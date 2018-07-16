@@ -2,6 +2,7 @@
 ### SDK
 https://aws.amazon.com/tw/sdk-for-php/
 https://github.com/aws/aws-sdk-php
+https://read.acloud.guru/serverless-php-630bb3e950f5
 
 ## Python
 ### SDK (boto3)
