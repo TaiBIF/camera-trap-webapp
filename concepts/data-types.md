@@ -1,12 +1,11 @@
 # 後端資料類別
 使用 @XXX 的表示法參照系統中的其他 object
 
-***警告***：目前的用詞混淆了一些東西，需要進一步整理。如 Document Detail API 與 Document List API 的 Document 指的其實是 Image Detail (annotation) 與 Image List。Upload Session 對應的 records 會被包裝成虛擬 spreadsheet，也會有自己所屬的邏輯路徑，這是目前未討論的概念。虛擬 spreadsheet 內的資訊則應維持恆定不變，以供計算影像的實體路徑。
-
 ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
 
 ## 內容分析
-### 從 P37 來看，出現的資訊有
+### 從 P37
+來看，出現的資訊有
 1. 特定單一站點（？）或是任何可視為 unit 的實體的資料摘要
     - 需要用到 Document Detail API (前提是 Document Detail 存了 logical location)
 2. 近期編輯的邏輯層檔案
@@ -20,6 +19,13 @@ ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
     - 對 Document DB 來說相對吃重（不能局部 update，一定要重傳整份）
     - 批次更新都要設法避開非強一致性帶來的問題
 
+### 第 40 頁
+***警告***：目前本文與其他兩篇文的用詞混淆了一些東西，需要進一步整理。如 Document Detail API 與 Document List API 的 Document 概念指的其實是 Image Detail (annotation) 與 Image List。Upload Session 對應的 records 會被包裝成虛擬 spreadsheet，也會有自己所屬的邏輯路徑，這是目前未討論的概念(Updated：已增補相關內容，見 https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw?both#Upload-Session-Image-File-List)。虛擬 spreadsheet 內的資訊則應維持恆定不變，以供計算影像的實體路徑。
+
+### 第 48 頁
+資料檢核如果在資料寫入時進行，可能會有反應時間太長的問題。更加不可能在前端做。也許會在後端排程進行？以 virtual spreadsheet 為單位，先上 write lock，然後程式中 cache 資料標準，以加速並避免被資料更新或標準更新影響。Virtual spreadsheet 上可加入前次完成檢核時間，系統依此排序，在資料更新時間或資料標準更新時間晚於前次完成檢核時間時，排程於深夜檢核之類。使用者也可以手動觸發檢核流程。
+
+
 ## 內容類別
 目前分為
 - Annotation
@@ -27,9 +33,9 @@ ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
 - Upload Session File List
 - Duplicated File List
 
-### Annotation
+### Image Detail (Annotation)
 - 請見 https://hackmd.io/oTNhuqP5TWy64kHWic3u6Q#%E7%8F%BE%E6%9C%89%E7%9A%84-mongodb-%E4%B8%8A%E7%9A%84%E8%B3%87%E6%96%99%E7%B5%90%E6%A7%8B
-### File Metadata (item in Document List)
+### Image File Metadata (item in Document List)
 - 相機相關
     - 時間 Created / Updated Time
     - @相機型號 Camera Model (待確認)
@@ -50,10 +56,11 @@ ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
     - Primary Key
         - 實體位置 Physical location (***NEED TO BE PERSISTENT***)
 
-### Upload Session File List
+### Upload Session Image File List
 - 需要這個資料類別的簡單理由是「維持資料與檔案綁定的完整性」，討論請參照：
     - https://hackmd.io/Olot8hzcR9CFgrKMK9022g#%E9%87%8D%E8%A4%87%E8%B3%87%E6%96%99%E7%AE%A1%E7%90%86%E5%8E%9F%E5%89%87-UPDATED-2018-07-18
     - https://hackmd.io/Olot8hzcR9CFgrKMK9022g#Write-lock-UPDATED-2018-07-18
+    - 衍生出虛擬檔案與邏輯路徑 upload session virtual excels
 - 內容
     - Upload Session ID
     - Physical Locations (array)
@@ -61,7 +68,8 @@ ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
         - Last Access (後端要控制好不要噴出無關人等的 last access info)
             - @使用者
             - @DateTime
-    - Logical location of this upload session (virtual spreadsheet)
+    - Logical location of this upload session (virtual spreadsheet), file name included.
+    - dateTime last validated
 
 ### Duplicated Image List
 - 目的是保護重複照片不會被刪光光（給後端參考用，至少留下一張），討論同見：
