@@ -1,6 +1,8 @@
 # 後端資料類別
 使用 @XXX 的表示法參照系統中的其他 object
 
+ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
+
 ## 內容分析
 ### 從 P37 來看，出現的資訊有
 1. 特定單一站點（？）或是任何可視為 unit 的實體的資料摘要
@@ -52,10 +54,11 @@
     - https://hackmd.io/Olot8hzcR9CFgrKMK9022g#Write-lock-UPDATED-2018-07-18
 - 內容
     - Upload Session ID
-    - Physical Location
-    - Last Access (後端要控制好不要噴出無關人等的 last access info)
-        - @使用者
-        - @DateTime
+    - Physical Locations (array)
+        - Physical Location
+        - Last Access (後端要控制好不要噴出無關人等的 last access info)
+            - @使用者
+            - @DateTime
 
 ### Duplicated File List
 - 目的是保護重複照片不會被刪光光（給後端參考用，至少留下一張），討論同見：
