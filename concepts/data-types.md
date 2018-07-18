@@ -1,6 +1,8 @@
 # 後端資料類別
 使用 @XXX 的表示法參照系統中的其他 object
 
+***警告***：目前的用詞混淆了一些東西，需要進一步整理。如 Document Detail API 與 Document List API 的 Document 指的其實是 Image Detail (annotation) 與 Image List。Upload Session 對應的 records 會被包裝成虛擬 spreadsheet，也會有自己所屬的邏輯路徑，這是目前未討論的概念。虛擬 spreadsheet 內的資訊則應維持恆定不變，以供計算影像的實體路徑。
+
 ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
 
 ## 內容分析
@@ -59,8 +61,9 @@ ongoing: https://hackmd.io/RSUvfVULSfiXGtgiiFQNsw
         - Last Access (後端要控制好不要噴出無關人等的 last access info)
             - @使用者
             - @DateTime
+    - Logical location of this upload session (virtual spreadsheet)
 
-### Duplicated File List
+### Duplicated Image List
 - 目的是保護重複照片不會被刪光光（給後端參考用，至少留下一張），討論同見：
     - https://hackmd.io/Olot8hzcR9CFgrKMK9022g#%E9%87%8D%E8%A4%87%E8%B3%87%E6%96%99%E7%AE%A1%E7%90%86%E5%8E%9F%E5%89%87-UPDATED-2018-07-18
 - 內容
