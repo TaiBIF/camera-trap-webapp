@@ -23,3 +23,8 @@
 - https://forums.aws.amazon.com/thread.jspa?threadID=261470
 - https://forums.aws.amazon.com/thread.jspa?threadID=267154&tstart=0
 
+### 啟用 User Pool Group 權限
+- 先在 IAM 建一個 for Identity Provider 的 Role，該給的權限給一給
+- User Pool 建 Group 並指定 Role
+- Identity Pool 底下依 Provider 設定 Authenticated role selection，要選 Choose Role from Token
+- https://aws.amazon.com/blogs/aws/new-amazon-cognito-groups-and-fine-grained-role-based-access-control-2/
