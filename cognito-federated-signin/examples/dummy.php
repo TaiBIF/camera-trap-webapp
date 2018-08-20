@@ -216,7 +216,7 @@ require "login.php";
 
 				// 前端取得登入使用者的 credential 法
 				AWSCognito.config.credentials = new AWSCognito.CognitoIdentityCredentials({
-					IdentityPoolId: 'ap-northeast-1:6e9f34bf-bd94-4f4f-8c63-12ab542ac14c',
+					IdentityPoolId: 'ap-northeast-1:83570204-11bb-4601-8094-2dc2ccfbc88a',
 					Logins: {
 						'cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_JACElFd4C': result.getIdToken().getJwtToken()
 					}
@@ -224,10 +224,12 @@ require "login.php";
 
 				AWSCognito.config.credentials.get(function(err){
 					if (err) return console.log("Error", err);
-					// 成功透過 identity provider 登入 AWS Cognito，取得 identity id，不知道有沒有其他取得 identity id 的方法？
+					// ************************************************ 這樣寫可以嘎？
+					localStorage.setItem('awsIdToken', result.getIdToken().getJwtToken());
+					// 成功透過 FB 登入 AWS Cognito，取得 identity id，不知道有沒有其他取得 identity id 的方法？
 					var identity_id = AWSCognito.config.credentials.identityId;
 					console.log("Cognito Identity Id", AWSCognito.config.credentials.identityId);
-					//* 吐給後端，必要時讓後端也可以得到授權使用服務 (根據忘了在哪看到官方帳號的回應是不給後端直接登入, SDK 沒對應的 function，所以只能前端登入丟 id 與 token 供後端認證，但建議還是全由前端做)
+					//* 吐給後端，必要時讓後端也可以得到授權使用服務
 					jQuery.get("login.php?" + window.location.hash.substr(1).split('&').filter((q)=>{return q.match(/^state=/)})[0] + "&identity_id=" + identity_id + "&id_token=" + result.getIdToken().getJwtToken()).done(function(data){
 						console.log(data);
 					});
@@ -266,5 +268,3 @@ require "login.php";
 	</script>
 </body>
 </html>
-
-
