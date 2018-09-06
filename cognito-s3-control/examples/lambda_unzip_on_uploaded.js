@@ -60,6 +60,7 @@ exports.handler = (event, context, callback) => {
             
             console.log("Remain size: " + fileWritableStreamBuffer.size() / 1024 + "kb");
             sharp(file_buf)
+              .withMetadata()
               .resize(512, 384)
               .webp({quality: 80})
               // .jpeg({quality: 80})
