@@ -1,0 +1,279 @@
+# 主資料集
+multimedia_annotations:
+  - type: StillImage / MovingImage
+    url_md5: some md5-hashed value (id field)
+    url: https://camera-trap/xxxxxx
+    multimedia_error_flag:
+    tokens:
+      - token_id: some uuid $some_token_id
+        token_error_flag:
+        species_shortcut:
+        description_level: individual
+        bbox:
+          full_scope: true
+          original_point: topleft
+        meta:
+          virtual_individual_id: some uuid
+          virtual_part_id: some uuid
+        data:
+          - label: human readable label
+            key:  $some_key1, annotation property id for machine
+            value: $some_value1, property value
+            unit: unit of value if exists
+            data_error_flag: flag if validation failed
+            last_validated: when the data record last validated (timestamp)
+            context: where the key is defined
+          - ...
+        relations:
+          - relation_label: human readable relation label
+            relation: $some_relation, for machine
+            target: $some_target, the target / object of a relation, token_id is used for value
+            context: where the relation is defined
+    related_upload_session:
+      - $upload_session_id_1 # 用來看上傳CSV匯入結果
+      - $upload_session_id_2
+    # 必要的 redundancy
+    project: some project
+    site: some site
+    sub_site: some sub site
+    location: some location
+    unique_location_md5: md5(project|site|sub_site|location)
+    date_time_original: 2017:02:09 06:11:09
+    year_original: '2017'
+    month_original: '02'
+    day_original: '09'
+    hour_original: '06'
+    create_date: 2017:02:09 06:11:09
+    wgs84dec_x: $wgs84dec_x1 # wgs84 十進位，存個副本以免計畫樣點資料被惡搞
+    wgs84dec_y: $wgs84dec_y1
+---
+
+  # 版本控制用的資料結構經過簡化
+multimedia_annotation_revisions:
+  - token_id: $some_token_id (id field)
+    data_revisions:
+      - $some_key1: $some_value1
+        $some_key2: $some_value2
+        $some_keyN: $some_valueN
+      - $some_keyN+1: $some_valueN+1
+        $some_keyN+2: $some_valueN+2
+    relation_revisions:
+      $some_relation1:
+      - $some_target1_1
+      - $some_target1_2
+      $some_relation2:
+      - $some_target2_1
+
+---
+
+# 視查詢頻度，要與主資料集共有一些 redundancies (faq)
+multimedia_metadata:
+  - url_md5: some md5-hashed value (id field)
+    timezone: +08:00
+    device_metadata: json serialized string of raw extracted metadata
+    make: RECONYX
+    model: HC500 HYPERFIRE\u0000\u0000\u0000\u0000
+    modify_date: 2017:02:09 06:11:09
+    exif:
+      exif_version: <Buffer 30 32 32 30>
+      exposure_time: 0.016666666666666666
+      iso: 500
+      flash: 25
+    # 必要的 redundancy
+    project: some project
+    site: some site
+    sub_site: some sub site
+    location: some location
+    unique_location_md5: md5(project|site|sub_site|location)
+    date_time_original: 2017:02:09 06:11:09
+    year_original: '2017'
+    month_original: '02'
+    day_original: '09'
+    hour_original: '06'    
+    create_date: 2017:02:09 06:11:09
+    wgs84dec_x: $wgs84dec_x1 # wgs84 十進位，存個副本以免計畫樣點資料被惡搞
+    wgs84dec_y: $wgs84dec_y1
+
+---
+
+project_metadata:
+  - project_id: $some_project_id
+    project_name:
+    project_alias:
+    contracting_organization: 林務局
+    project_code:
+    project_pi:
+      - PI 1
+      - PI 2
+      - ...
+    project_from_year:
+    project_data_from: min(project multimedia created)
+    project_data_to: max(project multimedia created)
+    project_admin_area:
+      - area 1
+      - area 2
+      - ...
+    project_abstract:
+    project_remarks:
+    project_cover_image_url:
+    members:
+      - some user id1
+      - some user id2
+    license:
+      metadata: CC BY
+      data: CC 0
+      multimedia: CC BY
+    data_fields_enabled:
+      - field_key: $field_key_1
+        validator: validator for $field_key_1
+      - field_key: $field_key_2
+        validator: validator for $field_key_2
+    higher_heirarchy:
+      - concat: project|site|sub_site
+        md5: md5(concat)
+    daily_test:
+      - since: some datetime or timestamp
+        time: test time of a day
+    
+
+---
+location_metadata:  
+  - unique_location_md5: md5-hashed unique_location (id field)
+    project: some project
+    site: some site
+    sub_site: some sub site
+    location: some location
+    unique_location: project|site|sub_site|location
+    higher_heirarchy: md5(project|site|sub_site)
+    original_coordinates:
+      - x: $x1
+        y: $y1
+        geodatum: wgs84
+        timestamp: some timestamp
+      - x: $x2
+        y: $y2
+        geodatum: twd97tm2
+        timestamp: some timestamp
+    wgs84dec_x: $wgs84dec_x1 # 一律標準化為 wgs84 十進位
+    wgs84dec_y: $wgs84dec_y1
+    elevation:
+    daily_test: #設計上可 override project level settings
+      - since: some datetime or timestamp
+        time: test time of a day
+    other_metadata:
+      - key: vegetation
+        value:
+      - key: land_cover
+        value: blahblah
+      - key: forest_compartment
+        value: blahblah
+---
+
+deployment_situation:
+  unique_location_md5:
+  roughly_from:
+  roughly_to:
+  situation_level: green / yellow / red
+  situation_description:
+  reported_by: $some_user_id
+
+---
+
+# 視情況決定是否用 DynamoDB 實作
+write_lock:
+  - unique_location_md5: md5-hashed unique_location (id field)
+    locked: false
+    locked_by: $some_user_id
+    locked_on: timestamp
+    last_user_act: $last_act_timestamp
+    unlock_on: $last_act_timestamp_plus_30mins
+
+---
+
+# 每「單個」檔案上傳自動產生
+upload_sessions:
+  - upload_session_id: $upload_session_id_1
+    unique_location_md5: $some_unique_location_md5_1
+    timestamp: $some_upload_time_1
+    by: $some_user_id_1
+    status: success / pending / error
+  - upload_session_id: $upload_session_id_2
+    unique_location_md5: $some_unique_location_md5_2
+    timestamp: $some_upload_time_1
+    by: $some_user_id_1
+    status: success / pending / error
+
+---
+
+users:
+  - user_id: $some_user_id
+    name: $some_name
+    email: $some_email
+    role: $some_role
+
+---
+
+login_sessions: 
+  - login_session_id: md5-hashed access_token used as unique key
+    user_id: $some_user_id # AWS Cognito 出啥就餵啥
+    login_timestamp: timestamp or date time
+    other_things_to_log: 還沒想到
+
+---
+
+data_fields_available:
+  cores:
+    - field_key: $some_unique_name for machine
+      field_label: name for human
+      description: some description for this field
+      default_validator: some validator
+  extensions:
+    - field_key: $some_unique_name for machine
+      field_label: name for human
+      description: some description for this field
+      default_validator: some validator
+
+---
+validators:
+  - label: 簡易物種中名驗證器
+    keys:
+      - vernacular-name
+    updated_timestamp: $some_timestamp_x
+    joint_conditions:
+      OR:
+        - key: vernacular-name
+          type: function
+          function: valueInVernacularNameList
+        - key: vernacular-name
+          type: function
+          function: valueInSpecialCases
+  - label: 物種名複合驗證器
+    keys: # 可以多重 match，譬如說無論中名與學名都要經過這個 validator 驗證，但... 也要避免重複驗證
+    - $key1, some key
+    - $key2, e.g. scientific-name
+    - $key3, e.g. vernacular-name
+    updated_timestamp: $some_timestamp
+    joint_conditions:
+      OR:
+        - AND:
+          - key: $key1
+            type: function
+            function: $some_validator_function, returns boolean
+          - key: $key2
+            type: match
+            value: Ursus thibetanus formosanus
+          - OR:
+            - key: $key3
+              type: match
+              value: 臺灣黑熊
+            - key: $key3
+              type: match
+              value: 台灣黑熊
+        - AND: more...
+
+---
+
+system_announcements:
+  date_time:
+  level: green / yellow / red
+  
