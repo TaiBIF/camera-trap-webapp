@@ -3,11 +3,11 @@ multimedia_annotations:
   - type: StillImage / MovingImage
     url_md5: some md5-hashed value (id field)
     url: https://camera-trap/xxxxxx
-    multimedia_error_flag:
+    multimedia_error_flag: false
     tokens:
       - token_id: some uuid $some_token_id
-        token_error_flag:
-        species_shortcut:
+        token_error_flag: false
+        species_shortcut: 台灣黑熊
         description_level: individual
         bbox:
           full_scope: true
@@ -39,13 +39,14 @@ multimedia_annotations:
     location: some location
     unique_location_md5: md5(project|site|sub_site|location)
     date_time_original: 2017:02:09 06:11:09
+    date_time_original_timestamp: 1537857332
     year_original: '2017'
     month_original: '02'
     day_original: '09'
     hour_original: '06'
     create_date: 2017:02:09 06:11:09
-    wgs84dec_x: $wgs84dec_x1 # wgs84 十進位，存個副本以免計畫樣點資料被惡搞
-    wgs84dec_y: $wgs84dec_y1
+    wgs84dec_x: 121.561837 # wgs84 十進位，存個副本以免計畫樣點資料被惡搞
+    wgs84dec_y: 23.556678
 ---
 
   # 版本控制用的資料結構經過簡化
@@ -165,8 +166,6 @@ location_metadata:
         value:
       - key: land_cover
         value: blahblah
-      - key: forest_compartment
-        value: blahblah
 ---
 
 deployment_situation:
@@ -209,7 +208,10 @@ users:
   - user_id: $some_user_id
     name: $some_name
     email: $some_email
-    role: $some_role
+    project_roles: 
+    - project: $some_project
+      roles:
+        - $some_role
 
 ---
 
@@ -273,7 +275,8 @@ validators:
 
 ---
 
+# 是不是考慮用 AWS 的訊息推送服務做就好
 system_announcements:
   date_time:
   level: green / yellow / red
-  
+  message:
