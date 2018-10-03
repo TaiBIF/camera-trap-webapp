@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="../css/lib.css">
+  <link rel="stylesheet" href="../css/app.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css"
+   integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+   crossorigin=""/>
+   <script>
+     window.name = 'Taibif-index';
+   </script>
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg">
+      <a href="./index.html#/" role="button" class="navbar-brand">Camara Capture</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav main-nav">
+          <li class="nav-item"><a class="nav-link active" role="button" href="./index.html#/">專案總覽 <span class="sr-only">(current)</span></a></li>
+          <li class="nav-item"><a class="nav-link" role="button" href="./search.html">資料搜尋</a></li>
+          <li class="nav-item"><a class="nav-link" role="button" href="#">範本下載</a></li>
+          <li class="nav-item"><a class="nav-link" role="button" href="./history.html">上傳紀錄</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">幫助</a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item">AAA</a>
+              <a class="dropdown-item">AAA</a>
+            </div>
+          </li>
+          <li class="divider"></li>
+        </ul>
+        <div class="navbar-nav subnav">
+          <a class="btn btn-warning mr-4" onclick="openUpload()">
+            <i class="fa fa-cloud-upload"></i>
+            檔案上傳
+          </a>
+          <div class="divider"></div>
+          <a class="nav-item nav-link" href="#"><i class="fa fa-bell"></i></a>
+          <div class="divider"></div>
+          <div class="nav-item dropdown">
+            <a class="nav-item nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              黃智賢
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <div id="app"></div>
+  </main>
+  <script src="../js/lib.js"></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxcore.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxdata.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxbuttons.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxscrollbar.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxmenu.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.pager.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.edit.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.selection.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.sort.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxlistbox.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxdropdownlist.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxcheckbox.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxcalendar.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxnumberinput.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxdatetimeinput.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.export.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.filter.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.columnsresize.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxgrid.columnsreorder.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxtooltip.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxcomplexinput.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxcombobox.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/jqxlistbox.js'></script>
+  <script src='../js/vendor/jqwidgets/jqwidgets/globalization/globalize.js'></script>
+  <script src="../js/main.js"></script>
+  
+</body>
+</html>

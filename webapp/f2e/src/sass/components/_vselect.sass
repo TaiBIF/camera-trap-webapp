@@ -1,0 +1,24 @@
+.dropdown-toggle
+  &:after
+    border-top: 0.3em solid $light-green
+    border-right: 0.3em solid transparent
+    border-bottom: 0 solid $light-green
+    border-left: 0.3em solid transparent
+
+.v-select 
+  background: #FFF
+  .vs__selected-options
+    > input[type=search], 
+    > input[type=search]:focus
+      margin: 0
+
+  .open-indicator
+    width: 20px
+
+  .dropdown-toggle
+    padding-bottom: 0
+    background: #FFF
+    z-index: 1999
+
+    &:after
+      display: none

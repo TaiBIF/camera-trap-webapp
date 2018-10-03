@@ -1,0 +1,248 @@
+@charset "UTF-8";
+
+.icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  background-size: 32px;
+}
+.icon-orcid-text {
+  width: 53px;
+  height: 16px;
+  @include background-retina('/assets/icons/logo-text-orcid.png', '/assets/icons/logo-text-orcid@2x.png');
+  background-size: 53px 16px;
+}
+.icon-orcid-circle {
+  width: 30px;
+  height: 30px;
+  @include background-retina('/assets/icons/logo-orcid-circle.png', '/assets/icons/logo-orcid-circle@2x.png');
+  background-size: 30px;
+}
+.icon-projects {
+  @include background-retina('/assets/icons/projects.png', '/assets/icons/projects@2x.png');
+}
+.icon-collapse {
+  @include background-retina('/assets/icons/collapse.png', '/assets/icons/collapse@2x.png');
+}
+.icon-calendar {
+  width: 16px;
+  height: 16px;
+  @include background-retina('/assets/icons/calendar.png', '/assets/icons/calendar@2x.png');
+  background-size: 16px;
+}
+.icon-flash {
+  width: 19px;
+  height: 19px;
+  @include background-retina('/assets/icons/flash.png', '/assets/icons/flash@2x.png');
+  background-size: 19px;
+}
+.icon-copy {
+  width: 19px;
+  height: 19px;
+  @include background-retina('/assets/icons/copy.png', '/assets/icons/copy@2x.png');
+  background-size: 19px;
+}
+.icon-break-link {
+  width: 19px;
+  height: 19px;
+  @include background-retina('/assets/icons/break-link.png', '/assets/icons/break-link@2x.png');
+  background-size: 19px;
+}
+.icon-check {
+  width: 19px;
+  height: 19px;
+  @include background-retina('/assets/icons/check.png', '/assets/icons/check@2x.png');
+  background-size: 19px;
+}
+.icon-add-green-circle {
+  width: 19px;
+  height: 19px;
+  @include background-retina('/assets/icons/add-green-circle.png', '/assets/icons/add-green-circle@2x.png');
+  background-size: 19px;
+}
+.icon-title-camara {
+  width: 40px;
+  height: 40px;
+  @include background-retina('/assets/icons/title-camara.png', '/assets/icons/title-camara@2x.png');
+  background-size: 40px;
+}
+.icon-title-doc {
+  width: 40px;
+  height: 40px;
+  @include background-retina('/assets/icons/title-doc.png', '/assets/icons/title-doc@2x.png');
+  background-size: 40px;
+}
+.icon-title-species {
+  width: 40px;
+  height: 40px;
+  @include background-retina('/assets/icons/title-species.png', '/assets/icons/title-species@2x.png');
+  background-size: 40px;
+}
+.icon-gallery-list {
+  width: 16px;
+  height: 16px;
+  @include background-retina('/assets/icons/gallery-list.png', '/assets/icons/gallery-list@2x.png');
+  background-size: 16px;
+}
+.icon-gallery-single {
+  width: 16px;
+  height: 16px;
+  @include background-retina('/assets/icons/gallery-single.png', '/assets/icons/gallery-single@2x.png');
+  background-size: 16px;
+}
+.icon-add-file {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/add_file.png', '/assets/icons/add_file@2x.png');
+  background-size: 24px;
+}
+.icon-add-green {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/add-green.png', '/assets/icons/add-green@2x.png');
+  background-size: 24px;
+}
+.icon-trash {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/trash.png', '/assets/icons/trash@2x.png');
+  background-size: 24px;
+}
+.icon-chevron-up {
+  width: 20px;
+  height: 20px;
+  @include background-retina('/assets/icons/chevron-up.png', '/assets/icons/chevron-up@2x.png');
+  background-position: center;
+  background-size: 20px;
+}
+.icon-chevron-down {
+  width: 20px;
+  height: 20px;
+  @include background-retina('/assets/icons/chevron-down.png', '/assets/icons/chevron-down@2x.png');
+  background-position: center;
+  background-size: 20px;
+}
+.icon-csv {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/csv.png', '/assets/icons/csv@2x.png');
+  background-position: center;
+  background-size: 18px;
+}
+.icon-photo {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/photo.png', '/assets/icons/photo@2x.png');
+  background-position: center;
+  background-size: 18px;
+}
+.icon-zip {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/zip.png', '/assets/icons/zip@2x.png');
+  background-position: center;
+  background-size: 18px;
+}
+.icon-waiting {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/waiting.png', '/assets/icons/waiting@2x.png');
+  background-size: 24px;
+}
+.icon-cloud-upload {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/cloud-upload.png', '/assets/icons/cloud-upload@2x.png');
+  background-size: 24px;
+}
+.icon-upload-error {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/upload-error.png', '/assets/icons/upload-error@2x.png');
+  background-position: center;
+  background-size: 16px;
+}
+.icon-upload-success {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/upload-success.png', '/assets/icons/upload-success@2x.png');
+  background-position: center;
+  background-size: 16px;
+}
+.icon-info {
+  width: 14px;
+  height: 14px;
+  @include background-retina('/assets/icons/info.png', '/assets/icons/info@2x.png');
+  background-size: 14px;
+}
+.btn:hover,
+.btn:focus,
+.active {
+  .icon-gallery-list {
+    @include background-retina('/assets/icons/gallery-list-active.png', '/assets/icons/gallery-list-active@2x.png');
+  }
+  .icon-gallery-single {
+    @include background-retina('/assets/icons/gallery-single-active.png', '/assets/icons/gallery-single-active@2x.png');
+  }
+}
+
+.icon-user {
+  width: 10px;
+  height: 11px;
+  @include background-retina('/assets/icons/user.png', '/assets/icons/user@2x.png');
+  background-size: 10px 11px;
+}
+.icon-pencil {
+  width: 14px;
+  height: 14px;
+  @include background-retina('/assets/icons/pencil.png', '/assets/icons/pencil@2x.png');
+  background-size: 14px;
+}
+.icon-add {
+  width: 14px;
+  height: 14px;
+  @include background-retina('/assets/icons/add.png', '/assets/icons/add@2x.png');
+  background-size: 14px;
+}
+.icon-search-green {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/search-green.png', '/assets/icons/search-green@2x.png');
+  background-size: 24px;
+}
+
+.icon-user-gray {
+  width: 11px;
+  height: 11px;
+  @include background-retina('/assets/icons/user-gray.png', '/assets/icons/user-gray@2x.png');
+  background-size: 10px;
+}
+
+.icon-warning {
+  width: 10px;
+  height: 11px;
+  @include background-retina('/assets/icons/warning.png', '/assets/icons/warning@2x.png');
+  background-size: 10px 11px;
+}
+
+.icon-warning {
+  width: 10px;
+  height: 11px;
+  @include background-retina('/assets/icons/warning.png', '/assets/icons/warning@2x.png');
+  background-size: 10px 11px;
+}
+
+.icon-download-sm {
+  width: 11px;
+  height: 11px;
+  @include background-retina('/assets/icons/download-sm.png', '/assets/icons/download-sm@2x.png');
+  background-size: 11px 11px;
+}
+
+.icon-back {
+  width: 24px;
+  height: 24px;
+  @include background-retina('/assets/icons/back.png', '/assets/icons/back@2x.png');
+  background-size: 24px 24px;
+}
