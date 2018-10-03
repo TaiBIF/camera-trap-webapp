@@ -1,0 +1,60 @@
+.page-project
+  > .container
+    padding-top: 20px
+
+  display: flex
+  flex-wrap: wrap
+  flex-direction: row
+  
+  .chart-control
+    position: relative
+    margin-top: 20px
+    margin-bottom: 10px
+    .btn.btn-default
+      position: absolute
+      top: -5px
+      right: 15px
+
+  aside 
+    display: block
+    width: 248px
+    background: #F9FBFA
+    box-shadow: 1px 0 0 0 #9B9B9B
+    overflow: auto
+
+    .aside-header
+      color: $gray
+      height: 60px
+      line-height: 60px
+      padding: 0 20px
+
+    .aside-project
+      padding: 10px 20px
+      color: $green
+      background-color: $bg-green
+      margin-bottom: 10px
+
+  .maintain 
+    flex: 1
+    padding: 20px
+
+  .speices-item
+    margin-bottom: 20px
+    .circle
+      float: left
+      display: block
+      margin-top: 4px
+      width: 14px
+      height: 14px
+      +border-radius(7px)
+      margin-right: 5px
+      + .text
+        display: block
+        margin-left: 24px
+        .sub-item
+          margin-top: 20px
+
+.page-login
+  a.text-green
+    text-decoration: none
+    border-bottom: 1px solid $green

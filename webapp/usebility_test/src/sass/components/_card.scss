@@ -1,0 +1,162 @@
+a.card,
+.card {
+  color: #202421;
+  margin-bottom: 40px;
+  border-radius: 4px 4px 0 0;
+  border: 0;
+  box-shadow: 0px 2px 3px 0px rgba(105,115,111,.3);
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+  &:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-image: linear-gradient(-90deg, #5AB159 0%, #ADD38D 93%);
+    top: 0;
+    left: 0;
+    z-index: 9;
+  }
+
+  .card-body {
+    position: relative;
+    padding: 20px;
+    .badge {
+      position: absolute;
+      height: 22px;
+      line-height: 22px;
+      display: block;
+      top: -30px;
+      font-weight: 300;
+
+      &.error {
+        font-size: 11px;
+        line-height: 11px;
+        padding: 4px;
+        right: 10px;
+        color: #D80C37;
+        background: #FEC9D4;
+      }
+      &.member {
+        left: 10px;
+        padding: 0 10px;
+        color: #FFF;
+        background: #464646;
+        border-radius: 22px;
+      }
+    }
+    .extra { 
+      text-align: center;
+
+      > div[class*='col']:not(:last-child) {
+        box-shadow: 1px 0 0 0 #DBDBDB;
+      }
+      > div {
+        align-self: flex-end;
+      }
+    }
+    h6 {
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    .last-update,
+    .update-rows {
+      color: #2A7F60;
+      margin: 0;
+    }
+  }
+}
+
+.accordion  > .card {
+  background: none;
+  border: 0;
+  box-shadow: none;
+
+  &:before {
+    display: none;
+  }
+  .card-header {
+    padding: 0;
+    background: #E1E3E5;
+    button.btn.btn-link {
+      text-align: left;
+      padding: 8px 20px;
+      text-decoration: none;
+      color: #8B8B8B;
+      font-size: 16px;
+    }
+  }
+
+  .collapse > .card-body {
+    background: none;
+    border: 0;
+    
+  }
+  .card.archive {
+    opacity: .5;
+    background: #E1E3E5;
+  }
+
+}
+
+.page-project {
+  .card {
+    margin: 0;
+  }
+
+  .card.map-card {
+    background: #F8F8F8;
+
+    .card-body {
+      .leaflet-container {
+        border-radius: 4px;
+      }
+    }
+    .card-header {
+      background: #FFF;
+
+      div[class*="col-"]:not(:last-child) {
+        box-shadow: 1px 0 0 0 rgba(155,155,155,.5);
+        align-self: center;
+      }
+
+      h3 {
+        font-size: 24px;
+        padding: 10px 5px;
+        margin: 0;
+        .icon {
+          margin-right: 20px;
+        }
+
+        small {
+          color: #7F8F7A;
+          font-size: 16px;
+          margin-top: 12px;
+        }
+      }
+    }
+  }
+
+  .card.update {
+    .card-body {
+      font-size: 13px;
+      .records {
+        position: relative;
+        display: block;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: 189px;
+        -webkit-overflow-scrolling:touch;  
+      }
+      .item {
+        margin-bottom: 5px;
+        > .link {
+          display: block;
+        }
+      }
+    }
+  }
+}

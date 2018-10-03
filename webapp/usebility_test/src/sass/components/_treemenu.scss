@@ -1,0 +1,147 @@
+
+aside.tree-container {
+  position: fixed;
+  width: 250px;
+  height: calc(100vh - 64px);
+  left: 0;
+  background: #FFF;
+  z-index: 0;
+  padding: 0;
+  z-index: 0;
+  padding: .5rem 0;
+  z-index: 0;
+  display: block;
+  overflow: auto;
+  box-shadow: 1px 0 0 0 rgba(0,0,0,.15);
+  
+  .slot_name { display: none; }
+  
+  &.is-collapse {
+    width: 60px;
+    header {
+      text-align: center;
+      > .btn {
+        float: none !important;
+        .icon-collapse {
+          @include background-retina('../img/icons/collapse-in.png','../img/icons/collapse-in@2x.png')
+        }
+      }
+      > .content {
+        display: block;
+        .text { display: none; }
+
+        .slot_name { display: block; }
+      }
+    }
+
+    ul.tree-menu {
+      li.tree-menu-item a.tree-menu-link {
+        padding: 10px 5px !important;
+
+        .total_name {
+          display: none;
+        }
+        .slot_name {
+          display: block;
+          padding: 0 8px;
+        }
+
+        &.add-item {
+          text-align: center;
+          .text { display: none; }
+        }
+      }
+    }
+
+    + .view {
+      margin-left: 60px;
+    }
+  }
+
+  header {
+    position: relative;
+    padding: 7px 10px;
+    background: #FFF;
+    font-size: 13px;
+    color: #8B8B8B;
+    .content {
+      line-height: 32px;
+      display: inline-block;
+    }
+  }
+  ul.tree-menu {
+    > li.tree-menu-item.is-open {
+      ul.tree-menu-child {
+        display: block;
+      }
+    }
+
+    > li.tree-menu-item:not(:last-child) {
+      border-bottom: 1px solid rgba(200,200,200,.5);
+    }
+    ul.tree-menu-child {
+      display: none;
+      padding-left: 0px;
+      padding-bottom: .5rem;
+
+      > .tree-menu-item a {
+        padding: 10px 15px 10px 50px;
+        .slot_name {
+          display: none;
+        }
+
+      }
+    }
+  }
+
+  ul.tree-menu-child,
+  ul.tree-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  ul.tree-menu {
+    > li.tree-menu-item {
+      &.is-open > a.tree-menu-link,
+      &.is-open > a.tree-menu-link:hover,
+      &.is-open > a.tree-menu-link:focus,
+      > a.tree-menu-link:hover,
+      > a.tree-menu-link:focus {
+        color: #464646;
+        background: #F0F1F3;
+      }
+    }
+    
+    a.tree-menu-link {
+      cursor: pointer;
+      display: block;
+      padding: 10px 20px;
+      color: #666;
+      font-size: 16px;
+
+      &.is-search-block {
+        background: none !important;
+      }
+      &.is-height {
+        height: 78px;
+        text-align: center;
+      }
+
+      &:hover,
+      &:focus {
+        color: #000;
+      }
+
+      &.is-active {
+        background: #E9F2DE;
+        color: #2A7F60;
+      }
+    }
+
+  }
+
+  + .view{
+    margin-left: 250px;
+  }
+}

@@ -1,0 +1,43 @@
+.lightbox {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: row;
+  left: 0;
+  top: 0;
+  background: rgba(70,70,70,.85);
+  z-index: 599;
+  display: none;
+  opacity: 0;
+  transition: opacity .3s .1s ease;
+
+  &.is-open {
+    display: block;
+    opacity: 1;
+  }
+
+  .lightbox-body {
+    flex: 1;
+    > img {
+      position: absolute;
+      width: auto;
+      height: 70%;
+      left: 0;
+      right: 0;
+      top: 120px;
+      bottom: 0;
+      margin: auto;
+    }
+  }
+  .lightbox-header {
+    display: block;
+    width: 100%;
+    height: 54px;
+    line-height: 38px;
+    padding: 10px 20px;
+    color: #FFF;
+    background: #464646;
+  }
+}

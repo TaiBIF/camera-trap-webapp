@@ -1,0 +1,51 @@
+header {
+  nav.navbar .navbar-nav {
+    .btn.btn-warning {
+      color: #FFF;
+      background: #FF8C23;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border: 1px solid #FFAF00;
+      box-shadow: inset -1px -1px 1px 0 rgba(107, 106, 107, .38);
+    }
+  }
+}
+
+.btn.btn-upload {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  input {
+    position: absolute;
+    opacity: 0;
+  }
+  .content {
+    display: block;
+  }
+}
+.btn.btn-warning {
+  position: relative;
+  color: #FFF !important;
+  background: #FF8C23;
+  border: 1px solid #FFAF00;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  > input {
+    position: absolute;
+    opacity: 0;
+  }
+
+}
+.btn.btn-rounded {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: #F0F1F3;
+  text-align: center;
+  @include border-radius(20px);
+
+  > .icon {
+    margin-left: -2px;
+  }
+}

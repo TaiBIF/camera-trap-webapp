@@ -1,0 +1,84 @@
+.form-group.row {
+  margin-bottom: 0;
+}
+
+.mx-datepicker {
+  display: block !important;
+  width: 100% !important;
+  vertical-align: top;
+
+  &.d-inline-block {
+    display: inline-block !important;
+    width: auto !important;
+  }
+  .mx-input-append {
+    display: none;
+  }
+  
+  
+  .mx-input {
+    border: 1px solid #E1E3E5;
+    height: 38px;
+    box-shadow: none;
+    background: url("../img/icons/calendar@2x.png") no-repeat right 10px center;
+    background-size: 16px;
+    &:focus {
+      background: none;
+      + .mx-input-append.mx-clear-wrapper {
+        display: block;
+      }
+    }
+  }
+}
+
+
+.checkbox {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+
+  input {
+    position: absolute;
+    opacity: 0;
+
+    + label {
+      padding-left: 18px;
+
+      &:before {
+        content: '';
+        left: 0;
+        position: absolute;
+        display: block;
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+        border: 1px solid #E1E3E5;
+      }
+    }
+
+
+    &:checked + label:before {
+      border-color: #8AC731;
+      background: #8AC731 url(../img/common/checked@2x.png) center no-repeat;
+      background-size: 9px 7px;
+    }
+  }
+}
+
+form {
+  .v-select .selected-tag {
+    max-width: 96px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    font-size: 13px;
+    background: #F0F1F3;
+    border-color: #8B8B8B;
+    .close {
+      position: absolute;
+      right: 5px;
+    }
+  }
+}
