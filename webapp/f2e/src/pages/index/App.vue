@@ -21,7 +21,23 @@
           </ul>
           <div class="navbar-nav subnav">
             <div class="divider"></div>
-            <a class="nav-item nav-link" href="#"><i class="fa fa-bell"></i></a>
+            <div class="nav-item dropdown">
+              <a class="nav-item nav-link dropdown-toggle" id="notification" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell"></i></a>
+              <div id="notification-container" class="dropdown-menu dropdown-menu-right" aria-labelledby="notification">
+                <a class="dropdown-item notification-item">
+                  <div class="meta text-gray date">2018/07/23 17:25 你 上傳了</div>
+                  <h5 class="text-green">
+                    <a href="#" class="link">
+                      全島鼬獾 屏東處-潮州站 PT09A<br/>
+                      2018/06/01-2018/07/31
+                    </a>
+                  </h5>
+                  <div class="meta">
+                    上傳失敗 <a class="text-green link">檢視錯誤</a>
+                  </div>
+                </a>
+              </div>
+            </div>
             <div class="divider"></div>
             <div class="nav-item dropdown">
               <a class="nav-item nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

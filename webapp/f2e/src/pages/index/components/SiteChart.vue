@@ -79,10 +79,7 @@ export default {
   },
   methods: {
     setCurrent(d) {
-      this.$emit('update', {
-        value: d.id,
-        label: d.name
-      })
+      this.$emit('update', d)
     }
   }
 }

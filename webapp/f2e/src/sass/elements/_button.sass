@@ -2,7 +2,9 @@ a.btn,
 a.btn:link,
 .btn
   font-size: 1rem
-  padding: 8px 20px
+  padding: 0 20px
+  height: 40px
+  line-height: 40px
   cursor: pointer
   display: inline-block
   text-decoration: none
@@ -18,7 +20,9 @@ a.btn:link,
 
   &.btn-sm 
     font-size: 13px
-    padding: 6px 12px
+    padding: 0 12px
+    height: 30px
+    line-height: 30px
 
   &.btn-block
     display: block
@@ -65,9 +69,10 @@ a.btn:link,
   display: inline-block
   .btn.btn-border-gray
     color: $black
-    padding: 3px 10px
+    padding: 0px 10px
     border-width: 1px 1px 1px 0
     border-style: solid 
+    line-height: 40px
     border-color: $gray
     +border-radius(0)
 
