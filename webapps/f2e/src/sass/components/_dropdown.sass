@@ -1,0 +1,38 @@
+.dropdown.v-select.single.searchable
+  .dropdown-toggle
+    padding-bottom: 0 !important
+    .vs__selected-options
+      padding: 0
+    .form-control
+      border: 0
+      height: 38px
+      line-height: 38px
+
+.dropdown-menu
+  padding: 0
+  border: 1px solid $border-gray
+
+  a.dropdown-item 
+    color: $black
+    padding: 8px 10px
+    text-decoration: none
+
+.dropdown
+  &.show>#notification-container
+    display: block
+  #notification-container
+    width: 380px
+    max-height: 1060px
+    overflow-x: hidden
+    overflow-y: auto
+    cursor: default
+    .notification-item
+      &:not(:last-child)
+        box-shadow: 0px -1px 0 0 #E1E3E5
+
+      h5 
+        margin: 5px 0
+
+      &:active
+        background: none
+      

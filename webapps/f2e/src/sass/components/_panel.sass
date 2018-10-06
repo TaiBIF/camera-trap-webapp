@@ -1,0 +1,102 @@
+.panel 
+  position: relative
+  display: block
+  border: 1px solid #E9E9E9
+  background: #FFF
+  box-shadow: 0 2px 4px 0 rgba(170, 191, 181, .3)
+  +border-radius(4px)
+
+  .panel-heading
+    background: $green
+    color: #FFF
+
+    h4 
+      font-size: 16px
+      padding: 8px 20px
+      margin: 0
+
+  .panel-body
+    padding: 20px 40px
+
+  &.panel-basic
+    .panel-header
+      padding: 20px
+
+  &.panel-project
+    margin-bottom: 40px
+    &:before
+      content: ""
+      height: 4px
+      width: 100%
+      display: block
+      top: 0
+      left: 0
+      background-color: #2A7F60
+      background: linear-gradient(to right, #2A7F60 50%, #8AC731)
+
+  &.tab-panel
+    .panel-header
+      padding: 0
+      ul.nav-tab
+        display: flex
+        flex-direction: row
+        margin: 0
+        padding: 0
+        list-style: none
+        li
+          position: relative
+          flex: 1
+          box-shadow: inset 2px 0px 4px 0 rgba(66,82,43,.2)
+          &:after
+            content: ""
+            width: 100%
+            height: 4px
+            display: block
+            background: transparent
+          a
+            display: block
+            height: 53px
+            line-height: 53px
+            color: $black
+            text-align: center
+            cursor: pointer
+            -webkit-touch-callout: none
+            -webkit-user-select: none
+            -khtml-user-select: none
+            -moz-user-select: none
+            -ms-user-select: none
+            user-select: none
+          &.active
+            box-shadow: 0 1px 2px 0 rgba(170,191,181,.4)
+            a 
+              color: $green
+            &:after
+              background: $light-green
+
+    .panel-body
+      padding: 0
+      
+      .tab-content
+        display: none
+        padding: 0 20px 20px
+
+        &.active
+          display: block
+        > .row.control-bar
+          background: $bg-gray
+          margin-left: -20px
+          margin-right: -20px
+          padding-top: 5px 
+          padding-bottom: 5px 
+
+          .form-group > label
+            line-height: 38px
+        
+        .map-container
+          padding-top: 20px
+          -webkit-touch-callout: none
+          -webkit-user-select: none
+          -khtml-user-select: none
+          -moz-user-select: none
+          -ms-user-select: none
+          user-select: none

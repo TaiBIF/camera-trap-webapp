@@ -1,0 +1,40 @@
+form.form 
+  .form-group
+    margin-bottom: 20px
+
+    .note 
+      margin-top: 15px
+
+    label:not(.btn)
+      text-align: right
+      line-height: 38px
+      &.required:before
+        content: "*"
+        display: inline-block
+        margin-right: 10px
+        color: $red
+
+    input::placeholder
+      color: $gray
+
+  .input-group-inline
+    display: flex 
+    flex-direction: row 
+    line-height: 38px
+    .input-text
+      padding: 0 10px
+  .input-group
+    position: relative
+    .input-group-append
+      position: absolute
+      width: 38px
+      height: 38px
+      right: 0
+      top: 0
+      display: block
+      text-align: center
+      line-height: 38px
+    input
+      +border-radius(0.25rem)
+
+
