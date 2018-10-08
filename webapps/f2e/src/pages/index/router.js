@@ -21,7 +21,7 @@ export default new Router({
     {
       path: '/project/:id/edit',
       name: 'editProject',
-      component: () => import('./views/CreateProject.vue')
+      component: () => import('./views/EditProject.vue')
     },
     {
       path: '/project/:id',
@@ -31,13 +31,13 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import('./views/Project.vue')
     },
-    // {
-    //   path: '/project/:id/site/:site_id',
-    //   name: 'site',
+    {
+      path: '/project/:id/site/:site_id',
+      name: 'site',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      // component: () => import('./views/Project.vue')
-    // }
+      component: () => import('./views/Site.vue')
+    }
   ]
 })

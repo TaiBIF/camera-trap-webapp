@@ -1,6 +1,10 @@
+  
 .page-project
   > .container
     padding-top: 20px
+
+  &.page-project-edit
+    padding-top: 0px
 
   display: flex
   flex-wrap: wrap
@@ -33,6 +37,9 @@
       color: $green
       background-color: $bg-green
       margin-bottom: 10px
+      
+      > a 
+        display: block
 
   .camera-chart 
     position: absolute
@@ -56,6 +63,59 @@
     flex: 1
     padding: 20px
 
+    &.page-sheet
+      padding: 0
+      display: flex 
+      flex-direction: column
+      
+      .search-container
+        padding: 20px
+        
+      .sheet-container
+        flex: 1
+        display: flex 
+        flex-wrap: wrap
+
+        .sheet
+          flex: 1
+          display: block
+          overflow-x: auto
+          box-sizing: border-box
+        .photo
+          position: relative
+          width: 200px
+          display: flex
+          flex-direction: column
+          .drag-bar 
+            position: absolute
+            width: 10px
+            height: 100%
+            left: 0
+            top: 0
+            height: 100%
+            cursor: ew-resize
+          .photo-container
+            padding: 10px
+            flex: 1
+            .img
+              max-width: 100%
+              line-height: 0
+            .control 
+              display: block
+              color: #FFF
+              background: $black
+              font-size: 13px
+              padding: 5px 10px
+              text-align: center
+              > *
+                text-align: center
+              .prev, .next
+                margin: 0 5px
+                color: $gray
+              .text
+                font-weight: 600
+
+          
   .speices-item
     margin-bottom: 20px
     .circle

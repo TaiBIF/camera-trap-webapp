@@ -9,19 +9,19 @@
           <div class="form-group row">
             <label for="" class="col-3 px-0 text-right required">樣區：</label>
             <div class="col-9">
-              <v-select v-modal="form.site" :options="['屏東處']"/>
+              <v-select v-model="form.site" :options="['屏東處']"/>
             </div>
           </div>
           <div class="form-group row">
             <label for="" class="col-3 px-0 text-right required">子樣區：</label>
             <div class="col-9">
-              <v-select v-modal="form.sub_site" :options="['旗山站']"/>
+              <v-select v-model="form.sub_site" :options="['旗山站']"/>
             </div>
           </div>
           <div class="form-group row">
             <label for="" class="col-3 px-0 text-right required">相機位置：</label>
             <div class="col-9">
-              <v-select v-modal="form.camera" :options="['PT97A']"/>
+              <v-select v-model="form.camera" :options="['PT97A']"/>
             </div>
           </div>
           <div class="form-group row">
@@ -45,13 +45,13 @@
           <div class="form-group row">
             <label for="" class="col-3 px-0 text-right required">異常狀況：</label>
             <div class="col-9">
-              <v-select v-modal="form.status" :options="['相機故障（空拍過多）']"/>
+              <v-select v-model="form.status" :options="['相機故障（空拍過多）']"/>
             </div>
           </div>
           <div class="form-group row">
             <label for="" class="col-3 px-0 text-right required">備註：</label>
             <div class="col-9">
-              <textarea v-modal="form.note"class="form-control"></textarea>
+              <textarea v-model="form.note" class="form-control"></textarea>
             </div>
           </div>
         </form>

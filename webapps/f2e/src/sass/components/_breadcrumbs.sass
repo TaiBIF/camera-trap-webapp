@@ -1,0 +1,37 @@
+ul.breadcrumbs
+  display: block
+  margin: 0
+  padding: 0
+  li 
+    display: inline-block
+
+      
+    &:last-child > a:before,
+    &:last-child > a:after
+      display: none
+    a,
+    a:link
+      position: relative
+      color: $gray
+      font-size: 13px
+      padding-right: 20px
+
+      &:before,
+      &:after
+        content: ""
+        position: absolute
+        display: block
+        width: 1px 
+        height: 8px
+        +border-radius(1px)
+        background: $gray
+        right: 10px
+        top: 0
+        margin: auto
+
+      &:before
+        +rotate(-45deg)
+        bottom: 40%
+      &:after
+        top: 40%
+        +rotate(45deg)

@@ -244,6 +244,7 @@
 <script>
 import L from 'leaflet';
 import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup } from 'vue2-leaflet';
+import moment from 'moment';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
@@ -379,7 +380,7 @@ export default {
   name: 'Project',
   data() {
     return {
-      today: new Date(),
+      today: moment(),
       currentDuration: 2018,
       currentSite: {
         value: 0,
@@ -600,7 +601,7 @@ export default {
       pieCharts.addSeries(PieChart);
     },
     changeDuration(count) {
-      if(this.currentDuration==this.today.getFullYear() && count>0) {
+      if(this.currentDuration==this.today.year() && count>0) {
         return
       }
       this.currentDuration += count

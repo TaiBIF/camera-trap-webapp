@@ -13,6 +13,11 @@
     position: absolute
     opacity: 0
 
+    &:checked + label:before
+      border-color: $green
+      background: $green url('/assets/common/checked@2x.png') center no-repeat
+      background-size: 9px 7px 
+
   label 
     padding-left: 30px
     
@@ -31,6 +36,8 @@
       bottom: 0
       left: 0
       margin: auto
+      border: 2px solid $gray
+      +border-radius(2px)
       +box-shadow(0px 1px 3px 0 rgba(211,219,215, 1))
 
 .radio

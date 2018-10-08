@@ -5,7 +5,15 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from '../../stores'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+import VueLodash from 'vue-lodash'
+import LoadScript from 'vue-plugin-load-script'
 import vSelect from 'vue-select'
+
+Vue.use(VueLodash, { name: 'lodash' }) // options is optional
+Vue.use(VueAxios, axios)
+Vue.use(LoadScript);
 
 Vue.component('v-select', vSelect)
 

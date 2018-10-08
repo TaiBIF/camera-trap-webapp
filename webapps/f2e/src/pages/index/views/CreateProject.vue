@@ -118,22 +118,22 @@
                 <label for="">詮釋資料：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-data-1" v-model="licenseForm.forData" value="1">
+                    <label for="for-data-1">
                       <img src="/assets/common/cc-0.png" height="40px" srcset="/assets/common/cc-0@2x.png">
                       <span class="text">無著作權 (CC0)</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-data-2" v-model="licenseForm.forData" value="2">
+                    <label for="for-data-2">
                       <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-data-3" v-model="licenseForm.forData" value="3">
+                    <label for="for-data-3">
                       <img src="/assets/common/cc-2.png" height="40px" srcset="/assets/common/cc-2@2x.png">
                       <span class="text">姓名標示-非商業性</span>
                     </label>
@@ -144,8 +144,8 @@
                 <label for="">鑑定資訊：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-info-1" v-model="licenseForm.forInfo" value="1">
+                    <label for="for-info-1">
                       <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
@@ -156,22 +156,22 @@
                 <label for="">影像資料：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-img-1" v-model="licenseForm.forImg" value="1">
+                    <label for="for-img-1">
                       <img src="/assets/common/cc-0.png" height="40px" srcset="/assets/common/cc-0@2x.png">
                       <span class="text">無著作權 (CC0)</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-img-2" v-model="licenseForm.forImg" value="2">
+                    <label for="for-img-2">
                       <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" name="" id="">
-                    <label for="">
+                    <input type="radio" id="for-img-3" v-model="licenseForm.forImg" value="3">
+                    <label for="for-img-3">
                       <img src="/assets/common/cc-2.png" height="40px" srcset="/assets/common/cc-2@2x.png">
                       <span class="text">姓名標示-非商業性</span>
                     </label>
@@ -231,6 +231,11 @@ export default {
         area: '',
         description: '',
         comment: ''
+      },
+      licenseForm: {
+        forData: '',
+        forInfo: '',
+        forImg: ''
       }
     }
   },
