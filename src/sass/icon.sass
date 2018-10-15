@@ -1,0 +1,81 @@
+@charset "UTF-8"
+
+  
+@import 'compass'
+@import 'compass/css3/animation'
+
+@import "./functions/retina-sprites"
+
+.icon 
+  display: inline-block
+  vertical-align: middle
+  
+// .icon-orcid-text 
+//   +use-sprite('orcid-text')
+// .icon-orcid-circle 
+//   +use-sprite('orcid-circle')
+.icon-remove-sm 
+  +use-sprite('remove-sm')
+.icon-projects 
+  +use-sprite('projects')
+.icon-add 
+  +use-sprite('add')
+.icon-add-green 
+  +use-sprite('add-green')
+.icon-download 
+  +use-sprite('download')
+.icon-cut 
+  +use-sprite('cut')
+.icon-copy 
+  +use-sprite('copy')
+.icon-lock 
+  +use-sprite('lock')
+.icon-paste 
+  +use-sprite('paste')
+.icon-collapse 
+  +use-sprite('collapse')
+.icon-info 
+  +use-sprite('info')
+.icon-remove 
+  +use-sprite('remove')
+.icon-splitter 
+  +use-sprite('splitter')
+.icon-title-camara 
+  +use-sprite('title-camara')
+.icon-title-doc 
+  +use-sprite('title-doc')
+.icon-title-species 
+  +use-sprite('title-species')
+.btn-icon
+  .icon-time-machine 
+    +use-sprite('time-machine-gray')
+  .icon-gallery 
+    +use-sprite('gallery-gray')
+  &.active
+    .icon-time-machine 
+      +use-sprite('time-machine')
+    .icon-gallery 
+      +use-sprite('gallery')
+
+.icon-gallery-list 
+  +use-sprite('gallery-list')
+.icon-gallery-single 
+  +use-sprite('gallery-single')
+
+.btn:hover,
+.btn:focus,
+.active 
+  .icon-gallery-list 
+    +use-sprite('gallery-list-active')
+  .icon-gallery-single 
+    +use-sprite('gallery-single-active')
+.icon-user 
+  +use-sprite('user')
+.icon-user-gray 
+  +use-sprite('user-gray')
+.icon-warning 
+  +use-sprite('warning')
+.icon-download-sm 
+  +use-sprite('download-sm')
+.icon-back 
+  +use-sprite('back')

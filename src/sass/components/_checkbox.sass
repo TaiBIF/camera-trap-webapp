@@ -1,0 +1,63 @@
+.radio,
+.checkbox
+  position: relative
+  display: block
+  margin-bottom: 20px
+
+  &.radio-inline,
+  &.checkbox-inline
+    display: inline-block
+    margin-right: 20px
+
+  input
+    position: absolute
+    opacity: 0
+
+    &:checked + label:before
+      border-color: $green
+      background: $green url('/assets/common/checked@2x.png') center no-repeat
+      background-size: 9px 7px 
+
+  label 
+    padding-left: 30px
+    
+    > img 
+      margin-right: 10px
+
+    > * 
+      vertical-align: middle
+
+    &:before
+      content: ""
+      position: absolute
+      width: 20px
+      height: 20px
+      top: 0
+      bottom: 0
+      left: 0
+      margin: auto
+      border: 2px solid $gray
+      +border-radius(2px)
+      +box-shadow(0px 1px 3px 0 rgba(211,219,215, 1))
+
+.radio
+  input + label:before
+    border: 1px solid $gray
+    +border-radius(20px)
+  input:checked 
+    + label:before
+      background: #FFF
+      border: 1px solid $light-green
+      +border-radius(20px)
+      +box-shadow(0px 1px 3px 0 #6E8A44)
+    + label:after
+      content: ""
+      position: absolute
+      width: 12px
+      height: 12px
+      top: 0
+      bottom: 0
+      left: 4px
+      margin: auto
+      background: $light-green
+      +border-radius(20px)

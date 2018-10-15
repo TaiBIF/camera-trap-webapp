@@ -1,0 +1,350 @@
+
+.page-project
+  width: 100%
+
+  > .container
+    padding-top: 20px
+
+  display: flex
+  flex-wrap: wrap
+  flex-direction: row
+  
+
+  &.page-project-edit
+    padding-top: 0px
+
+    .list
+      .item:not(.active)
+        .icon
+          &:before
+            content: ""
+            display: inline-block
+            width: 8px
+            height: 8px
+            background: $gray
+            +border-radius(8px)
+          > i.fa 
+            display: none
+  
+  .invite-block
+    background: #F8F8F8
+    padding: 20px
+    form.form-horizontal label
+      line-height: 38px
+
+  .empty-result
+    text-align: center
+    padding-top: 90px
+    h5
+      margin-top: 10px
+
+  .panel-body.camera-editor
+    display: flex
+    background: #F8F8F8
+    flex-direction: row
+    padding: 0
+    
+    .sidebar
+      width: 253px
+      background: #FFF
+      box-shadow: 0 2px 3px 0 rgba(170,191,181,.4)
+
+      ul 
+        list-style: none
+        margin: 0
+        padding: 0
+        li 
+          display: block 
+          -webkit-user-select: none
+          -khtml-user-select: none
+          -moz-user-select: none
+          -o-user-select: none
+          -ms-user-select: none
+          user-select: none
+
+          > ul.tree-menu
+            display: none
+
+          &.open 
+            > ul.tree-menu
+              display: block
+          &.active 
+            > .tree-menu-link,
+            > .site-item
+              background: #E9F2DE
+              color: $green
+              box-shadow: inset 0px -1px 0 0 #E1E3E5
+
+          &.add
+            display: flex
+            color: $gray
+            padding: 0 20px
+
+          &.edit 
+            .site-item
+              padding-top: 0 !important
+              padding-bottom: 0 !important
+              padding-right: 0
+          > .site-item
+            cursor: pointer
+            display: flex 
+            flex-direction: row
+            padding: 13px 20px
+            background: #F4F4F4
+            opacity: .8
+            box-shadow: inset 0 -1px 0 0 #E1E3E5
+            &:hover,
+            &:focus
+              opacity: 1
+          
+          > .site-item + ul.tree-menu 
+            > li.tree-menu-item.edit .tree-menu-link
+              padding-top: 0
+              padding-bottom: 0
+
+            > li.tree-menu-item .tree-menu-link
+              display: flex
+              padding: 13px 20px
+              padding-left: 40px
+              .text
+                flex: 1
+              > .icon
+                width: 20px
+                height: 20px
+                text-align: center
+                line-height: 24px
+                margin-right: 5px
+                font-size: 10px
+                align-self: center
+            > li.add
+              display: flex
+              padding: 0 20px
+              padding-left: 40px
+
+          .icon
+            margin-right: 5px
+            align-self: center
+
+          .text
+            flex: 1
+            input
+              border: 0
+              font-size: 16px
+              outline: 0
+              padding: 13px 0
+              background: transparent
+              &:focus
+                outline: 0
+
+    .sheet-view
+      display: flex 
+      height: 100%
+      background: #FFF
+      flex-direction: column
+      .sheet-container
+        flex: 1
+    .maintain
+      flex: 1
+      min-height: 446px
+
+  .column-editor
+    border: 1px solid #F0F1F3
+    .column-header
+      background: #E1E3E5
+      color: $black
+      text-align: left
+      > div
+        padding: 8px 20px
+        &:first-child
+          padding-left: 40px
+
+    .column-footer .btn
+      padding: 12px 40px
+      height: auto
+      color: $green
+    .column-body
+      padding: 0 15px
+      .column-item 
+        border-bottom: 1px solid #F0F1F3
+        > div
+          padding: 18px 20px
+          &:first-child
+            padding-left: 40px
+
+  .chart-control
+    position: relative
+    margin-top: 20px
+    margin-bottom: 10px
+    .btn.btn-default
+      position: absolute
+      top: -5px
+      right: 15px
+
+  aside 
+    display: block
+    width: 248px
+    background: #F9FBFA
+    overflow: auto
+
+    .aside-header
+      color: $gray
+      height: 60px
+      line-height: 60px
+      padding: 0 20px
+
+    .aside-project
+      padding: 10px 20px
+      color: $green
+      background-color: $bg-green
+      margin-bottom: 10px
+      
+      > a 
+        display: block
+
+  .camera-chart 
+    position: absolute
+    width: calc(100% - 15px)
+    height: 100%
+    display: block
+    top: 0
+    left: 0
+    padding: 20px 30px
+    background: #FFF
+    border: 1px solid $border-gray
+    z-index: 9
+    +border-radius(4px)
+    .close
+      position: absolute
+      right: 20px
+      top: 15px
+      color: $gray
+    
+  .maintain 
+    flex: 1
+    padding: 20px
+    box-shadow: -1px 0 0 0 #9B9B9B
+
+    &.page-sheet
+      padding: 0
+      display: flex 
+      flex-direction: column
+      
+      .search-container
+        padding: 20px 20px 10px
+        background: #FFF
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,.3)
+        z-index: 120
+        
+      .sheet-container
+        flex: 1
+        display: flex 
+        flex-wrap: wrap
+
+        .version-header,
+        .gallery-header
+          font-size: 13px
+          font-weight: 500
+          line-height: 40px
+          background: #F0F1F3
+          padding: 0 10px
+          border-bottom: 1px solid #DBDBDB
+        .sheet-header
+          position: relative
+          padding: 0 10px
+          .col-6
+            line-height: 38px
+            *
+              display: inline-block
+              vertical-align: middle
+            .btn-icon
+              vertical-align: middle
+              padding: 0
+              width: 24px
+              height: 24px
+              line-height: 22px
+              border: 1px solid $gray
+              &.active
+                border: 1px solid $green
+                box-shadow: 0 0 2px 0 transparentize($green, .51)
+          .divider
+            vertical-align: middle
+            display: inline-block
+            width: 1px 
+            height: 24px
+            margin: 0 10px
+            background: #FEFDFD
+            border-right: 1px solid #E1E3E5
+        .sheet
+          flex: 1
+          display: flex
+          overflow-x: hidden
+          box-sizing: border-box
+          flex-direction: column
+          #spreadsheet
+            flex: 1
+        .sidebar
+          position: relative
+          width: 200px
+          display: flex
+          flex-direction: column
+          .drag-bar 
+            position: absolute
+            width: 10px
+            height: 100%
+            left: 0
+            top: 0
+            height: 100%
+            cursor: ew-resize
+          .gallery-body,
+          .version-body
+            padding: 10px
+          .photo-container
+            flex: 1
+            .img
+              max-width: 100%
+              line-height: 0
+            .control 
+              display: block
+              color: #FFF
+              background: $black
+              font-size: 13px
+              padding: 5px 10px
+              text-align: center
+              > *
+                text-align: center
+              .prev, .next
+                margin: 0 5px
+                color: $gray
+              .text
+                font-weight: 600
+
+          
+  .speices-item
+    margin-bottom: 20px
+    .circle
+      float: left
+      display: block
+      margin-top: 4px
+      width: 14px
+      height: 14px
+      +border-radius(7px)
+      margin-right: 5px
+      + .text
+        display: block
+        margin-left: 24px
+        .sub-item
+          margin-top: 20px
+
+.page-login
+  a.text-green
+    text-decoration: none
+    border-bottom: 1px solid $green
+
+  
+.page-article
+  article
+    padding: 20px
+    margin: 20px 0
+    background: #FFF
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.35)
+    
