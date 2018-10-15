@@ -1,16 +1,31 @@
 # camera-trap-f2e
 
+## Develope
+- `cd webapps/f2e`
+- run `npm run serve`
+- 
+
+## Generate icon sperite
+- save icon to webapps/f2e/assets/icons and webapps/f2e/assets/icons-2x
+- `cd webapps/f2e`
+- `compass compile`
+
+## Build
+- cd webapps/f2e
+- run `npm run build`
+
 ## Setting
+
 
 ### vue.config.js
 
-- pages
-  - Split function & routes by page
+#### pages
+- Split function & routes by page
 
-- css
+#### css
   - use compass 
 
-- devServer
+#### devServer
   - set server port 3000
 
 

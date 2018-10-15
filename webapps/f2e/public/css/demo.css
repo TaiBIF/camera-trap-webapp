@@ -48,7 +48,7 @@
 .handsontable .table colgroup + thead tr:first-child td,
 .handsontable .table thead:first-child tr:first-child th,
 .handsontable .table thead:first-child tr:first-child td {
-  border-top: 1px solid #CCCCCC;
+  border-top: 1px solid #DBDBDB;
 }
 
 /* table-bordered */
@@ -64,7 +64,7 @@
 
 .handsontable .table-bordered th:first-child,
 .handsontable .table-bordered td:first-child {
-  border-left: 1px solid #CCCCCC;
+  border-left: 1px solid #DBDBDB;
 }
 
 .handsontable .table > tbody > tr > td,
@@ -177,11 +177,11 @@
   position: relative;
   border-top-width: 0;
   border-left-width: 0;
-  border-right: 1px solid #CCC;
-  border-bottom: 1px solid #CCC;
-  height: 22px;
+  border-right: 1px solid #DBDBDB;
+  border-bottom: 1px solid #DBDBDB;
+  height: 30px;
   empty-cells: show;
-  line-height: 21px;
+  line-height: 29px;
   padding: 0 8px 0;
   /* top, bottom padding different than 0 is handled poorly by FF with HTML5 doctype */
   background-color: #FFF;
@@ -202,6 +202,12 @@
   height: 100% !important;
   display: block !important;
   background: #2A7F60 !important;
+}
+
+.page-project-edit .handsontable th,
+.page-project-edit .handsontable td {
+  height: 40px;
+  line-height: 39px;
 }
 
 .handsontable td.htInvalid {
@@ -228,8 +234,8 @@
 
 .handsontable th:last-child {
   /*Foundation framework fix*/
-  border-right: 1px solid #CCC;
-  border-bottom: 1px solid #CCC;
+  border-right: 1px solid #DBDBDB;
+  border-bottom: 1px solid #DBDBDB;
 }
 
 .handsontable tr:first-child th.htNoFrame,
@@ -245,16 +251,16 @@
 .handsontable td:first-of-type,
 .handsontable .htNoFrame + th,
 .handsontable .htNoFrame + td {
-  border-left: 1px solid #CCC;
+  border-left: 1px solid #DBDBDB;
 }
 
 .handsontable.htRowHeaders thead tr th:nth-child(2) {
-  border-left: 1px solid #CCC;
+  border-left: 1px solid #DBDBDB;
 }
 
 .handsontable tr:first-child th,
 .handsontable tr:first-child td {
-  border-top: 1px solid #CCC;
+  border-top: 1px solid #DBDBDB;
 }
 
 .ht_master:not(.innerBorderLeft):not(.emptyColumns) ~ .handsontable tbody tr th,
@@ -270,7 +276,7 @@
 }
 
 .handsontable th {
-  background-color: #f0f0f0;
+  background-color: #f8f8f8;
   color: #222;
   text-align: center;
   font-weight: normal;
@@ -282,7 +288,7 @@
 }
 
 .handsontable th.active {
-  background-color: #CCC;
+  background-color: #DBDBDB;
 }
 
 .handsontable thead th .relative {
@@ -388,9 +394,11 @@
 /* A layer order of the selection types */
 .handsontable .wtBorder.current {
   z-index: 10;
+  background: #28a745 !important;
 }
 
 .handsontable .wtBorder.area {
+  background: #28a745 !important;
   z-index: 8;
 }
 
@@ -425,7 +433,7 @@
   bottom: 0;
   bottom: -100% \9;
   /* Fix for IE9 to spread the ":before" pseudo element to 100% height of the parent element */
-  background: #005eff;
+  background: #28a745;
 }
 
 /* Fix for IE10 and IE11 to spread the ":before" pseudo element to 100% height of the parent element */
@@ -475,12 +483,12 @@
 
 .handsontable tbody th.ht__highlight,
 .handsontable thead th.ht__highlight {
-  background-color: #dcdcdc;
+  background-color: #F8F8F8;
 }
 
 .handsontable tbody th.ht__active_highlight,
 .handsontable thead th.ht__active_highlight {
-  background-color: #8eb0e7;
+  background-color: rgba(40, 167, 69, 0.5);
   color: #000;
 }
 
@@ -1424,9 +1432,17 @@ http://nicolasgallagher.com/micro-clearfix-hack/
   display: none;
 }
 
-.htContextMenu table tbody tr td .htItemWrapper {
-  margin-left: 10px;
-  margin-right: 6px;
+.htContextMenu table tbody tr td .htItemWrapper .icon {
+  float: left;
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+.htContextMenu table tbody tr td .htItemWrapper .text {
+  display: block;
+  margin-left: 34px;
 }
 
 .htContextMenu table tbody tr td div span.selected {

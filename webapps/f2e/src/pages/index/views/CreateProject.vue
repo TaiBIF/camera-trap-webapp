@@ -1,5 +1,5 @@
 <template>
-  <main class="page-project">
+  <div class="page-project">
     <div class="container">
       <h1 class="heading">新增計畫</h1>
       <!-- Step 1 -->
@@ -20,6 +20,11 @@
                 <label for="project-name" class="col-2 required">計畫簡稱：</label>
                 <div class="col-4">
                   <input type="text" id="project-name" v-model="form.slot" placeholder="請輸入計畫簡稱 (限4字)" class="form-control">
+                </div>
+                <div class="col-6 pl-0">
+                  <span class="btn btn-text px-0" v-tooltip.right="{content: '專案簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別專案的文字'}">
+                    <i class="fa fa-info-circle text-green"></i>
+                  </span>
                 </div>
               </div>
               <div class="form-group row">
@@ -62,19 +67,19 @@
                 <label for="project-name" class="col-2">計畫地區：</label>
                 <div class="col-4">
                   <div class="select">
-                    <v-select v-model="form.area"></v-select>
+                    <v-select v-model="form.area" :options="options" multiple></v-select>
                   </div>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2">計畫摘要：</label>
-                <div class="col-4">
+                <div class="col-6">
                   <textarea v-model="form.description" class="form-control" placeholder="請簡單描述計畫目的"></textarea>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2">備註：</label>
-                <div class="col-4">
+                <div class="col-6">
                   <textarea v-model="form.comment" class="form-control" placeholder="您可以輸入任何補註資料"></textarea>
                 </div>
               </div>
@@ -90,6 +95,19 @@
                     <small class="text-gray">
                       您可以為專案添加封面，理想尺寸是 373 x 180 像素 (.jpg, .png) ，檔案上限為 2 MB。
                     </small>
+                  </div>
+                  <div class="preview" v-if="previewImg!==null">
+                    <div class="image">
+                      <img :src="previewImg.src">
+                    </div>
+                    <div class="content">
+                      {{ previewImg.name }}
+                    </div>
+                    <div class="action">
+                      <div class="btn btn-text" @click='removePreview()'>
+                        <i class="fa fa-times"></i>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -205,20 +223,40 @@
         </form>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>
 import DatePicker from 'vue2-datepicker'
+import {commonMixin} from '../../../mixins/common'
 
 export default {
   name: "CreateProject",
+  mixins: [commonMixin],
   components: {
     DatePicker
   },
   data() {
     return {
       step: 1,
+      options: [
+        {
+          value: 100,
+          label: '新竹市'
+        },
+        {
+          value: 101,
+          label: '嘉義市'
+        },
+        {
+          value: 102,
+          label: '桃園市'
+        },
+        {
+          value: 103,
+          label: '屏東市'
+        }
+      ],
       form: {
         cover: '',
         name: '',

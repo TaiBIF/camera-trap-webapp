@@ -13,14 +13,73 @@ form.form
         display: inline-block
         margin-right: 10px
         color: $red
+    
+    textarea:focus,
+    select:focus,
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="date"]:focus,
+    input[type="datetime"]:focus,
+    input[type="time"]:focus,
+    input[type="password"]:focus,
+    input[type="search"]:focus
+      outline: 0
+      border-color: $light-green
+      box-shadow: 0 0 2px 0 rgba(138,199,49,.6)
+    
+    .v-select .dropdown-toggle 
+      padding: 0
+      
+      input[type="search"]:focus
+        border: 0
+        box-shadow: 0 0 0 0 rgba(138,199,49,0)
 
     input::placeholder
       color: $gray
+    
+  .preview
+    display: flex
+    flex-direction: row
+    padding: 5px 0 5px 10px
+    margin-top: 20px
+    width: 100%
+    background: #F3F2F2
+    border: 1px solid #E1E3E5
+    +border-radius(4px)
+    align-items: center
+    align-content: center
+
+    .image
+      position: relative
+      overflow: hidden
+      display: block
+      width: 80px
+      height: 57px
+
+      img 
+        position: absolute
+        width: 100%
+        height: auto 
+        left: 0
+        right: 0
+        top: 0
+        bottom: 0
+        margin: auto
+
+    .content
+      flex: 1
+      padding: 10px
+
+    .action
+      padding: 0
 
   .input-group-inline
     display: flex 
     flex-direction: row 
     line-height: 38px
+    .input-group
+      flex: 1
+      min-width: 0
     .input-text
       padding: 0 10px
   .input-group
@@ -41,5 +100,20 @@ form.form
   form.form
     label 
       margin-right: 20px  
-
-
+      vertical-align: top
+      .icon
+        margin-left: 5px
+        > I 
+          margin-top: -3px
+    .checkbox.checkbox-inline
+      margin-bottom: 0px
+      
+.form-group-inline
+  display: inline-flex
+  align-content: center
+  align-items: center
+  .icon-note
+    margin-left: 15px
+  > * 
+    align-self: center
+  

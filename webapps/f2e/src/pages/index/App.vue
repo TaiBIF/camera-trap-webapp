@@ -12,9 +12,9 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">幫助</a>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item">常見問題</a>
-                <a class="dropdown-item">聯絡我們</a>
-                <a class="dropdown-item">隱私權政策</a>
+                <a href="./article.html#/faq" class="dropdown-item">常見問題</a>
+                <a href="./article.html#/contact" class="dropdown-item">聯絡我們</a>
+                <a href="./article.html#/private-policy" class="dropdown-item">隱私權政策</a>
               </div>
             </li>
             <li class="divider"></li>
@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
 import TreeMenu from './components/TreeMenu.vue'
 
 const project = {
@@ -112,7 +111,7 @@ export default {
   components: {TreeMenu},
   data() {
     return {
-      asideElem: ['overview','createProject', 'editProject'],
+      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense'],
       project: project
     }
   }

@@ -4,3 +4,17 @@
       height: 38px
     .mx-input-append
       display: none
+
+.mx-calendar
+  .mx-calendar-content .cell
+    &.today
+      color: $gray
+    &.actived,
+    &.actived:hover,
+    &.actived:focus
+      color: #FFF
+      background: $green
+      +border-radius(50%)
+    &:hover
+      background: $bg-gray
+      +border-radius(50%)

@@ -1,16 +1,29 @@
 <template>
   <div class="maintain page-sheet">
     <div class="search-container">
-      <a class="btn btn-green-border btn-sm float-right">
+      <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
         下載篩選結果
       </a>
       <h3>屏東處 - 旗山站</h3>
       <form action="" class="form form-horizontal">
         <div class="form-group mb-0">
           <label>相機位置</label>
-          <div class="checkbox checkbox-inline">
-            <input type="checkbox" v-model="form.camera" id="camera-all" value="all">
-            <label for="camera-all">全部相機位置</label>
+          <div class="d-inline-block">
+            <div class="checkbox checkbox-inline">
+              <input type="checkbox" v-model="form.camera" id="camera-all" value="all">
+              <label for="camera-all">全部相機位置</label>
+            </div>
+            <div class="mb-2">
+              <div class="checkbox checkbox-inline">
+                <input type="checkbox" v-model="form.camera" id="camera-1" value="1">
+                <label for="camera-1">
+                  <span class="text">PT02A</span>
+                  <span class="icon">
+                    <i class="icon-lock align-middle" v-tooltip.top="'陳士齊 正在編輯中'"></i>
+                  </span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="form-group mb-2">
@@ -41,30 +54,59 @@
         </div>
         <div>
           <div class="btn btn-sm btn-block btn-green">
-            <i class="fa fa-pencil-alt"></i> 進行編輯
+            <i class="fa fa-pencil-alt"></i> 進入編輯模式
           </div>
         </div>
       </form>
     </div>
     <div class="sheet-container">
       <div class="sheet">
+        <div class="sheet-header">
+          <div class="row">
+            <div class="col-6">
+              <small class="text-gray">共 132,136 筆資料</small>
+              <div class="divider"></div>
+            </div>
+            <div class="col-6 text-right">
+              <div class="divider"></div>
+              <a class="btn btn-icon">
+                <i class="icon-gallery"></i>
+              </a>
+              <div class="divider"></div>
+              <a class="btn btn-icon">
+                <i class="icon-time-machine"></i>
+              </a>
+            </div>
+          </div>
+        </div>
         <div id="spreadsheet"></div>
       </div>
-      <div class="photo" :style="{'width': `${galleryWidth}px`}">
+      <div class="sidebar" :style="{'width': `${galleryWidth}px`}">
         <div class="drag-bar" @mousedown="dragStart"></div>
         <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false">
-          <img :src="row_data[currentRow].url" class="img">
-          <div class="control">
-            <span class="prev">
-              <i class="fa fa-caret-left"></i>
-            </span>
-            <span class="text">
-              {{row_data[currentRow].filename}} | {{row_data[currentRow].datetime}}
-            </span>
-            <span class="prev">
-              <i class="fa fa-caret-right"></i>
-            </span>
+          <div class="gallery-header">
+            影像檢視
           </div>
+          <div class="gallery-body">
+            <img :src="row_data[currentRow].url" class="img">
+            <div class="control">
+              <span class="prev">
+                <i class="fa fa-caret-left"></i>
+              </span>
+              <span class="text">
+                {{row_data[currentRow].filename}} | {{row_data[currentRow].datetime}}
+              </span>
+              <span class="prev">
+                <i class="fa fa-caret-right"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="version-container">
+          <div class="version-header">
+            版本紀錄
+          </div>
+          <div class="version-body"></div>
         </div>
       </div>
     </div>
@@ -82,8 +124,9 @@ export default {
   name: 'Site',
   data() {
     return {
-      isRender: false,
       today: moment(),
+      editMode: false,
+      isRender: false,
       galleryWidth: 300,
       form: {
         camera: '',
@@ -128,7 +171,7 @@ export default {
           {
             data: 'datetime',
             type: 'date',
-            dateFormat: 'YYYY/MM/DD HH:mm:ss'
+            dateFormat: 'YYYY-MM-DD HH:mm:ss'
           },
           {
             data: 'species',
@@ -176,19 +219,19 @@ export default {
         rowHeaders: true,
         colHeaders: [
           // 'URL',
-          'Station',
-          'Camera',
-          'FileName',
-          'Datetime',
-          'Species',
-          'Sex',
-          'Age',
-          'IdvCount',
-          'Category',
-          'SciName',
-          'Behavior',
-          'Note',
-          '+'
+          '樣區',
+          '相機位置',
+          '檔名',
+          '時間',
+          '物種',
+          '性別',
+          '年齡',
+          '數量',
+          '類別',
+          '學名',
+          '行為',
+          '備註',
+          '<i class="icon-add"></i>'
         ],
         manualRowMove: true,
         manualColumnMove: true,
@@ -205,7 +248,7 @@ export default {
                 this.settings.data[idx].is_continuous = false
                 break;
               case 'clone':
-                this.row_data.splice(idx, 0, _.cloneDeep(row))
+                this.row_data.splice(idx, 0, window._.cloneDeep(row))
                 this.row_data = this.setContinuous(this.row_data)
                 this.settings.data = this.row_data
 
@@ -249,9 +292,8 @@ export default {
         },
         filters: true,
         dropdownMenu: true,
-        afterSelectionEnd: (r, c, r2, c2) => {
+        afterSelectionEnd: (r) => {
           this.currentRow = r
-          console.log(this.row_data[r])
         }
       },
       sheetContainer: null,
@@ -277,7 +319,7 @@ export default {
     dragEnd () {
       this.isDrag = false
     },
-    continousRenderer(instance, TD, row, col, prop, value, cellProperties) {
+    continousRenderer(instance, TD, row, col, prop, value) {
       if(prop=="species" && !value==false && value!=="") {
         
         let clsName = ''
@@ -405,7 +447,7 @@ export default {
       })
     },
     settingSheetHeight() {
-      this.settings.height = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
+      this.settings.height = window.innerHeight - (104 + this.$el.querySelector('.search-container').clientHeight)
 
       if(this.isRender) 
         this.sheet.updateSettings(this.settings)

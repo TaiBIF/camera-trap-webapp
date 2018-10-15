@@ -12,10 +12,19 @@
   padding: 0
   border: 1px solid $border-gray
 
-  a.dropdown-item 
+  hr 
+    margin: 10px 0
+
+  .dropdown-item 
+    cursor: pointer
     color: $black
     padding: 8px 10px
     text-decoration: none
+
+    &:focus,
+    &:active
+      color: $black
+      background: $border-gray
 
 .dropdown
   &.show>#notification-container

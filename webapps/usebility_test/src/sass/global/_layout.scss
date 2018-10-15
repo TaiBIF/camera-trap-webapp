@@ -37,7 +37,7 @@ a.link,
 
   &:hover,
   &:focus {
-    text-decoration: underline !important;
+    text-decoration: underline;
   }
   &.text-green {
     color: #2A7F60 !important;
@@ -49,6 +49,12 @@ a.link,
     color: #8B8B8B !important;
   }
   
+}
+
+.underline,
+.underline:hover,
+.underline:focus {
+  text-decoration: underline !important;
 }
 
 *[role="button"] {

@@ -10,11 +10,11 @@
  */
 
  @mixin background-retina($normal, $retina) {
-  background-image: url($normal);
+  background-image: image-url($normal);
   background-repeat: no-repeat;
   background-position: center;
   @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
-      background-image: url($retina);
+      background-image: image-url($retina);
       background-repeat: no-repeat;
       background-position: center;
   }

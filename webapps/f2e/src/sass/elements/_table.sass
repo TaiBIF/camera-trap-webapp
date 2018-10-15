@@ -1,0 +1,44 @@
+
+table.table
+  width: 100%
+  border-collapse: collapse
+  border: 1px solid #F0F1F3
+
+  thead
+    background: #E1E3E5
+    th
+      color: $black
+      text-align: left
+  
+  tbody > tr 
+    border-bottom: 1px solid #F0F1F3
+
+    &.disabled
+      background: #FBFBFC
+
+  tr>td,
+  tr>th
+    padding: 18px 20px
+    vertical-align: middle
+    -webkit-touch-callout: none
+    -webkit-user-select: none
+    -khtml-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+
+    .drag-item
+      cursor: ns-resize
+
+    &.action
+      padding: 0 !important
+      
+      > .btn 
+        height: auto
+        padding: 12px 40px !important
+        color: $green
+
+    &:first-child
+      padding-left: 40px
+  thead > tr>th
+    padding: 8px 20px

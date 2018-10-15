@@ -12,10 +12,10 @@
                   </h1>  
                 </div>
                 <div class="col-3 text-right">
-                  <a class="float-right btn btn-green-border btn-sm">
+                  <router-link to="/info/1/edit" class="float-right btn btn-green-border btn-sm">
                     <i class="fa fa-pencil-alt mr-2"></i>
                     <span class="text">計畫管理</span>
-                  </a>
+                  </router-link>
                 </div>
               </div>
               <div class="row mb-2">

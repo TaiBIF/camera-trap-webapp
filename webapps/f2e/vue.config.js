@@ -9,11 +9,11 @@ module.exports = {
       title: 'Index Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'index']
     },
-    demo: {
-      entry: 'src/pages/demo/main.js',
-      template: 'public/demo.html',
-      filename: 'demo.html',
-      title: 'Demo Page',
+    article: {
+      entry: 'src/pages/article/main.js',
+      template: 'public/article.html',
+      filename: 'article.html',
+      title: 'Article Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'intro']
     },
     login: {
@@ -29,12 +29,19 @@ module.exports = {
       filename: 'dummy.html',
       title: 'dummy Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'intro']
-    }
+    },
     // when using the entry-only string format,
     // template is inferred to be `public/subpage.html`
     // and falls back to `public/index.html` if not found.
     // Output filename is inferred to be `subpage.html`.
     // subpage: 'src/subpage/main.js'
+    demo: {
+      entry: 'src/pages/demo/main.js',
+      template: 'public/demo.html',
+      filename: 'demo.html',
+      title: 'Demo Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
   },
   css: {
     loaderOptions: {

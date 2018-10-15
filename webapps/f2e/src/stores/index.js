@@ -9,11 +9,16 @@ export default new Vuex.Store({
   state: {
     fileReady: false,
     projects: [],
+    currentSite: 0,
+    currentPoint: null,
     message: null
   },
   getters: {
-    FileReady: (state) => {
-      return state.fileReady
+    CurrentSite: (state) => {
+      return state.currentSite
+    },
+    CurrentPoint: (state) => {
+      return state.currentPoint
     },
     Projects: (state) => {
       return state.projects
@@ -23,8 +28,11 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    updateFileReady(state, bool) {
-      state.fileReady = bool
+    updateCurrentSite(state, num) {
+      state.currentSite = num
+    },
+    updateCurrentPoint(state, num) {
+      state.currentPoint = num
     },
     updateProjects(state) {
       projectAPI.getProjects().then((results) => {
@@ -38,6 +46,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setCurrentSite: ({ commit }, no) => {
+      commit("updateCurrentSite", no)
+    },
+    setCurrentPoint: ({ commit }, no) => {
+      commit("updateCurrentPoint", no)
+    },
     setFileReady: ({ commit }, bool) => {
       commit("updateFileReady", bool)
     },
