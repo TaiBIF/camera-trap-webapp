@@ -18,7 +18,8 @@ table.table
 
   tr>td,
   tr>th
-    padding: 18px 20px
+    font-size: 13px
+    padding: 10px 20px
     vertical-align: middle
     -webkit-touch-callout: none
     -webkit-user-select: none
@@ -33,12 +34,19 @@ table.table
     &.action
       padding: 0 !important
       
-      > .btn 
-        height: auto
-        padding: 12px 40px !important
-        color: $green
-
-    &:first-child
-      padding-left: 40px
   thead > tr>th
     padding: 8px 20px
+  
+  &.version-list
+    tr > td 
+      text-align: center
+      color: $black
+      padding: 0 20px
+      height: 40px
+      b 
+        color: $black
+
+    tr:hover
+      background: #F0F1F3
+      td:first-child
+        font-weight: 500

@@ -1,79 +1,122 @@
 <template>
   <div class="maintain page-sheet">
     <div class="search-container">
-      <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
-        下載篩選結果
-      </a>
-      <h3>屏東處 - 旗山站</h3>
-      <form action="" class="form form-horizontal">
-        <div class="form-group mb-0">
-          <label>相機位置</label>
-          <div class="d-inline-block">
-            <div class="checkbox checkbox-inline">
-              <input type="checkbox" v-model="form.camera" id="camera-all" value="all">
-              <label for="camera-all">全部相機位置</label>
-            </div>
-            <div class="mb-2">
+      <div v-if="editMode" class="edit-container">
+        <div class="row">
+          <div class="col-7">
+            <span class="text-gray">花蓮處 - 南華站</span>
+            <span class="divider"></span>
+            <span class="text-gray">PT01A、PT04A、PT09A</span>
+            <span class="divider"></span>
+            <span class="text-gray"> 16/03/01 上午12:00 到 18/07/01 上午12:00</span>
+          </div>
+          <div class="col-5 text-right">
+            <span class="text-gray">最後儲存時間：1 分鐘前</span>
+            <span class="divider"></span>
+            <button @click.stop.prevent="changeMode('editMode', false)" class="btn btn-circle"><i class="icon-save"></i></button>
+            <span class="divider"></span>
+            <button @click.stop.prevent="changeMode('editMode', false)" class="btn btn-basic btn-sm">關閉編輯模式</button>
+          </div>
+        </div>
+      </div>
+      <div v-else class="search-content">
+        <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
+          下載篩選結果
+        </a>
+        <h3 class="text-green mb-2">屏東處 - 旗山站</h3>
+        <hr class="my-0">
+        <form action="" class="form form-horizontal">
+          <div class="form-group mb-0">
+            <label>相機位置</label>
+            <div class="d-inline-block">
               <div class="checkbox checkbox-inline">
-                <input type="checkbox" v-model="form.camera" id="camera-1" value="1">
-                <label for="camera-1">
-                  <span class="text">PT02A</span>
-                  <span class="icon">
-                    <i class="icon-lock align-middle" v-tooltip.top="'陳士齊 正在編輯中'"></i>
-                  </span>
-                </label>
+                <input type="checkbox" v-model="form.camera" id="camera-all" value="all">
+                <label for="camera-all">全部相機位置</label>
+              </div>
+              <div class="mb-2">
+                <div class="checkbox checkbox-inline">
+                  <input type="checkbox" v-model="form.camera" id="camera-1" value="1">
+                  <label for="camera-1">
+                    <span class="text">PT02A</span>
+                    <span class="icon">
+                      <i class="icon-lock align-middle" v-tooltip.top="'陳士齊 正在編輯中'"></i>
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="form-group mb-2">
-          <label>資料時間</label>
-          <div class="d-inline-block">
-            <div class="input-group-inline">
-              <div class="input-group">
-                <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
-                <div class="input-group-append">
-                  <i class="icon icon-calendar"></i>
+          <div class="form-group mb-2">
+            <label>資料時間</label>
+            <div class="d-inline-block">
+              <div class="input-group-inline">
+                <div class="input-group">
+                  <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                  <div class="input-group-append">
+                    <i class="icon icon-calendar"></i>
+                  </div>
                 </div>
-              </div>
-              <div class="input-group ml-2">
-                <vue-timepicker v-model="form.start_time" format=""></vue-timepicker>
-              </div>
-              <span class="input-text">到</span>
-              <div class="input-group">
-                <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
-                <div class="input-group-append">
-                  <i class="icon icon-calendar"></i>
+                <div class="input-group ml-2">
+                  <vue-timepicker v-model="form.start_time" format=""></vue-timepicker>
                 </div>
-              </div>
-              <div class="input-group ml-2">
-                <vue-timepicker v-model="form.end_time" format="HH:mm"></vue-timepicker>
+                <span class="input-text">到</span>
+                <div class="input-group">
+                  <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                  <div class="input-group-append">
+                    <i class="icon icon-calendar"></i>
+                  </div>
+                </div>
+                <div class="input-group ml-2">
+                  <vue-timepicker v-model="form.end_time" format="HH:mm"></vue-timepicker>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div>
-          <div class="btn btn-sm btn-block btn-green">
-            <i class="fa fa-pencil-alt"></i> 進入編輯模式
+          <div>
+            <button @click.stop.prevent="changeMode('editMode', true)" class="btn btn-sm btn-block btn-green">
+              <i class="fa fa-pencil-alt"></i> 進入編輯模式
+            </button>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
     <div class="sheet-container">
       <div class="sheet">
         <div class="sheet-header">
           <div class="row">
-            <div class="col-6">
+            <div class="col-8">
               <small class="text-gray">共 132,136 筆資料</small>
               <div class="divider"></div>
+              <div class="dropdown" :class="{'d-none': !editMode}">
+                <div class="btn-group btn-grayscale" :class="{'active': isContinuous}">
+                  <button class="btn btn-sm pr-0" @click="renderContinuous()">
+                    <span class="icon"><i class="icon-continous"></i></span>
+                    <span class="text">連拍自動補齊</span>
+                  </button>
+                  <button class="btn btn-sm btn-grayscale dropdown-toggle dropdown-toggle-split" 
+                  id="continousButton" 
+                  data-toggle="dropdown" 
+                  aria-haspopup="true" 
+                  aria-expanded="false">
+                    <i class="fa fa-caret-down"></i>
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="continousButton">
+                    當相鄰照片間隔 <input type="text" v-model="continuousTime" class="form-control form-control-inline" /> 分鐘時，自動補齊物種名稱
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col-6 text-right">
+            <div class="col-4 text-right">
               <div class="divider"></div>
-              <a class="btn btn-icon">
+              <a class="btn btn-icon" 
+              @click="changeMode('galleryShow', !galleryShow)" 
+              :class="{'active': galleryShow}">
                 <i class="icon-gallery"></i>
               </a>
               <div class="divider"></div>
-              <a class="btn btn-icon">
+              <a class="btn btn-icon" 
+              @click="changeMode('historyShow', !historyShow)"
+              :class="{'active': historyShow}">
                 <i class="icon-time-machine"></i>
               </a>
             </div>
@@ -81,14 +124,37 @@
         </div>
         <div id="spreadsheet"></div>
       </div>
-      <div class="sidebar" :style="{'width': `${galleryWidth}px`}">
-        <div class="drag-bar" @mousedown="dragStart"></div>
-        <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false">
+      <div class="sidebar" :style="{'width': `${historyShow || galleryShow ? galleryWidth : 0}px`}">
+        <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false && galleryShow">
           <div class="gallery-header">
+            <a @click="changeMode('galleryShow', false)" class="close mt-1 float-right">
+              <i class="icon-remove-sm"></i>
+            </a>
             影像檢視
           </div>
-          <div class="gallery-body">
-            <img :src="row_data[currentRow].url" class="img">
+          <div class="gallery-body" v-if="!row_data[currentRow].url || row_data[currentRow].url==''">
+            <div class="empty-result">
+              <img src="/assets/common/empty-site.png" width="174" srcset="/assets/common/empty-site@2x.png">
+              <h5 class="text-gray">尚未上傳照片資料</h5>
+              <a class="btn btn-orange">
+                <span class="icon"><i class="icon-upload-white"></i></span>
+                <span class="text">補上傳影像檔</span>
+              </a>
+            </div>
+          </div>
+          <div class="gallery-body" v-else>
+            <div class="img-container">
+              <img :src="row_data[currentRow].url" class="img">
+              <div class="control-buttons">
+                <div class="btn-group">
+                  <div class="btn btn-sm btn-basic"><i class="icon-plus"></i></div>
+                  <div class="btn btn-sm btn-basic"><i class="icon-minus"></i></div>
+                </div>
+                <div class="btn-group">
+                  <div class="btn btn-sm btn-basic"><i class="icon-expand"></i></div>
+                </div>
+              </div>
+            </div>
             <div class="control">
               <span class="prev">
                 <i class="fa fa-caret-left"></i>
@@ -100,14 +166,41 @@
                 <i class="fa fa-caret-right"></i>
               </span>
             </div>
+            <div class="text-right my-2">
+              <div class="btn btn-sm btn-default">進階標註</div>
+            </div>
           </div>
         </div>
-        <div class="version-container">
+        <div class="version-container" v-if="historyShow">
           <div class="version-header">
+            <a @click="changeMode('historyShow', false)" class="close mt-1 float-right">
+              <i class="icon-remove-sm"></i>
+            </a>
             版本紀錄
           </div>
-          <div class="version-body"></div>
+          <div class="version-body">
+            <table class="table version-list">
+              <tbody>
+                <tr>
+                  <td>2018/09/05 17:37</td>
+                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
+                  <td class="text-gray">目前版本</td>
+                </tr>
+                <tr>
+                  <td>2018/09/05 17:37</td>
+                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
+                  <td class="text-gray"><a class="btn btn-basic btn-sm">還原成此版本</a></td>
+                </tr>
+                <tr>
+                  <td>2018/09/05 17:37</td>
+                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
+                  <td class="text-gray"><a class="btn btn-basic btn-sm">還原成此版本</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+        <div class="drag-bar" @mousedown="dragStart"></div>
       </div>
     </div>
   </div>
@@ -118,7 +211,9 @@ import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import VueTimepicker from 'vue2-timepicker'
 import Handsontable from 'handsontable'
+import 'handsontable/languages/all'
 
+// debugger
 
 export default {
   name: 'Site',
@@ -126,10 +221,14 @@ export default {
     return {
       today: moment(),
       editMode: false,
+      galleryShow: true,
+      historyShow: true,
       isRender: false,
-      galleryWidth: 300,
+      galleryWidth: 450,
+      isContinuous: false,
+      continuousTime: 1,
       form: {
-        camera: '',
+        camera: [],
         start_at: '',
         end_at: '',
         start_time: {
@@ -153,65 +252,126 @@ export default {
         total: 0
       },
       species: ["測試", "空拍", "山羌", "鼬獾", "台灣獼猴", "水鹿", "白鼻心"],
+      contextMenuSetting: {
+        callback: (key, selection) => {
+          let idx = selection[0].start.row
+          let row = this.row_data[idx]
+          
+          switch(key) {
+            case 'setContinuous':
+              this.settings.data[idx].is_continuous = true
+              break;
+            case 'stopContinuous':
+              this.settings.data[idx].is_continuous = false
+              break;
+            case 'clone':
+              this.row_data.splice(idx, 0, window._.cloneDeep(row))
+              this.row_data = this.setContinuous(this.row_data)
+              this.settings.data = this.row_data
+              break;
+          }
+
+          this.sheet.render()
+        },
+        items: {
+          "setContinuous": {
+            name: () => {return '<span class="icon"><i class="icon-link"></i></span><span class="text">重新建立連拍連結</span>'},
+            disabled: () => {
+              let selected = this.sheet.getSelectedLast()
+              return this.row_data[selected[0]].is_continuous
+            }
+          }, 
+          "stopContinuous": {
+            name: () => {return '<span class="icon"><i class="icon-unlink"></i></span><span class="text">解除連拍連結</span>'},
+            disabled: () => {
+              let selected = this.sheet.getSelectedLast()
+              return !this.row_data[selected[0]].is_continuous
+            }
+          }, 
+          "divider0": {name: '---------' },
+          "cut": {name: () => {return '<span class="icon"><i class="icon-cut"></i></span><span class="text">剪下</span>'} }, 
+          "copy": {name: () => {return '<span class="icon"><i class="icon-copy"></i></span><span class="text">複製</span>'} }, 
+          "paste": {name: () => {return '<span class="icon"><i class="icon-paste"></i></span><span class="text">貼上</span>'} }, 
+          "divider1": {name: '---------' },
+          "undo": {name: () => {return '<span class="icon"></span><span class="text">復原</span>'} }, 
+          "redo": {name: () => {return '<span class="icon"></span><span class="text">重做</span>'} }, 
+          "divider2": {name: '---------' },
+          "clone": {name: () => {return '<span class="icon"></span><span class="text">複製並貼上一列</span>'} }
+        }
+      },
       settings: {
         data: [],
         columns: [
           {
             data: 'station',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'camera',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'filename',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'datetime',
             type: 'date',
-            dateFormat: 'YYYY-MM-DD HH:mm:ss'
+            dateFormat: 'YYYY-MM-DD HH:mm:ss',
+            editor: false
           },
           {
             data: 'species',
             type: 'autocomplete',
             source: ["測試", "山羌", "鼬獾", "台灣獼猴", "水鹿", "白鼻心"],
-            renderer: this.continousRenderer
+            renderer: this.continousRenderer,
+            editor: false
           }, 
           {
             data: 'sex',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'age',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'idvcount',
-            type: 'numeric'
+            type: 'numeric',
+            editor: false
           },
           {
             data: 'category',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'sciName',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'behavior',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'note',
-            type: 'text'
+            type: 'text',
+            editor: false
           },
           {
             data: 'add',
-            type: 'text'
+            type: 'text',
+            editor: false
           }
         ],
+        language: 'zh-TW',
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: true,
@@ -235,62 +395,8 @@ export default {
         ],
         manualRowMove: true,
         manualColumnMove: true,
-        contextMenu: {
-          callback: (key, selection) => {
-            let idx = selection[0].start.row
-            let row = this.row_data[idx]
-            
-            switch(key) {
-              case 'setContinuous':
-                this.settings.data[idx].is_continuous = true
-                break;
-              case 'stopContinuous':
-                this.settings.data[idx].is_continuous = false
-                break;
-              case 'clone':
-                this.row_data.splice(idx, 0, window._.cloneDeep(row))
-                this.row_data = this.setContinuous(this.row_data)
-                this.settings.data = this.row_data
-
-                break;
-            }
-
-            this.sheet.render()
-          },
-          items: {
-            "setContinuous": {
-              name: "恢復連拍",
-              disabled: () => {
-                let selected = this.sheet.getSelectedLast()
-                return this.row_data[selected[0]].is_continuous
-              }
-            }, 
-            "stopContinuous": {
-              name: "取消連拍",
-              disabled: () => {
-                let selected = this.sheet.getSelectedLast()
-                return !this.row_data[selected[0]].is_continuous
-              }
-            }, 
-            "clone": {
-              name: "複製並貼上一列"
-            }, 
-            'row_above': {
-              name: "往上插入一列",
-              disabled: function () {
-                // Disable option when first row was clicked
-                return this.getSelectedLast()[0] === 0; // `this` === hot3
-              }
-            }, 
-            'row_below': {
-              name: "往下插入一列"
-            }, 
-            'remove_row': {
-              name: "刪除列"
-            }
-          }
-        },
         filters: true,
+        contextMenu: false,
         dropdownMenu: true,
         afterSelectionEnd: (r) => {
           this.currentRow = r
@@ -303,9 +409,6 @@ export default {
   },
   components: {
     DatePicker, VueTimepicker
-  },
-  watch: {
-    "currentSite": "setCamera"
   },
   methods: {
     dragStart () {
@@ -328,21 +431,23 @@ export default {
         if(this.species.indexOf(value)===-1 && value.indexOf('測試')===-1) {
           clsName += "htInvalid "
         }
-        
-        if($row.is_continuous) {
-          clsName += "is-continuoust"
-        }
+        if(this.isContinuous) {
+          // debugger
+          if($row.is_continuous) {
+            clsName += "is-continuoust"
+          }
 
-        if($row.is_continuous_apart) {
-          clsName += " is-continuous-apart"
-        }
+          if($row.is_continuous_apart) {
+            clsName += " is-continuous-apart"
+          }
 
-        if($row.is_continuous_start) {
-          clsName += " is-continuous-start ";
-        }
+          if($row.is_continuous_start) {
+            clsName += " is-continuous-start ";
+          }
 
-        if($row.is_continuous_end) {
-          clsName += " is-continuous-end ";
+          if($row.is_continuous_end) {
+            clsName += " is-continuous-end ";
+          }
         }
 
         TD.innerHTML = value
@@ -365,8 +470,12 @@ export default {
           total: this.row_data[row.continuous_start].continuous_count
         }
     },
+    renderContinuous() {
+      this.isContinuous = !this.isContinuous
+      this.setContinuous()
+    },
     setContinuous(data) {
-      let row_data = data
+      let row_data = !data ? this.row_data : data
       row_data.forEach((r, i) => {
         let $row = r;
         let current = r.datetime
@@ -375,6 +484,7 @@ export default {
         let c_dt = new Date(current);
         let p_dt = !prev ? null : new Date(prev)
         let n_dt = !next ? null : new Date(next)
+        let time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
         let isStart = false
         let isEnd = false
@@ -385,7 +495,7 @@ export default {
 
         if(
           !n_dt==false && 
-          (n_dt - c_dt <= 60000 || !p_dt==false && c_dt - p_dt <= 60000) && 
+          (n_dt - c_dt <= time  || !p_dt==false && c_dt - p_dt <= time) && 
           (["測試", "空拍"].indexOf($row.species) == -1)
         ) {
           isContinue = true;
@@ -395,7 +505,7 @@ export default {
         }
 
         // detect is continuous start
-        if(isContinue && !p_dt && n_dt - c_dt <= 60000 || c_dt - p_dt >= 60000) {
+        if(isContinue && !p_dt && n_dt - c_dt <= time || c_dt - p_dt >= time) {
           isStart = true;
           this.continuousCount = 1;
           this.continuousStart = i;
@@ -406,7 +516,7 @@ export default {
         $row.current_continuous = this.continuousCount;
         $row.continuous_start = this.continuousStart;
         // detect is continuous end
-        if(isContinue && !n_dt && c_dt - p_dt <= 60000 || n_dt - c_dt >= 60000) {
+        if(isContinue && !n_dt && c_dt - p_dt <= time || n_dt - c_dt >= time) {
           isEnd = true;
           $row.is_continuous_end = true;
           
@@ -446,9 +556,26 @@ export default {
         this.isRender = true
       })
     },
-    settingSheetHeight() {
-      this.settings.height = window.innerHeight - (104 + this.$el.querySelector('.search-container').clientHeight)
+    changeMode(key , val) {
+      this[key] = val
 
+      if(key=='editMode') {
+        this.settings.contextMenu = !val ? false: this.contextMenuSetting
+        this.settings.columns.forEach((col) => {
+          col.editor = !val ? false : col.type
+        })
+        this.sheet.updateSettings(this.settings)
+      }
+
+      setTimeout(() => {
+        this.settingSheetHeight()
+      }, 200)
+    },
+    settingSheetHeight() {
+      let sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
+      this.settings.height = sheetHeight - 40
+      this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
+      // debugger
       if(this.isRender) 
         this.sheet.updateSettings(this.settings)
     }

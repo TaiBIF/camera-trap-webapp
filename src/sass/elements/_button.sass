@@ -18,9 +18,16 @@ a.btn:link,
     + .text
       vertical-align: middle
 
+  &.btn-basic
+    background: #FFF 
+    color: $black
+    border: 1px solid $border-gray
+    box-shadow: 0 2px 2px 0px rgba(165, 172, 170, .15)
+
   &.btn-block
     display: block
     margin: 0
+    width: 100%
   
   &.btn-green
     color: #FFF
@@ -74,6 +81,12 @@ a.btn:link,
     .text
       color: $green
 
+  &[disabled],
+  &.btn-disabled
+    color: $gray
+    border: 1px solid #E1E3E5
+    background: #F3F2F2
+
 
 .btn-group
   display: inline-block
@@ -94,3 +107,5 @@ a.btn:link,
     &.active
       color: #FFF
       background: $green
+
+    

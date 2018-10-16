@@ -5,11 +5,65 @@ ul.tree-menu
 
   .tree-menu-item:nth-child(n+1)
     box-shadow: 0 1px 0 0 rgba(155,155,155,.15)
+    .text
+      line-height: 20px
+      height: 20px
+      color: $black
+    .icon
+      width: 20px
+      height: 20px
+      margin-right: 10px
+      text-align: center
+      line-height: 18px
+      .dot
+        display: inline-block
+        width: 8px
+        height: 8px
+        +border-radius(4px)
+        background: $gray
 
-    a.tree-menu-link
+    .tree-menu-link
       padding: 0 20px
       line-height: 44px
       height: 44px
       display: block
       text-decoration: none
       color: $black
+      display: flex 
+      flex-direction: row
+      cursor: pointer
+      flex-wrap: wrap
+      align-content: center
+      align-items: center
+      .text
+        flex: 1
+        height: 44px
+        line-height: 44px
+
+
+
+  .tree-menu-item.is-open
+    ul.tree-menu-child
+      display: block
+
+  ul.tree-menu-child
+    list-style: none
+    padding: 0
+    box-shadow: 0 -1px 0 0 rgba(155,155,155,.15)
+    display: none 
+
+    > .tree-menu-item > .tree-menu-link
+      padding-left: 50px
+      .icon
+        margin-right: 4px
+      
+      .text > .icon 
+        margin: 15px 0 0
+
+      &.is-active
+        background: $bg-green
+
+        > .text 
+          color: $green
+          
+

@@ -27,6 +27,12 @@
       background: $border-gray
 
 .dropdown
+
+  .dropdown-menu
+    display: none
+    &.show
+      display: block
+
   &.show>#notification-container
     display: block
   #notification-container
@@ -44,4 +50,33 @@
 
       &:active
         background: none
-      
+        
+  .btn.btn-sm.btn-grayscale
+    color: $gray 
+    padding: 0 5px
+    border: 1px solid $gray
+    line-height: 20px
+
+    + .dropdown-menu
+      width: 260px
+      padding: 10px
+      right: 0
+      left: auto !important
+      input 
+        display: inline-block 
+        width: 50px
+
+    &:hover,
+    &:focus 
+      background: $bg-gray
+
+    > .icon
+      margin-top: 1px
+      margin-right: 4px
+    > *
+      vertical-align: middle
+    > .text
+      color: $gray 
+      height: 20px
+      padding-right: 5px
+      border-right: 1px solid transparentize($gray, .8)

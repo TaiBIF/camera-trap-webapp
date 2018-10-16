@@ -35,6 +35,7 @@
   .empty-result
     text-align: center
     padding-top: 90px
+    padding-bottom: 90px
     h5
       margin-top: 10px
 
@@ -185,6 +186,7 @@
     width: 248px
     background: #F9FBFA
     overflow: auto
+    height: calc(100vh - 64px)
 
     .aside-header
       color: $gray
@@ -228,17 +230,98 @@
       padding: 0
       display: flex 
       flex-direction: column
+      width: calc(100vw - 248px)
       
+      .edit-container
+        padding: 10px 20px
+        color: $gray
+        background: $black
+        font-size: 13px
+        span 
+          vertical-align: middle
+        .btn
+          vertical-align: middle
+        .btn.btn-circle
+          width: 32px
+          height: 32px
+          line-height: 32px
+          text-align: center
+          margin-top: -2px
+          padding: 5px 0 0 1px
+          border: 0
+          vertical-align: middle
+          background: rgba(255,255,255,.3)
+          +border-radius(16px)
+        span.divider
+          display: inline-block 
+          width: 1px
+          height: 30px
+          background: #D3D6D9
+          opacity: .5
+          margin: 0 10px
+
       .search-container
-        padding: 20px 20px 10px
-        background: #FFF
         box-shadow: 0 1px 3px 0 rgba(0,0,0,.3)
         z-index: 120
+        
+        .search-content
+          background: #FFF
+          padding: 20px 20px 10px
         
       .sheet-container
         flex: 1
         display: flex 
         flex-wrap: wrap
+        
+        .btn-group.btn-grayscale
+          .btn.btn-sm
+            vertical-align: middle
+            border-color: $gray
+            line-height: 20px
+            > *
+              vertical-align: middle
+            .icon
+              margin-right: 4px
+            .text
+              padding-right: 5px
+              border-right: 1px solid transparentize($gray, .8)
+          &.active > .btn.btn-sm
+            border-color: $green
+            color: $green
+          .btn:first-child
+            border-right: 0
+            +border-radius(4px 0 0 4px)
+          .dropdown-toggle.dropdown-toggle-split
+            border-left: 0
+            +border-radius(0 4px 4px 0)
+            &:after
+              display: none
+
+        .gallery-body
+          .img-container
+            position: relative
+            .control-buttons
+              position: absolute
+              width: 24px
+              right: 10px
+              top: 10px
+              .btn-group
+                display: block
+                margin-bottom: 10px
+                line-height: 0
+                .btn
+                  padding: 0
+                  width: 24px
+                  height: 24px
+                  line-height: 0
+                  padding: 1px
+                  margin: 0
+                  &:first-child
+                    +border-radius(4px 4px 0 0)
+                  &:last-child
+                    +border-radius(0 0 4px 4px)
+                  &:last-child:first-child
+                    +border-radius(4px)
 
         .version-header,
         .gallery-header
@@ -251,17 +334,17 @@
         .sheet-header
           position: relative
           padding: 0 10px
-          .col-6
+          [class*='col-']
             line-height: 38px
-            *
+            > *
               display: inline-block
               vertical-align: middle
             .btn-icon
               vertical-align: middle
-              padding: 0
+              padding: 2px
               width: 24px
               height: 24px
-              line-height: 22px
+              line-height: 0
               border: 1px solid $gray
               &.active
                 border: 1px solid $green
@@ -285,8 +368,15 @@
         .sidebar
           position: relative
           width: 200px
+          max-height: 100%
           display: flex
           flex-direction: column
+          overflow-x: hidden
+          overflow-y: auto
+
+          > div:first-child
+            flex: 1
+
           .drag-bar 
             position: absolute
             width: 10px
@@ -295,14 +385,13 @@
             top: 0
             height: 100%
             cursor: ew-resize
-          .gallery-body,
-          .version-body
+          .gallery-body
             padding: 10px
           .photo-container
-            flex: 1
             .img
               max-width: 100%
               line-height: 0
+              display: block
             .control 
               display: block
               color: #FFF

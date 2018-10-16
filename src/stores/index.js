@@ -11,9 +11,13 @@ export default new Vuex.Store({
     projects: [],
     currentSite: 0,
     currentPoint: null,
+    currentToggle: null,
     message: null
   },
   getters: {
+    CurrentToggle: (state) => {
+      return state.currentToggle
+    },
     CurrentSite: (state) => {
       return state.currentSite
     },
@@ -28,6 +32,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    updateCurrentToggle(state, num) {
+      state.currentToggle = num
+    },
     updateCurrentSite(state, num) {
       state.currentSite = num
     },
@@ -46,6 +53,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setCurrentToggle: ({ commit }, no) => {
+      commit("updateCurrentToggle", no)
+    },
     setCurrentSite: ({ commit }, no) => {
       commit("updateCurrentSite", no)
     },

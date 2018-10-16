@@ -148,6 +148,7 @@ export default {
         manualRowResize: true,
         manualColumnResize: true,
         rowHeaders: true,
+        language: 'zh-TW',
         colHeaders: [
           // 'URL',
           '相機位置名稱',
