@@ -103,10 +103,9 @@
                       :lat-lng="mark.marker"
                       :draggable="false"
                       :radius="10000"
-                      :color="'green'"
-                      :fillColor="'green'"
+                      :fillColor="'#2A7F60'"
                       :fillOpacity="1"
-                      :strokeColor="'green'"
+                      :color="'rgba(42,127,96,.43)'"
                       @click="setCurrent(mark)">
                         <l-tooltip :content="mark.name"
                         :options="{permanent: true, direction: 'center'}"></l-tooltip>

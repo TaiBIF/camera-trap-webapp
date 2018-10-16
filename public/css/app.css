@@ -6081,13 +6081,65 @@ main .view {
 .page-project .maintain.page-sheet .sheet-container .btn-group.btn-grayscale .dropdown-toggle.dropdown-toggle-split:after {
   display: none;
 }
+.page-project .maintain.page-sheet .sheet-container .gallery-body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .page-project .maintain.page-sheet .sheet-container .gallery-body .img-container {
   position: relative;
+  padding-bottom: 75%;
+  display: block;
+  overflow: hidden;
+}
+.page-project .maintain.page-sheet .sheet-container .gallery-body .img-container > img {
+  left: -100%;
+  right: -100%;
+  top: -100%;
+  bottom: -100%;
+  margin: auto;
+  max-width: none !important;
+  position: absolute;
+  cursor: all-scroll;
+  transform-origin: 50%;
+  transition: width 0.3s ease;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .page-project .maintain.page-sheet .sheet-container .gallery-body .img-container .control-buttons {
   position: absolute;
+  width: 24px;
   right: 10px;
   top: 10px;
+}
+.page-project .maintain.page-sheet .sheet-container .gallery-body .img-container .control-buttons .btn-group {
+  display: block;
+  margin-bottom: 10px;
+  line-height: 0;
+}
+.page-project .maintain.page-sheet .sheet-container .gallery-body .img-container .control-buttons .btn-group .btn {
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 0;
+  padding: 1px;
+  margin: 0;
+}
+.page-project .maintain.page-sheet .sheet-container .gallery-body .img-container .control-buttons .btn-group .btn:first-child {
+  border-radius: 4px 4px 0 0;
+}
+.page-project .maintain.page-sheet .sheet-container .gallery-body .img-container .control-buttons .btn-group .btn:last-child {
+  border-radius: 0 0 4px 4px;
+}
+.page-project .maintain.page-sheet .sheet-container .gallery-body .img-container .control-buttons .btn-group .btn:last-child:first-child {
+  border-radius: 4px;
 }
 .page-project .maintain.page-sheet .sheet-container .version-header,
 .page-project .maintain.page-sheet .sheet-container .gallery-header {
@@ -7500,6 +7552,30 @@ table.site-table caption .legend .progress {
 }
 .modal .modal-content .modal-footer .btn:last-child {
   margin-right: 0;
+}
+.modal.light-box .close {
+  position: absolute;
+  right: 0;
+  top: -30px;
+}
+.modal.light-box .modal-dialog {
+  max-width: 750px !important;
+}
+.modal.light-box img {
+  position: relative;
+  width: 100% !important;
+  height: auto !important;
+}
+.modal.light-box .caption {
+  background: #464646;
+  color: #FFF;
+  text-align: center;
+  height: 50px;
+  padding: 10px 20px;
+  font-size: 24px;
+}
+.modal.light-box .caption small {
+  font-size: 16px;
 }
 
 .list .item {

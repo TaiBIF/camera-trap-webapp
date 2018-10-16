@@ -298,8 +298,35 @@
               display: none
 
         .gallery-body
+          -webkit-touch-callout: none
+          -webkit-user-select: none
+          -khtml-user-select: none
+          -moz-user-select: none
+          -ms-user-select: none
+          user-select: none
           .img-container
             position: relative
+            padding-bottom: 75%
+            display: block
+            overflow: hidden
+            
+            > img 
+              left: -100%
+              right: -100%
+              top: -100%
+              bottom: -100%
+              margin: auto
+              max-width: none !important
+              position: absolute
+              cursor: all-scroll
+              transform-origin: 50%
+              transition: width .3s ease
+              -webkit-touch-callout: none
+              -webkit-user-select: none
+              -khtml-user-select: none
+              -moz-user-select: none
+              -ms-user-select: none
+              user-select: none
             .control-buttons
               position: absolute
               width: 24px
@@ -385,6 +412,12 @@
             top: 0
             height: 100%
             cursor: ew-resize
+          .version-body
+            width: 100%
+            overflow-x: auto
+            margin: 0
+            table.table tr td 
+              white-space: nowrap
           .gallery-body
             padding: 10px
           .photo-container
