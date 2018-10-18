@@ -36,7 +36,7 @@
               </div>
             </div>
             <div class="col-4 text-center pt-5 divider">
-              <a href="#" class="btn btn-orange">
+              <a href="upload.html#/" class="btn btn-orange">
                 <i class="fa fa-upload mr-2"></i>
                 <span class="text">檔案上傳</span>
               </a>

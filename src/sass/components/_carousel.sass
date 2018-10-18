@@ -1,0 +1,20 @@
+.VueCarousel
+  .VueCarousel-wrapper 
+    .VueCarousel-slide
+      .caption
+        padding: 20px
+        text-align: center
+  
+  .VueCarousel-pagination
+    ul.VueCarousel-dot-container
+      li.VueCarousel-dot
+        margin: 0
+        
+        button.VueCarousel-dot-button
+          background: none
+          border: 1px solid $gray
+
+        &.VueCarousel-dot--active
+          button.VueCarousel-dot-button
+            border-color: $light-green
+            background: $light-green !important

@@ -4,6 +4,8 @@
   height: 100%
   left: 0
   top: 0
+  display: block
+  overflow-y: auto
   background: rgba(70,70,70,.7)
   transition: opacity .3s .1s ease
   z-index: 1129
@@ -18,6 +20,14 @@
     .modal-dialog
       -webkit-transform: translate(0,0)
       transform: translate(0,0)
+
+  &.trial-modal > .modal-dialog
+    max-width: 467px !important
+    
+    .modal-body
+      +border-radius(4px)
+      .action
+        padding: 20px
 
   .modal-dialog 
     position: absolute
@@ -53,6 +63,7 @@
   .modal-content 
     position: absolute
     width: 100%
+    margin-bottom: 50px
     pointer-events: auto
     background: #FFF
     display: flex
@@ -79,6 +90,9 @@
       padding: 20px 40px
       background: #FFF
       flex: 1
+
+      img 
+        max-width: 100%
 
     .modal-footer
       display: block

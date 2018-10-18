@@ -17,7 +17,11 @@
                 <div class="form-group row mb-0">
                   <label for="" class="col-2 text-right">加入成員</label>
                   <div class="col-4">
-                    <input type="text" class="form-control" placeholder="請輸入成員ROCID名稱或電子郵件" />
+                    <input type="text" class="form-control is-invalid" placeholder="請輸入成員ROCID名稱或電子郵件" />
+                    <div class="invalid-feedback">
+                      <span class="alert-box">!</span>
+                      <span class="text">電子郵件輸入不正確</span>
+                    </div>
                   </div>
                   <div class="col-4">
                     <v-select :options="roles"/>

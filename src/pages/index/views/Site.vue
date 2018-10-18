@@ -420,7 +420,7 @@ export default {
         let error = ''
         if(this.species.indexOf(value)===-1 && value.indexOf('測試')===-1) {
           clsName += "htInvalid "
-          error = '<span class="alert">!</span>'
+          error = '<span class="alert-box">!</span>'
         }
         if(this.isContinuous) {
           // debugger

@@ -216,18 +216,10 @@
   overflow: visible;
   background: transparentize(#D80C37, .84);
 
-  .alert {
-    content: "!";
-    color: #FFF;
-    text-align: center;
-    position: absolute;
-    width: 14px; 
-    height: 14px;
-    line-height: 14px;
-    font-size: 11px;
-    left: 1px;
-    top: 2px;
-    background: $red;
+  .alert-box {
+    float: left;
+    margin-left: -7px;
+    margin-top: 1px;
   }
 
   &:after {

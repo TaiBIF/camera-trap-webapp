@@ -17,8 +17,16 @@
 .btn-grayscale
   .icon-continous
     +use-sprite('continous-gray')
+    
+.icon-upload 
+  +use-sprite('upload-white')
+.disabled, [disabled]
+  .icon-upload 
+    +use-sprite('upload-gray')
 .icon-link 
   +use-sprite('link')
+.icon-trash 
+  +use-sprite('trash')
 .icon-unlink 
   +use-sprite('unlink')
 .icon-remove-sm 
@@ -102,3 +110,11 @@
   +use-sprite('download-sm')
 .icon-back 
   +use-sprite('back')
+.icon-folder 
+  +use-sprite('folder')
+.icon-csv 
+  +use-sprite('csv')
+.icon-zip 
+  +use-sprite('zip')
+.icon-photo 
+  +use-sprite('photo')

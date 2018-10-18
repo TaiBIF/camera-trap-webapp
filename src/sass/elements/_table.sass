@@ -13,8 +13,16 @@ table.table
   tbody > tr 
     border-bottom: 1px solid #F0F1F3
 
+    &:nth-child(2n)
+      background: #F8F8F8
+
     &.disabled
       background: #FBFBFC
+    
+    &.is-selected
+      background: transparentize(#FF7C23, .9)
+      .action 
+        display: inline-block
 
   tr>td,
   tr>th
@@ -27,9 +35,20 @@ table.table
     -moz-user-select: none
     -ms-user-select: none
     user-select: none
+    
+    .action 
+      position: absolute
+      right: 0px
+      margin-top: -5px
+      padding: 0 15px
+      border-left: 1px solid $gray
+      display: none
 
     .drag-item
       cursor: ns-resize
+    
+    .icon
+      margin-right: 5px
 
     &.action
       padding: 0 !important

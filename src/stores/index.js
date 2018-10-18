@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    pageLock: false,
     fileReady: false,
     projects: [],
     currentSite: 0,
@@ -15,6 +16,12 @@ export default new Vuex.Store({
     message: null
   },
   getters: {
+    PageLock: (state) => {
+      return state.pageLock
+    },
+    FileReady: (state) => {
+      return state.fileReady
+    },
     CurrentToggle: (state) => {
       return state.currentToggle
     },
@@ -32,6 +39,12 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    updatePageLock(state, bool) {
+      state.pageLock = bool
+    },
+    updateFileReady(state, value) {
+      state.fileReady = value
+    },
     updateCurrentToggle(state, num) {
       state.currentToggle = num
     },
@@ -53,6 +66,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setPageLock: ({ commit }, bool) => {
+      commit("updatePageLock", bool)
+    },
     setCurrentToggle: ({ commit }, no) => {
       commit("updateCurrentToggle", no)
     },

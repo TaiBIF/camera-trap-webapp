@@ -217,21 +217,46 @@
 }
 
 .handsontable td.htInvalid {
-  border: 2px solid #D0021B !important;
-  /*gives priority over td.area selection background*/
+  overflow: visible;
+  background: rgba(216, 12, 55, 0.16);
+}
+.handsontable td.htInvalid .alert-box {
+  float: left;
+  margin-left: -7px;
+  margin-top: 1px;
 }
 .handsontable td.htInvalid:after {
-  content: "!";
-  color: #FFF;
-  text-align: center;
+  content: "";
+  display: none;
   position: absolute;
-  width: 14px;
-  height: 14px;
-  line-height: 14px;
-  font-size: 11px;
+  width: 0;
+  height: 0;
+  bottom: 80%;
   left: 0;
-  top: 0;
-  background: #D0021B;
+  right: 0;
+  margin: auto;
+  border-top: 10px solid #000;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+.handsontable td.htInvalid:before {
+  content: attr(data-tooltip);
+  position: absolute;
+  background: #000;
+  display: none;
+  color: #FFF;
+  width: 120px;
+  bottom: 100%;
+  left: -100%;
+  right: -100%;
+  margin: auto auto 10px;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+.handsontable td.htInvalid:hover:before, .handsontable td.htInvalid:focus:before, .handsontable td.htInvalid:hover:after, .handsontable td.htInvalid:focus:after {
+  display: block;
 }
 
 .handsontable td.htNoWrap {

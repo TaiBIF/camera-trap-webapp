@@ -75,14 +75,20 @@ a.btn:link,
   &.btn-upload
     position: relative
     overflow: hidden
-    border-color: $light-green
+    border: 1px solid $green
     input 
       display: none
     .text
       color: $green
 
   &[disabled],
-  &.btn-disabled
+  &.btn-disabled,
+  &[disabled]:hover,
+  &.btn-disabled:hover,
+  &[disabled]:focus,
+  &.btn-disabled:focus,
+  &[disabled]:active,
+  &.btn-disabled:active
     color: $gray
     border: 1px solid #E1E3E5
     background: #F3F2F2
