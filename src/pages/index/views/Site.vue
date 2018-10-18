@@ -398,10 +398,16 @@ export default {
       isDrag: false,
     }
   },
+  watch: {
+    'currentRow': 'recordUpdate'
+  },
   components: {
     DatePicker, VueTimepicker, ZoomDrag
   },
   methods: {
+    recordUpdate() {
+      
+    },
     dragStart () {
       this.isDrag = true
     },

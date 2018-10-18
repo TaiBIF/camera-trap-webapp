@@ -53,6 +53,7 @@
         </div>
       </nav>
     </header>
+
     <main class="page-project">
       <aside v-if="asideElem.indexOf($route.name)==-1">
         <router-link to="/" class="aside-header">
@@ -65,7 +66,9 @@
         </div>
         <tree-menu :items="project.children" :defaultOpenLevel="1" />
       </aside>
+
       <router-view/>
+
     </main>
   </div>
 </template>
@@ -183,6 +186,14 @@ export default {
     return {
       asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense'],
       project: project
+    }
+  },
+  watch: {
+    '$router': "fetchData"
+  },
+  methods: {
+    fetchData() {
+      let projectID = this.$router.params.id
     }
   }
 }

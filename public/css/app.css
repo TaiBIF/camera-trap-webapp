@@ -6508,6 +6508,10 @@ a.btn:link.btn-disabled:active,
   background: #F3F2F2;
 }
 
+button.btn {
+  line-height: 37px;
+}
+
 .btn-group {
   display: inline-block;
 }
@@ -6545,6 +6549,29 @@ a.btn:link.btn-disabled:active,
   padding: 0;
   height: 40px;
   line-height: 40px;
+}
+.message.is-alert {
+  position: absolute;
+  max-width: 466px;
+  top: -40px;
+  left: 0;
+  right: 0;
+  font-size: 13px;
+  margin: auto;
+  background: #F2D3D9;
+  border: 1px solid rgba(216, 12, 55, 0.25);
+  color: #D80C37;
+  padding: 8px 13px;
+  box-shadow: 0 2px 4px 0 rgba(56, 66, 62, 0.45);
+  z-index: 99;
+}
+.message.is-alert .text {
+  display: block;
+  margin-left: 20px;
+  margin-right: 30px;
+}
+.message.is-alert .close {
+  margin-top: 3px;
 }
 
 form.form .form-group {
@@ -6701,9 +6728,12 @@ table.table tbody > tr.disabled {
 table.table tbody > tr.is-selected {
   background: rgba(255, 124, 35, 0.1);
 }
+table.table tbody > tr.is-selected .action {
+  display: inline-block;
+}
 table.table tr > td,
 table.table tr > th {
-  font-size: 13px;
+  font-size: 16px;
   padding: 10px 20px;
   vertical-align: middle;
   -webkit-touch-callout: none;
@@ -6712,6 +6742,20 @@ table.table tr > th {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+table.table tr > td .upload-progress,
+table.table tr > th .upload-progress {
+  width: 24px;
+  height: 24px;
+}
+table.table tr > td .action,
+table.table tr > th .action {
+  position: absolute;
+  right: 0px;
+  margin-top: -5px;
+  padding: 0 15px;
+  border-left: 1px solid #8B8B8B;
+  display: none;
 }
 table.table tr > td .drag-item,
 table.table tr > th .drag-item {
@@ -6727,6 +6771,9 @@ table.table tr > th.action {
 }
 table.table thead > tr > th {
   padding: 8px 20px;
+}
+table.table.version-list tr > td {
+  font-size: 13px;
 }
 table.table.version-list tr > td {
   text-align: center;

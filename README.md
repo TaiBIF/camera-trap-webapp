@@ -2,8 +2,9 @@
 
 ## Develope
 - `cd webapps/f2e`
+- run `npm install`
 - run `npm run serve`
-- 
+- run `npm run build`
 
 ## Generate icon sperite
 - save icon to webapps/f2e/assets/icons and webapps/f2e/assets/icons-2x

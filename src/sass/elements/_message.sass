@@ -11,3 +11,27 @@
     padding: 0
     height: 40px
     line-height: 40px
+
+  
+  &.is-alert
+    position: absolute
+    max-width: 466px
+    top: -40px
+    left: 0
+    right: 0
+    font-size: 13px
+    margin: auto
+    background: #F2D3D9
+    border: 1px solid transparentize($red, .75)
+    color: $red
+    padding: 8px 13px
+    box-shadow: 0 2px 4px 0 transparentize(#38423E, .55)
+    z-index: 99
+
+    .text
+      display: block
+      margin-left: 20px
+      margin-right: 30px
+
+    .close
+      margin-top: 3px
