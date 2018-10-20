@@ -9,11 +9,25 @@ module.exports = {
       title: 'Index Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'index']
     },
+    search: {
+      entry: 'src/pages/search/main.js',
+      template: 'public/search.html',
+      filename: 'search.html',
+      title: 'Search Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
     upload: {
       entry: 'src/pages/upload/main.js',
       template: 'public/upload.html',
       filename: 'upload.html',
       title: 'Upload Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
+    history: {
+      entry: 'src/pages/history/main.js',
+      template: 'public/history.html',
+      filename: 'history.html',
+      title: 'history Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'intro']
     },
     article: {

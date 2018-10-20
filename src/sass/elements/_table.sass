@@ -60,6 +60,16 @@ table.table
   thead > tr>th
     padding: 8px 20px
   
+  &.history
+    box-shadow: 0 2px 4px 0 transparentize(#002E14, .72)
+    tbody > tr 
+      background: #FFF
+      td 
+        color: $black
+        font-weight: 400
+      &:nth-child(2n)
+        background: #F8F8F8
+
   &.version-list
     tr > th 
     tr > td

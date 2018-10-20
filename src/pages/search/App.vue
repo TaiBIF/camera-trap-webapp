@@ -1,12 +1,12 @@
 <template>
   <div id="app">
     <header>
-      <nav class="navbar navbar-expand-lg">
+      <nav class="navbar navbar-expand-md">
         <a href="./index.html#/" role="button" class="navbar-brand">Camara Capture</a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav main-nav">
-            <li class="nav-item"><a class="nav-link active" role="button" href="./index.html#/">專案總覽 <span class="sr-only">(current)</span></a></li>
-            <li class="nav-item"><a class="nav-link" role="button" href="./search.html">篩選及下載</a></li>
+            <li class="nav-item"><a class="nav-link" role="button" href="./index.html#/">專案總覽 <span class="sr-only">(current)</span></a></li>
+            <li class="nav-item"><a class="nav-link active" role="button" href="./search.html">篩選及下載</a></li>
             <li class="nav-item"><a class="nav-link" role="button" href="./history.html">上傳紀錄</a></li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">幫助</a>
@@ -52,147 +52,40 @@
         </div>
       </nav>
     </header>
-    
-    <main class="page-project">
-      <aside v-if="asideElem.indexOf($route.name)==-1">
-        <router-link to="/" class="aside-header">
-          <i class="fa fa-chevron-left"></i> 返回計畫總覽
-        </router-link>
-        <div class="aside-project">
-          <router-link to="/project/1">
-          {{ project.name }}
-          </router-link>
-        </div>
-        <tree-menu :items="project.children" :defaultOpenLevel="1" />
-      </aside>
-
+    <main class="page-search">
       <router-view/>
-
     </main>
   </div>
 </template>
 
 <script>
-import TreeMenu from './components/TreeMenu.vue'
-
-const project = {
-  id: 1,
-  name: '國家生物多樣性監測與報告系統規劃-陸域',
-  slot: '多樣性',
-  children: [
-    {
-      id: 11,
-      name: '羅東處',
-      project_id: 1,
-      children: [
-        {
-          id: 101,
-          name: 'OO站'
-        },
-        {
-          id: 102,
-          name: 'XX站'
-        },
-        {
-          id: 103,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 12,
-      name: '新竹處',
-      project_id: 1,
-      children: [
-        {
-          id: 201,
-          name: 'OO站'
-        },
-        {
-          id: 202,
-          name: 'XX站'
-        },
-        {
-          id: 203,
-          name: '%%站'
-        }
-      ]
-    }, 
-    {
-      id: 13,
-      name: '東勢處',
-      project_id: 1,
-      children: [
-        {
-          id: 301,
-          name: 'OO站'
-        },
-        {
-          id: 302,
-          name: 'XX站'
-        },
-        {
-          id: 303,
-          name: '%%站'
-        }
-      ]
-    }, 
-    {
-      id: 14,
-      name: '南投處',
-      project_id: 1,
-      children: [
-        {
-          id: 401,
-          name: 'OO站'
-        },
-        {
-          id: 402,
-          name: 'XX站'
-        },
-        {
-          id: 403,
-          name: '%%站'
-        }
-      ]
-    }, 
-    {
-      id: 15,
-      name: '嘉義處',
-      project_id: 1,
-      children: [
-        {
-          id: 501,
-          name: 'OO站'
-        },
-        {
-          id: 502,
-          name: 'XX站'
-        },
-        {
-          id: 503,
-          name: '%%站'
-        }
-      ]
-    }
-  ]
-}
+import {mapGetters, mapActions} from 'vuex'
 
 export default {
   name: "App",
-  components: {TreeMenu},
+  computed: {
+    ...mapGetters([
+      'PageLock'
+    ])
+  },
   data() {
     return {
-      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense'],
-      project: project
     }
   },
   watch: {
-    '$router': "fetchData"
+    'PageLock': 'setBodyLock',
+    "$router": "routeChange"
   },
   methods: {
-    fetchData() {
-      let projectID = this.$router.params.id
+    ...mapActions([
+      'setPageLock'
+    ]),
+    routeChange() {
+      this.setPageLock(false)
+    },
+    setBodyLock() {
+      if(this.PageLock) document.body.classList.add('page-lock')
+      else document.body.classList.remove('page-lock')
     }
   }
 }

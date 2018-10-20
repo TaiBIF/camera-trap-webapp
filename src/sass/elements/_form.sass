@@ -1,4 +1,12 @@
 form.form 
+
+  .action
+    .btn 
+      vertical-align: top
+    button[type="submit"],
+    .btn-orange
+      min-width: 120px
+
   .form-group
     margin-bottom: 20px
 
@@ -8,6 +16,10 @@ form.form
     label:not(.btn)
       text-align: right
       line-height: 38px
+
+      span
+        vertical-align: middle
+
       &.required:before
         content: "*"
         display: inline-block
