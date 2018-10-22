@@ -6442,11 +6442,51 @@ main .view {
   border-bottom: 1px solid #2A7F60;
 }
 
+.page-article ul.contact-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.page-article ul.contact-list li {
+  margin-bottom: 10px;
+}
+.page-article ul.contact-list li a {
+  color: #8B8B8B;
+  cursor: pointer;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+}
+.page-article ul.contact-list li a:before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 8px;
+  background: #8B8B8B;
+}
+.page-article ul.contact-list li a:hover, .page-article ul.contact-list li a:focus {
+  color: #464646;
+}
+.page-article ul.contact-list li.active > a {
+  color: #2A7F60;
+}
+.page-article ul.contact-list li.active > a:before {
+  background: #2A7F60;
+}
 .page-article article {
   padding: 20px;
   margin: 20px 0;
   background: #FFF;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.page-setting .gray-block {
+  padding: 10px 20px;
+  line-height: 1.5;
+  background: #F3F2F2;
 }
 
 h1 {
@@ -6521,6 +6561,14 @@ a.btn:link.btn-basic,
   color: #464646;
   border: 1px solid #D7D8DA;
   box-shadow: 0 2px 2px 0px rgba(165, 172, 170, 0.15);
+}
+a.btn.btn-orcid,
+a.btn:link.btn-orcid,
+.btn.btn-orcid {
+  background: #F3F2F2;
+  border: 1px solid #E1E3E5;
+  color: #2A7F60;
+  text-decoration: underline !important;
 }
 a.btn.btn-block,
 a.btn:link.btn-block,
@@ -6711,7 +6759,7 @@ form.form .form-group {
   margin-bottom: 20px;
 }
 form.form .form-group .note {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 form.form .form-group label:not(.btn) {
   text-align: right;
@@ -6832,6 +6880,12 @@ form.form .input-group input {
   display: inline-flex;
   align-content: center;
   align-items: center;
+}
+.form-group-inline > label {
+  align-self: start !important;
+}
+.form-group-inline .checkbox.checkbox-inline {
+  margin-bottom: 0;
 }
 .form-group-inline .icon-note {
   margin-left: 15px;
@@ -7967,6 +8021,34 @@ table.site-table caption .legend .progress {
   padding: 40px;
   background: #FFF;
   box-shadow: 0 2px 4px 0 rgba(170, 191, 181, 0.4);
+}
+
+.accordion .accordion-item .accordion-heading {
+  border: 1px solid rgba(233, 233, 233, 0.8);
+}
+.accordion .accordion-item .accordion-heading .icon {
+  float: right;
+  margin: 17px 20px 0;
+  transform: rotate(0deg);
+}
+.accordion .accordion-item .accordion-heading h5 {
+  font-size: 16px;
+  padding: 18px 20px;
+  margin: 0;
+  font-weight: 400;
+}
+.accordion .accordion-item .accordion-body {
+  padding: 20px 40px;
+  background: #F1EFEF;
+  line-height: 1.5;
+  display: none;
+  border: 1px solid rgba(233, 233, 233, 0.8);
+}
+.accordion .accordion-item.is-open > .accordion-heading .icon {
+  transform: rotate(180deg);
+}
+.accordion .accordion-item.is-open > .accordion-body {
+  display: block;
 }
 
 /*!

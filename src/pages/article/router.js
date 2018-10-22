@@ -9,9 +9,19 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/:slug',
+      path: '/',
       name: 'article',
       component: Article
+    },
+    {
+      path: '/faq',
+      name: 'faq',
+      component: () => import('./views/FAQ.vue')
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('./views/Contact.vue')
     }
   ]
 })

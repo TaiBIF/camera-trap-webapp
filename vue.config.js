@@ -30,6 +30,13 @@ module.exports = {
       title: 'history Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'intro']
     },
+    setting: {
+      entry: 'src/pages/setting/main.js',
+      template: 'public/setting.html',
+      filename: 'setting.html',
+      title: 'Setting Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
     article: {
       entry: 'src/pages/article/main.js',
       template: 'public/article.html',

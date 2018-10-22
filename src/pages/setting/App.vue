@@ -5,8 +5,8 @@
         <a href="./index.html#/" role="button" class="navbar-brand">Camara Capture</a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav main-nav">
-            <li class="nav-item"><a class="nav-link" role="button" href="./index.html#/">專案總覽 <span class="sr-only">(current)</span></a></li>
-            <li class="nav-item"><a class="nav-link active" role="button" href="./search.html">篩選及下載</a></li>
+            <li class="nav-item"><a class="nav-link active" role="button" href="./index.html#/">專案總覽 <span class="sr-only">(current)</span></a></li>
+            <li class="nav-item"><a class="nav-link" role="button" href="./search.html">篩選及下載</a></li>
             <li class="nav-item"><a class="nav-link" role="button" href="./history.html">上傳紀錄</a></li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">幫助</a>
@@ -51,7 +51,7 @@
         </div>
       </nav>
     </header>
-    <main class="page-search">
+    <main class="page-setting">
       <router-view/>
     </main>
   </div>

@@ -1,0 +1,27 @@
+.accordion 
+  .accordion-item
+    .accordion-heading
+      border: 1px solid transparentize(#E9E9E9, .2)
+      .icon 
+        float: right
+        margin: 17px 20px 0
+        transform: rotate(0deg)
+
+      h5 
+        font-size: 16px
+        padding: 18px 20px
+        margin: 0
+        font-weight: 400
+      
+    .accordion-body
+      padding: 20px 40px
+      background: #F1EFEF
+      line-height: 1.5
+      display: none
+      border: 1px solid transparentize(#E9E9E9, .2)
+    
+    &.is-open > .accordion-heading .icon
+      transform: rotate(180deg)
+
+    &.is-open > .accordion-body
+      display: block

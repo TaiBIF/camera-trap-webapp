@@ -590,9 +590,47 @@
 
   
 .page-article
+  ul.contact-list
+    margin: 0
+    padding: 0
+    list-style: none
+    li 
+      margin-bottom: 10px
+      a 
+        color: $gray
+        cursor: pointer
+        height: 30px
+        line-height: 30px
+        padding: 0 10px
+
+        &:before 
+          content: ""
+          display: inline-block
+          vertical-align: middle
+          width: 8px
+          height: 8px
+          margin-right: 10px
+          +border-radius(8px)
+          background: $gray
+
+        &:hover,
+        &:focus
+          color: $black
+
+      &.active > a 
+        color: $green
+        &:before 
+          background: $green
+
   article
     padding: 20px
     margin: 20px 0
     background: #FFF
     box-shadow: 0 1px 3px 0 rgba(0,0,0,.35)
     
+
+.page-setting
+  .gray-block
+    padding: 10px 20px
+    line-height: 1.5
+    background: #F3F2F2
