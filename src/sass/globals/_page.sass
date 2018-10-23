@@ -2,6 +2,9 @@
 .page-project
   width: 100%
 
+  #map
+    height: 400px
+    
   > .container
     padding-top: 20px
 
@@ -458,6 +461,48 @@
       background: #F0F1F3
       padding: 0 10px
       border-bottom: 1px solid #DBDBDB
+    
+    .sheet-footer
+      height: 40px
+      line-height: 40px
+      font-size: 13px
+      padding: 0 20px
+      .select
+        display: inline-block
+        vertical-align: middle
+        margin: 0 5px
+        width: 64px
+        height: 24px
+        font-size: 13px
+        overflow: hidden
+        border: 1px solid #E1E3E5
+        background: #FFF right 10px center url(/assets/common/caret@2x.png) no-repeat
+        background-size: 14px
+        +border-radius(2px)
+        select.form-control
+          border: 0
+          font-size: 13px
+          width: 80px
+          height: 24px
+          background: transparent
+      .pager
+        margin: 8px 20px 0 0
+        .input-group-prepend,
+        .input-group-append
+          button 
+            background: #FFF
+            border: 1px solid #E1E3E5
+        input.form-control
+          font-size: 13px
+          width: 40px
+          height: 24px
+          color: $black
+          text-align: center
+          outline: 0
+          &:focus 
+            outline: 0
+            border-color: #6B6A6B
+
     .sheet-header
       position: relative
       padding: 0 10px

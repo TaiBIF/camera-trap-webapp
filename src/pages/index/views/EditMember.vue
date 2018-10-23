@@ -25,7 +25,7 @@
                   </div>
                   <div class="col-4">
                     <v-select :options="roles"/>
-                    <a class="d-block link text-green underline mt-1">成員權限說明</a>
+                    <router-link to="/member/description" class="d-block link text-green underline mt-1">成員權限說明</router-link>
                   </div>
                   <div class="col-2">
                     <button @click.prevent="invitationOpen=true" class="btn btn-orange">邀請</button>

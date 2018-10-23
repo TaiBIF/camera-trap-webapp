@@ -5795,6 +5795,9 @@ main .view {
   flex-wrap: wrap;
   flex-direction: row;
 }
+.page-project #map {
+  height: 400px;
+}
 .page-project > .container {
   padding-top: 20px;
 }
@@ -6568,6 +6571,7 @@ a.btn:link.btn-orcid,
   background: #F3F2F2;
   border: 1px solid #E1E3E5;
   color: #2A7F60;
+  line-height: 36px;
   text-decoration: underline !important;
 }
 a.btn.btn-block,
@@ -6961,6 +6965,31 @@ table.table tr > th.action {
 }
 table.table thead > tr > th {
   padding: 8px 20px;
+}
+table.table.auth-table thead > tr {
+  background: #2A7F60;
+}
+table.table.auth-table thead > tr > th {
+  height: 60px;
+  color: #FFF;
+  padding: 20px auto;
+}
+table.table.auth-table tbody tr > td {
+  padding-left: 40px;
+  height: 60px;
+  border: 1px solid #B7B7B7;
+  text-align: center;
+  vertical-align: middle;
+}
+table.table.auth-table tbody tr > td:first-child {
+  text-align: left;
+}
+table.table.auth-table tbody tr.sec-title {
+  background: #E1E3E5;
+}
+table.table.auth-table tbody tr.sec-title > td {
+  text-align: left;
+  padding-left: 20px;
 }
 table.table.history {
   box-shadow: 0 2px 4px 0 rgba(0, 46, 20, 0.28);
@@ -7625,7 +7654,9 @@ table.site-table tr.is-active > td .progress.is-complete {
   background: #2A7F60;
 }
 table.site-table tr.is-active > td .progress.not-complete {
-  background: #FF7C23;
+  background: #FAA6B4;
+  border-top: 1px solid #2A7F60;
+  border-bottom: 1px solid #2A7F60;
 }
 table.site-table tr th, table.site-table tr td {
   position: relative;
@@ -7659,10 +7690,10 @@ table.site-table .progress {
   height: 19px;
 }
 table.site-table .progress.is-complete {
-  background: #AFDACA;
+  background: #BFE08E;
 }
 table.site-table .progress.not-complete {
-  background: #FAD49B;
+  background: #FAA6B4;
 }
 table.site-table .progress.is-cancel {
   background: #8C9CAB;

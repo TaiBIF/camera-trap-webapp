@@ -39,6 +39,11 @@ export default new Router({
       component: () => import('./views/EditMember.vue')
     },
     {
+      path: '/member/description',
+      name: 'memberDescription',
+      component: () => import('./views/MemberDescription.vue')
+    },
+    {
       path: '/license/:id/edit',
       name: 'editLicense',
       component: () => import('./views/EditLicense.vue')

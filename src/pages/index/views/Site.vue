@@ -1,5 +1,5 @@
 <template>
-  <div class="maintain page-sheet">
+  <div class="maintain page-sheet p-0">
     <div class="search-container">
       <div v-if="editMode" class="edit-container">
         <div class="row">
@@ -123,6 +123,33 @@
           </div>
         </div>
         <div id="spreadsheet"></div>
+        <div class="sheet-footer">
+          <span class="text-gray">單頁顯示</span>
+          <span class="select">
+            <select name="" id="" class="form-control">
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+              <option value="1500">1500</option>
+            </select>
+          </span>
+          <span class="text-gray">筆資料，您正在檢視：</span>
+          <span>第 2001-3501 筆</span>
+          <div class="float-right">
+            <div class="input-group pager">
+              <div class="input-group-prepend">
+                <button>
+                  <i class="fa fa-caret-left"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control" value="1/10">
+              <div class="input-group-append">
+                <button>
+                  <i class="fa fa-caret-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="sidebar" :style="{'width': `${historyShow || galleryShow ? galleryWidth : 0}px`}">
         <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false && galleryShow">
@@ -571,7 +598,7 @@ export default {
     },
     settingSheetHeight() {
       let sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
-      this.settings.height = sheetHeight - 40
+      this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
       if(this.isRender) 

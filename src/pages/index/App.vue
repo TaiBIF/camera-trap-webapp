@@ -182,7 +182,7 @@ export default {
   components: {TreeMenu},
   data() {
     return {
-      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense'],
+      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription'],
       project: project
     }
   },
@@ -191,7 +191,7 @@ export default {
   },
   methods: {
     fetchData() {
-      let projectID = this.$router.params.id
+      // let projectID = this.$router.params.id
     }
   }
 }
