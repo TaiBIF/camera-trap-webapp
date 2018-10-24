@@ -40,7 +40,7 @@
               <span class="text">{{row.msg}}</span>
             </div>
             
-            <a v-if="row.status==2" class="link text-underline mr-2">補上傳影像檔</a>
+            <a href="./upload.html" v-if="row.status==2" class="link text-underline mr-2">補上傳影像檔</a>
             <a v-if="row.status==2" class="link text-underline">查看</a>
             <a v-if="row.status==-1" class="text-danger text-underline">檢視錯誤</a>
           </td>

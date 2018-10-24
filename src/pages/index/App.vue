@@ -54,6 +54,7 @@
     
     <main class="page-project">
       <aside v-if="asideElem.indexOf($route.name)==-1">
+        <!-- Render Project structure -->
         <router-link to="/" class="aside-header">
           <i class="fa fa-chevron-left"></i> 返回計畫總覽
         </router-link>
@@ -182,6 +183,7 @@ export default {
   components: {TreeMenu},
   data() {
     return {
+      // 側選單不顯示的 Router name 
       asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription'],
       project: project
     }

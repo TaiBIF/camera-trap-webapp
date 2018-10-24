@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h1 class="text-green">常見問題</h1>
+        <!-- 判斷 current tab -->
         <ul class="contact-list">
           <li :class="current==0 ? 'active' : ''" @click="current=0">
             <a>系統操作</a>
@@ -37,10 +38,12 @@
           </div>
           <div class="panel-body p-0">
             <div class="accordion">
+              <!-- Render QA list -->
               <div class="accordion-item" 
               v-for="(accord, idx) in faqList[current].list" 
               :key="`accord-${idx}`" 
               :class="collapse==idx ? 'is-open' : ''">
+                <!-- Toggle collapse -->
                 <div class="accordion-heading" @click="collapse= collapse==idx ? null : idx">
                   <div class="icon">
                     <i class="icon-chevron-down"></i>
@@ -58,7 +61,7 @@
 </template>
 
 <script>
-
+// FAQ 架構
 const faq = [
   { 
     name: "系統操作", 

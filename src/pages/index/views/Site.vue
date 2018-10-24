@@ -1,6 +1,7 @@
 <template>
   <div class="maintain page-sheet p-0">
     <div class="search-container">
+      <!-- Edit mode -->
       <div v-if="editMode" class="edit-container">
         <div class="row">
           <div class="col-7">
@@ -19,6 +20,7 @@
           </div>
         </div>
       </div>
+      <!-- Overview mode -->
       <div v-else class="search-content">
         <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
           下載篩選結果
@@ -123,6 +125,7 @@
           </div>
         </div>
         <div id="spreadsheet"></div>
+        <!-- Pagination -->
         <div class="sheet-footer">
           <span class="text-gray">單頁顯示</span>
           <span class="select">
@@ -262,6 +265,7 @@ export default {
       currentRow: 0,
       row_data: [],
       rowData: {},
+      // 連拍紀錄
       continuousCount: 0,
       continuousStart: false,
       continuous: {
