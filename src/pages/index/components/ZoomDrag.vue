@@ -101,10 +101,7 @@ export default {
       img.style.transform = `translate(${this.currentCoordinate.x}px, ${this.currentCoordinate.y}px)`
 
     },
-    onDragEnd(e) {
-      let el = this.$el,
-          img = this.$el.querySelector('#img-preview');
-      
+    onDragEnd() {
       this.lastCoordinate = {
         x: this.currentCoordinate.x,
         y: this.currentCoordinate.y

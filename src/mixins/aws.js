@@ -11,14 +11,14 @@ function initCognitoSDK() {
 		UserPoolId : 'ap-northeast-1_JACElFd4C', 
 		AdvancedSecurityDataCollectionFlag : 0
 	};
-	var auth = new AmazonCognitoIdentity.CognitoAuth(authData);
+	var auth = new window.AmazonCognitoIdentity.CognitoAuth(authData);
 	
 	auth.setState('someRandomState');
 	auth.userhandler = {
 		onSuccess: function(result) {
-			AWSCognito.config.update({region: 'ap-northeast-1'});
+			window.AWSCognito.config.update({region: 'ap-northeast-1'});
 
-			AWSCognito.config.credentials = new AWSCognito.CognitoIdentityCredentials({
+			AWSCognito.config.credentials = new window.AWSCognito.CognitoIdentityCredentials({
 				IdentityPoolId: 'ap-northeast-1:83570204-11bb-4601-8094-2dc2ccfbc88a',
 				Logins: {
 					'cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_JACElFd4C': result.getIdToken().getJwtToken()

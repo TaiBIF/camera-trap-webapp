@@ -172,7 +172,7 @@
 <script>
 import {mapActions, mapGetters} from 'vuex'
 import TrailModal from '../components/TrialModal'
-import {awsMixins} from '../mixins/aws.js'
+// import {awsMixins} from '../mixins/aws.js'
 import {commonMixin} from '../../../mixins/common.js'
 import ProgressBar from 'progressbar.js'
 
@@ -499,18 +499,18 @@ export default {
     this.dropzone.ondragover = function (event) {event.preventDefault();}
     this.dropzone.ondrop = (evt) => {
       evt.preventDefault();
-      this.fileList.push(123)
+      this.fileList = files
     }
 
-    this.$el.querySelector("#upload").onchange = (evt) => {
-      this.fileList.push(123)
+    this.$el.querySelector("#upload").onchange = () => {
+      this.fileList = files
     }
 
     document.body.onkeydown = (e) => {
       this.isKeyDown = true
       this.currentKey = e.keyCode
     }
-    document.body.onkeyup = (e) => {
+    document.body.onkeyup = () => {
       this.isKeyDown = false
       this.currentKey = 0
     }
