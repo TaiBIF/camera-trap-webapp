@@ -1,17 +1,13 @@
-# camera-trap-f2e
+# camera-trap-webapp
 
-## Develope
-- `cd webapps/f2e`
+## Develop
 - run `npm run serve`
-- 
 
-## Generate icon sperite
-- save icon to webapps/f2e/assets/icons and webapps/f2e/assets/icons-2x
-- `cd webapps/f2e`
+## Generate icon sprite
+- save icon to /assets/icons and /assets/icons-2x
 - `compass compile`
 
 ## Build
-- cd webapps/f2e
 - run `npm run build`
 
 ## Setting
