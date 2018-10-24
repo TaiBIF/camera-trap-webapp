@@ -84,6 +84,7 @@ export default {
       'setProjects', 'setMessage'
     ]),
     loadProject() {
+      // 取得專案列表
       projApi.getProjects().then(r => {
         this.setProjects(r)
         this.loadMessage()

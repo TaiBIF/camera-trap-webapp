@@ -1,5 +1,6 @@
 <template>
   <ul class="tree-menu">
+    <!-- Print 出所有子項目 -->
     <tree-item 
       v-for="(item, idx) in items" 
       :key="`menu-${item.id}`" 
