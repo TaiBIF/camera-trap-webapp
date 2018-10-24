@@ -2,6 +2,9 @@
 .page-project
   width: 100%
 
+  #map
+    height: 400px
+    
   > .container
     padding-top: 20px
 
@@ -226,188 +229,6 @@
     padding: 20px
     box-shadow: -1px 0 0 0 #9B9B9B
 
-    &.page-sheet
-      padding: 0
-      display: flex 
-      flex-direction: column
-      width: calc(100vw - 248px)
-      
-      .edit-container
-        padding: 10px 20px
-        color: $gray
-        background: $black
-        font-size: 13px
-        span 
-          vertical-align: middle
-        .btn
-          vertical-align: middle
-        .btn.btn-circle
-          width: 32px
-          height: 32px
-          line-height: 32px
-          text-align: center
-          margin-top: -2px
-          padding: 5px 0 0 1px
-          border: 0
-          vertical-align: middle
-          background: rgba(255,255,255,.3)
-          +border-radius(16px)
-        span.divider
-          display: inline-block 
-          width: 1px
-          height: 30px
-          background: #D3D6D9
-          opacity: .5
-          margin: 0 10px
-
-      .search-container
-        box-shadow: 0 1px 3px 0 rgba(0,0,0,.3)
-        z-index: 120
-        
-        .search-content
-          background: #FFF
-          padding: 20px 20px 10px
-        
-      .sheet-container
-        flex: 1
-        display: flex 
-        flex-wrap: wrap
-        
-        .btn-group.btn-grayscale
-          .btn.btn-sm
-            vertical-align: middle
-            border-color: $gray
-            line-height: 20px
-            > *
-              vertical-align: middle
-            .icon
-              margin-right: 4px
-            .text
-              padding-right: 5px
-              border-right: 1px solid transparentize($gray, .8)
-          &.active > .btn.btn-sm
-            border-color: $green
-            color: $green
-          .btn:first-child
-            border-right: 0
-            +border-radius(4px 0 0 4px)
-          .dropdown-toggle.dropdown-toggle-split
-            border-left: 0
-            +border-radius(0 4px 4px 0)
-            &:after
-              display: none
-
-        .gallery-body
-          .img-container
-            position: relative
-            .control-buttons
-              position: absolute
-              width: 24px
-              right: 10px
-              top: 10px
-              .btn-group
-                display: block
-                margin-bottom: 10px
-                line-height: 0
-                .btn
-                  padding: 0
-                  width: 24px
-                  height: 24px
-                  line-height: 0
-                  padding: 1px
-                  margin: 0
-                  &:first-child
-                    +border-radius(4px 4px 0 0)
-                  &:last-child
-                    +border-radius(0 0 4px 4px)
-                  &:last-child:first-child
-                    +border-radius(4px)
-
-        .version-header,
-        .gallery-header
-          font-size: 13px
-          font-weight: 500
-          line-height: 40px
-          background: #F0F1F3
-          padding: 0 10px
-          border-bottom: 1px solid #DBDBDB
-        .sheet-header
-          position: relative
-          padding: 0 10px
-          [class*='col-']
-            line-height: 38px
-            > *
-              display: inline-block
-              vertical-align: middle
-            .btn-icon
-              vertical-align: middle
-              padding: 2px
-              width: 24px
-              height: 24px
-              line-height: 0
-              border: 1px solid $gray
-              &.active
-                border: 1px solid $green
-                box-shadow: 0 0 2px 0 transparentize($green, .51)
-          .divider
-            vertical-align: middle
-            display: inline-block
-            width: 1px 
-            height: 24px
-            margin: 0 10px
-            background: #FEFDFD
-            border-right: 1px solid #E1E3E5
-        .sheet
-          flex: 1
-          display: flex
-          overflow-x: hidden
-          box-sizing: border-box
-          flex-direction: column
-          #spreadsheet
-            flex: 1
-        .sidebar
-          position: relative
-          width: 200px
-          max-height: 100%
-          display: flex
-          flex-direction: column
-          overflow-x: hidden
-          overflow-y: auto
-
-          > div:first-child
-            flex: 1
-
-          .drag-bar 
-            position: absolute
-            width: 10px
-            height: 100%
-            left: 0
-            top: 0
-            height: 100%
-            cursor: ew-resize
-          .gallery-body
-            padding: 10px
-          .photo-container
-            .img
-              max-width: 100%
-              line-height: 0
-              display: block
-            .control 
-              display: block
-              color: #FFF
-              background: $black
-              font-size: 13px
-              padding: 5px 10px
-              text-align: center
-              > *
-                text-align: center
-              .prev, .next
-                margin: 0 5px
-                color: $gray
-              .text
-                font-weight: 600
-
-          
   .speices-item
     margin-bottom: 20px
     .circle
@@ -424,6 +245,389 @@
         .sub-item
           margin-top: 20px
 
+.page-sheet
+  padding: 0
+  display: flex 
+  flex-direction: column
+  width: calc(100vw - 248px)
+  
+  form.form.filter-form
+    font-size: 13px
+    padding-bottom: 0px
+    
+    > .row > div[class*="col-"]
+      &:not(:last-child):before
+        content: ""
+        position: absolute
+        width: 1px 
+        height: 90%
+        display: block
+        right: 0
+        background: $border-gray
+
+      .row 
+        margin: 0 -5px
+      .row > div[class*='col-']
+        padding-left: 5px
+        padding-right: 5px
+
+    .form-group
+      font-size: 13px
+      margin-bottom: 10px
+      label:not(.btn)
+        line-height: 30px
+    .v-select .open-indicator
+      margin-top: 5px
+    .v-select .selected-tag
+      line-height: 1
+      padding: 0 10px
+      height: 24px
+
+    .v-select .vs__selected-options > input[type=search], 
+    .v-select .vs__selected-options > input[type=search]:focus,
+    .dropdown.v-select.single.searchable .dropdown-toggle .form-control,
+    .mx-datepicker .mx-input-wrapper .mx-input,
+    .time-picker input.display-time,
+    .time-picker .clear-btn
+      height: 30px
+      line-height: 30px
+      vertical-align: top
+    .time-picker .clear-btn
+      margin: 0
+
+    .input-group .input-group-append
+      width: 30px
+      height: 30px
+      line-height: 30px
+
+  .search-filters
+    div[class*="col-"]:not(:last-child):before
+      content: ""
+      position: absolute
+      width: 1px 
+      height: 90%
+      display: block
+      right: 0
+      background: $border-gray
+
+    .item 
+      font-size: 13px
+      margin-bottom: 10px
+
+      label
+        float: left
+        text-align: right
+        color: $gray
+        width: 70px
+      .content 
+        display: block
+        margin-left: 70px
+
+      &.short-label > label 
+        width: 50px
+        + .content
+          margin-left: 50px
+      &.long-label > label 
+        width: 100px
+        + .content
+          margin-left: 100px
+
+  .edit-container
+    padding: 10px 20px
+    color: $gray
+    background: $black
+    font-size: 13px
+    span 
+      vertical-align: middle
+    .btn
+      vertical-align: middle
+    .btn.btn-circle
+      width: 32px
+      height: 32px
+      line-height: 32px
+      text-align: center
+      margin-top: -2px
+      padding: 5px 0 0 1px
+      border: 0
+      vertical-align: middle
+      background: rgba(255,255,255,.3)
+      +border-radius(16px)
+    span.divider
+      display: inline-block 
+      width: 1px
+      height: 30px
+      background: #D3D6D9
+      opacity: .5
+      margin: 0 10px
+
+  .search-container
+    background: #FFF
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.3)
+    z-index: 120
+    
+    .btn-orange 
+      min-width: 120px
+    .search-content
+      background: #FFF
+      padding: 20px 20px 10px
+    
+  .sheet-container
+    flex: 1
+    display: flex 
+    flex-wrap: wrap
+    
+    .btn-group.btn-grayscale
+      .btn.btn-sm
+        vertical-align: middle
+        border-color: $gray
+        line-height: 20px
+        > *
+          vertical-align: middle
+        .icon
+          margin-right: 4px
+        .text
+          padding-right: 5px
+          border-right: 1px solid transparentize($gray, .8)
+      &.active > .btn.btn-sm
+        border-color: $green
+        color: $green
+      .btn:first-child
+        border-right: 0
+        +border-radius(4px 0 0 4px)
+      .dropdown-toggle.dropdown-toggle-split
+        border-left: 0
+        +border-radius(0 4px 4px 0)
+        &:after
+          display: none
+
+    .gallery-body
+      -webkit-touch-callout: none
+      -webkit-user-select: none
+      -khtml-user-select: none
+      -moz-user-select: none
+      -ms-user-select: none
+      user-select: none
+      .img-container
+        position: relative
+        padding-bottom: 75%
+        display: block
+        overflow: hidden
+        
+        > img 
+          left: -100%
+          right: -100%
+          top: -100%
+          bottom: -100%
+          margin: auto
+          max-width: none !important
+          position: absolute
+          cursor: all-scroll
+          transform-origin: 50%
+          transition: width .3s ease
+          -webkit-touch-callout: none
+          -webkit-user-select: none
+          -khtml-user-select: none
+          -moz-user-select: none
+          -ms-user-select: none
+          user-select: none
+        .control-buttons
+          position: absolute
+          width: 24px
+          right: 10px
+          top: 10px
+          .btn-group
+            display: block
+            margin-bottom: 10px
+            line-height: 0
+            .btn
+              padding: 0
+              width: 24px
+              height: 24px
+              line-height: 0
+              padding: 1px
+              margin: 0
+              &:first-child
+                +border-radius(4px 4px 0 0)
+              &:last-child
+                +border-radius(0 0 4px 4px)
+              &:last-child:first-child
+                +border-radius(4px)
+
+    .version-header,
+    .gallery-header
+      font-size: 13px
+      font-weight: 500
+      line-height: 40px
+      background: #F0F1F3
+      padding: 0 10px
+      border-bottom: 1px solid #DBDBDB
+    
+    .sheet-footer
+      height: 40px
+      line-height: 40px
+      font-size: 13px
+      padding: 0 20px
+      .select
+        display: inline-block
+        vertical-align: middle
+        margin: 0 5px
+        width: 64px
+        height: 24px
+        font-size: 13px
+        overflow: hidden
+        border: 1px solid #E1E3E5
+        background: #FFF right 10px center url(/assets/common/caret@2x.png) no-repeat
+        background-size: 14px
+        +border-radius(2px)
+        select.form-control
+          border: 0
+          font-size: 13px
+          width: 80px
+          height: 24px
+          background: transparent
+      .pager
+        margin: 8px 20px 0 0
+        .input-group-prepend,
+        .input-group-append
+          button 
+            background: #FFF
+            border: 1px solid #E1E3E5
+        input.form-control
+          font-size: 13px
+          width: 40px
+          height: 24px
+          color: $black
+          text-align: center
+          outline: 0
+          &:focus 
+            outline: 0
+            border-color: #6B6A6B
+
+    .sheet-header
+      position: relative
+      padding: 0 10px
+      [class*='col-']
+        line-height: 38px
+        > *
+          display: inline-block
+          vertical-align: middle
+        .btn-icon
+          vertical-align: middle
+          padding: 2px
+          width: 24px
+          height: 24px
+          line-height: 0
+          border: 1px solid $gray
+          &.active
+            border: 1px solid $green
+            box-shadow: 0 0 2px 0 transparentize($green, .51)
+      .divider
+        vertical-align: middle
+        display: inline-block
+        width: 1px 
+        height: 24px
+        margin: 0 10px
+        background: #FEFDFD
+        border-right: 1px solid #E1E3E5
+    .sheet
+      flex: 1
+      display: flex
+      overflow-x: hidden
+      box-sizing: border-box
+      flex-direction: column
+      #spreadsheet
+        flex: 1
+    .sidebar
+      position: relative
+      width: 200px
+      max-height: 100%
+      display: flex
+      flex-direction: column
+      overflow-x: hidden
+      overflow-y: auto
+
+      > div:first-child
+        flex: 1
+
+      .drag-bar 
+        position: absolute
+        width: 10px
+        height: 100%
+        left: 0
+        top: 0
+        height: 100%
+        cursor: ew-resize
+      .version-body
+        width: 100%
+        overflow-x: auto
+        margin: 0
+        table.table tr td 
+          white-space: nowrap
+      .gallery-body
+        padding: 10px
+      .photo-container
+        .img
+          max-width: 100%
+          line-height: 0
+          display: block
+        .control 
+          display: block
+          color: #FFF
+          background: $black
+          font-size: 13px
+          padding: 5px 10px
+          text-align: center
+          > *
+            text-align: center
+          .prev, .next
+            margin: 0 5px
+            color: $gray
+          .text
+            font-weight: 600
+
+.page-search
+  .page-sheet
+    width: 100%
+  .green-block
+    padding: 10px 20px
+    border: 1px solid transparentize(#8AC731, .68)
+    background: #E9F2DE
+  .gray-block
+    padding: 20px
+    margin-bottom: 20px
+    background: #F3F2F2
+    display: flex
+    flex-direction: row
+    align-content: cetner
+    align-items: cetner
+    .form-content
+      flex: 1
+    .form-action
+      width: 44px
+      padding-left: 20px
+      align-self: center
+
+.page-upload
+  > .container
+    padding-top: 20px
+    padding-bottom: 20px
+
+  .upload-container
+    margin-top: 20px
+  .upload-area
+    height: 440px
+    padding-top: 105px
+    margin-top: 10px
+    background: #FFF 
+    border: 2px dashed #9B9B9B
+    +border-radius(4px)
+  .upload-list-container
+    margin-top: 10px
+    background: #FFF 
+    +border-radius(4px)
+    box-shadow: 0 2px 4px 0 transparentize(#002E14, .88)
+
+
 .page-login
   a.text-green
     text-decoration: none
@@ -431,9 +635,47 @@
 
   
 .page-article
+  ul.contact-list
+    margin: 0
+    padding: 0
+    list-style: none
+    li 
+      margin-bottom: 10px
+      a 
+        color: $gray
+        cursor: pointer
+        height: 30px
+        line-height: 30px
+        padding: 0 10px
+
+        &:before 
+          content: ""
+          display: inline-block
+          vertical-align: middle
+          width: 8px
+          height: 8px
+          margin-right: 10px
+          +border-radius(8px)
+          background: $gray
+
+        &:hover,
+        &:focus
+          color: $black
+
+      &.active > a 
+        color: $green
+        &:before 
+          background: $green
+
   article
     padding: 20px
     margin: 20px 0
     background: #FFF
     box-shadow: 0 1px 3px 0 rgba(0,0,0,.35)
     
+
+.page-setting
+  .gray-block
+    padding: 10px 20px
+    line-height: 1.5
+    background: #F3F2F2

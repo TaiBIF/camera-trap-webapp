@@ -44,9 +44,8 @@
                 黃智賢
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
+                <a class="dropdown-item" href="setting.html#/">設定</a>
+                <a class="dropdown-item" href="#">登出</a>
               </div>
             </div>
           </div>

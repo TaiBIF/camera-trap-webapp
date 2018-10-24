@@ -9,6 +9,34 @@ module.exports = {
       title: 'Index Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'index']
     },
+    search: {
+      entry: 'src/pages/search/main.js',
+      template: 'public/search.html',
+      filename: 'search.html',
+      title: 'Search Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
+    upload: {
+      entry: 'src/pages/upload/main.js',
+      template: 'public/upload.html',
+      filename: 'upload.html',
+      title: 'Upload Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
+    history: {
+      entry: 'src/pages/history/main.js',
+      template: 'public/history.html',
+      filename: 'history.html',
+      title: 'history Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
+    setting: {
+      entry: 'src/pages/setting/main.js',
+      template: 'public/setting.html',
+      filename: 'setting.html',
+      title: 'Setting Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
     article: {
       entry: 'src/pages/article/main.js',
       template: 'public/article.html',
@@ -21,13 +49,6 @@ module.exports = {
       template: 'public/login.html',
       filename: 'login.html',
       title: 'Login Page',
-      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
-    },
-    dummy: {
-      entry: 'src/pages/dummy/main.js',
-      template: 'public/dummy.html',
-      filename: 'dummy.html',
-      title: 'dummy Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'intro']
     },
     // when using the entry-only string format,

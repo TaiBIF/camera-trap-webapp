@@ -6,6 +6,9 @@ html, body
   min-height: 100vh
   background: #F9FBFA
 
+  &.page-lock
+    overflow: hidden
+
 *
   box-sizing: border-box
 
@@ -34,10 +37,24 @@ a:link
   &:focus 
     text-decoration: underline !important
 
+.alert-box 
+  content: "!"
+  color: #FFF
+  text-align: center
+  width: 14px 
+  height: 14px
+  line-height: 14px
+  font-size: 11px
+  background: $red
+  margin-right: 5px
+  display: inline-block
+  vertical-align: middle
+
 a.link,
 .link 
   color: #2A7F60 !important
   text-decoration: none
+  cursor: pointer
 
   &:hover,
   &:focus 
@@ -54,11 +71,18 @@ a.link,
   
 .text-green 
   color: $green !important
+  
+.text-orange 
+  color: $orange !important
 
 .text-muted,
 .text-gray 
   color: $gray !important
   
+.time-picker
+  width: 100% !important
+  input.display-time
+    width: 100% !important
 
 *[role="button"] 
   cursor: pointer !important

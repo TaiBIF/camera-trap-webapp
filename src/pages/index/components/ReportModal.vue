@@ -27,7 +27,7 @@
             </div>
             <div class="form-group row">
               <label for="" class="col-3 px-0 text-right required">異常資料時間：</label>
-              <div class="col-4 input-group-inline">
+              <div class="col-6 input-group-inline">
                 <div class="input-group">
                   <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
                   <div class="input-group-append">

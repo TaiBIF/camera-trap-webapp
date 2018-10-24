@@ -1,0 +1,34 @@
+.tab
+  ul.nav-tab 
+    display: flex
+    list-style: none
+    margin: 0
+    padding: 0
+    > li 
+      flex: 1
+      > a 
+        font-size: 20px
+        display: block
+        color: $black
+        height: 50px
+        font-weight: 400
+        text-align: center
+        background: #FFF 
+        padding: 11px 20px 10px
+        box-shadow: inset 2px 0 4px 0 transparentize(#42522B, .8)
+        border-top: 0px solid transparent
+        +border-radius(4px 4px 0 0)
+      
+      &.active > a, 
+      &.active > a:hover,
+      &.active > a:focus
+        color: #000
+        font-weight: 500
+        border-top: 3px solid $light-green
+        box-shadow: inset 0px 0 0px 0 transparentize(#42522B, 0)
+
+  .tab-content
+    .tab-pane
+      padding: 40px
+      background: #FFF
+      box-shadow: 0 2px 4px 0 transparentize(#AABFB5, .6)

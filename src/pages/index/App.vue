@@ -6,8 +6,7 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav main-nav">
             <li class="nav-item"><a class="nav-link active" role="button" href="./index.html#/">專案總覽 <span class="sr-only">(current)</span></a></li>
-            <li class="nav-item"><a class="nav-link" role="button" href="./search.html">資料搜尋</a></li>
-            <li class="nav-item"><a class="nav-link" role="button" href="#">範本下載</a></li>
+            <li class="nav-item"><a class="nav-link" role="button" href="./search.html">篩選及下載</a></li>
             <li class="nav-item"><a class="nav-link" role="button" href="./history.html">上傳紀錄</a></li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">幫助</a>
@@ -44,17 +43,18 @@
                 黃智賢
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
+                <a class="dropdown-item" href="setting.html#/">設定</a>
+                <a class="dropdown-item" href="#">登出</a>
               </div>
             </div>
           </div>
         </div>
       </nav>
     </header>
+    
     <main class="page-project">
       <aside v-if="asideElem.indexOf($route.name)==-1">
+        <!-- Render Project structure -->
         <router-link to="/" class="aside-header">
           <i class="fa fa-chevron-left"></i> 返回計畫總覽
         </router-link>
@@ -65,7 +65,9 @@
         </div>
         <tree-menu :items="project.children" :defaultOpenLevel="1" />
       </aside>
+
       <router-view/>
+
     </main>
   </div>
 </template>
@@ -181,8 +183,17 @@ export default {
   components: {TreeMenu},
   data() {
     return {
-      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense'],
+      // 側選單不顯示的 Router name 
+      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription'],
       project: project
+    }
+  },
+  watch: {
+    '$router': "fetchData"
+  },
+  methods: {
+    fetchData() {
+      // let projectID = this.$router.params.id
     }
   }
 }

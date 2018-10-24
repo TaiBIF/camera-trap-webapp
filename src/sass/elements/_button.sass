@@ -24,6 +24,13 @@ a.btn:link,
     border: 1px solid $border-gray
     box-shadow: 0 2px 2px 0px rgba(165, 172, 170, .15)
 
+  &.btn-orcid 
+    background: #F3F2F2
+    border: 1px solid #E1E3E5
+    color: $green
+    line-height: 36px
+    text-decoration: underline !important
+
   &.btn-block
     display: block
     margin: 0
@@ -75,18 +82,26 @@ a.btn:link,
   &.btn-upload
     position: relative
     overflow: hidden
-    border-color: $light-green
+    border: 1px solid $green
     input 
       display: none
     .text
       color: $green
 
   &[disabled],
-  &.btn-disabled
+  &.btn-disabled,
+  &[disabled]:hover,
+  &.btn-disabled:hover,
+  &[disabled]:focus,
+  &.btn-disabled:focus,
+  &[disabled]:active,
+  &.btn-disabled:active
     color: $gray
     border: 1px solid #E1E3E5
     background: #F3F2F2
-
+    
+button.btn
+  line-height: 37px
 
 .btn-group
   display: inline-block

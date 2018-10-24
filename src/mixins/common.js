@@ -1,3 +1,5 @@
+import { mapActions } from "vuex";
+
 export const commonMixin = {
   data() {
     return {
@@ -6,6 +8,17 @@ export const commonMixin = {
     }
   },
   methods: {
+    ...mapActions([
+      'setPageLock'
+    ]),
+    modalOpen(key) {
+      this.setPageLock(true)
+      this[key] = true
+    },
+    modalClose(key) {
+      this.setPageLock(false)
+      this[key] = false
+    },
     removePreview() {
       this.previewImg = null
     },

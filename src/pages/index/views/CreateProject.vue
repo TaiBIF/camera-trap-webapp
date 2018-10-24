@@ -116,7 +116,7 @@
           </div>
 
           <div class="action">
-            <router-link to="/overview" class="btn btn-default">取消</router-link>
+            <router-link to="/" class="btn btn-default">取消</router-link>
             <button type="submit" @click.stop.prevent="nextStep()" class="btn btn-orange">下一步</button>
           </div>
         </form>
@@ -217,7 +217,7 @@
           </div>
 
           <div class="action">
-            <router-link to="/overview" class="btn btn-default">取消</router-link>
+            <router-link to="/" class="btn btn-default">取消</router-link>
             <button type="submit" @click.stop.prevent="doSubmit()" class="btn btn-orange">新增計畫</button>
           </div>
         </form>

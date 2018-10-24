@@ -1,13 +1,25 @@
 form.form 
+
+  .action
+    .btn 
+      vertical-align: top
+    button[type="submit"],
+    .btn-orange
+      min-width: 120px
+
   .form-group
     margin-bottom: 20px
 
     .note 
-      margin-top: 15px
+      margin-top: 10px
 
     label:not(.btn)
       text-align: right
       line-height: 38px
+
+      span
+        vertical-align: middle
+
       &.required:before
         content: "*"
         display: inline-block
@@ -112,6 +124,13 @@ form.form
   display: inline-flex
   align-content: center
   align-items: center
+
+  > label
+    align-self: start !important
+
+  .checkbox.checkbox-inline
+    margin-bottom: 0
+
   .icon-note
     margin-left: 15px
   > * 

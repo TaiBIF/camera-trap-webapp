@@ -36,7 +36,7 @@
               </div>
             </div>
             <div class="col-4 text-center pt-5 divider">
-              <a href="#" class="btn btn-orange">
+              <a href="upload.html#/" class="btn btn-orange">
                 <i class="fa fa-upload mr-2"></i>
                 <span class="text">檔案上傳</span>
               </a>
@@ -68,7 +68,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-5 col-md-4" v-if="mapMode=='camera'">
+                <div class="col-sm-5 col-md-4" v-if="currentSite.child">
                   <div class="form-group row mb-0">
                     <label class="col-5 text-right">
                       子樣區：
@@ -81,10 +81,12 @@
               </div>
               <div class="row map-container">
                 <div class="col-5">
-                  <l-map style="height: 520px" :zoom="mapInfo.zoom" :center="mapInfo.center" :options="mapInfo.options">
+                  <l-map style="height: 395px" :zoom="mapInfo.zoom" :center="mapInfo.center" :options="mapInfo.options">
                     <l-control-zoom :position="'topleft'" />
+
                     <l-tile-layer :url="mapInfo.url" :attribution="mapInfo.attribution" />
-                    <l-layer-group v-if="mapMode=='camera'" :className="'site-container'">
+                    
+                    <l-layer-group v-if="mapMode=='camera'" :className="'site-container'" layer-type="overlay" name="Layer Marker">
                       <l-marker v-for="(mark,idx) in mapInfo.marker" 
                       :key="`project-marker-${idx}`" 
                       :icon="mark.icon"
@@ -97,28 +99,42 @@
                       </l-marker>
                     </l-layer-group>
                     
-                    <l-layer-group v-if="mapMode=='project'">
+                    <l-layer-group v-if="mapMode=='project'" layer-type="overlay" name="Layer Circle">
                       <l-circle v-for="(mark,idx) in mapInfo.marker" 
                       :key="`project-circle-1${idx+1}`" 
                       :lat-lng="mark.marker"
                       :draggable="false"
-                      :radius="10000"
-                      :color="'green'"
-                      :fillColor="'green'"
+                      :radius=10000
+                      :fillColor="'#2A7F60'"
                       :fillOpacity="1"
-                      :strokeColor="'green'"
+                      :color="'rgba(42,127,96,.43)'"
                       @click="setCurrent(mark)">
                         <l-tooltip :content="mark.name"
                         :options="{permanent: true, direction: 'center'}"></l-tooltip>
                       </l-circle>
                     </l-layer-group>
 
+                    <l-layer-group v-if="showWoods" layer-type="overlay" name="Layer polyline">
+                      <l-polygon 
+                      v-for="item in polygon"
+                      :key="item.id"
+                      :lat-lngs="item.points"
+                      :fillColor="'rgba(255,140,35,.15)'"
+                      :stroke="1"
+                      :fillOpacity="1"
+                      :color="'#FFAF00'" />
+                    </l-layer-group>
+
                   </l-map>
+                  <div class="checkbox float-right mt-3     mb-0">
+                    <input type="checkbox" name="show-woods" id="show-woods" value="1" v-model="showWoods">
+                    <label for="show-woods">在地圖顯示林班地範圍</label>
+                  </div>
                 </div>
                 <div class="col-7">
                   <div class="row">
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-8">
-                      <h1 class="display-heading">{{ !currentSubSite ? currentSite.label : currentSubSite.label }}</h1>
+                      <h1 class="display-heading mt-1">{{ !currentSubSite ? currentSite.label : currentSubSite.label }}</h1>
                       <small class="sub-heading text-gray">最後更新時間：2018/08/16</small>
                     </div>
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-4 text-right">
@@ -235,6 +251,7 @@
           </div>
         </div>
       </div>
+      
     </div>
 
     <report-modal :open="errorReportOpen" @close="errorReportOpen=false" @submit="submitReport" />
@@ -243,7 +260,7 @@
 
 <script>
 import L from 'leaflet';
-import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon} from 'vue2-leaflet';
 import moment from 'moment';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
@@ -258,6 +275,15 @@ const Icon = L.icon({
     shadowAnchor: [31, 77]
 });
 
+const IconSelect = L.icon({
+    iconUrl: '/assets/common/marker-icon-select@2x.png',
+    iconSize: [66, 120],
+    iconAnchor: [33, 80],
+    popupAnchor: [-3, -76],
+    shadowSize: [66, 120],
+    shadowAnchor: [31, 77]
+});
+
 const ErrorIcon = L.icon({
     iconUrl: '/assets/common/marker-icon-error@2x.png',
     iconSize: [60, 109],
@@ -265,6 +291,15 @@ const ErrorIcon = L.icon({
     popupAnchor: [-3, -76],
     shadowSize: [66, 109],
     shadowAnchor: [33, 77]
+});
+
+const ErrorIconSelect = L.icon({
+    iconUrl: '/assets/common/marker-icon-error-select@2x.png',
+    iconSize: [66, 120],
+    iconAnchor: [30, 80],
+    popupAnchor: [-3, -80],
+    shadowSize: [66, 120],
+    shadowAnchor: [33, 80]
 });
 
 const ProjectMarkers = [
@@ -280,6 +315,7 @@ const ProjectMarkers = [
     name: '新竹處',
     project_id: 1,
     marker: L.latLng(24.753846,121.175827),
+    children: [],
     progress: [2,2,1,1,1,2,2,0,0,0,0,0]
   },
   {
@@ -392,6 +428,16 @@ export default {
       currentSubSite: null,
       siteStatusTab: 0,
       progressData: ProjectMarkers,
+      showWoods: false,
+      polygon: [
+        { id: 'p1',
+          points: [
+            {lat: 24.604577, lng: 121.608599},
+            {lat: 24.753846, lng: 121.175827},
+            {lat: 24.349130, lng: 121.164845}
+          ],
+          visible: true }
+      ],
       mapInfo: {
         zoom: 11,
         options: {
@@ -528,22 +574,16 @@ export default {
     }
   },
   components: {
-    LMap,
-    LTileLayer,
-    LControlZoom,
-    LMarker, LPopup,
-    LCircle, 
-    LTooltip,
+    LMap, LTileLayer, LControlZoom, LMarker, LPopup, LPolygon, LCircle, LTooltip, LLayerGroup,
     SiteChart,
     "v-chart": VueHighcharts,
-    LLayerGroup,
     ReportModal
   },
   watch: {
     "currentSite": "setCamera"
   },
   methods: {
-    submitReport(form) {
+    submitReport() {
       // send error data
     },
     setCamera(value) {
@@ -552,7 +592,8 @@ export default {
           this.currentCamera = null
           this.currentSubSite = value.child[0];
           this.progressData = SiteMarkers
-          this.mapInfo.center = SiteMarkers[0].marker
+          SiteMarkers[0].icon = SiteMarkers[0].error>0 ? IconSelect : ErrorIconSelect
+          this.mapInfo.center = window._.clone(SiteMarkers[0].marker)
           this.mapMode = 'camera';
         } else {
           this.currentCamera = null
@@ -560,25 +601,43 @@ export default {
           this.progressData = ProjectMarkers
           this.mapMode = 'project';
         }
+        this.renderMap();
+      }
+
+      if(this.mapMode=="camera") {
+        if(!value.child) {
+          let proj = ProjectMarkers.find(p => { return p.id==value.value})
+          this.currentCamera = null
+          this.currentSubSite = null;
+          this.progressData = ProjectMarkers
+          this.mapMode = 'project';
+          this.renderMap();
+          setTimeout(()=> { 
+            this.mapInfo.center = window._.clone(proj.marker) 
+          }, 100)
+          
+        }
       }
       
-      this.renderMap();
     },
     setCurrent(val) {
-      if(this.mapMode=='project') {
-        this.currentSite = this.sites.find((s) => { return s.value===val.id })
-        ProjectMarkers.forEach(r => {
-          if(r.id===val.id) {
-            this.mapInfo.center = L.latLng(r.marker.lat, r.marker.lng)
-          }
-        })
-      } 
-
       if(this.mapMode=='camera') {
+        SiteMarkers.forEach(site => {
+          site.icon = site.error ? ErrorIcon : Icon
+        })
+
         this.currentCamera = val
-        this.mapInfo.center = this.currentCamera.marker
+        this.currentCamera.icon = val.error ? ErrorIconSelect : IconSelect
+        this.mapInfo.center = window._.clone(this.currentCamera.marker)
         setTimeout(() => {this.loadBarChart()}, 200)
       }
+      
+      if(this.mapMode=='project') {
+        this.currentSite = this.sites.find((s) => { return s.value==val.id })
+        setTimeout(() => {
+          this.mapInfo.center = window._.clone(val.marker) 
+        }, 50)
+      } 
     },
     countPercentage(idx, array) {
       let total = 0,
@@ -611,12 +670,12 @@ export default {
       if(this.mapMode=='project') {
         this.mapInfo.zoom = 9
         this.mapInfo.marker = ProjectMarkers
-        this.mapInfo.center = ProjectMarkers[0].marker
+        this.mapInfo.center = window._.clone(ProjectMarkers[0].marker)
       } 
       if(this.mapMode=='camera') {
         this.mapInfo.zoom = 15
         this.mapInfo.marker = SiteMarkers
-        this.mapInfo.center = SiteMarkers[0].marker
+        this.mapInfo.center = window._.clone(SiteMarkers[0].marker)
       }
     }
   },

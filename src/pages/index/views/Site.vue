@@ -1,6 +1,7 @@
 <template>
-  <div class="maintain page-sheet">
+  <div class="maintain page-sheet p-0">
     <div class="search-container">
+      <!-- Edit mode -->
       <div v-if="editMode" class="edit-container">
         <div class="row">
           <div class="col-7">
@@ -19,6 +20,7 @@
           </div>
         </div>
       </div>
+      <!-- Overview mode -->
       <div v-else class="search-content">
         <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
           下載篩選結果
@@ -123,6 +125,34 @@
           </div>
         </div>
         <div id="spreadsheet"></div>
+        <!-- Pagination -->
+        <div class="sheet-footer">
+          <span class="text-gray">單頁顯示</span>
+          <span class="select">
+            <select name="" id="" class="form-control">
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+              <option value="1500">1500</option>
+            </select>
+          </span>
+          <span class="text-gray">筆資料，您正在檢視：</span>
+          <span>第 2001-3501 筆</span>
+          <div class="float-right">
+            <div class="input-group pager">
+              <div class="input-group-prepend">
+                <button>
+                  <i class="fa fa-caret-left"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control" value="1/10">
+              <div class="input-group-append">
+                <button>
+                  <i class="fa fa-caret-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="sidebar" :style="{'width': `${historyShow || galleryShow ? galleryWidth : 0}px`}">
         <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false && galleryShow">
@@ -143,26 +173,15 @@
             </div>
           </div>
           <div class="gallery-body" v-else>
-            <div class="img-container">
-              <img :src="row_data[currentRow].url" class="img">
-              <div class="control-buttons">
-                <div class="btn-group">
-                  <div class="btn btn-sm btn-basic"><i class="icon-plus"></i></div>
-                  <div class="btn btn-sm btn-basic"><i class="icon-minus"></i></div>
-                </div>
-                <div class="btn-group">
-                  <div class="btn btn-sm btn-basic"><i class="icon-expand"></i></div>
-                </div>
-              </div>
-            </div>
+            <zoom-drag :row="row_data[currentRow]" :index="currentRow" :total="row_data.length" />
             <div class="control">
-              <span class="prev">
+              <span class="prev" @click="currentRow>0 ? currentRow--: currentRow">
                 <i class="fa fa-caret-left"></i>
               </span>
               <span class="text">
                 {{row_data[currentRow].filename}} | {{row_data[currentRow].datetime}}
               </span>
-              <span class="prev">
+              <span class="prev" @click="currentRow>row_data.length-1?currentRow: currentRow++">
                 <i class="fa fa-caret-right"></i>
               </span>
             </div>
@@ -212,6 +231,7 @@ import DatePicker from 'vue2-datepicker'
 import VueTimepicker from 'vue2-timepicker'
 import Handsontable from 'handsontable'
 import 'handsontable/languages/all'
+import ZoomDrag from '../components/ZoomDrag'
 
 // debugger
 
@@ -224,6 +244,7 @@ export default {
       galleryShow: true,
       historyShow: true,
       isRender: false,
+      scaleSize: 1,
       galleryWidth: 450,
       isContinuous: false,
       continuousTime: 1,
@@ -244,6 +265,7 @@ export default {
       currentRow: 0,
       row_data: [],
       rowData: {},
+      // 連拍紀錄
       continuousCount: 0,
       continuousStart: false,
       continuous: {
@@ -407,16 +429,21 @@ export default {
       isDrag: false,
     }
   },
+  watch: {
+    'currentRow': 'recordUpdate'
+  },
   components: {
-    DatePicker, VueTimepicker
+    DatePicker, VueTimepicker, ZoomDrag
   },
   methods: {
+    recordUpdate() {
+      
+    },
     dragStart () {
       this.isDrag = true
     },
     dragMove (e) {
       if(!this.isDrag) return
-
       this.galleryWidth = window.innerWidth - e.pageX 
     },
     dragEnd () {
@@ -427,9 +454,10 @@ export default {
         
         let clsName = ''
         let $row = this.row_data[row]
-        
+        let error = ''
         if(this.species.indexOf(value)===-1 && value.indexOf('測試')===-1) {
           clsName += "htInvalid "
+          error = '<span class="alert-box">!</span>'
         }
         if(this.isContinuous) {
           // debugger
@@ -450,7 +478,8 @@ export default {
           }
         }
 
-        TD.innerHTML = value
+        TD.dataset.tooltip = "物種不在預設中"
+        TD.innerHTML = value + error
         TD.className = clsName
       }
     },
@@ -573,7 +602,7 @@ export default {
     },
     settingSheetHeight() {
       let sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
-      this.settings.height = sheetHeight - 40
+      this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
       if(this.isRender) 
