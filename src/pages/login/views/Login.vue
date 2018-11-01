@@ -19,7 +19,7 @@
               </router-link>
             </div>
             <div class="text-gray">
-              還沒有帳號？ <a href="#" class="text-green" target="_blank">前往 <i class="icon align-baseline icon-orcid-text"></i> 網頁註冊</a>
+              還沒有帳號？ <a href="https://orcid.org/register" class="text-green" target="_blank">前往 <i class="icon align-baseline icon-orcid-text"></i> 網頁註冊</a>
             </div>
             <hr class="mt-5">
             <div class="text-center">
