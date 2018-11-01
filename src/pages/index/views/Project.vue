@@ -87,6 +87,7 @@
                     <l-tile-layer :url="mapInfo.url" :attribution="mapInfo.attribution" />
                     
                     <l-layer-group v-if="mapMode=='camera'" :className="'site-container'" layer-type="overlay" name="Layer Marker">
+                      <!-- 相機樣點座標 -->
                       <l-marker v-for="(mark,idx) in mapInfo.marker" 
                       :key="`project-marker-${idx}`" 
                       :icon="mark.icon"
@@ -100,6 +101,7 @@
                     </l-layer-group>
                     
                     <l-layer-group v-if="mapMode=='project'" layer-type="overlay" name="Layer Circle">
+                      <!-- 樣站範圍，待實際資料取得後微調 -->
                       <l-circle v-for="(mark,idx) in mapInfo.marker" 
                       :key="`project-circle-1${idx+1}`" 
                       :lat-lng="mark.marker"
@@ -115,6 +117,7 @@
                     </l-layer-group>
 
                     <l-layer-group v-if="showWoods" layer-type="overlay" name="Layer polyline">
+                      <!-- 林班地座標 -->
                       <l-polygon 
                       v-for="item in polygon"
                       :key="item.id"
@@ -266,6 +269,8 @@ import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
 
+
+// 設定未選擇/已選擇 Icon
 const Icon = L.icon({
     iconUrl: '/assets/common/marker-icon@2x.png',
     iconSize: [60, 109],
@@ -308,6 +313,7 @@ const ProjectMarkers = [
     name: '羅東處',
     project_id: 1,
     marker: L.latLng(24.604577,121.608599),
+    // 每月進度，透過 API 取得月份狀態 0: 無資料，1:未完成，2:已完成， -1: 已取消
     progress: [2,1,-1,-1,-1,-1,-1,-1,-1,0,0,0]
   },
   {
@@ -394,6 +400,7 @@ const PieChart = {
     { name: '其他', y: 208 }
   ]
 }
+
 const BarChart = {
   name: "每月影像筆數",
   data: [
@@ -417,19 +424,19 @@ export default {
   data() {
     return {
       today: moment(),
-      currentDuration: 2018,
-      currentSite: {
+      currentDuration: 2018, // 紀錄目前顯示的年份
+      currentSite: {  // 紀錄目前顯示的樣站，格式需轉成 vue-select 的格式
         value: 0,
         label: '全部樣區'
       },
-      currentCamera: null,
+      currentSubSite: null,  // 紀錄目前顯示的子樣站
+      currentCamera: null, // 紀錄目前顯示的相機
       errorReportOpen: false,
-      mapMode: "project",
-      currentSubSite: null,
-      siteStatusTab: 0,
-      progressData: ProjectMarkers,
-      showWoods: false,
-      polygon: [
+      mapMode: "project",  // 目前顯示的圖表層級
+      siteStatusTab: 0, // 資料格式
+      progressData: ProjectMarkers, // 取得每月繳交資訊
+      showWoods: false, // 是否顯示林班地
+      polygon: [  // 林班地資料示意
         { id: 'p1',
           points: [
             {lat: 24.604577, lng: 121.608599},
@@ -448,6 +455,7 @@ export default {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         marker: []
       },
+      // vue-select 使用的樣站資訊
       sites: [
         {
           value: 0,
@@ -489,8 +497,10 @@ export default {
         }
       ],
       species: PieChart.data,
+      // 共用圖表顏色
       chartColors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
       currentTab: 0,
+      // 長條圖設定
       barOption: {
         chart: {
           type: 'column',
@@ -506,6 +516,7 @@ export default {
           backgroundColor: 'rgba(0,0,0,.8)',
           useHTML: true,
           pointFormatter: function() {
+            // 顯示錯誤數
             return `
               <div>
                 <span class="red label float-right ${this.error==0 ? 'd-none': 'd-inline-block'}">${this.error}筆異常</span>
@@ -532,6 +543,7 @@ export default {
         },
         series: null
       },
+      // 圓餅圖設定
       pieOption: {
         chart: {
           backgroundColor: 'transparent',
@@ -587,11 +599,13 @@ export default {
       // send error data
     },
     setCamera(value) {
+      // 判斷顯示層級，帶入樣站或相機
       if(this.mapMode == 'project') {
         if(!value.child==false && value.child.length) {
           this.currentCamera = null
           this.currentSubSite = value.child[0];
           this.progressData = SiteMarkers
+          // 設定地圖要顯示的 Icon
           SiteMarkers[0].icon = SiteMarkers[0].error>0 ? IconSelect : ErrorIconSelect
           this.mapInfo.center = window._.clone(SiteMarkers[0].marker)
           this.mapMode = 'camera';
@@ -621,6 +635,7 @@ export default {
       
     },
     setCurrent(val) {
+      // 判斷顯示層級，帶入樣站或相機
       if(this.mapMode=='camera') {
         SiteMarkers.forEach(site => {
           site.icon = site.error ? ErrorIcon : Icon
@@ -650,6 +665,7 @@ export default {
 
       return (100 * (current / total)).toFixed(1);
     },
+    // 更新圖表
     loadBarChart() {
       let barCharts = this.$refs.barCharts;
       barCharts.removeSeries()
@@ -659,6 +675,7 @@ export default {
       let pieCharts = this.$refs.pieCharts;
       pieCharts.addSeries(PieChart);
     },
+    // 切換顯示年份
     changeDuration(count) {
       if(this.currentDuration==this.today.year() && count>0) {
         return
@@ -666,6 +683,7 @@ export default {
       this.currentDuration += count
       // get New Data
     },
+    // 根據層級切換地圖顯示大小
     renderMap() {
       if(this.mapMode=='project') {
         this.mapInfo.zoom = 9

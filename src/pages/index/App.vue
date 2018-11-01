@@ -184,7 +184,7 @@ export default {
   data() {
     return {
       // 側選單不顯示的 Router name 
-      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription'],
+      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription','photoTag'],
       project: project
     }
   },

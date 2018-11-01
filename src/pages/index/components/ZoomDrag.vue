@@ -69,14 +69,17 @@ export default {
   },
   methods: {
     openLightBox() {
+      // 打開 Lightbox
       this.lightBoxOpen = true
     },
     onDragStart(e) {
+      // 紀錄圖片起始拖拉位置
       this.isDrag = true;
       this.coordinate.x = e.clientX
       this.coordinate.y = e.clientY
     },
     onDrag(e) {
+      // 圖片拖拉位置更新
       if(!this.isDrag || this.scaleSize==1) return;
 
       let el = this.$el,
@@ -101,10 +104,8 @@ export default {
       img.style.transform = `translate(${this.currentCoordinate.x}px, ${this.currentCoordinate.y}px)`
 
     },
-    onDragEnd(e) {
-      let el = this.$el,
-          img = this.$el.querySelector('#img-preview');
-      
+    onDragEnd() {
+      // 記錄最後拖拉座標
       this.lastCoordinate = {
         x: this.currentCoordinate.x,
         y: this.currentCoordinate.y
@@ -113,7 +114,11 @@ export default {
       this.isDrag = false;
     },
     changeScale(type) {
-      let img = this.$el.querySelector('#img-preview');
+      // 取得目前圖片尺寸，以 +- 50% 比例縮放
+      let img = this.$el.querySelector('#img-preview'),
+          container = this.$el;
+      this.originWidth = this.src!=='' ? container.clientWidth : 0;
+      this.currentWidth = this.src!=='' ? container.clientWidth : 0;
       
       if(type=='increase') 
         this.scaleSize = this.scaleSize + 0.5;
@@ -123,6 +128,7 @@ export default {
       img.style.width = (this.originWidth * this.scaleSize) + 'px';
     },
     updateImgWidth() {
+      // Sheet 切換列表時更新圖片和尺寸
       let img = this.$el.querySelector('#img-preview'),
           container = this.$el;
 

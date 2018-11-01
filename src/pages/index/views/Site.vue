@@ -186,7 +186,9 @@
               </span>
             </div>
             <div class="text-right my-2">
-              <div class="btn btn-sm btn-default">進階標註</div>
+              <router-link :to="`/project/${$route.params.id}/site/${$route.params.site_id}/photo/1`" class="btn btn-sm btn-default">
+                進階標註
+              </router-link>
             </div>
           </div>
         </div>
@@ -273,6 +275,8 @@ export default {
         current: 0,
         total: 0
       },
+      updateRow: {},
+      // [API] 需要透過 API 帶入常用分類
       species: ["測試", "空拍", "山羌", "鼬獾", "台灣獼猴", "水鹿", "白鼻心"],
       contextMenuSetting: {
         callback: (key, selection) => {
@@ -280,12 +284,14 @@ export default {
           let row = this.row_data[idx]
           
           switch(key) {
+            // 設定連拍
             case 'setContinuous':
               this.settings.data[idx].is_continuous = true
               break;
             case 'stopContinuous':
               this.settings.data[idx].is_continuous = false
               break;
+            // 複製一列
             case 'clone':
               this.row_data.splice(idx, 0, window._.cloneDeep(row))
               this.row_data = this.setContinuous(this.row_data)
@@ -420,6 +426,16 @@ export default {
         filters: true,
         contextMenu: false,
         dropdownMenu: true,
+        afterChange: (changes) => {
+          if(!changes) return;
+          // chagnes: [[index, column, old value, new value]]
+          // updateRow 紀錄有更新的欄位
+          changes.forEach(change => {
+            let idx = change[0] 
+            if(!this.updateRow[idx]) this.updateRow[idx] = {}
+            this.updateRow[idx][change[1]] = change[3]
+          })
+        },
         afterSelectionEnd: (r) => {
           this.currentRow = r
         }
@@ -455,16 +471,20 @@ export default {
         let clsName = ''
         let $row = this.row_data[row]
         let error = ''
+
+        // 不在預設物種資料顯示錯誤
         if(this.species.indexOf(value)===-1 && value.indexOf('測試')===-1) {
           clsName += "htInvalid "
           error = '<span class="alert-box">!</span>'
         }
+
+        // 是否為連拍照片
         if(this.isContinuous) {
-          // debugger
           if($row.is_continuous) {
             clsName += "is-continuoust"
           }
 
+          // 是否與連拍分離
           if($row.is_continuous_apart) {
             clsName += " is-continuous-apart"
           }
@@ -478,12 +498,14 @@ export default {
           }
         }
 
+        // 設定錯誤提示文字
         TD.dataset.tooltip = "物種不在預設中"
         TD.innerHTML = value + error
         TD.className = clsName
       }
     },
     setCurrentContinuous () {
+      // 取得目前資料的連拍資訊
       let row = this.row_data[this.currentRow];
 
       if(!row.is_continuous)  
@@ -500,11 +522,13 @@ export default {
         }
     },
     renderContinuous() {
+      // 切換連拍狀態
       this.isContinuous = !this.isContinuous
       this.setContinuous()
     },
     setContinuous(data) {
       let row_data = !data ? this.row_data : data
+      // 判斷連拍
       row_data.forEach((r, i) => {
         let $row = r;
         let current = r.datetime
@@ -522,6 +546,7 @@ export default {
           $row.is_continuous_apart = false
         }
 
+        // 排除測試、空拍
         if(
           !n_dt==false && 
           (n_dt - c_dt <= time  || !p_dt==false && c_dt - p_dt <= time) && 
@@ -530,34 +555,33 @@ export default {
           isContinue = true;
           $row.is_continuous = true;
           this.continuousCount++;
-          // result += " is-continuous ";
         }
 
-        // detect is continuous start
+        // 是不是連拍第一張
         if(isContinue && !p_dt && n_dt - c_dt <= time || c_dt - p_dt >= time) {
           isStart = true;
           this.continuousCount = 1;
           this.continuousStart = i;
           $row.is_continuous_start = true;
-          // $row += " is-continuous-start ";
         }
         
         $row.current_continuous = this.continuousCount;
         $row.continuous_start = this.continuousStart;
-        // detect is continuous end
+        
+        // 是不是連拍最後一張
         if(isContinue && !n_dt && c_dt - p_dt <= time || n_dt - c_dt >= time) {
           isEnd = true;
           $row.is_continuous_end = true;
           
           row_data[this.continuousStart].continuous_count = this.continuousCount;
           this.continuousCount = 0;
-          // $row += " is-continuous-end ";
         }
       });
 
       return row_data
     },
     getSheetData () {
+      // 取得 csv 資料，並轉成 json
       this.$http.get('/csv/HC21A.csv').then((response) => {
         var data = [];
         
@@ -580,19 +604,22 @@ export default {
         
         this.row_data = this.setContinuous(data)
         this.settings.data = this.row_data
-        
+        // 產出 sheet 畫面
         this.sheet = new Handsontable(this.sheetContainer, this.settings);
         this.isRender = true
       })
     },
     changeMode(key , val) {
+      // 切換編輯狀態
       this[key] = val
 
       if(key=='editMode') {
+        // 打開右鍵選單，打開欄位編輯模式
         this.settings.contextMenu = !val ? false: this.contextMenuSetting
         this.settings.columns.forEach((col) => {
           col.editor = !val ? false : col.type
         })
+        // 更新 sheet 
         this.sheet.updateSettings(this.settings)
       }
 
@@ -601,6 +628,7 @@ export default {
       }, 200)
     },
     settingSheetHeight() {
+      // 根據模式切換更新 sheet 高度
       let sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
       this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
@@ -610,12 +638,14 @@ export default {
     }
   },
   mounted() {
+      // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
     this.settingSheetHeight()
     this.getSheetData()
 
     window.onresize = () => {this.settingSheetHeight()}
 
+    // 拖拉側欄照片區塊大小
     document.body.addEventListener('mousemove', (e) => {this.dragMove(e)});
     document.body.addEventListener('mouseup', (e) => {this.dragEnd(e)});
   }

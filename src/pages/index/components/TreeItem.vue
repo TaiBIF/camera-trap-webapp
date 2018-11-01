@@ -7,6 +7,8 @@
     :class="{
       'is-active': $route.params.site_id == item.id
     }">
+
+      <!-- 有子項目顯示箭頭 -->
       <span class="icon">
         <i class="fa" v-if="isFolder" 
         :class="CurrentToggle==idx ? 'fa-caret-down' : 'fa-caret-right'"></i> 
@@ -15,6 +17,7 @@
       <span class="text" v-if="isFolder">
         {{item.name}}
       </span>
+      <!-- 處於編輯狀態顯示 lock -->
       <router-link class="text" v-else :to="`/project/1/site/${item.id}`">
         {{item.name}}
         <div class="icon float-right">
@@ -23,6 +26,7 @@
       </router-link>
     </div>
 
+    <!-- Print 出所有子項目 -->
     <ul class="tree-menu-child" v-if="isFolder">
       <tree-item 
       v-for="(child) in item.children" 
@@ -56,6 +60,7 @@ export default {
   },
   data() {
     return {
+      // 判斷是否有子項目
       isFolder: !this.item==false && !this.item.children==false && this.item.children.length > 0,
     }
   },
@@ -64,6 +69,7 @@ export default {
       'setCurrentToggle'
     ]),
     toggleDropdown() {
+      // 切換開闔狀態
       if(!this.isFolder) return
 
       if(this.item.children.length) {

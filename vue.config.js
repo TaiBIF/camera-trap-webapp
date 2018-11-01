@@ -51,6 +51,13 @@ module.exports = {
       title: 'Login Page',
       // chunks: ['chunk-vendors', 'chunk-common', 'intro']
     },
+    login: {
+      entry: 'src/pages/intro/main.js',
+      template: 'public/intro.html',
+      filename: 'intro.html',
+      title: 'Intro Page',
+      // chunks: ['chunk-vendors', 'chunk-common', 'intro']
+    },
     // when using the entry-only string format,
     // template is inferred to be `public/subpage.html`
     // and falls back to `public/index.html` if not found.
