@@ -63,6 +63,14 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('./views/Site.vue')
+    },
+    {
+      path: '/project/:id/site/:site_id/photo/:photo_id',
+      name: 'photoTag',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('./views/PhotoTag.vue')
     }
   ]
 })

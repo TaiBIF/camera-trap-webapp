@@ -186,7 +186,9 @@
               </span>
             </div>
             <div class="text-right my-2">
-              <div class="btn btn-sm btn-default">進階標註</div>
+              <router-link :to="`/project/${$route.params.id}/site/${$route.params.site_id}/photo/1`" class="btn btn-sm btn-default">
+                進階標註
+              </router-link>
             </div>
           </div>
         </div>

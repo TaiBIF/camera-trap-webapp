@@ -2,6 +2,38 @@
 nav.navbar 
   padding: 0 20px !important
   
+  button.navbar-toggler
+    span.navbar-toggler-icon
+      position: relative
+      background: #FFF
+      width: 20px
+      height: 2px
+      transform: rotate(45deg)
+      +transition(all .3s ease)
+      &:before,
+      &:after
+        content: ''
+        position: absolute
+        width: 20px
+        height: 2px
+        background: #FFF
+        display: block
+        margin-top: 0
+        transform: rotate(0deg)
+        +transition(all .3s ease)
+      &:after
+        transform: rotate(90deg)
+
+    &.collapsed
+      span.navbar-toggler-icon
+        transform: rotate(0deg)
+        &:before
+          margin-top: -8px
+        &:after
+          margin-top: 8px
+          transform: rotate(0deg)
+        
+
   .navbar-brand 
     position: relative
     font-size: 2rem
@@ -28,7 +60,8 @@ nav.navbar
       background: #30936F
       border-right: 1px solid #1E5C45
     
-  
+  .navbar-nav .btn
+    line-height: 40px !important
 
   form.search 
     position: relative
@@ -127,3 +160,30 @@ nav.navbar
   .navbar-nav.main-nav 
     flex: 1
   
+
+  @media screen and (max-width: 768px)
+    .navbar-collapse.collapse
+      display: none
+
+      > .navbar-nav
+        width: 100%
+        .nav-item
+          margin: 0 !important
+          padding: 0 0 15px
+
+          .dropdown-menu
+            background: none
+            border: 0
+            a.dropdown-item
+              color: #FFF
+              &:hover,
+              &:focus
+                background: rgba(0,0,0,.3)
+        .divider
+          display: none
+        .btn
+          width: 100%
+
+      &.show
+        display: flex
+        width: 100%

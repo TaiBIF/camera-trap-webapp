@@ -1,3 +1,215 @@
+.page-intro 
+  .btn.btn-lg
+    font-weight: 400
+    width: 100%
+    max-width: 360px
+    font-size: 24px
+    height: 60px
+    line-height: 60px
+
+  section
+    min-height: 680px
+    padding: 60px 0
+    
+    h2.text-green 
+      font-size: 30px
+      margin-top: 0
+      big 
+        font-size: 60px
+        color: #7C9C2D
+    
+    p.desp
+      color: #8B8B8B
+      font-size: 16px
+      line-height: 26px
+
+    .img-items
+      margin-top: 70px
+      .item
+        display: inline-block
+        margin-left: 40px
+        text-align: center
+        .image
+          line-height: 0
+          img 
+            width: 120px
+        .content
+          margin-top: 20px
+          color: #405C36
+
+    &.banner
+      position: relative
+      height: 590px
+      background: url(/assets/intro/banner@2x.png) 
+      background-size: cover
+      padding: 0
+      .caption
+        position: absolute
+        bottom: 85px
+        color: #FFF 
+        h1.header
+          font-size: 72px
+          color: #FFF 
+          margin: 0
+        p 
+          margin-top: 10px
+          margin-bottom: 40px
+          font-size: 30px
+
+    &.important
+      min-height: 600px
+      h1.text-green 
+        font-size: 40px
+      .service-items
+        margin-top: 40px
+        div[class*="col-"]
+          margin-bottom: 20px
+
+      .image
+        text-align: center
+        img 
+          width: 222px
+          margin: 0 auto
+        + .content
+          text-align: center
+          h2 
+            margin-top: 20px
+            margin-bottom: 0
+          .description
+            font-size: 24px
+            margin: 0
+            color: $gray
+            font-weight: 400
+
+    &.easy,
+    &.effect,
+    &.professional
+      padding-top: 140px
+    &.easy
+      background: url(/assets/intro/bg-easy@2x.png) right center no-repeat
+      background-size: auto 100%
+    &.effect
+      background: url(/assets/intro/bg-effect@2x.png) left center no-repeat
+      background-size: auto 100%
+    &.professional
+      background: url(/assets/intro/bg-professional@2x.png) right center no-repeat
+      background-size: auto 100%
+    &.demo
+      background: url(/assets/intro/bg-demo@2x.png) center bottom no-repeat
+      background-size: 100% auto
+
+      img
+        max-width: 100%
+
+      h1.text-green
+        text-align: center
+        font-size: 76px
+        line-height: 0.7
+        small 
+          font-size: 24px
+          color: $light-green
+
+  footer 
+    padding: 40px 0
+    color: #FFF
+    background: #2E432B
+
+    .logo
+      height: 33px
+    
+    span.gov-item
+      margin-left: 15px
+      display: inline-block
+      vertical-align: middle
+      margin-bottom: 15px
+        
+      img.gov-logo
+        vertical-align: middle
+        height: 27px
+        margin-right: 5px
+      span.text
+        vertical-align: middle
+        text-align: left
+        display: inline-block
+        font-size: 14px
+        font-weight: 300
+        small 
+          display: block
+          font-size: 11px
+
+    hr
+      margin-top: 40px
+      border: 0
+      border-top: 1px solid #979797
+
+    .sitemap
+      display: flex 
+      flex-direction: row
+      .item 
+        flex: 1
+        label 
+          height: 40px
+          line-height: 40px
+        ul
+          margin: 0
+          padding: 0
+          list-style: none 
+          li > a 
+            color: #FFF
+            font-weight: 300
+            line-height: 30px
+            height: 30px
+            > .icon
+              margin-right: 10px
+            > * 
+              vertical-align: middle
+
+  @media screen and (max-width: 768px)
+    font-size: 14px
+    footer
+      .sitemap
+        flex-direction: column
+          
+    section
+      .btn.btn-lg
+        font-size: 20px
+        line-height: 48px
+        height: 48px
+      .img-items
+        margin-top: 30px
+        .item
+          margin-left: 20px
+      &.banner
+        .caption
+          text-align: center
+      &.easy
+        padding-top: 200px
+        background-position: right top
+        background-size: auto 300px
+      &.effect
+        padding-top: 200px
+        background-position: left top
+        background-size: auto 300px
+      &.professional
+        padding-top: 0
+        padding-bottom: 250px
+        background-position: right bottom
+        background-size: auto 300px
+      &.important
+        min-height: 600px
+        h1.text-green 
+          font-size: 32px
+            
+        .image
+          text-align: center
+          img 
+            width: 222px
+            margin: 0 auto
+          + .content
+            h2 
+              font-size: 20px
+            .description
+              font-size: 14px
 
 .page-project
   width: 100%

@@ -13,9 +13,18 @@ export default new Vuex.Store({
     currentSite: 0,
     currentPoint: null,
     currentToggle: null,
-    message: null
+    message: null,
+    image_info: {
+      carrier_url: '',
+      title: '',
+      bookmarklet: true,
+      image_list: ["https://roadkill.tw/sites/roadkill/files/styles/species_photo/adaptive-image/public/bioclass/3c6d4f6a20e08ad47557b4fc5e67dbc8.jpg?itok=bnExmRy5"]
+    }
   },
   getters: {
+    ImageInfo: (state) => {
+      return state.image_info
+    },
     PageLock: (state) => {
       return state.pageLock
     },

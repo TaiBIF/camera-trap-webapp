@@ -1,0 +1,210 @@
+.calibox
+  .token-basic.hover
+    box-shadow: 0 0 0 3px #FF8C23
+
+  .ctrlZone 
+    width: 100%
+    padding-top: 10px
+    padding-bottom: 10px
+  
+  .panel-body 
+    padding-top: 0
+    padding-left: 20px
+    padding-right: 20px
+    > .row > div[class*='col-']:after
+      content: ''
+      position: absolute
+      width: 1px
+      height: 100%
+      background: #E1E3E5
+      right: 0
+      top: 0
+
+  #edit-bbox
+    position: absolute
+    border: 3px dashed #FFF
+    opacity: 0
+
+    &.show 
+      opacity: 1
+
+  .img-container
+    position: relative
+    width: auto 
+    height: auto
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+    
+    .bbox 
+      position: absolute
+      display: block
+      border: 1px solid #FFF
+      z-index: 98
+      &:hover
+        box-shadow: inset 0 0 0 3px #FF8C23
+
+    .outer
+      position: absolute
+      display: block
+      z-index: 98
+      background: rgba(255, 255, 255, 0.6)
+
+      &.left
+        width: 0%
+        height: 100%
+        left: 0px
+        top: 0px
+      
+      &.right
+        width: 0%
+        height: 100%
+        right: 0px
+        top: 0px
+
+      &.top
+        width: 100%
+        height: 0%
+        left: 0%
+        top: 0px
+
+      &.bottom
+        width: 100%
+        height: 0%
+        left: 0%
+        bottom: 0px
+
+  .css_td.gray-block
+    background: #F8F8F8
+    border: 1px solid #E1E3E5
+    margin-top: 10px
+    input 
+      height: 26px
+      line-height: 24px
+      font-size: 13px
+      display: block
+      width: 100%
+      padding: 0 10px
+      background: #FFFFFF
+      border: 1px solid $border-gray
+      +border-radius(2px)
+
+    .tab-header
+      border-bottom: 1px solid #E1E3E5
+      a 
+        display: inline-block
+        font-size: 13px
+        padding: 0 20px
+        line-height: 30px
+        height: 30px
+        color: $gray
+        cursor: pointer
+        border-bottom: 2px solid transparent
+        &.active
+          color: $light-green
+          border-color: $light-green
+
+    &.tree-container
+      padding: 20px
+      height: 205px
+      overflow: auto 
+
+    &.table-container
+      table 
+        max-width: 100%
+
+        tr:nth-child(2n-1)
+          background: #FFF
+
+        tr td 
+          padding-top: 10px
+          padding-bottom: 10px
+
+          &:first-child
+            padding-left: 10px
+          &:last-child
+            padding-right: 10px
+          
+
+      .css_table
+        padding: 0 20px
+        .row
+          margin-top: 10px
+          .col-4
+            color: $gray
+          .col-8
+            padding-left: 0
+
+  .token-basic-tree > ol
+    list-style: none 
+    padding-left: 20px
+    position: relative
+    &:before
+      content: ""
+      position: absolute
+      display: block
+      width: 1px 
+      left: 0
+      top: 15px
+      background: #979797
+      height: calc(100% - 30px)
+    li
+      margin-bottom: 20px
+      .token-item
+        position: relative
+        font-size: 13px
+        color: #FFF
+        padding: 0px 10px
+        height: 30px
+        line-height: 32px
+        display: inline-flex !important
+        flex-direction: row
+        background: #495598
+        cursor: default
+        
+        .name 
+          margin-right: 10px
+
+        &.focus,
+        &.hover
+          padding-right: 0
+          .action
+            display: flex
+
+        .action
+          display: none
+          padding: 0
+          margin: 0
+          align-self: center
+          button 
+            background: none 
+            border: 0
+            width: 30px
+            height: 30px
+
+        button.remove
+          color: #FFF
+          background: #303865
+        &:before
+          content: ""
+          position: absolute
+          display: block
+          width: 11px
+          height: 1px
+          left: -20px
+          top: 0
+          bottom: 0
+          margin: auto
+          background: #495598
+
+
+  .info-container
+    display: flex
+    flex-direction: column
+
+    .table-container
+      flex: 1
+
+  #target_image
+    max-width: 100%

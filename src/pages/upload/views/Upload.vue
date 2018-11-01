@@ -6,6 +6,7 @@
       <li><a>檔案上傳</a></li>
     </ul>
 
+    <!-- 拖拉或選擇檔案 -->
     <div class="col-10 offset-1 upload-container" :class='{"d-none": fileList.length}'>
       <div class="text-right">
         <a @click="modalOpen('trialModalOpen')" class="link text-green">檢閱詳細上傳說明</a>
@@ -25,6 +26,7 @@
       </div>
     </div>
 
+    <!-- 抓到檔案資訊顯示列表 -->
     <div class="col-12 px-0" :class='{"d-none": !fileList.length}'>
       <h1 class="text-green">檔案上傳</h1>
       <div class="row">
@@ -165,6 +167,7 @@
       </div>
     </div>
 
+    <!-- 上傳說明 -->
     <trail-modal :open="trialModalOpen" @close="closeModal" />
   </div>
 </template>
