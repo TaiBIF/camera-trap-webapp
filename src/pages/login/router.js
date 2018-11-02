@@ -12,11 +12,6 @@ export default new Router({
       path: '/',
       name: 'login',
       component: Login
-    },
-    {
-      path: '/confirm',
-      name: 'confirm',
-      component: () => import('./views/Confirm.vue')
     }
   ]
 })
