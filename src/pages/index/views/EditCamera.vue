@@ -14,28 +14,27 @@
           <div class="panel-body camera-editor">
             <div class="sidebar">
               <ul>
-                <li 
-                v-for="(site, s_id) in sites" 
-                :key="`site-tree-${s_id}`" 
-                :class="{'open': CurrentSite==s_id, 'active': CurrentSite==s_id && CurrentPoint==null, 'edit': s_id==currentEdit}">
-                  
+                <li
+                v-for="(site, s_id) in sites"
+                :key="`site-tree-${s_id}`"
+                :class="{'open': CurrentSite === s_id, 'active': CurrentSite === s_id && CurrentPoint === null, 'edit': s_id === currentEdit}">
                   <div class="site-item" @click="setCurrentSite(s_id)" @dblclick="editSite(s_id)">
                     <div class="icon">
-                      <i class="fa" :class="CurrentSite!=s_id?'fa-caret-right': 'fa-caret-down'"></i>
+                      <i class="fa" :class="CurrentSite !== s_id ? 'fa-caret-right' : 'fa-caret-down'"></i>
                     </div>
                     <div class="text" v-if="s_id==currentEdit">
-                      <input type="text" 
-                      v-model="site.name" 
-                      @blur="currentEdit=null" 
+                      <input type="text"
+                      v-model="site.name"
+                      @blur="currentEdit=null"
                       @keydown="updateSite($event)">
                     </div>
                     <div class="text" v-else>{{site.name}}</div>
                   </div>
 
-                  <site-menu 
-                  :items="site.children" 
-                  :index="s_id" 
-                  :defaultOpenLevel="1" 
+                  <site-menu
+                  :items="site.children"
+                  :index="s_id"
+                  :defaultOpenLevel="1"
                   @update="updatePoint" />
 
                 </li>
@@ -69,7 +68,7 @@
                 <div class="sheet-container">
                   <div id="sheet"></div>
                     <a class="text-green btn btn-link" @click="addData()">
-                    <span class="icon"><i class="icon-add-green"></i></span> 
+                    <span class="icon"><i class="icon-add-green"></i></span>
                     <span class="text">新增相機位置</span>
                   </a>
                 </div>
@@ -82,17 +81,15 @@
           <router-link to="/project/1" class="btn btn-default">返回</router-link>
           <button type="submit" @click.stop.prevent="doSubmit()" class="btn btn-orange">儲存設定</button>
         </div>
-        
       </div>
     </div>
     <close-window-dialog :open="closeWindowOpen" @close="closeWindowOpen=false" />
   </div>
-
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
-import {commonMixin} from '../../../mixins/common'
+import { mapActions, mapGetters } from 'vuex'
+import { commonMixin } from '../../../mixins/common'
 import SpeciesOrderPanel from '../components/SpeciesOrder'
 import CloseWindowDialog from '../components/CloseWindowDialog'
 import SiteMenu from '../components/SiteMenu'
@@ -101,12 +98,12 @@ import EditNav from '../components/EditNav'
 import Handsontable from 'handsontable'
 
 export default {
-  name: "EditProject",
+  name: 'EditCamera',
   mixins: [commonMixin],
   components: {
     SpeciesOrderPanel, CloseWindowDialog, SiteMenu, SiteItem, EditNav
   },
-  data() {
+  data () {
     return {
       newSite: '',
       currentSite: 0,
@@ -160,12 +157,10 @@ export default {
         ],
         contextMenu: {
           callback: (key, selection) => {
-            if(key=='clone') {
-              let idx = selection[0].start.row
-              let data = this.CurrentPoint==null 
-                          ? this.sites[this.CurrentSite].data 
-                          : this.sites[this.CurrentSite].children[this.CurrentPoint].data
-              let row = data[idx]
+            if (key === 'clone') {
+              const idx = selection[0].start.row
+              let data = this.CurrentPoint === null ? this.sites[this.CurrentSite].data : this.sites[this.CurrentSite].children[this.CurrentPoint].data
+              const row = data[idx]
               data = data.splice(idx, 0, window._.cloneDeep(row))
               // this.sheet.loadData(data)
               // this.sheet.updateSettings(this.settings)
@@ -174,27 +169,27 @@ export default {
             this.sheet.render()
           },
           items: {
-            "cut": {name: () => {return '<span class="icon"><i class="icon-cut"></i></span><span class="text">剪下</span>'} }, 
-            "copy": {name: () => {return '<span class="icon"><i class="icon-copy"></i></span><span class="text">複製</span>'} }, 
-            "paste": {name: () => {return '<span class="icon"><i class="icon-paste"></i></span><span class="text">貼上</span>'} }, 
-            "divider1": {name: '---------' },
-            "undo": {name: () => {return '<span class="icon"></i></span><span class="text">復原</span>'} }, 
-            "redo": {name: () => {return '<span class="icon"></i></span><span class="text">重做</span>'} }, 
-            "divider2": {name: '---------' },
-            "clone": {name: () => {return '<span class="icon"></span><span class="text">複製並貼上一列</span>'} }, 
-            "remove_row": {
-              name: () => {return '<span class="icon"></span><span class="text">刪除相機位置</span>'},
-              disabled() {
-                let selected = this.getSelected()[0][0]
-                let row = this.getDataAtRow(selected)
+            'cut': { name: () => { return '<span class="icon"><i class="icon-cut"></i></span><span class="text">剪下</span>' } },
+            'copy': { name: () => { return '<span class="icon"><i class="icon-copy"></i></span><span class="text">複製</span>' } },
+            'paste': { name: () => { return '<span class="icon"><i class="icon-paste"></i></span><span class="text">貼上</span>' } },
+            'divider1': { name: '---------' },
+            'undo': { name: () => { return '<span class="icon"></i></span><span class="text">復原</span>' } },
+            'redo': { name: () => { return '<span class="icon"></i></span><span class="text">重做</span>' } },
+            'divider2': { name: '---------' },
+            'clone': { name: () => { return '<span class="icon"></span><span class="text">複製並貼上一列</span>' } },
+            'remove_row': {
+              name: () => { return '<span class="icon"></span><span class="text">刪除相機位置</span>' },
+              disabled () {
+                const selected = this.getSelected()[0][0]
+                const row = this.getDataAtRow(selected)
                 let empty = true
-                
-                row.forEach((col) => { 
-                  if(col!=null && col!='') empty = false 
+
+                row.forEach((col) => {
+                  if (col !== null && col !== '') empty = false
                 })
                 return !empty
               }
-            }, 
+            }
           }
         },
         dropdownMenu: true,
@@ -205,14 +200,14 @@ export default {
   },
   watch: {
     'CurrentPoint': {
-      handler(val) {
-        this.settings.data = this.sites[this.CurrentSite].children[val].data;
+      handler (val) {
+        this.settings.data = this.sites[this.CurrentSite].children[val].data
         this.renderSheet()
       },
       deep: true
     },
     'CurrentSite': {
-      handler() {
+      handler () {
         this.setCurrentPoint(0)
       },
       deep: true
@@ -227,18 +222,18 @@ export default {
     ...mapActions([
       'setCurrentSite', 'setCurrentPoint'
     ]),
-    renderSheet() {
-      if(!this.isRender) {
-        this.sheetContainer = this.$el.querySelector('#sheet');
+    renderSheet () {
+      if (!this.isRender) {
+        this.sheetContainer = this.$el.querySelector('#sheet')
         this.settings.data = this.sites[this.CurrentSite].data
-        this.sheet = new Handsontable(this.sheetContainer, this.settings);
+        this.sheet = new Handsontable(this.sheetContainer, this.settings)
         this.isRender = true
       } else {
         this.sheet.updateSettings(this.settings)
       }
     },
-    addData() {
-      if(this.CurrentPoint==null) {
+    addData () {
+      if (this.CurrentPoint === null) {
         this.sites[this.CurrentSite].data.push({
           name: '', updated_at: '', lat: '', lng: '', altitude: '', vegetation: ''
         })
@@ -253,29 +248,31 @@ export default {
 
       this.renderSheet()
     },
-    editSite(idx) {
+    editSite (idx) {
       this.oldName = this.sites[idx].name
 
-      if(!this.currentEdit)
+      if (!this.currentEdit) {
         this.currentEdit = idx
-      else
+      } else {
         this.currentEdit = null
+      }
     },
-    updatePoint(i, obj) {
+    updatePoint (i, obj) {
       this.sites[i].children = obj
     },
-    updateSite(evt) {
-      if(evt.type=="keydown") {
-        if(evt.keyCode==27) {
+    updateSite (evt) {
+      if (evt.type === 'keydown') {
+        if (evt.keyCode === 27) {
           this.sites[this.currentEdit].name = this.oldName
           this.currentEdit = null
         }
-        if(evt.keyCode==13)
+        if (evt.keyCode === 13) {
           this.currentEdit = null
-      } 
+        }
+      }
     },
-    addSite(evt) {
-      if((evt.type=="click" || evt.type=="keydown" && evt.keyCode==13) && this.newSite!=='') {
+    addSite (evt) {
+      if ((evt.type === 'click' || evt.type === 'keydown' && evt.keyCode === 13) && this.newSite !== '') {
         this.sites.push({
           name: this.newSite,
           children: [],
@@ -284,15 +281,14 @@ export default {
 
         this.newSite = ''
 
-        if(!this.isRender) {
+        if (!this.isRender) {
           setTimeout(() => {
             this.renderSheet()
           }, 300)
         }
-
       }
     },
-    doSubmit() {
+    doSubmit () {
       this.$router.push('/')
     }
   }

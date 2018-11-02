@@ -105,7 +105,6 @@
             <button type="submit" class="btn btn-orange">儲存設定</button>
           </div>
         </form>
-      
       </div>
     </div>
     <close-window-dialog :open="closeWindowOpen" @close="closeWindowOpen=false" />
@@ -113,18 +112,18 @@
 </template>
 
 <script>
-import {commonMixin} from '../../../mixins/common'
+import { commonMixin } from '../../../mixins/common'
 import EditNav from '../components/EditNav'
 import DatePicker from 'vue2-datepicker'
 import CloseWindowDialog from '../components/CloseWindowDialog'
 
 export default {
-  name: "EditProject",
+  name: 'EditLicense',
   mixins: [commonMixin],
   components: {
     EditNav, DatePicker, CloseWindowDialog
   },
-  data() {
+  data () {
     return {
       closeWindowOpen: false,
       licenseForm: {
@@ -136,7 +135,7 @@ export default {
     }
   },
   methods: {
-    doSubmit() {
+    doSubmit () {
       this.$router.push('/')
     }
   }

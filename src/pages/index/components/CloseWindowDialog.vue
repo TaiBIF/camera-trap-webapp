@@ -13,14 +13,13 @@
           <a @click="$emit('submit')" class="btn btn-orange">確定刪除</a>
         </div>
       </div>
-    </div>  
-  </div>  
+    </div>
+  </div>
 </template>
 
 <script>
-
 export default {
-  name: "InvitationDialog",
+  name: 'CloseWindowDialog',
   props: {
     open: {
       type: Boolean,

@@ -1,10 +1,10 @@
 <template>
   <ul class="tree-menu">
-    <site-item 
-    v-for="(item, idx) in items" 
-    :key="`menu-${idx}`" 
-    :item="item" 
-    :level="1" 
+    <site-item
+    v-for="(item, idx) in items"
+    :key="`menu-${idx}`"
+    :item="item"
+    :level="1"
     :idx="idx" />
 
     <li class="add">
@@ -18,7 +18,6 @@
   </ul>
 </template>
 
-
 <script>
 import SiteItem from './SiteItem'
 
@@ -26,19 +25,19 @@ export default {
   name: 'SiteMenu',
   components: { SiteItem },
   props: {
-    items: Array, 
+    items: Array,
     index: Number,
     defaultOpenLevel: Number
   },
-  data() {
+  data () {
     return {
       points: this.items,
       newPoint: ''
     }
   },
   methods: {
-    addPoint(evt) {
-      if((evt.type=="click" || evt.type=="keydown" && evt.keyCode==13) && this.newPoint!=='') {
+    addPoint (evt) {
+      if ((evt.type === 'click' || evt.type === 'keydown' && evt.keyCode === 13) && this.newPoint !== '') {
         this.points.push({
           name: this.newPoint,
           data: []

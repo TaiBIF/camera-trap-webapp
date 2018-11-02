@@ -1,15 +1,14 @@
 <template>
   <ul class="tree-menu">
     <!-- Print 出所有子項目 -->
-    <tree-item 
-      v-for="(item, idx) in items" 
-      :key="`menu-${item.id}`" 
-      :item="item" 
-      :level="1" 
+    <tree-item
+      v-for="(item, idx) in items"
+      :key="`menu-${item.id}`"
+      :item="item"
+      :level="1"
       :idx="idx" />
   </ul>
 </template>
-
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -18,7 +17,7 @@ import TreeItem from './TreeItem'
 export default {
   name: 'tree-menu',
   props: {
-    items: Array, 
+    items: Array,
     defaultOpenLevel: Number
   },
   computed: {

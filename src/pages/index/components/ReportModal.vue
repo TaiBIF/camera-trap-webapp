@@ -62,17 +62,15 @@
           <button @click="submit()" class="btn btn-orange">回報異常資料</button>
         </div>
       </div>
-    </div>  
-  </div>  
+    </div>
+  </div>
 </template>
 
 <script>
-
 import DatePicker from 'vue2-datepicker'
 
-
 export default {
-  name: "ReportModal",
+  name: 'ReportModal',
   props: {
     open: {
       type: Boolean,
@@ -82,7 +80,7 @@ export default {
   components: {
     DatePicker
   },
-  data() {
+  data () {
     return {
       form: {
         start_at: '',
@@ -95,7 +93,7 @@ export default {
     }
   },
   methods: {
-    submit() {
+    submit () {
       this.$emit('close')
     }
   }

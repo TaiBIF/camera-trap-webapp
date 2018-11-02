@@ -1,5 +1,5 @@
 <template>
-  <main class="page-login" :style="{'background': 'url(//baconmockup.com/1920/1080)'}">
+  <main class="page-login" :style="{'background': 'url(/assets/common/bg-login.png)'}">
     <div class="row">
       <div class="col-6 offset-3">
 
@@ -35,6 +35,6 @@
 
 <script>
 export default {
-  name: "Login"
+  name: 'Login'
 }
 </script>

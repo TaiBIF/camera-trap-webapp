@@ -13,16 +13,19 @@
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">計畫名稱：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name" v-model="form.name" placeholder="請輸入計畫名稱" class="form-control">
+                  <input type="text" id="project-name" class="form-control"
+                  v-model="form.name" placeholder="請輸入計畫名稱">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">計畫簡稱：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name" v-model="form.slot" placeholder="請輸入計畫簡稱 (限4字)" class="form-control">
+                  <input type="text" id="project-name"
+                  v-model="form.slot" placeholder="請輸入計畫簡稱 (限4字)" class="form-control">
                 </div>
                 <div class="col-6 pl-0">
-                  <span class="btn btn-text px-0" v-tooltip.right="{content: '專案簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別專案的文字'}">
+                  <span class="btn btn-text px-0"
+                  v-tooltip.right="{content: '專案簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別專案的文字'}">
                     <i class="fa fa-info-circle text-green"></i>
                   </span>
                 </div>
@@ -111,7 +114,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -228,15 +230,15 @@
 
 <script>
 import DatePicker from 'vue2-datepicker'
-import {commonMixin} from '../../../mixins/common'
+import { commonMixin } from '../../../mixins/common'
 
 export default {
-  name: "CreateProject",
+  name: 'CreateProject',
   mixins: [commonMixin],
   components: {
     DatePicker
   },
-  data() {
+  data () {
     return {
       step: 1,
       options: [
@@ -278,12 +280,12 @@ export default {
     }
   },
   methods: {
-    doSubmit() {
+    doSubmit () {
       this.$router.push('/')
     },
-    nextStep() {
+    nextStep () {
       // 儲存現階段資料，或直接跳下一步一次送出
-      this.step++;
+      this.step++
     }
   }
 }

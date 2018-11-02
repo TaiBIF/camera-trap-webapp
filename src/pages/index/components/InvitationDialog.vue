@@ -10,14 +10,14 @@
           <a @click="$emit('close')" class="btn btn-default">返回計畫管理</a>
         </div>
       </div>
-    </div>  
-  </div>  
+    </div>
+  </div>
 </template>
 
 <script>
 
 export default {
-  name: "InvitationDialog",
+  name: 'InvitationDialog',
   props: {
     open: {
       type: Boolean,

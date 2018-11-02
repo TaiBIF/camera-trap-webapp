@@ -1,12 +1,21 @@
 <template>
 <li>
-  <div class="token-item" ui-tree-handle :class="classes[token.token_id]" @mouseover="$emit('highlightBox',token.token_id, $event)" @mousedown="$emit('setEditToken',token.token_id, $event)" @mouseleave="$emit('highlightAllBox',$event)" style="display:inline-block">
+  <div class="token-item"
+  ui-tree-handle
+  :class="classes[token.token_id]"
+  @mouseover="$emit('highlightBox', token.token_id, $event)"
+  @mousedown="$emit('setEditToken',token.token_id, $event)"
+  @mouseleave="$emit('highlightAllBox',$event)"
+  style="display:inline-block">
     <div class="name">Token {{token.tree_simple_id}}</div>
     <div class="action">
-      <button data-nodrag @mousedown="$emit('uiCopyToken',$event)" class="copy_token">
+      <button
+      data-nodrag
+      @mousedown="$emit('uiCopyToken',$event)" class="copy_token">
         <i class="icon-copy-sm-white"></i>
       </button>
-      <button class="remove" data-nodrag @mousedown="$emit('updateUiCopiedToken', undefined)">
+      <button class="remove"
+      data-nodrag @mousedown="$emit('updateUiCopiedToken', undefined)">
         <i class="icon-remove-sm-white"></i>
       </button>
     </div>
@@ -32,7 +41,7 @@
     <button @mousedown='setRelationObject($event, token.token_id)'>》</button>
   </div>
   <ol ui-tree-nodes="" :class="{hidden: collapsed}" v-if="!token.tokens==false">
-    <token-renderer 
+    <token-renderer
     @highlightBox="tid => {$emit('highlightBox', tid)}"
     @uiDeleteToken="(e, tid) => {$emit('uiDeleteToken', e, tid)}"
     @uiCopyToken="e => {$emit('uiCopyToken', e)}"
@@ -41,10 +50,10 @@
     @updateUiCopiedToken="(v) => {$emit('uiCopiedToken', v)}"
     :uiCopiedToken="uiCopiedToken"
     :edit_token="edit_token"
-    :classes="classes" 
-    v-for="(toke,t) in token.tokens" 
-    :token="toke" 
-    :key="`token-${index}-${t}`"  />
+    :classes="classes"
+    v-for="(toke,t) in token.tokens"
+    :token="toke"
+    :key="`token-${index}-${t}`" />
   </ol>
 </li>
 </template>
@@ -54,7 +63,7 @@ import TokenRenderer from '../components/TokenRenderer'
 
 export default {
   name: 'TokenRenderer',
-  components: {TokenRenderer},
+  components: { TokenRenderer },
   props: {
     index: {
       type: Number,
@@ -81,7 +90,7 @@ export default {
       default: true
     }
   },
-  data() {
+  data () {
     return {
       collapsed: false
     }
