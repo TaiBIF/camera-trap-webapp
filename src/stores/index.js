@@ -18,7 +18,7 @@ export default new Vuex.Store({
       carrier_url: '',
       title: '',
       bookmarklet: true,
-      image_list: ["https://roadkill.tw/sites/roadkill/files/styles/species_photo/adaptive-image/public/bioclass/3c6d4f6a20e08ad47557b4fc5e67dbc8.jpg?itok=bnExmRy5"]
+      image_list: ['https://roadkill.tw/sites/roadkill/files/styles/species_photo/adaptive-image/public/bioclass/3c6d4f6a20e08ad47557b4fc5e67dbc8.jpg?itok=bnExmRy5']
     }
   },
   getters: {
@@ -48,27 +48,27 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    updatePageLock(state, bool) {
+    updatePageLock (state, bool) {
       state.pageLock = bool
     },
-    updateFileReady(state, value) {
+    updateFileReady (state, value) {
       state.fileReady = value
     },
-    updateCurrentToggle(state, num) {
+    updateCurrentToggle (state, num) {
       state.currentToggle = num
     },
-    updateCurrentSite(state, num) {
+    updateCurrentSite (state, num) {
       state.currentSite = num
     },
-    updateCurrentPoint(state, num) {
+    updateCurrentPoint (state, num) {
       state.currentPoint = num
     },
-    updateProjects(state) {
+    updateProjects (state) {
       projectAPI.getProjects().then((results) => {
         state.projects = results
       })
     },
-    updateMessage(state) {
+    updateMessage (state) {
       api.getMessage().then((results) => {
         state.message = results
       })
@@ -76,25 +76,25 @@ export default new Vuex.Store({
   },
   actions: {
     setPageLock: ({ commit }, bool) => {
-      commit("updatePageLock", bool)
+      commit('updatePageLock', bool)
     },
     setCurrentToggle: ({ commit }, no) => {
-      commit("updateCurrentToggle", no)
+      commit('updateCurrentToggle', no)
     },
     setCurrentSite: ({ commit }, no) => {
-      commit("updateCurrentSite", no)
+      commit('updateCurrentSite', no)
     },
     setCurrentPoint: ({ commit }, no) => {
-      commit("updateCurrentPoint", no)
+      commit('updateCurrentPoint', no)
     },
     setFileReady: ({ commit }, bool) => {
-      commit("updateFileReady", bool)
+      commit('updateFileReady', bool)
     },
-    setProjects({ commit }, proj) {
-      commit("updateProjects", proj)
+    setProjects: ({ commit }, proj) => {
+      commit('updateProjects', proj)
     },
-    setMessage({ commit }, msg) {
-      commit("updateMessage", msg)
+    setMessage: ({ commit }, msg) => {
+      commit('updateMessage', msg)
     }
   }
 })

@@ -1,8 +1,9 @@
 <template>
   <div class="img-container">
-    <img class="img" id="img-preview" 
-    draggable="true" 
+    <img class="img" 
+    id="img-preview" 
     :src="row.url" 
+    draggable="true" 
     @dragstart="onDragStart($event)"
     @drag="onDrag($event)"
     @dragend="onDragEnd($event)" />
