@@ -35,17 +35,15 @@
           <button @click="submit()" class="btn btn-orange">送出申請</button>
         </div>
       </div>
-    </div>  
-  </div>  
+    </div>
+  </div>
 </template>
 
 <script>
-
 import DatePicker from 'vue2-datepicker'
 
-
 export default {
-  name: "NewColumnModal",
+  name: 'NewColumnModal',
   props: {
     open: {
       type: Boolean,
@@ -55,7 +53,7 @@ export default {
   components: {
     DatePicker
   },
-  data() {
+  data () {
     return {
       form: {
         name: '',
@@ -65,7 +63,7 @@ export default {
     }
   },
   methods: {
-    submit() {
+    submit () {
       // submit form
       this.$emit('submit', this.form)
     }

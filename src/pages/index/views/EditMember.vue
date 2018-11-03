@@ -64,10 +64,9 @@
           <router-link to="/project/1" class="btn btn-default">返回</router-link>
           <button type="submit" @click.stop.prevent="doSubmit()" class="btn btn-orange">儲存設定</button>
         </div>
-        
       </div>
     </div>
-    
+
     <new-column-modal :open="newColumnOpen" @close='newColumnOpen=false' @submit="submitColumn" />
     <species-order-panel :open="speciesOpen" @close='speciesOpen=false' />
     <close-window-dialog :open="closeWindowOpen" @close="closeWindowOpen=false" />
@@ -75,11 +74,10 @@
     <delete-column-dialog :open="deleteColumnOpen" @close="deleteColumnOpen=false"  />
     <remove-member-dialog :open="removeMemberOpen" @close="removeMemberOpen=false" @submit="confirmRemove" />
   </div>
-
 </template>
 
 <script>
-import {commonMixin} from '../../../mixins/common'
+import { commonMixin } from '../../../mixins/common'
 import DatePicker from 'vue2-datepicker'
 import draggable from 'vuedraggable'
 import NewColumnModal from '../components/NewColumn'
@@ -92,69 +90,24 @@ import SiteMenu from '../components/SiteMenu'
 import SiteItem from '../components/SiteItem'
 import EditNav from '../components/EditNav'
 
-const column = [
-  {
-    name: "樣區",
-    type: "下拉選單",
-    description: "樣區-子樣區",
-    default: true
-  }, {
-    name: '相機位置',
-    type: '下拉選單',
-    description: "相機位置名稱",
-    default: true
-  }, {
-    name: '檔名',
-    type: '輸入框',
-    description: '01234.jpg',
-    default: true
-  }, {
-    name: '時間',
-    type: '日期時間',
-    description: 'YY/MM/DD hh:mm',
-    default: true
-  }, {
-    name: '物種',
-    type: '下拉選單',
-    description: '編輯常見物種排序',
-    default: true
-  }, {
-    name: '性別',
-    type: '下拉選單',
-    description: '公、母',
-    default: false
-  }, {
-    name: '年齡',
-    type: '下拉選單',
-    description: '成體、亞成體、幼體',
-    default: false
-  }, {
-    name: '備註',
-    type: '下拉選單',
-    description: '輸入框',
-    default: false
-  }
-]
-
 export default {
-  name: "EditProject",
+  name: 'EditMember',
   mixins: [commonMixin],
   components: {
     EditNav,
     NewColumnModal, SpeciesOrderPanel, DatePicker, draggable, SiteMenu, SiteItem, CloseWindowDialog, InvitationDialog, DeleteColumnDialog, RemoveMemberDialog
   },
-  data() {
+  data () {
     return {
       currentItem: 3,
       step: 1,
-      column: column,
       newColumnOpen: false,
       speciesOpen: false,
       closeWindowOpen: false,
       deleteColumnOpen: false,
       removeMemberOpen: false,
       invitationOpen: false,
-      roles: ['計畫管理員','承辦人員','巡山員'],
+      roles: ['計畫管理員', '承辦人員', '巡山員'],
       sites: [],
       members: [
         {
@@ -189,21 +142,21 @@ export default {
     }
   },
   methods: {
-    confirmRemove() {
+    confirmRemove () {
       this.members.splice(this.currentMember, 1)
       this.removeMemberOpen = false
     },
-    removeMember(i) {
+    removeMember (i) {
       this.removeMemberOpen = true
       this.currentMember = i
     },
-    removeItem(i) {
-      this.column.splice(i,1)
+    removeItem (i) {
+      this.column.splice(i, 1)
     },
-    doSubmit() {
+    doSubmit () {
       this.$router.push('/')
     },
-    submitColumn(form) {
+    submitColumn (form) {
       this.column.push({
         default: false,
         ...form

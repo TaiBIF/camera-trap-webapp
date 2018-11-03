@@ -51,7 +51,6 @@
         </div>
       </nav>
     </header>
-    
     <main class="page-project">
       <aside v-if="asideElem.indexOf($route.name)==-1">
         <!-- Render Project structure -->
@@ -117,7 +116,7 @@ const project = {
           name: '%%站'
         }
       ]
-    }, 
+    },
     {
       id: 13,
       name: '東勢處',
@@ -136,7 +135,7 @@ const project = {
           name: '%%站'
         }
       ]
-    }, 
+    },
     {
       id: 14,
       name: '南投處',
@@ -155,7 +154,7 @@ const project = {
           name: '%%站'
         }
       ]
-    }, 
+    },
     {
       id: 15,
       name: '嘉義處',
@@ -179,20 +178,20 @@ const project = {
 }
 
 export default {
-  name: "App",
-  components: {TreeMenu},
-  data() {
+  name: 'App',
+  components: { TreeMenu },
+  data () {
     return {
-      // 側選單不顯示的 Router name 
-      asideElem: ['overview','createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription','photoTag'],
+      // 側選單不顯示的 Router name
+      asideElem: ['overview', 'createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription', 'photoTag'],
       project: project
     }
   },
   watch: {
-    '$router': "fetchData"
+    '$router': 'fetchData'
   },
   methods: {
-    fetchData() {
+    fetchData () {
       // let projectID = this.$router.params.id
     }
   }

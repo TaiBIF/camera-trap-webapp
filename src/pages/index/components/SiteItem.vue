@@ -1,35 +1,38 @@
 <template>
-  <li class="tree-menu-item" :class="{'edit': edit, 'active': idx==CurrentPoint}">
-
-    <div class="tree-menu-link" @click="setCurrent()" @dblclick="edit=true">
+  <li class="tree-menu-item"
+  :class="{'edit': edit, 'active': idx===CurrentPoint}">
+    <div class="tree-menu-link"
+    @click="setCurrent()"
+    @dblclick="edit=true">
       <div class="icon">
         <i class="fa fa-circle"></i>
-      </div> 
-      <div class="text" v-if="edit">
-        <input type="text" 
-        v-model="item.name" 
-        @blur="edit=false; $emit()"
+      </div>
+      <div class="text"
+      v-if="edit">
+        <input type="text"
+        v-model="item.name"
+        @blur="edit=false"
         @keydown="updatePoint($event)">
       </div>
       <div class="text" v-else>{{item.name}}</div>
     </div>
 
     <ul class="tree-menu-child" v-if="isFolder">
-      <tree-item 
-      v-for="(child, c_id) in item.children" 
-      :key="`menu-${idx}-${c_id}`" 
-      :level="level+1" 
+      <tree-item
+      v-for="(child, c_id) in item.children"
+      :key="`menu-${idx}-${c_id}`"
+      :level="level+1"
       :item="child"/>
-      <tree-item :level="level+1" :add="true" ></tree-item>
+      <tree-item :level="level+1" :add="true"></tree-item>
     </ul>
   </li>
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import SiteItem from '../components/SiteItem'
 
-export default { 
+export default {
   name: 'SiteItem',
   components: { SiteItem },
   props: {
@@ -46,32 +49,30 @@ export default {
       'CurrentPoint'
     ])
   },
-  data() {
+  data  () {
     return {
       edit: false,
-      isFolder: !this.item==false && !this.item.children==false && this.item.children.length > 0,
+      isFolder: !this.item === false && !this.item.children === false && this.item.children.length > 0
     }
   },
   methods: {
     ...mapActions([
       'setCurrentPoint'
     ]),
-    updatePoint(e) {
-      if(e.type=="keydown") {
-        if(e.keyCode==27) {
+    updatePoint (e) {
+      if (e.type === 'keydown') {
+        if (e.keyCode === 27) {
           this.sites[this.currentEdit].name = this.oldName
           this.edit = false
         }
-        if(e.keyCode==13)
+        if (e.keyCode === 13) {
           this.edit = false
-      } 
+        }
+      }
     },
-    setCurrent() {
+    setCurrent () {
       this.setCurrentPoint(this.idx)
     }
-  },
-  beforeMount() {
-    // debugger
   }
 }
 </script>

@@ -95,10 +95,10 @@
                     <span class="icon"><i class="icon-continous"></i></span>
                     <span class="text">連拍自動補齊</span>
                   </button>
-                  <button class="btn btn-sm btn-grayscale dropdown-toggle dropdown-toggle-split" 
-                  id="continousButton" 
-                  data-toggle="dropdown" 
-                  aria-haspopup="true" 
+                  <button class="btn btn-sm btn-grayscale dropdown-toggle dropdown-toggle-split"
+                  id="continousButton"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
                   aria-expanded="false">
                     <i class="fa fa-caret-down"></i>
                   </button>
@@ -110,13 +110,13 @@
             </div>
             <div class="col-4 text-right">
               <div class="divider"></div>
-              <a class="btn btn-icon" 
-              @click="changeMode('galleryShow', !galleryShow)" 
+              <a class="btn btn-icon"
+              @click="changeMode('galleryShow', !galleryShow)"
               :class="{'active': galleryShow}">
                 <i class="icon-gallery"></i>
               </a>
               <div class="divider"></div>
-              <a class="btn btn-icon" 
+              <a class="btn btn-icon"
               @click="changeMode('historyShow', !historyShow)"
               :class="{'active': historyShow}">
                 <i class="icon-time-machine"></i>
@@ -236,10 +236,9 @@ import 'handsontable/languages/all'
 import ZoomDrag from '../components/ZoomDrag'
 
 // debugger
-
 export default {
   name: 'Site',
-  data() {
+  data () {
     return {
       today: moment(),
       editMode: false,
@@ -255,12 +254,12 @@ export default {
         start_at: '',
         end_at: '',
         start_time: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         },
         end_time: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         }
       },
       selection: null,
@@ -277,54 +276,54 @@ export default {
       },
       updateRow: {},
       // [API] 需要透過 API 帶入常用分類
-      species: ["測試", "空拍", "山羌", "鼬獾", "台灣獼猴", "水鹿", "白鼻心"],
+      species: ['測試', '空拍', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
       contextMenuSetting: {
         callback: (key, selection) => {
-          let idx = selection[0].start.row
-          let row = this.row_data[idx]
-          
-          switch(key) {
-            // 設定連拍
-            case 'setContinuous':
-              this.settings.data[idx].is_continuous = true
-              break;
-            case 'stopContinuous':
-              this.settings.data[idx].is_continuous = false
-              break;
-            // 複製一列
-            case 'clone':
-              this.row_data.splice(idx, 0, window._.cloneDeep(row))
-              this.row_data = this.setContinuous(this.row_data)
-              this.settings.data = this.row_data
-              break;
+          const idx = selection[0].start.row
+          const row = this.row_data[idx]
+
+          switch (key) {
+          // 設定連拍
+          case 'setContinuous':
+            this.settings.data[idx].is_continuous = true
+            break
+          case 'stopContinuous':
+            this.settings.data[idx].is_continuous = false
+            break
+          // 複製一列
+          case 'clone':
+            this.row_data.splice(idx, 0, window._.cloneDeep(row))
+            this.row_data = this.setContinuous(this.row_data)
+            this.settings.data = this.row_data
+            break
           }
 
           this.sheet.render()
         },
         items: {
-          "setContinuous": {
-            name: () => {return '<span class="icon"><i class="icon-link"></i></span><span class="text">重新建立連拍連結</span>'},
+          'setContinuous': {
+            name: () => { return '<span class="icon"><i class="icon-link"></i></span><span class="text">重新建立連拍連結</span>' },
             disabled: () => {
-              let selected = this.sheet.getSelectedLast()
+              const selected = this.sheet.getSelectedLast()
               return this.row_data[selected[0]].is_continuous
             }
-          }, 
-          "stopContinuous": {
-            name: () => {return '<span class="icon"><i class="icon-unlink"></i></span><span class="text">解除連拍連結</span>'},
+          },
+          'stopContinuous': {
+            name: () => { return '<span class="icon"><i class="icon-unlink"></i></span><span class="text">解除連拍連結</span>' },
             disabled: () => {
-              let selected = this.sheet.getSelectedLast()
+              const selected = this.sheet.getSelectedLast()
               return !this.row_data[selected[0]].is_continuous
             }
-          }, 
-          "divider0": {name: '---------' },
-          "cut": {name: () => {return '<span class="icon"><i class="icon-cut"></i></span><span class="text">剪下</span>'} }, 
-          "copy": {name: () => {return '<span class="icon"><i class="icon-copy"></i></span><span class="text">複製</span>'} }, 
-          "paste": {name: () => {return '<span class="icon"><i class="icon-paste"></i></span><span class="text">貼上</span>'} }, 
-          "divider1": {name: '---------' },
-          "undo": {name: () => {return '<span class="icon"></span><span class="text">復原</span>'} }, 
-          "redo": {name: () => {return '<span class="icon"></span><span class="text">重做</span>'} }, 
-          "divider2": {name: '---------' },
-          "clone": {name: () => {return '<span class="icon"></span><span class="text">複製並貼上一列</span>'} }
+          },
+          'divider0': { name: '---------' },
+          'cut': { name: () => { return '<span class="icon"><i class="icon-cut"></i></span><span class="text">剪下</span>' } },
+          'copy': { name: () => { return '<span class="icon"><i class="icon-copy"></i></span><span class="text">複製</span>' } },
+          'paste': { name: () => { return '<span class="icon"><i class="icon-paste"></i></span><span class="text">貼上</span>' } },
+          'divider1': { name: '---------' },
+          'undo': { name: () => { return '<span class="icon"></span><span class="text">復原</span>' } },
+          'redo': { name: () => { return '<span class="icon"></span><span class="text">重做</span>' } },
+          'divider2': { name: '---------' },
+          'clone': { name: () => { return '<span class="icon"></span><span class="text">複製並貼上一列</span>' } }
         }
       },
       settings: {
@@ -354,10 +353,10 @@ export default {
           {
             data: 'species',
             type: 'autocomplete',
-            source: ["測試", "山羌", "鼬獾", "台灣獼猴", "水鹿", "白鼻心"],
+            source: ['測試', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
             renderer: this.continousRenderer,
             editor: false
-          }, 
+          },
           {
             data: 'sex',
             type: 'text',
@@ -427,12 +426,12 @@ export default {
         contextMenu: false,
         dropdownMenu: true,
         afterChange: (changes) => {
-          if(!changes) return;
+          if (!changes) return
           // chagnes: [[index, column, old value, new value]]
           // updateRow 紀錄有更新的欄位
           changes.forEach(change => {
-            let idx = change[0] 
-            if(!this.updateRow[idx]) this.updateRow[idx] = {}
+            const idx = change[0]
+            if (!this.updateRow[idx]) this.updateRow[idx] = {}
             this.updateRow[idx][change[1]] = change[3]
           })
         },
@@ -442,7 +441,7 @@ export default {
       },
       sheetContainer: null,
       sheet: null,
-      isDrag: false,
+      isDrag: false
     }
   },
   watch: {
@@ -452,147 +451,145 @@ export default {
     DatePicker, VueTimepicker, ZoomDrag
   },
   methods: {
-    recordUpdate() {
-      
+    recordUpdate () {
     },
     dragStart () {
       this.isDrag = true
     },
     dragMove (e) {
-      if(!this.isDrag) return
-      this.galleryWidth = window.innerWidth - e.pageX 
+      if (!this.isDrag) return
+      this.galleryWidth = window.innerWidth - e.pageX
     },
     dragEnd () {
       this.isDrag = false
     },
-    continousRenderer(instance, TD, row, col, prop, value) {
-      if(prop=="species" && !value==false && value!=="") {
-        
+    continousRenderer (instance, TD, row, col, prop, value) {
+      if (prop === 'species' && !value === false && value !== '') {
+        const $row = this.row_data[row]
         let clsName = ''
-        let $row = this.row_data[row]
         let error = ''
 
         // 不在預設物種資料顯示錯誤
-        if(this.species.indexOf(value)===-1 && value.indexOf('測試')===-1) {
-          clsName += "htInvalid "
+        if (this.species.indexOf(value) === -1 && value.indexOf('測試') === -1) {
+          clsName += 'htInvalid '
           error = '<span class="alert-box">!</span>'
         }
 
         // 是否為連拍照片
-        if(this.isContinuous) {
-          if($row.is_continuous) {
-            clsName += "is-continuoust"
+        if (this.isContinuous) {
+          if ($row.is_continuous) {
+            clsName += 'is-continuoust'
           }
 
           // 是否與連拍分離
-          if($row.is_continuous_apart) {
-            clsName += " is-continuous-apart"
+          if ($row.is_continuous_apart) {
+            clsName += ' is-continuous-apart'
           }
 
-          if($row.is_continuous_start) {
-            clsName += " is-continuous-start ";
+          if ($row.is_continuous_start) {
+            clsName += ' is-continuous-start '
           }
 
-          if($row.is_continuous_end) {
-            clsName += " is-continuous-end ";
+          if ($row.is_continuous_end) {
+            clsName += ' is-continuous-end '
           }
         }
 
         // 設定錯誤提示文字
-        TD.dataset.tooltip = "物種不在預設中"
+        TD.dataset.tooltip = '物種不在預設中'
         TD.innerHTML = value + error
         TD.className = clsName
       }
     },
     setCurrentContinuous () {
       // 取得目前資料的連拍資訊
-      let row = this.row_data[this.currentRow];
+      const row = this.row_data[this.currentRow]
 
-      if(!row.is_continuous)  
+      if (!row.is_continuous) {
         this.continuous = {
           row: null,
           current: 0,
           total: 0
         }
-      else
+      } else {
         this.continuous = {
           row: this.currentRow,
           current: row.current_continuous,
           total: this.row_data[row.continuous_start].continuous_count
         }
+      }
     },
-    renderContinuous() {
+    renderContinuous () {
       // 切換連拍狀態
       this.isContinuous = !this.isContinuous
       this.setContinuous()
     },
-    setContinuous(data) {
-      let row_data = !data ? this.row_data : data
+    setContinuous (data) {
+      const rowData = !data ? this.row_data : data
       // 判斷連拍
-      row_data.forEach((r, i) => {
-        let $row = r;
-        let current = r.datetime
-        let prev = i > 0 ? row_data[i - 1].datetime : null
-        let next = i + 1 < row_data.length ? row_data[i + 1].datetime : null
-        let c_dt = new Date(current);
-        let p_dt = !prev ? null : new Date(prev)
-        let n_dt = !next ? null : new Date(next)
-        let time = Number(this.continuousTime) * 60 * 1000
+      rowData.forEach((r, i) => {
+        const $row = r
+        const current = r.datetime
+        const prev = i > 0 ? rowData[i - 1].datetime : null
+        const next = i + 1 < rowData.length ? rowData[i + 1].datetime : null
+        const cDt = new Date(current)
+        const pDt = !prev ? null : new Date(prev)
+        const nDt = !next ? null : new Date(next)
+        const time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
         let isStart = false
         let isEnd = false
-        
-        if($row.is_continuous_apart == undefined) {
+
+        if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false
         }
 
         // 排除測試、空拍
-        if(
-          !n_dt==false && 
-          (n_dt - c_dt <= time  || !p_dt==false && c_dt - p_dt <= time) && 
-          (["測試", "空拍"].indexOf($row.species) == -1)
+        if (
+          !nDt === false &&
+          (nDt - cDt <= time || !pDt === false && cDt - pDt <= time) &&
+          (['測試', '空拍'].indexOf($row.species) === -1)
         ) {
-          isContinue = true;
-          $row.is_continuous = true;
-          this.continuousCount++;
+          isContinue = true
+          $row.is_continuous = true
+          this.continuousCount++
         }
 
         // 是不是連拍第一張
-        if(isContinue && !p_dt && n_dt - c_dt <= time || c_dt - p_dt >= time) {
-          isStart = true;
-          this.continuousCount = 1;
-          this.continuousStart = i;
-          $row.is_continuous_start = true;
+        if (isContinue && !pDt && nDt - cDt <= time || cDt - pDt >= time) {
+          isStart = true
+          this.continuousCount = 1
+          this.continuousStart = i
+          $row.is_continuous_start = true
         }
-        
-        $row.current_continuous = this.continuousCount;
-        $row.continuous_start = this.continuousStart;
-        
-        // 是不是連拍最後一張
-        if(isContinue && !n_dt && c_dt - p_dt <= time || n_dt - c_dt >= time) {
-          isEnd = true;
-          $row.is_continuous_end = true;
-          
-          row_data[this.continuousStart].continuous_count = this.continuousCount;
-          this.continuousCount = 0;
-        }
-      });
 
-      return row_data
+        $row.current_continuous = this.continuousCount
+        $row.continuous_start = this.continuousStart
+
+        // 是不是連拍最後一張
+        if (isContinue && !nDt && cDt - pDt <= time || nDt - cDt >= time) {
+          isEnd = true
+          $row.is_continuous_end = true
+
+          rowData[this.continuousStart].continuous_count = this.continuousCount
+          this.continuousCount = 0
+        }
+      })
+
+      return rowData
     },
     getSheetData () {
       // 取得 csv 資料，並轉成 json
       this.$http.get('/csv/HC21A.csv').then((response) => {
-        var data = [];
-        
-        (response.data.split(/\r\n/g)).forEach((ref, idx) => {
-          var row = ref.split(/,/g);
-          // debugger;
-          if(idx==0) {
+        var data = []
+        response.data.split(/\r\n/g).forEach((ref, idx) => {
+          var row = ref.split(/,/g)
+          // debugger
+          if (idx === 0) {
             // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
             this.rowData = row
           } else {
-            let item = {}
+            var item = {}
 
             row.forEach((r, i) => {
               item[this.rowData[i].toLowerCase()] = r
@@ -600,26 +597,26 @@ export default {
 
             data.push(item)
           }
-        });
-        
+        })
+
         this.row_data = this.setContinuous(data)
         this.settings.data = this.row_data
         // 產出 sheet 畫面
-        this.sheet = new Handsontable(this.sheetContainer, this.settings);
+        this.sheet = new Handsontable(this.sheetContainer, this.settings)
         this.isRender = true
       })
     },
-    changeMode(key , val) {
+    changeMode (key, val) {
       // 切換編輯狀態
       this[key] = val
 
-      if(key=='editMode') {
+      if (key === 'editMode') {
         // 打開右鍵選單，打開欄位編輯模式
-        this.settings.contextMenu = !val ? false: this.contextMenuSetting
+        this.settings.contextMenu = !val ? false : this.contextMenuSetting
         this.settings.columns.forEach((col) => {
           col.editor = !val ? false : col.type
         })
-        // 更新 sheet 
+        // 更新 sheet
         this.sheet.updateSettings(this.settings)
       }
 
@@ -627,27 +624,26 @@ export default {
         this.settingSheetHeight()
       }, 200)
     },
-    settingSheetHeight() {
+    settingSheetHeight () {
       // 根據模式切換更新 sheet 高度
-      let sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
+      const sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
       this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
-      if(this.isRender) 
-        this.sheet.updateSettings(this.settings)
+      if (this.isRender) this.sheet.updateSettings(this.settings)
     }
   },
-  mounted() {
-      // 綁定 sheet element、設定高度、取得資料
+  mounted () {
+    // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
     this.settingSheetHeight()
     this.getSheetData()
 
-    window.onresize = () => {this.settingSheetHeight()}
+    window.onresize = () => { this.settingSheetHeight() }
 
     // 拖拉側欄照片區塊大小
-    document.body.addEventListener('mousemove', (e) => {this.dragMove(e)});
-    document.body.addEventListener('mouseup', (e) => {this.dragEnd(e)});
+    document.body.addEventListener('mousemove', (e) => { this.dragMove(e) })
+    document.body.addEventListener('mouseup', (e) => { this.dragEnd(e) })
   }
 }
 </script>

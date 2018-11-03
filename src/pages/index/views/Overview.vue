@@ -1,13 +1,12 @@
 <template>
   <main class="page-project">
     <div class="container">
-      <div class="message" v-if="Message!==null">
+      <div class="message" v-if="Message !== null">
         <div class="container">
           {{ Message.title }}
         </div>
       </div>
       <h1 class="heading">計畫總覽</h1>
-
       <div v-if="!Projects.length">
         <div class="empty-content">
           <img src="/assets/common/empty-project.png" width="212px" srcset="/assets/common/empty-project@2x.png">
@@ -15,7 +14,7 @@
           <router-link to="/project/create" class="btn btn-orange">新增專案</router-link>
         </div>
       </div>
-      
+
       <div v-else>
         <!-- Controlbar -->
         <div class="row">
@@ -35,7 +34,6 @@
           <div class="col-4 text-right">
             <router-link to="/project/create" class="btn btn-orange">新增專案</router-link>
           </div>
-            
         </div>
         <!-- Cards -->
         <div class="three cards">
@@ -62,15 +60,13 @@
           </router-link>
         </div>
       </div>
-
     </div>
   </main>
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import * as projApi from '../../../service/project'
-import * as commonApi from '../../../service/common'
 
 export default {
   name: 'Overview',
@@ -83,20 +79,20 @@ export default {
     ...mapActions([
       'setProjects', 'setMessage'
     ]),
-    loadProject() {
+    loadProject () {
       // 取得專案列表
       projApi.getProjects().then(r => {
         this.setProjects(r)
         this.loadMessage()
       })
     },
-    loadMessage() {
+    loadMessage () {
       projApi.getProjects().then(r => {
         this.setMessage(r)
       })
     }
   },
-  beforeMount() {
+  beforeMount () {
     this.loadProject()
   }
 }

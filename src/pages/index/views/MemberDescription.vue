@@ -5,11 +5,11 @@
       <div class="col-12">
         <h1 class="heading">成員權限說明</h1>
         <p>
-          此處詳列系統各成員層級權限，若有疑問 
+          此處詳列系統各成員層級權限，若有疑問
           <a class="text-green text-underline">請聯繫系統管理員 </a>
         </p>
       </div>
-      
+
      <div class="col-12 pb-5">
         <table class="table auth-table">
           <thead>
@@ -322,16 +322,15 @@
         </table>
       </div>
     </div>
-    
-  </div>
 
+  </div>
 </template>
 
 <script>
-import {commonMixin} from '../../../mixins/common'
+import { commonMixin } from '../../../mixins/common'
 
 export default {
-  name: "MemberDescription",
-  mixins: [commonMixin],
+  name: 'MemberDescription',
+  mixins: [commonMixin]
 }
 </script>

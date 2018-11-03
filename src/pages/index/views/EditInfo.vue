@@ -25,7 +25,7 @@
                   <input type="text" id="project-name" v-model="form.slot" placeholder="請輸入計畫簡稱 (限4字)" class="form-control">
                 </div>
                 <div class="col-5 pl-0">
-                  <span class="btn btn-text px-0" v-tooltip.right="{content: '專案簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別專案的文字'}">
+                  <span class="btn btn-text px-0" v-tooltip.right="{ content: '專案簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別專案的文字' }">
                     <i class="icon-info"></i>
                   </span>
                 </div>
@@ -114,7 +114,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -131,18 +130,18 @@
 </template>
 
 <script>
-import {commonMixin} from '../../../mixins/common'
+import { commonMixin } from '../../../mixins/common'
 import DatePicker from 'vue2-datepicker'
 import EditNav from '../components/EditNav'
 import CloseWindowDialog from '../components/CloseWindowDialog'
 
 export default {
-  name: "EditProject",
+  name: 'EditInfo',
   mixins: [commonMixin],
   components: {
     EditNav, DatePicker, CloseWindowDialog
   },
-  data() {
+  data () {
     return {
       closeWindowOpen: false,
       form: {
@@ -161,7 +160,7 @@ export default {
     }
   },
   methods: {
-    doSubmit() {
+    doSubmit () {
       this.$router.push('/')
     }
   }

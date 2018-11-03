@@ -1,8 +1,8 @@
 <template>
-  <li class="tree-menu-item" 
+  <li class="tree-menu-item"
   :class="{'is-open': CurrentToggle==idx}">
 
-    <div class="tree-menu-link" 
+    <div class="tree-menu-link"
     @click="toggleDropdown()"
     :class="{
       'is-active': $route.params.site_id == item.id
@@ -10,8 +10,8 @@
 
       <!-- 有子項目顯示箭頭 -->
       <span class="icon">
-        <i class="fa" v-if="isFolder" 
-        :class="CurrentToggle==idx ? 'fa-caret-down' : 'fa-caret-right'"></i> 
+        <i class="fa" v-if="isFolder"
+        :class="CurrentToggle==idx ? 'fa-caret-down' : 'fa-caret-right'"></i>
         <i v-else class="dot"></i>
       </span>
       <span class="text" v-if="isFolder">
@@ -25,14 +25,13 @@
         </div>
       </router-link>
     </div>
-
     <!-- Print 出所有子項目 -->
     <ul class="tree-menu-child" v-if="isFolder">
-      <tree-item 
-      v-for="(child) in item.children" 
-      :key="`menu-${item.id}-${child.id}`" 
-      :level="level+1" 
-      :item="child"/>
+      <tree-item
+      v-for="(child) in item.children"
+      :key="`menu-${item.id}-${child.id}`"
+      :level="level + 1"
+      :item="child" />
     </ul>
   </li>
 </template>
@@ -41,7 +40,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import TreeItem from '../components/TreeItem'
 
-export default { 
+export default {
   name: 'tree-item',
   components: { TreeItem },
   props: {
@@ -58,27 +57,24 @@ export default {
       'CurrentToggle'
     ])
   },
-  data() {
+  data () {
     return {
       // 判斷是否有子項目
-      isFolder: !this.item==false && !this.item.children==false && this.item.children.length > 0,
+      isFolder: !this.item === false && !this.item.children === false && this.item.children.length > 0
     }
   },
   methods: {
     ...mapActions([
       'setCurrentToggle'
     ]),
-    toggleDropdown() {
+    toggleDropdown () {
       // 切換開闔狀態
-      if(!this.isFolder) return
+      if (!this.isFolder) return
 
-      if(this.item.children.length) {
+      if (this.item.children.length) {
         this.setCurrentToggle(this.idx)
       }
     }
-  },
-  beforeMount() {
-    // debugger
   }
 }
 </script>
