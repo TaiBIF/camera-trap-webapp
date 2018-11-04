@@ -11,7 +11,7 @@
         <div class="empty-content">
           <img src="/assets/common/empty-project.png" width="212px" srcset="/assets/common/empty-project@2x.png">
           <h1 class="empty">您目前沒有任何計畫</h1>
-          <router-link to="/project/create" class="btn btn-orange">新增專案</router-link>
+          <router-link to="/project/create" class="btn btn-orange">新增計畫</router-link>
         </div>
       </div>
 
@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="col-4 text-right">
-            <router-link to="/project/create" class="btn btn-orange">新增專案</router-link>
+            <router-link to="/project/create" class="btn btn-orange">新增計畫</router-link>
           </div>
         </div>
         <!-- Cards -->
