@@ -1,9 +1,5 @@
 <template>
-<<<<<<< HEAD
-  <main class="page-login" v-bind:style="{'background': 'url(//baconmockup.com/1920/1080)'}">
-=======
   <main class="page-login" :style="{'background': 'url(/assets/common/bg-login.png)'}">
->>>>>>> feature-aja
     <div class="row">
       <div class="col-6 offset-3">
 
