@@ -43,15 +43,6 @@ function initCognitoSDK () {
         awsCognitoSession.getIdToken().getJwtToken()
       )
 
-      // sign in camera trap api
-      axios.post(
-        'https://camera-trap.tw/api/ctp-user/sign-in',
-        { idToken: awsCognitoSession.getIdToken().getJwtToken() },
-        function (data) {
-          console.log(data)
-        }
-      )
-
       // 前端取得登入使用者的 credentials 法
       var logins = {}
       logins[idpDomain] = awsCognitoSession.getIdToken().getJwtToken()
@@ -72,7 +63,15 @@ function initCognitoSDK () {
       // })
 
       console.log('Sign in success')
-      window.location.replace('/')
+
+      // sign in camera trap api
+      axios
+        .post('https://camera-trap.tw/api/ctp-user/sign-in', {
+          idToken: awsCognitoSession.getIdToken().getJwtToken()
+        })
+        .then(() => {
+          window.location.replace('/')
+        })
     },
     onFailure: function (err) {
       // put some error message test here
@@ -89,8 +88,8 @@ const auth = initCognitoSDK()
 // ---------------------------
 
 const checkIsLogin = () => {
-  let session = auth.signInUserSession
-  let dateNow = Date.now() / 1000
+  const session = auth.signInUserSession
+  const dateNow = Date.now() / 1000
   if (!!session.idToken.jwtToken && session.idToken.payload.exp > dateNow) {
     // signed-in
     console.log('signed-in')
