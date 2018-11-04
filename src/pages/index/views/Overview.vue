@@ -65,35 +65,32 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import * as projApi from '../../../service/project'
+import { createNamespacedHelpers } from 'vuex'
+
+const project = createNamespacedHelpers('project')
+const message = createNamespacedHelpers('message')
 
 export default {
   name: 'Overview',
   computed: {
-    ...mapGetters([
-      'Projects', 'Message'
+    ...project.mapGetters([
+      'Projects'
+    ]),
+    ...message.mapGetters([
+      'Message'
     ])
   },
   methods: {
-    ...mapActions([
-      'setProjects', 'setMessage'
+    ...project.mapActions([
+      'loadProject'
     ]),
-    loadProject () {
-      // 取得專案列表
-      projApi.getProjects().then(r => {
-        this.setProjects(r)
-        this.loadMessage()
-      })
-    },
-    loadMessage () {
-      projApi.getProjects().then(r => {
-        this.setMessage(r)
-      })
-    }
+    ...message.mapActions([
+      'loadMessage'
+    ])
   },
   beforeMount () {
     this.loadProject()
+    this.loadMessage()
   }
 }
 </script>
