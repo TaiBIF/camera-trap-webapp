@@ -16,7 +16,7 @@ const getProjects = async () => {
   const res = await fetchWrap({
     url: '/project/related-to-me',
     method: 'POST',
-    body: { user_id: 'OrcID_0000-0002-7446-3249' }
+    body: { user_id: localStorage.getItem('user_id') }
   })
 
   return res.ref

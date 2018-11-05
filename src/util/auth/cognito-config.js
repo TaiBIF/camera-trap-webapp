@@ -38,11 +38,6 @@ function initCognitoSDK () {
     onSuccess: function (awsCognitoSession) {
       AWSCognito.config.update({ region: 'ap-northeast-1' })
 
-      localStorage.setItem(
-        'awsIdToken',
-        awsCognitoSession.getIdToken().getJwtToken()
-      )
-
       // 前端取得登入使用者的 credentials 法
       var logins = {}
       logins[idpDomain] = awsCognitoSession.getIdToken().getJwtToken()
@@ -76,6 +71,12 @@ function initCognitoSDK () {
         .then(res => res.json())
         .then(response => {
           console.log(`sign-in: ${JSON.stringify(response)}`)
+
+          localStorage.setItem('user_id', response.ret)
+          localStorage.setItem(
+            'awsIdToken',
+            awsCognitoSession.getIdToken().getJwtToken()
+          )
           window.location.replace('/')
         })
     },
