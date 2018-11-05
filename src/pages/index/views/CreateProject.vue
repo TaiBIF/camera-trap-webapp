@@ -229,8 +229,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import { commonMixin } from '../../../mixins/common'
+
+const project = createNamespacedHelpers('project')
 
 export default {
   name: 'CreateProject',
@@ -270,7 +273,8 @@ export default {
         public_at: '',
         area: '',
         description: '',
-        comment: ''
+        comment: '',
+        no: ''
       },
       licenseForm: {
         forData: '',
@@ -280,8 +284,15 @@ export default {
     }
   },
   methods: {
+    ...project.mapActions([
+      'createProject'
+    ]),
     doSubmit () {
-      this.$router.push('/')
+      this.createProject({
+        ...this.form,
+        ...this.licenseForm
+      })
+      .then(() => this.$router.push('/'))
     },
     nextStep () {
       // 儲存現階段資料，或直接跳下一步一次送出

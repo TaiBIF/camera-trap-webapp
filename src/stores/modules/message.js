@@ -1,22 +1,19 @@
 import { getMessage } from '../../service/api'
 
 export const getters = {
-  Message: state => {
-    return state.message
-  }
+  Message: state => state.message
 }
 
 export const mutations = {
-  updateMessage (state) {
-    getMessage().then(results => {
-      state.message = results
-    })
+  updateMessage (state, payload) {
+    state.message = payload
   }
 }
 
 export const actions = {
-  loadMessage ({ commit }, msg) {
-    commit('updateMessage', msg)
+  async loadMessage ({ commit }) {
+    const payload = await getMessage()
+    commit('updateMessage', payload)
   }
 }
 
