@@ -65,22 +65,19 @@ function initCognitoSDK () {
       console.log('Sign in success')
 
       fetch(`https://camera-trap.tw/api/ctp-user/sign-in`, {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        // mode: 'cors', // no-cors, cors, *same-origin
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         },
-        // redirect: 'follow', // manual, *follow, error
-        // referrer: 'no-referrer', // no-referrer, *client
         body: JSON.stringify({
           idToken: awsCognitoSession.getIdToken().getJwtToken()
-        }) // body data type must match "Content-Type" header
+        })
       })
         .then(res => res.json())
         .then(response => {
           console.log(`sign-in: ${JSON.stringify(response)}`)
           window.location.replace('/')
-        }) // parses response to JSON
+        })
     },
     onFailure: function (err) {
       // put some error message test here
@@ -91,8 +88,6 @@ function initCognitoSDK () {
   auth.useCodeGrantFlow()
   return auth
 }
-
-const auth = initCognitoSDK()
 
 // ---------------------------
 
@@ -120,6 +115,8 @@ const checkIsLogin = () => {
   }
 }
 
+// onload
+const auth = initCognitoSDK()
 checkIsLogin()
 
 // beforeEach
