@@ -1,3 +1,5 @@
+<!-- this template is not being used due to ORCiD supplies such a confirmation page. -->
+
 <template>
   <main class="page-login">
     <div class="container">
