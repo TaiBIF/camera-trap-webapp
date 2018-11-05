@@ -57,23 +57,23 @@ export default {
     Slide
   },
   watch: {
-    'open': "watchToggle"
+    'open': 'watchToggle'
   },
-  data() {
+  data () {
     return {
       currentPage: 0
     }
   },
   methods: {
-    watchToggle() {
+    watchToggle () {
       this.currentPage = 0
     },
-    nextSlide() {
+    nextSlide () {
       this.currentPage++;
 
-      if(this.currentPage==3) {
-        this.$emit('close', 'trialModalOpen');
-        this.currentPage = 2;
+      if (this.currentPage === 3) {
+        this.$emit('close', 'trialModalOpen')
+        this.currentPage = 2
       }
     }
   }

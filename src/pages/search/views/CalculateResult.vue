@@ -106,13 +106,11 @@
           </div>
         </div>
       </form>
-      
     </div>
     <div class="sheet-container">
       <div class="sheet">
         <div id="spreadsheet"></div>
       </div>
-      
     </div>
   </div>
 </template>
@@ -129,7 +127,7 @@ import ZoomDrag from '../../index/components/ZoomDrag'
 
 export default {
   name: 'CalculateResult',
-  data() {
+  data () {
     return {
       today: moment(),
       isRender: false,
@@ -140,12 +138,12 @@ export default {
         start_at: '',
         end_at: '',
         start_time: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         },
         end_time: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         }
       },
       row_data: [],
@@ -185,7 +183,7 @@ export default {
         }
       },
       sheetContainer: null,
-      sheet: null,
+      sheet: null
     }
   },
   watch: {
@@ -199,8 +197,8 @@ export default {
       this.isDrag = true
     },
     dragMove (e) {
-      if(!this.isDrag) return
-      this.galleryWidth = window.innerWidth - e.pageX 
+      if (!this.isDrag) return
+      this.galleryWidth = window.innerWidth - e.pageX
     },
     dragEnd () {
       this.isDrag = false
@@ -231,27 +229,28 @@ export default {
           item: '目擊事件除以相機工作時長',
           result: '306 小時'
         }
-      ];
-      
+      ]
+
       this.settings.data = this.row_data
-      
-      this.sheet = new Handsontable(this.sheetContainer, this.settings);
+
+      this.sheet = new Handsontable(this.sheetContainer, this.settings)
       this.isRender = true
     },
-    settingSheetHeight() {
-      let sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
+    settingSheetHeight () {
+      const sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
       this.settings.height = sheetHeight
       // debugger
-      if(this.isRender) 
+      if (this.isRender) {
         this.sheet.updateSettings(this.settings)
+      }
     }
   },
-  mounted() {
+  mounted () {
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
     this.settingSheetHeight()
     this.getSheetData()
 
-    window.onresize = () => {this.settingSheetHeight()}
+    window.onresize = () => this.settingSheetHeight()
   }
 }
 </script>

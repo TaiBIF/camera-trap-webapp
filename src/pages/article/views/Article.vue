@@ -19,13 +19,13 @@
 
 <script>
 export default {
-  name: "Article",
-  data() {
+  name: 'Article',
+  data () {
     return {
       article: {
         title: 'Title',
         description: 'Description',
-        content: "Content",
+        content: 'Content',
         updated_at: '2018/08/14'
       }
     }

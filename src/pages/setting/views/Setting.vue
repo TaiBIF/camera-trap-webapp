@@ -110,7 +110,7 @@
 <script>
 export default {
   name: 'Setting',
-  data() {
+  data () {
     return {
       form: {
         name: 'Cindy Gu',

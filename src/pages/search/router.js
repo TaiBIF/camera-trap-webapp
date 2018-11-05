@@ -5,7 +5,7 @@ import Search from './views/Search'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'hash',
+  mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
@@ -24,4 +24,4 @@ export default new Router({
       component: () => import('./views/CalculateResult.vue')
     }
   ]
-});
+})

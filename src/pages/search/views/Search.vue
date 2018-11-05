@@ -117,7 +117,7 @@
                 <div class="col-2">
                   <div class="form-group">
                     <label>性別：</label>
-                    <v-select 
+                    <v-select
                     :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
                     :placeholder="'請選擇性別'" />
                   </div>
@@ -152,7 +152,7 @@
                 <div class="col-3">
                   <div class="form-group">
                     <label>海拔：</label>
-                    <v-select 
+                    <v-select
                     :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
                     :placeholder="'請選擇海拔範圍'" />
                   </div>
@@ -160,7 +160,7 @@
                 <div class="col-3">
                   <div class="form-group">
                     <label>植被：</label>
-                    <v-select 
+                    <v-select
                     :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
                     :placeholder="'請選擇植被'" />
                   </div>
@@ -168,7 +168,7 @@
                 <div class="col-4">
                   <div class="form-group">
                     <label>土地覆蓋類型：</label>
-                    <v-select 
+                    <v-select
                     :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
                     :placeholder="'請選擇土地覆蓋類型'" />
                   </div>
@@ -207,7 +207,7 @@
                   <div class="form-group row mb-0">
                     <label class="col-3 text-right required">計算項目：</label>
                     <div class="col-9">
-                      <v-select 
+                      <v-select
                       :options="[{value: 1, label:'有效照片與目擊事件'}]" />
                     </div>
                   </div>
@@ -216,7 +216,7 @@
             </div>
             <hr>
             <h5 class="mb-3">
-              基本欄位 
+              基本欄位
               <span class="text-gray">( 請選擇單一相機位置及物種進行計算 )</span>
             </h5>
             <div class="gray-block" v-for="(data, did) in form.data" :key="`data-form-${did}`">
@@ -328,15 +328,15 @@
 </template>
 
 <script>
-import {commonMixin} from '../../../mixins/common.js'
+import { commonMixin } from '../../../mixins/common.js'
 import DatePicker from 'vue2-datepicker'
 import VueTimepicker from 'vue2-timepicker'
 
 export default {
-  name: "Search",
+  name: 'Search',
   mixins: [commonMixin],
-  components: {DatePicker, VueTimepicker},
-  data() {
+  components: { DatePicker, VueTimepicker },
+  data () {
     return {
       currentTab: 1,
       advSecOpen: true,
@@ -346,56 +346,54 @@ export default {
             project: '',
             site: '',
             subsite: '',
-            camera: '',
+            camera: ''
           }
         ],
-        start_at: '', 
-        end_at: '', 
+        start_at: '',
+        end_at: '',
         start_time: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         },
         end_time: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         },
         camera_start: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         },
         camera_end: {
-          HH: "10",
-          mm: "05"
+          HH: '10',
+          mm: '05'
         }
       }
     }
   },
   methods: {
-    submitSearch() {
+    submitSearch () {
       this.$router.push('/search')
     },
-    submitCalculate() {
+    submitCalculate () {
       this.$router.push('/calculate')
     },
-    removeFormData(idx) {
+    removeFormData (idx) {
       this.form.data.splice(idx, 1)
     },
-    addFormData() {
+    addFormData () {
       this.form.data.push(
         {
           project: '',
           site: '',
           subsite: '',
-          camera: '',
+          camera: ''
         }
       )
     }
-  }, 
-  beforeMount() {
-    
   },
-  mounted() {
-    
+  beforeMount () {
+  },
+  mounted () {
   }
 }
 </script>
