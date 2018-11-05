@@ -11,7 +11,7 @@
         <div class="empty-content">
           <img src="/assets/common/empty-project.png" width="212px" srcset="/assets/common/empty-project@2x.png">
           <h1 class="empty">您目前沒有任何計畫</h1>
-          <router-link to="/project/create" class="btn btn-orange">新增專案</router-link>
+          <router-link to="/project/create" class="btn btn-orange">新增計畫</router-link>
         </div>
       </div>
 
@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="col-4 text-right">
-            <router-link to="/project/create" class="btn btn-orange">新增專案</router-link>
+            <router-link to="/project/create" class="btn btn-orange">新增計畫</router-link>
           </div>
         </div>
         <!-- Cards -->
@@ -65,35 +65,32 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import * as projApi from '../../../service/project'
+import { createNamespacedHelpers } from 'vuex'
+
+const project = createNamespacedHelpers('project')
+const message = createNamespacedHelpers('message')
 
 export default {
   name: 'Overview',
   computed: {
-    ...mapGetters([
-      'Projects', 'Message'
+    ...project.mapGetters([
+      'Projects'
+    ]),
+    ...message.mapGetters([
+      'Message'
     ])
   },
   methods: {
-    ...mapActions([
-      'setProjects', 'setMessage'
+    ...project.mapActions([
+      'loadProject'
     ]),
-    loadProject () {
-      // 取得專案列表
-      projApi.getProjects().then(r => {
-        this.setProjects(r)
-        this.loadMessage()
-      })
-    },
-    loadMessage () {
-      projApi.getProjects().then(r => {
-        this.setMessage(r)
-      })
-    }
+    ...message.mapActions([
+      'loadMessage'
+    ])
   },
   beforeMount () {
     this.loadProject()
+    this.loadMessage()
   }
 }
 </script>
