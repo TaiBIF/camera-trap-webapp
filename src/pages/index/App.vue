@@ -52,17 +52,17 @@
       </nav>
     </header>
     <main class="page-project">
-      <aside v-if="asideElem.indexOf($route.name)==-1">
+      <aside v-if="asideElem.indexOf($route.name)==-1 && !!currentProject">
         <!-- Render Project structure -->
         <router-link to="/" class="aside-header">
           <i class="fa fa-chevron-left"></i> 返回計畫總覽
         </router-link>
         <div class="aside-project">
           <router-link to="/project/1">
-          {{ project.name }}
+          {{ currentProject.projectTitle }}
           </router-link>
         </div>
-        <tree-menu :items="project.children" :defaultOpenLevel="1" />
+        <tree-menu :items="cameraLocations" :defaultOpenLevel="1" />
       </aside>
 
       <router-view/>
@@ -199,6 +199,12 @@ export default {
     $route (to, from) {
       this.fetchData()
     }
+  },
+  computed: {
+    ...project.mapGetters([
+      'currentProject',
+      'cameraLocations'
+    ])
   },
   methods: {
     ...project.mapActions([

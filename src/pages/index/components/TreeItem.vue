@@ -18,7 +18,7 @@
         {{item.name}}
       </span>
       <!-- 處於編輯狀態顯示 lock -->
-      <router-link class="text" v-else :to="`/project/1/site/${item.id}`">
+      <router-link class="text" v-else :to="`/project/${currentProjectId}/site/${item.id}`">
         {{item.name}}
         <div class="icon float-right">
           <i class="icon-lock-green"></i>
@@ -37,8 +37,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex'
 import TreeItem from '../components/TreeItem'
+
+const project = createNamespacedHelpers('project')
 
 export default {
   name: 'tree-item',
@@ -55,7 +57,8 @@ export default {
   computed: {
     ...mapGetters([
       'CurrentToggle'
-    ])
+    ]),
+    ...project.mapState(['currentProjectId'])
   },
   data () {
     return {
