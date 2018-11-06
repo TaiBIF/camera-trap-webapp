@@ -72,9 +72,14 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+
 import TreeMenu from './components/TreeMenu.vue'
 
-const project = {
+const project = createNamespacedHelpers('project')
+const message = createNamespacedHelpers('message')
+
+const fakeProject = {
   id: 1,
   name: '國家生物多樣性監測與報告系統規劃-陸域',
   slot: '多樣性',
@@ -184,15 +189,27 @@ export default {
     return {
       // 側選單不顯示的 Router name
       asideElem: ['overview', 'createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription', 'photoTag'],
-      project: project
+      project: fakeProject
     }
   },
+  beforeMount () {
+    this.fetchData()
+  },
   watch: {
-    '$router': 'fetchData'
+    $route (to, from) {
+      this.fetchData()
+    }
   },
   methods: {
+    ...project.mapActions([
+      'loadProject'
+    ]),
+    ...message.mapActions([
+      'loadMessage'
+    ]),
     fetchData () {
-      // let projectID = this.$router.params.id
+      this.loadProject()
+      this.loadMessage()
     }
   }
 }

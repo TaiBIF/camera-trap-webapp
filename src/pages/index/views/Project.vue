@@ -260,9 +260,12 @@
 import L from 'leaflet'
 import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
 import moment from 'moment'
+import { createNamespacedHelpers } from 'vuex'
 import VueHighcharts from 'vue2-highcharts'
 import SiteChart from '../components/SiteChart'
 import ReportModal from '../components/ReportModal'
+
+const project = createNamespacedHelpers('project')
 
 // 設定未選擇/已選擇 Icon
 const Icon = L.icon({
@@ -589,6 +592,9 @@ export default {
     'currentSite': 'setCamera'
   },
   methods: {
+    ...project.mapMutations([
+      'setCurrentProject'
+    ]),
     submitReport () {
       // send error data
     },
@@ -692,6 +698,7 @@ export default {
   mounted () {
     this.renderMap()
     this.loadPieChart()
+    this.setCurrentProject(this.$route.params.id)
   }
 }
 </script>

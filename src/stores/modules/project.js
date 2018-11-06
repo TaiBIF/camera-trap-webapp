@@ -3,12 +3,18 @@ import { getProjects, createProject } from '../../service/api'
 export const getters = {
   Projects: state => {
     return state.projects
+  },
+  currentProject: state => {
+    return state.projects.find(val => val.project === state.currentProjectId)
   }
 }
 
 export const mutations = {
   updateProjects (state, payload) {
     state.projects = payload
+  },
+  setCurrentProject (state, payload) {
+    state.currentProjectId = payload
   }
 }
 
@@ -26,7 +32,8 @@ export const actions = {
 export default {
   namespaced: true,
   state: {
-    projects: []
+    projects: [],
+    currentProjectId: null
   },
   getters,
   mutations,

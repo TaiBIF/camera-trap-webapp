@@ -37,7 +37,7 @@
         </div>
         <!-- Cards -->
         <div class="three cards">
-          <router-link to="/project/1" class="card" v-for="(proj) in Projects" :key="`proj-${proj._id}`">
+          <router-link :to="`/project/${proj._id}`" class="card" v-for="(proj) in Projects" :key="`proj-${proj._id}`">
             <div class="image">
               <img :src="proj.coverImage">
               <div class="badget">
@@ -81,16 +81,12 @@ export default {
     ])
   },
   methods: {
-    ...project.mapActions([
-      'loadProject'
-    ]),
-    ...message.mapActions([
-      'loadMessage'
+    ...project.mapMutations([
+      'setCurrentProject'
     ])
   },
   beforeMount () {
-    this.loadProject()
-    this.loadMessage()
+    this.setCurrentProject('')
   }
 }
 </script>
