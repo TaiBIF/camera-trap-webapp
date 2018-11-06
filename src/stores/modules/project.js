@@ -18,13 +18,7 @@ export const actions = {
     commit('updateProjects', payload)
   },
   async createProject ({ dispatch }, payload) {
-    await createProject({
-      id: 2,
-      name: '林務局2',
-      start_at: 2019,
-      agency: '林務局2',
-      members: 172
-    })
+    await createProject(payload)
     dispatch('loadProject')
   }
 }
