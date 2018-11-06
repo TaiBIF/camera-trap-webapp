@@ -211,7 +211,7 @@
                 </div>
                 <div class="col-6">
                   <h3>
-                    本計畫已辨識物種 <big>5</big> 種
+                    本計畫已辨識物種 <big>{{speciesGroup.species_group.length}}</big> 種
                   </h3>
                   <small class="sub-heading text-center text-gray">最後更新時間：2018/08/16</small>
                   <hr>
@@ -387,15 +387,7 @@ const SiteMarkers = [
 const PieChart = {
   name: 'speices',
   size: '80%',
-  innerSize: '50%',
-  data: [
-    { name: '山羌', y: 1365 },
-    { name: '台灣獼猴', y: 1184 },
-    { name: '鼬獾', y: 1085 },
-    { name: '水鹿', y: 467 },
-    { name: '臺灣黑熊', y: 705 },
-    { name: '其他', y: 208 }
-  ]
+  innerSize: '50%'
 }
 
 const BarChart = {
@@ -493,7 +485,6 @@ export default {
           label: '南投處'
         }
       ],
-      species: PieChart.data,
       // 共用圖表顏色
       chartColors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
       currentTab: 0,
@@ -593,19 +584,25 @@ export default {
       setTimeout(() => {
         this.renderMap()
         this.loadPieChart()
+        this.getSpeciesGroup()
       }, 100)
     },
     'currentSite': 'setCamera'
   },
   computed: {
+    ...project.mapState(['speciesGroup']),
     ...project.mapGetters([
       'currentProject',
-      'cameraLocations'
+      'cameraLocations',
+      'species'
     ])
   },
   methods: {
     ...project.mapMutations([
       'setCurrentProject'
+    ]),
+    ...project.mapActions([
+      'getSpeciesGroup'
     ]),
     submitReport () {
       // send error data

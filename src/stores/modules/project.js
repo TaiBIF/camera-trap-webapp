@@ -1,4 +1,4 @@
-import { getProjects, createProject } from '../../service/api'
+import { getProjects, createProject, getSpeciesGroup } from '../../service/api'
 
 export const getters = {
   Projects: state => {
@@ -10,7 +10,9 @@ export const getters = {
     )
   },
   cameraLocations: (_, getters) => {
-    if (!getters.currentProject.cameraLocations) return []
+    if (!getters.currentProject || !getters.currentProject.cameraLocations) {
+      return []
+    }
 
     const locations = getters.currentProject.cameraLocations.map(
       ({ site, subSite }) => ({ site, subSite })
@@ -42,6 +44,12 @@ export const getters = {
     }, {})
 
     return Object.values(table)
+  },
+  species: state => {
+    return state.speciesGroup.species_group.map(val => ({
+      name: val.species,
+      y: val.count
+    }))
   }
 }
 
@@ -51,6 +59,9 @@ export const mutations = {
   },
   setCurrentProject (state, payload) {
     state.currentProjectId = payload
+  },
+  setSpeciesGroup (state, payload) {
+    state.speciesGroup = payload
   }
 }
 
@@ -62,6 +73,16 @@ export const actions = {
   async createProject ({ dispatch }, payload) {
     await createProject(payload)
     dispatch('loadProject')
+  },
+  async getSpeciesGroup ({ state, commit }) {
+    const payload = await getSpeciesGroup(state.currentProjectId)
+
+    payload
+      ? commit('setSpeciesGroup', payload)
+      : commit('setSpeciesGroup', {
+        species_group: [],
+        total: 0
+      })
   }
 }
 
@@ -69,7 +90,11 @@ export default {
   namespaced: true,
   state: {
     projects: [],
-    currentProjectId: null
+    currentProjectId: null,
+    speciesGroup: {
+      species_group: [],
+      total: 0
+    }
   },
   getters,
   mutations,
