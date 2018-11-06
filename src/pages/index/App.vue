@@ -79,117 +79,13 @@ import TreeMenu from './components/TreeMenu.vue'
 const project = createNamespacedHelpers('project')
 const message = createNamespacedHelpers('message')
 
-const fakeProject = {
-  id: 1,
-  name: '國家生物多樣性監測與報告系統規劃-陸域',
-  slot: '多樣性',
-  children: [
-    {
-      id: 11,
-      name: '羅東處',
-      project_id: 1,
-      children: [
-        {
-          id: 101,
-          name: 'OO站'
-        },
-        {
-          id: 102,
-          name: 'XX站'
-        },
-        {
-          id: 103,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 12,
-      name: '新竹處',
-      project_id: 1,
-      children: [
-        {
-          id: 201,
-          name: 'OO站'
-        },
-        {
-          id: 202,
-          name: 'XX站'
-        },
-        {
-          id: 203,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 13,
-      name: '東勢處',
-      project_id: 1,
-      children: [
-        {
-          id: 301,
-          name: 'OO站'
-        },
-        {
-          id: 302,
-          name: 'XX站'
-        },
-        {
-          id: 303,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 14,
-      name: '南投處',
-      project_id: 1,
-      children: [
-        {
-          id: 401,
-          name: 'OO站'
-        },
-        {
-          id: 402,
-          name: 'XX站'
-        },
-        {
-          id: 403,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 15,
-      name: '嘉義處',
-      project_id: 1,
-      children: [
-        {
-          id: 501,
-          name: 'OO站'
-        },
-        {
-          id: 502,
-          name: 'XX站'
-        },
-        {
-          id: 503,
-          name: '%%站'
-        }
-      ]
-    }
-  ]
-}
-
 export default {
   name: 'App',
   components: { TreeMenu },
   data () {
     return {
       // 側選單不顯示的 Router name
-      asideElem: ['overview', 'createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription', 'photoTag'],
-      project: fakeProject
+      asideElem: ['overview', 'createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription', 'photoTag']
     }
   },
   beforeMount () {
