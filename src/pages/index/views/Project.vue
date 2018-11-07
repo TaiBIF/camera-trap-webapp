@@ -544,9 +544,21 @@ export default {
         this.renderMap()
         this.loadPieChart()
         this.getSpeciesGroup()
+        this.fetchImageStatus()
       }, 100)
     },
-    'currentSite': 'setCamera'
+    currentSite: function (newValue) {
+      setTimeout(() => {
+        this.setCamera(newValue)
+        this.fetchImageStatus()
+      }, 100)
+    },
+    currentDuration: function (newValue) {
+      setTimeout(() => {
+        this.setCamera(newValue)
+        this.fetchImageStatus()
+      }, 100)
+    }
   },
   computed: {
     ...project.mapState(['speciesGroup']),
@@ -562,8 +574,21 @@ export default {
       'setCurrentProject'
     ]),
     ...project.mapActions([
-      'getSpeciesGroup'
+      'getSpeciesGroup',
+      'getLocationIdentifiedStatus',
+      'getLocationRetrievedStatus',
+      'getLocationCameraAbnormalStatus'
     ]),
+    fetchImageStatus () {
+      const payload = {
+        year: this.currentDuration,
+        site: this.currentSite.label
+      }
+
+      this.getLocationIdentifiedStatus(payload)
+      this.getLocationRetrievedStatus(payload)
+      this.getLocationCameraAbnormalStatus(payload)
+    },
     timeFormat (time) {
       return moment(time * 1000).format('YYYY/MM/DD')
     },
