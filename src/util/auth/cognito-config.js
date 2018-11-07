@@ -38,11 +38,6 @@ function initCognitoSDK () {
     onSuccess: function (awsCognitoSession) {
       AWSCognito.config.update({ region: 'ap-northeast-1' })
 
-      localStorage.setItem(
-        'awsIdToken',
-        awsCognitoSession.getIdToken().getJwtToken()
-      )
-
       // 前端取得登入使用者的 credentials 法
       var logins = {}
       logins[idpDomain] = awsCognitoSession.getIdToken().getJwtToken()
@@ -64,12 +59,24 @@ function initCognitoSDK () {
 
       console.log('Sign in success')
 
-      // sign in camera trap api
-      axios
-        .post('https://camera-trap.tw/api/ctp-user/sign-in', {
+      fetch(`https://camera-trap.tw/api/ctp-user/sign-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: JSON.stringify({
           idToken: awsCognitoSession.getIdToken().getJwtToken()
         })
-        .then(() => {
+      })
+        .then(res => res.json())
+        .then(response => {
+          console.log(`sign-in: ${JSON.stringify(response)}`)
+
+          localStorage.setItem('user_id', response.ret)
+          localStorage.setItem(
+            'awsIdToken',
+            awsCognitoSession.getIdToken().getJwtToken()
+          )
           window.location.replace('/')
         })
     },
@@ -82,8 +89,6 @@ function initCognitoSDK () {
   auth.useCodeGrantFlow()
   return auth
 }
-
-const auth = initCognitoSDK()
 
 // ---------------------------
 
@@ -111,6 +116,8 @@ const checkIsLogin = () => {
   }
 }
 
+// onload
+const auth = initCognitoSDK()
 checkIsLogin()
 
 // beforeEach

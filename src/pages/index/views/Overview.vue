@@ -37,23 +37,23 @@
         </div>
         <!-- Cards -->
         <div class="three cards">
-          <router-link to="/project/1" class="card" v-for="(proj, pid) in Projects" :key="`proj-${pid}`">
+          <router-link :to="`/project/${proj._id}`" class="card" v-for="(proj) in Projects" :key="`proj-${proj._id}`">
             <div class="image">
-              <img src="https://via.placeholder.com/373x180">
+              <img :src="proj.coverImage">
               <div class="badget">
-                <i class="fa fa-user"></i>{{proj.members}}
+                <i class="fa fa-user"></i>{{proj.members || 'todo'}}
               </div>
             </div>
             <div class="content">
-              <h3 class="card-heading">{{proj.name}}</h3>
+              <h3 class="card-heading">{{proj.projectTitle}}</h3>
               <div class="row description">
                 <div class="col-6">
                   <small class="text-gray label">資料起始年份</small>
-                  <span class="text-green">{{proj.start_at}}</span>
+                  <span class="text-green">{{proj.projectStartDate.split('-')[0]}}</span>
                 </div>
                 <div class="col-6">
                   <small class="text-gray label">委託單位</small>
-                  <span class="text-green">{{proj.agency}}</span>
+                  <span class="text-green">{{proj.funder}}</span>
                 </div>
               </div>
             </div>
@@ -81,16 +81,12 @@ export default {
     ])
   },
   methods: {
-    ...project.mapActions([
-      'loadProject'
-    ]),
-    ...message.mapActions([
-      'loadMessage'
+    ...project.mapMutations([
+      'setCurrentProject'
     ])
   },
   beforeMount () {
-    this.loadProject()
-    this.loadMessage()
+    this.setCurrentProject('')
   }
 }
 </script>

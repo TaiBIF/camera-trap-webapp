@@ -138,21 +138,21 @@
                 <label for="">詮釋資料：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" id="for-data-1" v-model="licenseForm.forData" value="1">
+                    <input type="radio" id="for-data-1" v-model="licenseForm.forData" value="CC0">
                     <label for="for-data-1">
                       <img src="/assets/common/cc-0.png" height="40px" srcset="/assets/common/cc-0@2x.png">
                       <span class="text">無著作權 (CC0)</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-data-2" v-model="licenseForm.forData" value="2">
+                    <input type="radio" id="for-data-2" v-model="licenseForm.forData" value="CC BY 4.0">
                     <label for="for-data-2">
                       <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-data-3" v-model="licenseForm.forData" value="3">
+                    <input type="radio" id="for-data-3" v-model="licenseForm.forData" value="CC BY-NC">
                     <label for="for-data-3">
                       <img src="/assets/common/cc-2.png" height="40px" srcset="/assets/common/cc-2@2x.png">
                       <span class="text">姓名標示-非商業性</span>
@@ -164,7 +164,7 @@
                 <label for="">鑑定資訊：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" id="for-info-1" v-model="licenseForm.forInfo" value="1">
+                    <input type="radio" id="for-info-1" v-model="licenseForm.forInfo" value="CC BY 4.0">
                     <label for="for-info-1">
                       <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
@@ -176,21 +176,21 @@
                 <label for="">影像資料：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" id="for-img-1" v-model="licenseForm.forImg" value="1">
+                    <input type="radio" id="for-img-1" v-model="licenseForm.forImg" value="CC0">
                     <label for="for-img-1">
                       <img src="/assets/common/cc-0.png" height="40px" srcset="/assets/common/cc-0@2x.png">
                       <span class="text">無著作權 (CC0)</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-img-2" v-model="licenseForm.forImg" value="2">
+                    <input type="radio" id="for-img-2" v-model="licenseForm.forImg" value="CC BY 4.0">
                     <label for="for-img-2">
                       <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-img-3" v-model="licenseForm.forImg" value="3">
+                    <input type="radio" id="for-img-3" v-model="licenseForm.forImg" value="CC BY-NC">
                     <label for="for-img-3">
                       <img src="/assets/common/cc-2.png" height="40px" srcset="/assets/common/cc-2@2x.png">
                       <span class="text">姓名標示-非商業性</span>
@@ -229,8 +229,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import { commonMixin } from '../../../mixins/common'
+
+const project = createNamespacedHelpers('project')
 
 export default {
   name: 'CreateProject',
@@ -242,22 +245,27 @@ export default {
     return {
       step: 1,
       options: [
-        {
-          value: 100,
-          label: '新竹市'
-        },
-        {
-          value: 101,
-          label: '嘉義市'
-        },
-        {
-          value: 102,
-          label: '桃園市'
-        },
-        {
-          value: 103,
-          label: '屏東市'
-        }
+        '台北市',
+        '新北市',
+        '桃園市',
+        '台中市',
+        '台南市',
+        '高雄市',
+        '基隆市',
+        '新竹市',
+        '嘉義市',
+        '新竹縣',
+        '苗栗縣',
+        '彰化縣',
+        '雲林縣',
+        '嘉義縣',
+        '屏東縣',
+        '宜蘭縣',
+        '花蓮縣',
+        '台東縣',
+        '澎湖縣',
+        '金門縣',
+        '連江縣'
       ],
       form: {
         cover: '',
@@ -270,7 +278,8 @@ export default {
         public_at: '',
         area: '',
         description: '',
-        comment: ''
+        comment: '',
+        no: ''
       },
       licenseForm: {
         forData: '',
@@ -280,8 +289,15 @@ export default {
     }
   },
   methods: {
+    ...project.mapActions([
+      'createProject'
+    ]),
     doSubmit () {
-      this.$router.push('/')
+      this.createProject({
+        form: this.form,
+        licenseForm: this.licenseForm
+      })
+      .then(() => this.$router.push('/'))
     },
     nextStep () {
       // 儲存現階段資料，或直接跳下一步一次送出

@@ -52,17 +52,17 @@
       </nav>
     </header>
     <main class="page-project">
-      <aside v-if="asideElem.indexOf($route.name)==-1">
+      <aside v-if="asideElem.indexOf($route.name)==-1 && !!currentProject">
         <!-- Render Project structure -->
         <router-link to="/" class="aside-header">
           <i class="fa fa-chevron-left"></i> 返回計畫總覽
         </router-link>
         <div class="aside-project">
           <router-link to="/project/1">
-          {{ project.name }}
+          {{ currentProject.projectTitle }}
           </router-link>
         </div>
-        <tree-menu :items="project.children" :defaultOpenLevel="1" />
+        <tree-menu :items="cameraLocations" :defaultOpenLevel="1" />
       </aside>
 
       <router-view/>
@@ -72,110 +72,12 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+
 import TreeMenu from './components/TreeMenu.vue'
 
-const project = {
-  id: 1,
-  name: '國家生物多樣性監測與報告系統規劃-陸域',
-  slot: '多樣性',
-  children: [
-    {
-      id: 11,
-      name: '羅東處',
-      project_id: 1,
-      children: [
-        {
-          id: 101,
-          name: 'OO站'
-        },
-        {
-          id: 102,
-          name: 'XX站'
-        },
-        {
-          id: 103,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 12,
-      name: '新竹處',
-      project_id: 1,
-      children: [
-        {
-          id: 201,
-          name: 'OO站'
-        },
-        {
-          id: 202,
-          name: 'XX站'
-        },
-        {
-          id: 203,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 13,
-      name: '東勢處',
-      project_id: 1,
-      children: [
-        {
-          id: 301,
-          name: 'OO站'
-        },
-        {
-          id: 302,
-          name: 'XX站'
-        },
-        {
-          id: 303,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 14,
-      name: '南投處',
-      project_id: 1,
-      children: [
-        {
-          id: 401,
-          name: 'OO站'
-        },
-        {
-          id: 402,
-          name: 'XX站'
-        },
-        {
-          id: 403,
-          name: '%%站'
-        }
-      ]
-    },
-    {
-      id: 15,
-      name: '嘉義處',
-      project_id: 1,
-      children: [
-        {
-          id: 501,
-          name: 'OO站'
-        },
-        {
-          id: 502,
-          name: 'XX站'
-        },
-        {
-          id: 503,
-          name: '%%站'
-        }
-      ]
-    }
-  ]
-}
+const project = createNamespacedHelpers('project')
+const message = createNamespacedHelpers('message')
 
 export default {
   name: 'App',
@@ -183,16 +85,33 @@ export default {
   data () {
     return {
       // 側選單不顯示的 Router name
-      asideElem: ['overview', 'createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription', 'photoTag'],
-      project: project
+      asideElem: ['overview', 'createProject', 'editInfo', 'editColumn', 'editCamera', 'editMember', 'editLicense', 'memberDescription', 'photoTag']
     }
   },
+  beforeMount () {
+    this.fetchData()
+  },
   watch: {
-    '$router': 'fetchData'
+    $route (to, from) {
+      this.fetchData()
+    }
+  },
+  computed: {
+    ...project.mapGetters([
+      'currentProject',
+      'cameraLocations'
+    ])
   },
   methods: {
+    ...project.mapActions([
+      'loadProject'
+    ]),
+    ...message.mapActions([
+      'loadMessage'
+    ]),
     fetchData () {
-      // let projectID = this.$router.params.id
+      this.loadProject()
+      this.loadMessage()
     }
   }
 }

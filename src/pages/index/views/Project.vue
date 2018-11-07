@@ -1,5 +1,5 @@
 <template>
-  <div class="maintain">
+  <div class="maintain" v-if="!!currentProject">
     <div class="container">
       <div class="panel panel-project">
         <div class="panel-body">
@@ -8,7 +8,7 @@
               <div class="row">
                 <div class="col-9">
                   <h1 class="heading mt-0">
-                    國家生物多樣性監測與報告系統規劃-陸域
+                    {{currentProject.projectTitle}}
                   </h1>
                 </div>
                 <div class="col-3 text-right">
@@ -20,19 +20,19 @@
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 col-md-3 text-gray">委辦單位</div>
-                <div class="col-sm-8 col-md-9">林務局</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.funder}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 col-md-3 text-gray">計畫編號</div>
-                <div class="col-sm-8 col-md-9">10156331</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.projectId}}</div>
               </div>
-              <div class="row mb-2">
+              <div class="row mb-2" v-if="!!currentProject.principalInvestigator">
                 <div class="col-sm-4 col-md-3 text-gray">計畫主持人</div>
-                <div class="col-sm-8 col-md-9">黃智賢</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.principalInvestigator}}</div>
               </div>
-              <div class="row">
+              <div class="row" v-if="!!currentProject.projectStartDate && !!currentProject.projectEndDate">
                 <div class="col-sm-4 col-md-3 text-gray">計畫時間</div>
-                <div class="col-sm-8 col-md-9">2015/01/01 - 2020/12/31</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.projectStartDate}} - {{currentProject.projectEndDate}}</div>
               </div>
             </div>
             <div class="col-4 text-center pt-5 divider">
@@ -211,7 +211,7 @@
                 </div>
                 <div class="col-6">
                   <h3>
-                    本計畫已辨識物種 <big>5</big> 種
+                    本計畫已辨識物種 <big>{{speciesGroup.species_group.length}}</big> 種
                   </h3>
                   <small class="sub-heading text-center text-gray">最後更新時間：2018/08/16</small>
                   <hr>
@@ -260,9 +260,12 @@
 import L from 'leaflet'
 import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
 import moment from 'moment'
+import { createNamespacedHelpers } from 'vuex'
 import VueHighcharts from 'vue2-highcharts'
 import SiteChart from '../components/SiteChart'
 import ReportModal from '../components/ReportModal'
+
+const project = createNamespacedHelpers('project')
 
 // 設定未選擇/已選擇 Icon
 const Icon = L.icon({
@@ -384,15 +387,7 @@ const SiteMarkers = [
 const PieChart = {
   name: 'speices',
   size: '80%',
-  innerSize: '50%',
-  data: [
-    { name: '山羌', y: 1365 },
-    { name: '台灣獼猴', y: 1184 },
-    { name: '鼬獾', y: 1085 },
-    { name: '水鹿', y: 467 },
-    { name: '臺灣黑熊', y: 705 },
-    { name: '其他', y: 208 }
-  ]
+  innerSize: '50%'
 }
 
 const BarChart = {
@@ -490,7 +485,6 @@ export default {
           label: '南投處'
         }
       ],
-      species: PieChart.data,
       // 共用圖表顏色
       chartColors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
       currentTab: 0,
@@ -586,9 +580,30 @@ export default {
     ReportModal
   },
   watch: {
+    currentProject: function (newValue) {
+      setTimeout(() => {
+        this.renderMap()
+        this.loadPieChart()
+        this.getSpeciesGroup()
+      }, 100)
+    },
     'currentSite': 'setCamera'
   },
+  computed: {
+    ...project.mapState(['speciesGroup']),
+    ...project.mapGetters([
+      'currentProject',
+      'cameraLocations',
+      'species'
+    ])
+  },
   methods: {
+    ...project.mapMutations([
+      'setCurrentProject'
+    ]),
+    ...project.mapActions([
+      'getSpeciesGroup'
+    ]),
     submitReport () {
       // send error data
     },
@@ -690,8 +705,7 @@ export default {
     }
   },
   mounted () {
-    this.renderMap()
-    this.loadPieChart()
+    this.setCurrentProject(this.$route.params.id)
   }
 }
 </script>
