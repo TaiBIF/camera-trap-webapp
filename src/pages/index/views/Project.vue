@@ -213,7 +213,7 @@
                   <h3>
                     本計畫已辨識物種 <big>{{speciesGroup.species_group.length}}</big> 種
                   </h3>
-                  <small class="sub-heading text-center text-gray">最後更新時間：2018/08/16</small>
+                  <small class="sub-heading text-center text-gray" v-if="speciesGroup.modified">最後更新時間：{{timeFormat(speciesGroup.modified)}}</small>
                   <hr>
                   <div class="row">
                     <div class="col-5">
@@ -604,6 +604,9 @@ export default {
     ...project.mapActions([
       'getSpeciesGroup'
     ]),
+    timeFormat (time) {
+      return moment(time * 1000).format('YYYY/MM/DD')
+    },
     submitReport () {
       // send error data
     },

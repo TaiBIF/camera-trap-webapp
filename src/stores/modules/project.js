@@ -76,13 +76,7 @@ export const actions = {
   },
   async getSpeciesGroup ({ state, commit }) {
     const payload = await getSpeciesGroup(state.currentProjectId)
-
-    payload
-      ? commit('setSpeciesGroup', payload)
-      : commit('setSpeciesGroup', {
-        species_group: [],
-        total: 0
-      })
+    commit('setSpeciesGroup', payload)
   }
 }
 
@@ -93,7 +87,8 @@ export default {
     currentProjectId: null,
     speciesGroup: {
       species_group: [],
-      total: 0
+      total: 0,
+      modified: null
     }
   },
   getters,
