@@ -67,7 +67,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-5 col-md-4" v-if="currentSite.child">
+                <div class="col-sm-5 col-md-4" v-if="currentSite.child && currentSite.child.length > 0">
                   <div class="form-group row mb-0">
                     <label class="col-5 text-right">
                       子樣區：
@@ -444,47 +444,6 @@ export default {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         marker: []
       },
-      // vue-select 使用的樣站資訊
-      sites: [
-        {
-          value: 0,
-          label: '全部樣區'
-        },
-        {
-          value: 1,
-          label: '羅東處',
-          child: [
-            {
-              value: 11,
-              label: 'A 站'
-            },
-            {
-              value: 12,
-              label: 'B 站'
-            },
-            {
-              value: 13,
-              label: 'C 站'
-            },
-            {
-              value: 14,
-              label: 'D 站'
-            }
-          ]
-        },
-        {
-          value: 2,
-          label: '新竹處'
-        },
-        {
-          value: 3,
-          label: '東勢處'
-        },
-        {
-          value: 4,
-          label: '南投處'
-        }
-      ],
       // 共用圖表顏色
       chartColors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
       currentTab: 0,
@@ -594,7 +553,8 @@ export default {
     ...project.mapGetters([
       'currentProject',
       'cameraLocations',
-      'species'
+      'species',
+      'sites'
     ])
   },
   methods: {

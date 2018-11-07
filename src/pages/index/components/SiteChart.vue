@@ -74,7 +74,7 @@ export default {
       default: 'normal'
     },
     current: {
-      type: Number,
+      type: [Number, String],
       default: null
     },
     chart: {

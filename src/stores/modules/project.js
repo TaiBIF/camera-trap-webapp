@@ -50,6 +50,36 @@ export const getters = {
       name: val.species,
       y: val.count
     }))
+  },
+  // vue-select 使用的樣站資訊
+  sites: (_, getters) => {
+    // 格式同 cameraLocations 只是要替換 key， id -> value, name -> label
+    const sites = getters.cameraLocations.reduce(
+      (accumulator, currentValue) => {
+        const tmp = {
+          value: currentValue.id,
+          label: currentValue.name,
+          child: currentValue.children
+            ? currentValue.children.map(val => ({
+              value: val.id,
+              label: val.name
+            }))
+            : []
+        }
+        accumulator.push(tmp)
+
+        return accumulator
+      },
+      []
+    )
+
+    return [
+      {
+        value: '全部樣區',
+        label: '全部樣區'
+      },
+      ...sites
+    ]
   }
 }
 
