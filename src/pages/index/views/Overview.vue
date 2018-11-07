@@ -3,7 +3,7 @@
     <div class="container">
       <div class="message" v-if="Message !== null">
         <div class="container">
-          {{ Message.title }}
+          {{ Message[0].title }}
         </div>
       </div>
       <h1 class="heading">計畫總覽</h1>

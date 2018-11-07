@@ -1,10 +1,20 @@
-const fake = {
-  message: {
-    id: 1,
-    title: '緊急通知：2018/12/25 下午10點緊急維修，系統暫停使用'
-  }
-}
+import fetchWrap from '../../util/fetch'
 
-const getMessage = () => new Promise(resolve => resolve(fake.message))
+const getMessage = async () => {
+  const res = await fetchWrap({
+    url: '/announcement/query',
+    method: 'POST',
+    body: {
+      query: {},
+      limit: 3,
+      sort: { modified: -1 }
+    }
+  })
+
+  return res.results.map(val => ({
+    id: val.announcement_id,
+    title: val.message
+  }))
+}
 
 export { getMessage }
