@@ -90,6 +90,13 @@ export default {
   },
   beforeMount () {
     this.fetchData()
+    if (this.$validator.dictionary.hasLocale('zh_TW')) {
+      this.$validator.localize('zh_TW')
+    } else {
+      import(`vee-validate/dist/locale/zh_TW`).then(locale => {
+        this.$validator.localize('zh_TW', locale)
+      })
+    }
   },
   watch: {
     $route (to, from) {
