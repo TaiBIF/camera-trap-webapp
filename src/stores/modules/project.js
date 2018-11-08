@@ -1,4 +1,11 @@
-import { getProjects, createProject, getSpeciesGroup } from '../../service/api'
+import {
+  getProjects,
+  createProject,
+  getSpeciesGroup,
+  getLocationIdentifiedStatus,
+  getLocationRetrievedStatus,
+  getLocationAbnormalStatus
+} from '../../service/api'
 
 export const getters = {
   Projects: state => {
@@ -50,6 +57,36 @@ export const getters = {
       name: val.species,
       y: val.count
     }))
+  },
+  // vue-select 使用的樣站資訊
+  sites: (_, getters) => {
+    // 格式同 cameraLocations 只是要替換 key， id -> value, name -> label
+    const sites = getters.cameraLocations.reduce(
+      (accumulator, currentValue) => {
+        const tmp = {
+          value: currentValue.id,
+          label: currentValue.name,
+          child: currentValue.children
+            ? currentValue.children.map(val => ({
+              value: val.id,
+              label: val.name
+            }))
+            : []
+        }
+        accumulator.push(tmp)
+
+        return accumulator
+      },
+      []
+    )
+
+    return [
+      {
+        value: '全部樣區',
+        label: '全部樣區'
+      },
+      ...sites
+    ]
   }
 }
 
@@ -62,27 +99,57 @@ export const mutations = {
   },
   setSpeciesGroup (state, payload) {
     state.speciesGroup = payload
+  },
+  setLocationIdentifiedStatus (state, payload) {
+    state.locationIdentifiedStatus = payload
+  },
+  setLocationRetrievedStatus (state, payload) {
+    state.locationRetrievedStatus = payload
+  },
+  setLocationCameraAbnormalStatus (state, payload) {
+    state.locationCameraAbnormalStatus = payload
   }
 }
 
 export const actions = {
+  // 讀取計畫列表
   async loadProject ({ commit }) {
-    const payload = await getProjects()
-    commit('updateProjects', payload)
+    const data = await getProjects()
+    commit('updateProjects', data)
   },
+  // 新增計畫
   async createProject ({ dispatch }, payload) {
     await createProject(payload)
     dispatch('loadProject')
   },
+  // 取得辨識物種列表
   async getSpeciesGroup ({ state, commit }) {
-    const payload = await getSpeciesGroup(state.currentProjectId)
-
-    payload
-      ? commit('setSpeciesGroup', payload)
-      : commit('setSpeciesGroup', {
-        species_group: [],
-        total: 0
-      })
+    const data = await getSpeciesGroup(state.currentProjectId)
+    commit('setSpeciesGroup', data)
+  },
+  // 影像辨識狀況
+  async getLocationIdentifiedStatus ({ state, commit }, payload) {
+    const data = await getLocationIdentifiedStatus({
+      projectTitle: state.currentProjectId,
+      ...payload
+    })
+    commit('setLocationIdentifiedStatus', data)
+  },
+  // 影像回收狀況
+  async getLocationRetrievedStatus ({ state, commit }, payload) {
+    const data = await getLocationRetrievedStatus({
+      projectTitle: state.currentProjectId,
+      ...payload
+    })
+    commit('setLocationRetrievedStatus', data)
+  },
+  // 相機異常值
+  async getLocationCameraAbnormalStatus ({ state, commit }, payload) {
+    const data = await getLocationAbnormalStatus({
+      projectTitle: state.currentProjectId,
+      ...payload
+    })
+    commit('setLocationCameraAbnormalStatus', data)
   }
 }
 
@@ -93,8 +160,12 @@ export default {
     currentProjectId: null,
     speciesGroup: {
       species_group: [],
-      total: 0
-    }
+      total: 0,
+      modified: null
+    },
+    locationIdentifiedStatus: [],
+    locationRetrievedStatus: [],
+    locationCameraAbnormalStatus: []
   },
   getters,
   mutations,

@@ -67,7 +67,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-5 col-md-4" v-if="currentSite.child">
+                <div class="col-sm-5 col-md-4" v-if="currentSite.child && currentSite.child.length > 0">
                   <div class="form-group row mb-0">
                     <label class="col-5 text-right">
                       子樣區：
@@ -213,7 +213,7 @@
                   <h3>
                     本計畫已辨識物種 <big>{{speciesGroup.species_group.length}}</big> 種
                   </h3>
-                  <small class="sub-heading text-center text-gray">最後更新時間：2018/08/16</small>
+                  <small class="sub-heading text-center text-gray" v-if="speciesGroup.modified">最後更新時間：{{timeFormat(speciesGroup.modified)}}</small>
                   <hr>
                   <div class="row">
                     <div class="col-5">
@@ -444,47 +444,6 @@ export default {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
         marker: []
       },
-      // vue-select 使用的樣站資訊
-      sites: [
-        {
-          value: 0,
-          label: '全部樣區'
-        },
-        {
-          value: 1,
-          label: '羅東處',
-          child: [
-            {
-              value: 11,
-              label: 'A 站'
-            },
-            {
-              value: 12,
-              label: 'B 站'
-            },
-            {
-              value: 13,
-              label: 'C 站'
-            },
-            {
-              value: 14,
-              label: 'D 站'
-            }
-          ]
-        },
-        {
-          value: 2,
-          label: '新竹處'
-        },
-        {
-          value: 3,
-          label: '東勢處'
-        },
-        {
-          value: 4,
-          label: '南投處'
-        }
-      ],
       // 共用圖表顏色
       chartColors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
       currentTab: 0,
@@ -585,16 +544,29 @@ export default {
         this.renderMap()
         this.loadPieChart()
         this.getSpeciesGroup()
+        this.fetchImageStatus()
       }, 100)
     },
-    'currentSite': 'setCamera'
+    currentSite: function (newValue) {
+      setTimeout(() => {
+        this.setCamera(newValue)
+        this.fetchImageStatus()
+      }, 100)
+    },
+    currentDuration: function (newValue) {
+      setTimeout(() => {
+        this.setCamera(newValue)
+        this.fetchImageStatus()
+      }, 100)
+    }
   },
   computed: {
     ...project.mapState(['speciesGroup']),
     ...project.mapGetters([
       'currentProject',
       'cameraLocations',
-      'species'
+      'species',
+      'sites'
     ])
   },
   methods: {
@@ -602,8 +574,24 @@ export default {
       'setCurrentProject'
     ]),
     ...project.mapActions([
-      'getSpeciesGroup'
+      'getSpeciesGroup',
+      'getLocationIdentifiedStatus',
+      'getLocationRetrievedStatus',
+      'getLocationCameraAbnormalStatus'
     ]),
+    fetchImageStatus () {
+      const payload = {
+        year: this.currentDuration,
+        site: this.currentSite.label
+      }
+
+      this.getLocationIdentifiedStatus(payload)
+      this.getLocationRetrievedStatus(payload)
+      this.getLocationCameraAbnormalStatus(payload)
+    },
+    timeFormat (time) {
+      return moment(time * 1000).format('YYYY/MM/DD')
+    },
     submitReport () {
       // send error data
     },

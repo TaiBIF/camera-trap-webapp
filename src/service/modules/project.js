@@ -58,4 +58,41 @@ const getSpeciesGroup = async payload => {
   return res.ret.length > 0 ? res.ret[0] : null
 }
 
-export { getProjects, createProject, getSpeciesGroup }
+const getLocationIdentifiedStatus = async payload => {
+  const res = await fetchWrap({
+    url: '/project/location-month-identified-num',
+    method: 'POST',
+    body: payload
+  })
+
+  return res.ret
+}
+
+const getLocationRetrievedStatus = async payload => {
+  const res = await fetchWrap({
+    url: '/project/location-month-retrieved-num',
+    method: 'POST',
+    body: payload
+  })
+
+  return res.ret
+}
+
+const getLocationAbnormalStatus = async payload => {
+  const res = await fetchWrap({
+    url: '/project/location-month-abnormal',
+    method: 'POST',
+    body: payload
+  })
+
+  return res.ret
+}
+
+export {
+  getProjects,
+  createProject,
+  getSpeciesGroup,
+  getLocationIdentifiedStatus,
+  getLocationRetrievedStatus,
+  getLocationAbnormalStatus
+}
