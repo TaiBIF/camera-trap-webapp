@@ -213,33 +213,28 @@
                   <h3>
                     本計畫已辨識物種 <big>{{speciesGroup.species_group.length}}</big> 種
                   </h3>
-                  <small class="sub-heading text-center text-gray" v-if="speciesGroup.modified">最後更新時間：{{timeFormat(speciesGroup.modified)}}</small>
+                  <small class="sub-heading text-gray" v-if="speciesGroup.modified">最後更新時間：{{timeFormat(speciesGroup.modified)}}</small>
                   <hr>
                   <div class="row">
                     <div class="col-5">
                       <div class="speices-item"
                       v-for="(sp, sid) in species"
                       :key="`speices-item-${sid}`"
-                      v-if="sp.name!=='其他'">
+                      v-if="sid<=5">
                         <span class="circle" :style="{backgroundColor: chartColors[sid]}"></span>
                         <span class="text">{{sp.name}} {{ countPercentage(sid, species)}}%</span>
                       </div>
                     </div>
                     <div class="col-7">
-                      <div class="speices-item"
-                      v-for="(sp, sid) in species"
-                      :key="`speices-item-${sid}`"
-                      v-if="sp.name=='其他'">
-                        <span class="circle" :style="{backgroundColor: chartColors[sid]}"></span>
+                      <div class="speices-item">
+                        <span class="circle" :style="{backgroundColor: chartColors[6]}"></span>
                         <span class="text">
-                          {{sp.name}} {{ countPercentage(sid, species)}}%
-                          <div class="text-gray">
-                            <div class="sub-item">鼠 (非單一物種) 1%</div>
-                            <div class="sub-item">白鼻心 1%</div>
-                            <div class="sub-item">人 1%</div>
-                            <div class="sub-item">藍腹鷴 1%</div>
-                            <div class="sub-item">食蟹獴 1%</div>
-                            <div class="sub-item">狗 0.8%</div>
+                          其他
+                          <div class="text-gray"
+                          v-for="(sp, sid) in species"
+                          :key="`speices-item-${sid}`"
+                          v-if="sid>5">
+                            <div class="sub-item">{{sp.name}} {{ countPercentage(sid, species)}}%</div>
                           </div>
                         </span>
                       </div>
@@ -384,12 +379,6 @@ const SiteMarkers = [
   }
 ]
 
-const PieChart = {
-  name: 'speices',
-  size: '80%',
-  innerSize: '50%'
-}
-
 const BarChart = {
   name: '每月影像筆數',
   data: [
@@ -421,6 +410,7 @@ export default {
       currentSubSite: null,  // 紀錄目前顯示的子樣站
       currentCamera: null, // 紀錄目前顯示的相機
       errorReportOpen: false,
+      pieChartRendering: false,
       mapMode: 'project',  // 目前顯示的圖表層級
       siteStatusTab: 0, // 資料格式
       progressData: ProjectMarkers, // 取得每月繳交資訊
@@ -542,7 +532,6 @@ export default {
     currentProject: function (newValue) {
       setTimeout(() => {
         this.renderMap()
-        this.loadPieChart()
         this.getSpeciesGroup()
         this.fetchImageStatus()
       }, 100)
@@ -558,7 +547,8 @@ export default {
         this.setCamera(newValue)
         this.fetchImageStatus()
       }, 100)
-    }
+    },
+    'species': 'loadPieChart'
   },
   computed: {
     ...project.mapState(['speciesGroup']),
@@ -666,9 +656,25 @@ export default {
       barCharts.removeSeries()
       barCharts.addSeries(BarChart)
     },
-    loadPieChart () {
+    loadPieChart (val, val2) {
+      if (!val.length || this.pieChartRendering) return
+      var data = []
+      this.species.forEach((v, i) => {
+        if (i > 5) {
+          if (!data[6]) data[6] = { name: '其他', y: 0 }
+          else data[6].y += v.y
+        } else data.push(v)
+      })
       const pieCharts = this.$refs.pieCharts
-      pieCharts.addSeries(PieChart)
+      const PieChartOpt = {
+        type: 'pie',
+        name: 'speices',
+        size: '80%',
+        innerSize: '50%',
+        data: data
+      }
+      pieCharts.addSeries(PieChartOpt)
+      this.pieChartRendering = true
     },
     // 切換顯示年份
     changeDuration (count) {
