@@ -140,10 +140,10 @@
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-4 text-right">
                       <div class="btn-group">
                         <a class="btn btn-border-gray"
-                        @click="siteStatusTab=0"
+                        @click="setSiteStatusTab(0)"
                         :class="{'active': siteStatusTab==0}">影像回收狀況</a>
                         <a class="btn btn-border-gray"
-                        @click="siteStatusTab=1"
+                        @click="setSiteStatusTab(1)"
                         :class="{'active': siteStatusTab==1}">影像辨識進度</a>
                       </div>
                     </div>
@@ -304,86 +304,6 @@ const ErrorIconSelect = L.icon({
   shadowAnchor: [33, 80]
 })
 
-const ProjectMarkers = [
-  {
-    id: 1,
-    name: '羅東處',
-    project_id: 1,
-    marker: L.latLng(24.604577, 121.608599),
-    // 每月進度，透過 API 取得月份狀態 0: 無資料，1:未完成，2:已完成， -1: 已取消
-    progress: [2, 1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0]
-  },
-  {
-    id: 2,
-    name: '新竹處',
-    project_id: 1,
-    marker: L.latLng(24.753846, 121.175827),
-    children: [],
-    progress: [2, 2, 1, 1, 1, 2, 2, 0, 0, 0, 0, 0]
-  },
-  {
-    id: 3,
-    name: '東勢處',
-    project_id: 1,
-    marker: L.latLng(24.304081, 120.873835),
-    progress: [1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0]
-  },
-  {
-    id: 4,
-    name: '南投處',
-    project_id: 1,
-    marker: L.latLng(24.349130, 121.164845),
-    progress: [2, 2, 1, 1, 1, 2, 2, 0, 0, 0, 0, 0]
-  }
-]
-
-const SiteMarkers = [
-  {
-    id: 11,
-    name: 'PT07A',
-    takeback: 2250,
-    num: 106,
-    last_update: '2017/05/23 15:22',
-    error: 5,
-    icon: ErrorIcon,
-    marker: L.latLng(24.611081, 121.605761), color: 'green',
-    progress: [2, 1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0]
-  },
-  {
-    id: 12,
-    name: 'PT08A',
-    takeback: 5250,
-    num: 20,
-    last_update: '2017/05/23 15:22',
-    error: 0,
-    icon: Icon,
-    marker: L.latLng(24.607959, 121.601986), color: 'red',
-    progress: [2, 1, 0, 0, 2, -1, -1, -1, -1, 0, 0, 0]
-  },
-  {
-    id: 13,
-    name: 'PT09A',
-    takeback: 2250,
-    num: 106,
-    last_update: '2017/05/23 15:22',
-    error: 5,
-    icon: ErrorIcon,
-    marker: L.latLng(24.607023, 121.603960), color: 'green',
-    progress: [2, 1, 2, -1, -1, -1, -1, -1, -1, 0, 0, 0]
-  },
-  {
-    id: 14,
-    name: 'PT10A',
-    takeback: 5250,
-    num: 20,
-    last_update: '2017/05/23 15:22',
-    error: 0,
-    icon: Icon,
-    marker: L.latLng(24.611939, 121.607220), color: 'red',
-    progress: [2, 1, 1, 1, -1, -1, -1, -1, -1, 0, 0, 0]
-  }
-]
-
 const PieChart = {
   name: 'speices',
   size: '80%',
@@ -422,8 +342,7 @@ export default {
       currentCamera: null, // 紀錄目前顯示的相機
       errorReportOpen: false,
       mapMode: 'project',  // 目前顯示的圖表層級
-      siteStatusTab: 0, // 資料格式
-      progressData: ProjectMarkers, // 取得每月繳交資訊
+      progressData: [], // 取得每月繳交資訊
       showWoods: false, // 是否顯示林班地
       polygon: [  // 林班地資料示意
         { id: 'p1',
@@ -561,17 +480,23 @@ export default {
     }
   },
   computed: {
-    ...project.mapState(['speciesGroup']),
+    ...project.mapState([
+      'speciesGroup',
+      'siteStatusTab'
+    ]),
     ...project.mapGetters([
       'currentProject',
       'cameraLocations',
       'species',
-      'sites'
+      'sites',
+      'ProjectMarkers',
+      'SiteMarkers'
     ])
   },
   methods: {
     ...project.mapMutations([
-      'setCurrentProject'
+      'setCurrentProject',
+      'setSiteStatusTab'
     ]),
     ...project.mapActions([
       'getSpeciesGroup',
@@ -582,7 +507,7 @@ export default {
     fetchImageStatus () {
       const payload = {
         year: this.currentDuration,
-        site: this.currentSite.label
+        ...{ site: this.currentSite.label !== '全部樣區' ? this.currentSite.label : undefined }
       }
 
       this.getLocationIdentifiedStatus(payload)
@@ -601,15 +526,14 @@ export default {
         if (!value.child === false && value.child.length) {
           this.currentCamera = null
           this.currentSubSite = value.child[0]
-          this.progressData = SiteMarkers
-          // 設定地圖要顯示的 Icon
-          SiteMarkers[0].icon = SiteMarkers[0].error > 0 ? IconSelect : ErrorIconSelect
-          this.mapInfo.center = window._.clone(SiteMarkers[0].marker)
+          this.progressData = this.SiteMarkers
+
+          this.mapInfo.center = window._.clone(this.SiteMarkers[0].marker)
           this.mapMode = 'camera'
         } else {
           this.currentCamera = null
           this.currentSubSite = null
-          this.progressData = ProjectMarkers
+          this.progressData = this.ProjectMarkers
           this.mapMode = 'project'
         }
         this.renderMap()
@@ -617,10 +541,10 @@ export default {
 
       if (this.mapMode === 'camera') {
         if (!value.child) {
-          const proj = ProjectMarkers.find(p => { return p.id === value.value })
+          const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
           this.currentCamera = null
           this.currentSubSite = null
-          this.progressData = ProjectMarkers
+          this.progressData = this.ProjectMarkers
           this.mapMode = 'project'
           this.renderMap()
           setTimeout(() => {
@@ -632,7 +556,7 @@ export default {
     setCurrent (val) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
-        SiteMarkers.forEach(site => {
+        this.SiteMarkers.forEach(site => {
           site.icon = site.error ? ErrorIcon : Icon
         })
 
@@ -680,20 +604,29 @@ export default {
     },
     // 根據層級切換地圖顯示大小
     renderMap () {
+      if (this.ProjectMarkers.length === 0) return
+
       if (this.mapMode === 'project') {
         this.mapInfo.zoom = 9
-        this.mapInfo.marker = ProjectMarkers
-        this.mapInfo.center = window._.clone(ProjectMarkers[0].marker)
+        this.mapInfo.marker = this.ProjectMarkers
+        this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
       }
       if (this.mapMode === 'camera') {
         this.mapInfo.zoom = 15
-        this.mapInfo.marker = SiteMarkers
-        this.mapInfo.center = window._.clone(SiteMarkers[0].marker)
+        this.mapInfo.marker = this.SiteMarkers.map(val => {
+        // 設定地圖要顯示的 Icon
+          return {
+            ...val,
+            icon: val.error > 0 ? IconSelect : ErrorIconSelect
+          }
+        })
+        this.mapInfo.center = window._.clone(this.SiteMarkers[0].marker)
       }
     }
   },
   mounted () {
     this.setCurrentProject(this.$route.params.id)
+    this.progressData = this.ProjectMarkers
   }
 }
 </script>
