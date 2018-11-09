@@ -53,11 +53,11 @@ export const getters = {
     return Object.values(table)
   },
   species: state => {
-    let data = state.speciesGroup.species_group.map(val => [val.species, val.count])
+    var data = state.speciesGroup.species_group.map(val => [val.species, val.count])
     data.sort((a, b) => {
       return b[1] - a[1]
     })
-    
+
     return data.map(val => ({ name: val[0], y: val[1] }))
   },
   // vue-select 使用的樣站資訊

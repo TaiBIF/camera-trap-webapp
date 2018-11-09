@@ -12,7 +12,7 @@
         <a @click="modalOpen('trialModalOpen')" class="link text-green">檢閱詳細上傳說明</a>
       </div>
       <div id="dropzone" class="upload-area text-center">
-        <img src="/assets/upload/upload-img.png" height="180" srcset="/assets/upload/upload-img@2x.png">
+        <img src="/assets/upinfo/upload-img.png" height="180" srcset="/assets/upinfo/upload-img@2x.png">
         <h1>將檔案拖曳於此並上傳</h1>
         <p>或 <label for="upload" class="text-green underline">點此瀏覽檔案</label></p>
         <input type="file" class="d-none" id="upload">

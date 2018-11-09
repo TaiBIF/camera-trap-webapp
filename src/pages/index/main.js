@@ -20,7 +20,6 @@ Vue.use(VueAxios, axios)
 Vue.use(LoadScript)
 Vue.use(VTooltip)
 Vue.use(VeeValidate)
-
 Vue.component('v-select', vSelect)
 
 Vue.config.productionTip = false
