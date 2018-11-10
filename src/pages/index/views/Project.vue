@@ -182,10 +182,10 @@
                       <small class="text-gray">{{currentSite.label}}-{{currentSubSite.label}}</small>
                     </h1>
                     <div class="text-gray">
-                      <div>架設日期：2018/08/17</div>
-                      <div>經緯度：X(97)213520, Y(97)2561356</div>
-                      <div>海拔：230m</div>
-                      <div>植披：闊葉林</div>
+                      <div>架設日期：{{ CameraInfo.modified_at }}</div>
+                      <div>經緯度：{{ CameraInfo.latlng[0] }}, {{ CameraInfo.latlng[1] }}</div>
+                      <div>海拔：{{ CameraInfo.altitude }}m</div>
+                      <div>植披：{{ CameraInfo.planting }}</div>
                     </div>
                     <div class="row chart-control">
                       <div class="col-12 text-center text-gray">
@@ -406,6 +406,12 @@ export default {
       currentSite: {  // 紀錄目前顯示的樣站，格式需轉成 vue-select 的格式
         value: 0,
         label: '全部樣區'
+      },
+      CameraInfo: {
+        modified_at: '2018/08/17',
+        latlng: ['X(97)213520', 'Y(97)2561356'],
+        altitude: 230,
+        planting: '闊葉林'
       },
       currentSubSite: null,  // 紀錄目前顯示的子樣站
       currentCamera: null, // 紀錄目前顯示的相機
