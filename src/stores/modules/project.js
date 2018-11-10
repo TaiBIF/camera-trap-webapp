@@ -1,3 +1,4 @@
+import L from 'leaflet'
 import {
   getProjects,
   createProject,
@@ -34,7 +35,6 @@ export const getters = {
           children: []
         }
       }
-
       // 判斷 subSite 是否存在
       if (
         !accumulator[currentValue.site].children.find(
@@ -68,10 +68,20 @@ export const getters = {
         const tmp = {
           value: currentValue.id,
           label: currentValue.name,
-          child: currentValue.children
+          child: currentValue.children && currentValue.children[0].id !== 'NULL'
             ? currentValue.children.map(val => ({
               value: val.id,
-              label: val.name
+              label: val.name,
+              // 塞入 camera 資料
+              camera: getters.currentProject.cameraLocations.reduce(
+                (array, camera) => {
+                  if (currentValue.id === camera.site && val.id === camera.subSite) {
+                    array.push(camera)
+                  }
+                  return array
+                },
+                []
+              )
             }))
             : []
         }
@@ -88,6 +98,72 @@ export const getters = {
         label: '全部樣區'
       },
       ...sites
+    ]
+  },
+  ProjectMarkers: state => {
+    // siteStatusTab, 0 = 影像回收狀況, 1 = 影像辨識進度
+    const source =
+      state.siteStatusTab === 0
+        ? state.locationRetrievedStatus
+        : state.locationIdentifiedStatus
+
+    return source.map(val => ({
+      id: val._id,
+      name: val.site,
+      project_id: val.projectTitle,
+      marker: L.latLng(val.wgs84dec_y, val.wgs84dec_x),
+      progress: val.monthly_num.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.month] = currentValue.num
+        return accumulator
+      }, Array(12).fill(0))
+    }))
+  },
+  SiteMarkers: state => {
+    return [
+      {
+        id: 11,
+        name: 'PT07A',
+        takeback: 2250,
+        num: 106,
+        last_update: '2017/05/23 15:22',
+        error: 5,
+        marker: L.latLng(24.611081, 121.605761),
+        color: 'green',
+        progress: [2, 1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0]
+      },
+      {
+        id: 12,
+        name: 'PT08A',
+        takeback: 5250,
+        num: 20,
+        last_update: '2017/05/23 15:22',
+        error: 0,
+        marker: L.latLng(24.607959, 121.601986),
+        color: 'red',
+        progress: [2, 1, 0, 0, 2, -1, -1, -1, -1, 0, 0, 0]
+      },
+      {
+        id: 13,
+        name: 'PT09A',
+        takeback: 2250,
+        num: 106,
+        last_update: '2017/05/23 15:22',
+        error: 5,
+        marker: L.latLng(24.607023, 121.60396),
+        color: 'green',
+        progress: [2, 1, 2, -1, -1, -1, -1, -1, -1, 0, 0, 0]
+      },
+      {
+        id: 14,
+        name: 'PT10A',
+        takeback: 5250,
+        num: 20,
+        last_update: '2017/05/23 15:22',
+        error: 0,
+        marker: L.latLng(24.611939, 121.60722),
+        color: 'red',
+        progress: [2, 1, 1, 1, -1, -1, -1, -1, -1, 0, 0, 0]
+      }
     ]
   }
 }
@@ -110,6 +186,9 @@ export const mutations = {
   },
   setLocationCameraAbnormalStatus (state, payload) {
     state.locationCameraAbnormalStatus = payload
+  },
+  setSiteStatusTab (state, payload) {
+    state.siteStatusTab = payload
   }
 }
 
@@ -167,7 +246,9 @@ export default {
     },
     locationIdentifiedStatus: [],
     locationRetrievedStatus: [],
-    locationCameraAbnormalStatus: []
+    locationCameraAbnormalStatus: [],
+    // 畫面用
+    siteStatusTab: 0
   },
   getters,
   mutations,

@@ -7,8 +7,9 @@
       :key="`trow-${dIdx}`"
       :class="{'is-active': d.id==current}"
       @click="setCurrent(d)">
-        <th>{{d.name}}</th>
+        <th>{{d.cameraLocation}}</th>
         <td
+        v-if="d.progress"
         v-for="(p, pIdx) in d.progress"
         :key="`trow-${dIdx}-${pIdx}`">
           <span class="progress"
