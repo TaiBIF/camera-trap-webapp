@@ -1,11 +1,11 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-import auth from './modules/auth';
-import project from './modules/project';
-import message from './modules/message';
+import auth from './modules/auth'
+import project from './modules/project'
+import message from './modules/message'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
@@ -30,56 +30,56 @@ export default new Vuex.Store({
   },
   getters: {
     ImageInfo: state => {
-      return state.image_info;
+      return state.image_info
     },
     PageLock: state => {
-      return state.pageLock;
+      return state.pageLock
     },
     FileReady: state => {
-      return state.fileReady;
+      return state.fileReady
     },
     CurrentToggle: state => {
-      return state.currentToggle;
+      return state.currentToggle
     },
     CurrentSite: state => {
-      return state.currentSite;
+      return state.currentSite
     },
     CurrentPoint: state => {
-      return state.currentPoint;
+      return state.currentPoint
     }
   },
   mutations: {
-    updatePageLock(state, bool) {
-      state.pageLock = bool;
+    updatePageLock (state, bool) {
+      state.pageLock = bool
     },
-    updateFileReady(state, value) {
-      state.fileReady = value;
+    updateFileReady (state, value) {
+      state.fileReady = value
     },
-    updateCurrentToggle(state, num) {
-      state.currentToggle = num;
+    updateCurrentToggle (state, num) {
+      state.currentToggle = num
     },
-    updateCurrentSite(state, num) {
-      state.currentSite = num;
+    updateCurrentSite (state, num) {
+      state.currentSite = num
     },
-    updateCurrentPoint(state, num) {
-      state.currentPoint = num;
+    updateCurrentPoint (state, num) {
+      state.currentPoint = num
     }
   },
   actions: {
     setPageLock: ({ commit }, bool) => {
-      commit('updatePageLock', bool);
+      commit('updatePageLock', bool)
     },
     setCurrentToggle: ({ commit }, no) => {
-      commit('updateCurrentToggle', no);
+      commit('updateCurrentToggle', no)
     },
     setCurrentSite: ({ commit }, no) => {
-      commit('updateCurrentSite', no);
+      commit('updateCurrentSite', no)
     },
     setCurrentPoint: ({ commit }, no) => {
-      commit('updateCurrentPoint', no);
+      commit('updateCurrentPoint', no)
     },
     setFileReady: ({ commit }, bool) => {
-      commit('updateFileReady', bool);
+      commit('updateFileReady', bool)
     }
   }
-});
+})
