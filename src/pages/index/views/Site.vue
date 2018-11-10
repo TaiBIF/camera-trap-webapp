@@ -25,7 +25,7 @@
         <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
           下載篩選結果
         </a>
-        <h3 class="text-green mb-2">屏東處 - 旗山站</h3>
+        <h3 class="text-green mb-2">{{this.$route.params.site_id}} - {{this.$route.params.subsite_id}}</h3>
         <hr class="my-0">
         <form action="" class="form form-horizontal">
           <div class="form-group mb-0">
@@ -36,10 +36,10 @@
                 <label for="camera-all">全部相機位置</label>
               </div>
               <div class="mb-2">
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" v-model="form.camera" id="camera-1" value="1">
-                  <label for="camera-1">
-                    <span class="text">PT02A</span>
+                <div class="checkbox checkbox-inline" :key="camera.fullCameraLocationMd5" v-for="camera in cameraList">
+                  <input type="checkbox" v-model="form.camera" :id="camera.fullCameraLocationMd5" :value="camera.fullCameraLocationMd5">
+                  <label :for="camera.fullCameraLocationMd5">
+                    <span class="text">{{camera.cameraLocation}}</span>
                     <span class="icon">
                       <i class="icon-lock align-middle" v-tooltip.top="'陳士齊 正在編輯中'"></i>
                     </span>
@@ -186,7 +186,7 @@
               </span>
             </div>
             <div class="text-right my-2">
-              <router-link :to="`/project/${$route.params.id}/site/${$route.params.site_id}/photo/1`" class="btn btn-sm btn-default">
+              <router-link :to="`/project/${$route.params.id}/site/${$route.params.subsite_id}/photo/1`" class="btn btn-sm btn-default">
                 進階標註
               </router-link>
             </div>
@@ -228,12 +228,16 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import VueTimepicker from 'vue2-timepicker'
 import Handsontable from 'handsontable'
 import 'handsontable/languages/all'
 import ZoomDrag from '../components/ZoomDrag'
+
+const project = createNamespacedHelpers('project')
+const media = createNamespacedHelpers('media')
 
 // debugger
 export default {
@@ -445,12 +449,81 @@ export default {
     }
   },
   watch: {
-    'currentRow': 'recordUpdate'
+    'currentRow': 'recordUpdate',
+    $route (to, from) {
+      // 清空篩選條件
+      this.form = {
+        camera: [],
+        start_at: '',
+        end_at: '',
+        start_time: {
+          HH: '10',
+          mm: '05'
+        },
+        end_time: {
+          HH: '10',
+          mm: '05'
+        }
+      }
+    },
+    'form': {
+      handler: function (newValue) {
+        const getTime = (day, time) => {
+          return moment(day)
+            .hour(time.HH)
+            .minute(time.mm)
+            .format('X')
+        }
+
+        const payload =
+          {
+            query: {
+              projectTitle: this.$route.params.id,
+              site: this.$route.params.site_id,
+              date_time_original_timestamp: {
+                '$gte': getTime(newValue.start_at, newValue.start_time),
+                '$lte': getTime(newValue.end_at, newValue.end_time)
+              },
+              fullCameraLocationMd5: newValue.camera.indexOf('all') !== -1
+                ? undefined
+                : { '$in': newValue.camera }
+            },
+            limit: 100000,
+            skip: 0
+          }
+
+        if (
+          payload.query.date_time_original_timestamp['$gte'] !== 'Invalid date' &&
+          payload.query.date_time_original_timestamp['$lte'] !== 'Invalid date'
+        ) {
+          this.getSiteData(payload)
+        }
+      },
+      deep: true
+    }
   },
   components: {
     DatePicker, VueTimepicker, ZoomDrag
   },
+  computed: {
+    ...project.mapGetters([
+      'currentProject'
+    ]),
+    cameraList () {
+      return this
+      .currentProject ? this
+      .currentProject.cameraLocations
+      .filter(val => val.subSite === this.$route.params.subsite_id)
+        : []
+    }
+  },
   methods: {
+    ...project.mapMutations([
+      'setCurrentProject'
+    ]),
+    ...media.mapActions([
+      'getSiteData'
+    ]),
     recordUpdate () {
     },
     dragStart () {
@@ -634,10 +707,12 @@ export default {
     }
   },
   mounted () {
+    this.setCurrentProject(this.$route.params.id)
+
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
     this.settingSheetHeight()
-    this.getSheetData()
+    // this.getSheetData()
 
     window.onresize = () => { this.settingSheetHeight() }
 
