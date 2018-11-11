@@ -25,7 +25,7 @@
         <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
           下載篩選結果
         </a>
-        <h3 class="text-green mb-2">屏東處 - 旗山站</h3>
+        <h3 class="text-green mb-2">{{this.$route.params.site_id}} - {{this.$route.params.subsite_id}}</h3>
         <hr class="my-0">
         <form action="" class="form form-horizontal">
           <div class="form-group mb-0">
@@ -36,12 +36,14 @@
                 <label for="camera-all">全部相機位置</label>
               </div>
               <div class="mb-2">
-                <div class="checkbox checkbox-inline">
-                  <input type="checkbox" v-model="form.camera" id="camera-1" value="1">
-                  <label for="camera-1">
-                    <span class="text">PT02A</span>
-                    <span class="icon">
-                      <i class="icon-lock align-middle" v-tooltip.top="'陳士齊 正在編輯中'"></i>
+                <div class="checkbox checkbox-inline" :key="camera.fullCameraLocationMd5" v-for="camera in cameraList">
+                  <input type="checkbox" v-model="form.camera" :id="camera.fullCameraLocationMd5" :value="camera.fullCameraLocationMd5"
+                    :disabled = "!cameraLocked[camera.fullCameraLocationMd5] || cameraLocked[camera.fullCameraLocationMd5].locked"
+                  >
+                  <label :for="camera.fullCameraLocationMd5">
+                    <span class="text">{{camera.cameraLocation}}</span>
+                    <span class="icon" v-if="cameraLocked[camera.fullCameraLocationMd5] && cameraLocked[camera.fullCameraLocationMd5].locked">
+                      <i class="icon-lock align-middle" v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy} 正在編輯中`"></i>
                     </span>
                   </label>
                 </div>
@@ -87,7 +89,7 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-8">
-              <small class="text-gray">共 132,136 筆資料</small>
+              <small class="text-gray">共 {{siteData.length -1}} 筆資料</small>
               <div class="divider"></div>
               <div class="dropdown" :class="{'d-none': !editMode}">
                 <div class="btn-group btn-grayscale" :class="{'active': isContinuous}">
@@ -186,7 +188,7 @@
               </span>
             </div>
             <div class="text-right my-2">
-              <router-link :to="`/project/${$route.params.id}/site/${$route.params.site_id}/photo/1`" class="btn btn-sm btn-default">
+              <router-link :to="`/project/${$route.params.id}/site/${$route.params.subsite_id}/photo/1`" class="btn btn-sm btn-default">
                 進階標註
               </router-link>
             </div>
@@ -228,12 +230,31 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
 import VueTimepicker from 'vue2-timepicker'
 import Handsontable from 'handsontable'
 import 'handsontable/languages/all'
 import ZoomDrag from '../components/ZoomDrag'
+
+const project = createNamespacedHelpers('project')
+const media = createNamespacedHelpers('media')
+const cameraLocation = createNamespacedHelpers('cameraLocation')
+
+const formDefault = {
+  camera: [],
+  start_at: moment('2018/1/1'),
+  end_at: moment('2018/12/31'),
+  start_time: {
+    HH: '00',
+    mm: '00'
+  },
+  end_time: {
+    HH: '23',
+    mm: '59'
+  }
+}
 
 // debugger
 export default {
@@ -249,19 +270,7 @@ export default {
       galleryWidth: 450,
       isContinuous: false,
       continuousTime: 1,
-      form: {
-        camera: [],
-        start_at: '',
-        end_at: '',
-        start_time: {
-          HH: '10',
-          mm: '05'
-        },
-        end_time: {
-          HH: '10',
-          mm: '05'
-        }
-      },
+      form: formDefault,
       selection: null,
       currentRow: 0,
       row_data: [],
@@ -445,12 +454,90 @@ export default {
     }
   },
   watch: {
-    'currentRow': 'recordUpdate'
+    'currentRow': 'recordUpdate',
+    $route (to, from) {
+      // 清空篩選條件
+      this.form = Object.assign({}, formDefault)
+      this.fetchCameraLocked()
+    },
+    'form': {
+      handler: function (newValue) {
+        const getTime = (day, time) => {
+          return moment(day)
+            .hour(time.HH)
+            .minute(time.mm)
+            .format('X') - 0
+        }
+
+        const payload =
+          {
+            query: {
+              projectTitle: this.$route.params.id,
+              site: this.$route.params.site_id,
+              date_time_corrected_timestamp: {
+                '$gte': getTime(newValue.start_at, newValue.start_time),
+                '$lte': getTime(newValue.end_at, newValue.end_time)
+              },
+              fullCameraLocationMd5: newValue.camera.indexOf('all') !== -1
+                ? undefined
+                : { '$in': newValue.camera }
+            },
+            limit: 100000,
+            skip: 0
+          }
+
+        if (
+          payload.query.date_time_corrected_timestamp['$gte'] !== 'Invalid date' &&
+          payload.query.date_time_corrected_timestamp['$lte'] !== 'Invalid date'
+        ) {
+          this.getSiteData(payload)
+        }
+      },
+      deep: true
+    },
+    'siteData': {
+      handler: function () {
+        this.getSheetData()
+      },
+      deep: true
+    }
   },
   components: {
     DatePicker, VueTimepicker, ZoomDrag
   },
+  computed: {
+    ...project.mapGetters([
+      'currentProject'
+    ]),
+    ...media.mapGetters([
+      'siteData'
+    ]),
+    ...cameraLocation.mapGetters([
+      'cameraLocked'
+    ]),
+    cameraList () {
+      return this.currentProject
+        ? this.currentProject.cameraLocations.filter(val => val.subSite === this.$route.params.subsite_id)
+        : []
+    }
+  },
   methods: {
+    ...project.mapMutations([
+      'setCurrentProject'
+    ]),
+    ...media.mapActions([
+      'getSiteData'
+    ]),
+    ...cameraLocation.mapActions([
+      'getCameraLocked'
+    ]),
+    fetchCameraLocked () {
+      this.getCameraLocked({
+        projectTitle: this.$route.params.id,
+        site: this.$route.params.site_id,
+        subSite: this.$route.params.subsite_id
+      })
+    },
     recordUpdate () {
     },
     dragStart () {
@@ -579,32 +666,29 @@ export default {
       return rowData
     },
     getSheetData () {
-      // 取得 csv 資料，並轉成 json
-      this.$http.get('/csv/HC21A.csv').then((response) => {
-        var data = []
-        response.data.split(/\r\n/g).forEach((ref, idx) => {
-          var row = ref.split(/,/g)
-          // debugger
-          if (idx === 0) {
-            // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
-            this.rowData = row
-          } else {
-            var item = {}
+      const data = []
+      this.siteData.forEach((ref, idx) => {
+        var row = ref.split(/,/g)
+        // debugger
+        if (idx === 0) {
+          // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
+          this.rowData = row
+        } else {
+          var item = {}
 
-            row.forEach((r, i) => {
-              item[this.rowData[i].toLowerCase()] = r
-            })
+          row.forEach((r, i) => {
+            item[this.rowData[i].toLowerCase()] = r
+          })
 
-            data.push(item)
-          }
-        })
-
-        this.row_data = this.setContinuous(data)
-        this.settings.data = this.row_data
-        // 產出 sheet 畫面
-        this.sheet = new Handsontable(this.sheetContainer, this.settings)
-        this.isRender = true
+          data.push(item)
+        }
       })
+
+      this.row_data = this.setContinuous(data)
+      this.settings.data = this.row_data
+      // 產出 sheet 畫面
+      this.sheet = new Handsontable(this.sheetContainer, this.settings)
+      this.isRender = true
     },
     changeMode (key, val) {
       // 切換編輯狀態
@@ -634,10 +718,12 @@ export default {
     }
   },
   mounted () {
+    this.setCurrentProject(this.$route.params.id)
+    this.fetchCameraLocked()
+
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
     this.settingSheetHeight()
-    this.getSheetData()
 
     window.onresize = () => { this.settingSheetHeight() }
 

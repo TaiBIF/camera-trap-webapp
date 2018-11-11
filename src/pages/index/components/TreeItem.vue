@@ -18,7 +18,7 @@
         {{item.name}}
       </span>
       <!-- 處於編輯狀態顯示 lock -->
-      <router-link class="text" v-else :to="`/project/${currentProjectId}/site/${item.id}`">
+      <router-link class="text" v-else :to="link">
         {{item.name}}
         <div class="icon float-right">
           <i class="icon-lock-green"></i>
@@ -29,6 +29,7 @@
     <ul class="tree-menu-child" v-if="isFolder">
       <tree-item
       v-for="(child) in item.children"
+      :site="item.id"
       :key="`menu-${item.id}-${child.id}`"
       :level="level + 1"
       :item="child" />
@@ -46,6 +47,7 @@ export default {
   name: 'tree-item',
   components: { TreeItem },
   props: {
+    site: String,
     item: Object,
     idx: Number,
     level: Number,
@@ -58,7 +60,14 @@ export default {
     ...mapGetters([
       'CurrentToggle'
     ]),
-    ...project.mapState(['currentProjectId'])
+    ...project.mapState(['currentProjectId']),
+    link () {
+      if (this.site) {
+        return `/project/${this.currentProjectId}/site/${this.site}/${this.item.id}`
+      } else {
+        return `/project/${this.currentProjectId}/site/${this.item.id}`
+      }
+    }
   },
   data () {
     return {
