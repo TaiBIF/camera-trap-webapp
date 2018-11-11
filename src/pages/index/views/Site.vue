@@ -87,7 +87,7 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-8">
-              <small class="text-gray">共 132,136 筆資料</small>
+              <small class="text-gray">共 {{siteData.length -1}} 筆資料</small>
               <div class="divider"></div>
               <div class="dropdown" :class="{'d-none': !editMode}">
                 <div class="btn-group btn-grayscale" :class="{'active': isContinuous}">
@@ -239,6 +239,20 @@ import ZoomDrag from '../components/ZoomDrag'
 const project = createNamespacedHelpers('project')
 const media = createNamespacedHelpers('media')
 
+const formDefault = {
+  camera: [],
+  start_at: moment('2018/1/1'),
+  end_at: moment('2018/12/31'),
+  start_time: {
+    HH: '00',
+    mm: '00'
+  },
+  end_time: {
+    HH: '23',
+    mm: '59'
+  }
+}
+
 // debugger
 export default {
   name: 'Site',
@@ -253,19 +267,7 @@ export default {
       galleryWidth: 450,
       isContinuous: false,
       continuousTime: 1,
-      form: {
-        camera: [],
-        start_at: '',
-        end_at: '',
-        start_time: {
-          HH: '10',
-          mm: '05'
-        },
-        end_time: {
-          HH: '10',
-          mm: '05'
-        }
-      },
+      form: formDefault,
       selection: null,
       currentRow: 0,
       row_data: [],
@@ -452,19 +454,7 @@ export default {
     'currentRow': 'recordUpdate',
     $route (to, from) {
       // 清空篩選條件
-      this.form = {
-        camera: [],
-        start_at: '',
-        end_at: '',
-        start_time: {
-          HH: '10',
-          mm: '05'
-        },
-        end_time: {
-          HH: '10',
-          mm: '05'
-        }
-      }
+      this.form = formDefault
     },
     'form': {
       handler: function (newValue) {
@@ -500,6 +490,12 @@ export default {
         }
       },
       deep: true
+    },
+    'siteData': {
+      handler: function () {
+        this.getSheetData()
+      },
+      deep: true
     }
   },
   components: {
@@ -508,6 +504,9 @@ export default {
   computed: {
     ...project.mapGetters([
       'currentProject'
+    ]),
+    ...media.mapGetters([
+      'siteData'
     ]),
     cameraList () {
       return this
@@ -652,32 +651,29 @@ export default {
       return rowData
     },
     getSheetData () {
-      // 取得 csv 資料，並轉成 json
-      this.$http.get('/csv/HC21A.csv').then((response) => {
-        var data = []
-        response.data.split(/\r\n/g).forEach((ref, idx) => {
-          var row = ref.split(/,/g)
-          // debugger
-          if (idx === 0) {
-            // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
-            this.rowData = row
-          } else {
-            var item = {}
+      const data = []
+      this.siteData.forEach((ref, idx) => {
+        var row = ref.split(/,/g)
+        // debugger
+        if (idx === 0) {
+          // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
+          this.rowData = row
+        } else {
+          var item = {}
 
-            row.forEach((r, i) => {
-              item[this.rowData[i].toLowerCase()] = r
-            })
+          row.forEach((r, i) => {
+            item[this.rowData[i].toLowerCase()] = r
+          })
 
-            data.push(item)
-          }
-        })
-
-        this.row_data = this.setContinuous(data)
-        this.settings.data = this.row_data
-        // 產出 sheet 畫面
-        this.sheet = new Handsontable(this.sheetContainer, this.settings)
-        this.isRender = true
+          data.push(item)
+        }
       })
+
+      this.row_data = this.setContinuous(data)
+      this.settings.data = this.row_data
+      // 產出 sheet 畫面
+      this.sheet = new Handsontable(this.sheetContainer, this.settings)
+      this.isRender = true
     },
     changeMode (key, val) {
       // 切換編輯狀態
@@ -712,7 +708,6 @@ export default {
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
     this.settingSheetHeight()
-    // this.getSheetData()
 
     window.onresize = () => { this.settingSheetHeight() }
 
