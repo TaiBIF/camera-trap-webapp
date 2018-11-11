@@ -5,6 +5,7 @@ import auth from './modules/auth'
 import project from './modules/project'
 import message from './modules/message'
 import media from './modules/media'
+import cameraLocation from './modules/cameraLocation'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ export default new Vuex.Store({
     auth,
     project,
     message,
-    media
+    media,
+    cameraLocation
   },
   state: {
     pageLock: false,

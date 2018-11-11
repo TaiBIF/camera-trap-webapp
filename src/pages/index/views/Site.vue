@@ -37,11 +37,13 @@
               </div>
               <div class="mb-2">
                 <div class="checkbox checkbox-inline" :key="camera.fullCameraLocationMd5" v-for="camera in cameraList">
-                  <input type="checkbox" v-model="form.camera" :id="camera.fullCameraLocationMd5" :value="camera.fullCameraLocationMd5">
+                  <input type="checkbox" v-model="form.camera" :id="camera.fullCameraLocationMd5" :value="camera.fullCameraLocationMd5"
+                    :disabled = "!cameraLocked[camera.fullCameraLocationMd5] || cameraLocked[camera.fullCameraLocationMd5].locked"
+                  >
                   <label :for="camera.fullCameraLocationMd5">
                     <span class="text">{{camera.cameraLocation}}</span>
-                    <span class="icon">
-                      <i class="icon-lock align-middle" v-tooltip.top="'陳士齊 正在編輯中'"></i>
+                    <span class="icon" v-if="cameraLocked[camera.fullCameraLocationMd5] && cameraLocked[camera.fullCameraLocationMd5].locked">
+                      <i class="icon-lock align-middle" v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy} 正在編輯中`"></i>
                     </span>
                   </label>
                 </div>
@@ -238,6 +240,7 @@ import ZoomDrag from '../components/ZoomDrag'
 
 const project = createNamespacedHelpers('project')
 const media = createNamespacedHelpers('media')
+const cameraLocation = createNamespacedHelpers('cameraLocation')
 
 const formDefault = {
   camera: [],
@@ -455,6 +458,7 @@ export default {
     $route (to, from) {
       // 清空篩選條件
       this.form = Object.assign({}, formDefault)
+      this.fetchCameraLocked()
     },
     'form': {
       handler: function (newValue) {
@@ -508,11 +512,12 @@ export default {
     ...media.mapGetters([
       'siteData'
     ]),
+    ...cameraLocation.mapGetters([
+      'cameraLocked'
+    ]),
     cameraList () {
-      return this
-      .currentProject ? this
-      .currentProject.cameraLocations
-      .filter(val => val.subSite === this.$route.params.subsite_id)
+      return this.currentProject
+        ? this.currentProject.cameraLocations.filter(val => val.subSite === this.$route.params.subsite_id)
         : []
     }
   },
@@ -523,6 +528,16 @@ export default {
     ...media.mapActions([
       'getSiteData'
     ]),
+    ...cameraLocation.mapActions([
+      'getCameraLocked'
+    ]),
+    fetchCameraLocked () {
+      this.getCameraLocked({
+        projectTitle: this.$route.params.id,
+        site: this.$route.params.site_id,
+        subSite: this.$route.params.subsite_id
+      })
+    },
     recordUpdate () {
     },
     dragStart () {
@@ -704,6 +719,7 @@ export default {
   },
   mounted () {
     this.setCurrentProject(this.$route.params.id)
+    this.fetchCameraLocked()
 
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet')
