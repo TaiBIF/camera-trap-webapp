@@ -454,7 +454,7 @@ export default {
     'currentRow': 'recordUpdate',
     $route (to, from) {
       // 清空篩選條件
-      this.form = formDefault
+      this.form = Object.assign({}, formDefault)
     },
     'form': {
       handler: function (newValue) {
