@@ -22,7 +22,10 @@ const getSiteData = async payload => {
     })
   })
 
-  return res
+  return res.results.map(val => ({
+    ...val,
+    url: `https://camera-trap.tw/${val.url}`
+  }))
 }
 
 export { getSiteData }

@@ -472,7 +472,7 @@ export default {
           return moment(day)
             .hour(time.HH)
             .minute(time.mm)
-            .format('X')
+            .format('X') - 0
         }
 
         const payload =
@@ -480,7 +480,7 @@ export default {
             query: {
               projectTitle: this.$route.params.id,
               site: this.$route.params.site_id,
-              date_time_original_timestamp: {
+              date_time_corrected_timestamp: {
                 '$gte': getTime(newValue.start_at, newValue.start_time),
                 '$lte': getTime(newValue.end_at, newValue.end_time)
               },
@@ -493,8 +493,8 @@ export default {
           }
 
         if (
-          payload.query.date_time_original_timestamp['$gte'] !== 'Invalid date' &&
-          payload.query.date_time_original_timestamp['$lte'] !== 'Invalid date'
+          payload.query.date_time_corrected_timestamp['$gte'] !== 'Invalid date' &&
+          payload.query.date_time_corrected_timestamp['$lte'] !== 'Invalid date'
         ) {
           this.getSiteData(payload)
         }
