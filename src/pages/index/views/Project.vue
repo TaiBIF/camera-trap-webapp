@@ -480,8 +480,8 @@ export default {
       'cameraLocations',
       'species',
       'sites',
-      'ProjectMarkers'
-      // 'SiteMarkers'
+      'ProjectMarkers',
+      'SiteMarkers'
     ])
   },
   methods: {
@@ -618,7 +618,7 @@ export default {
       if (this.mapMode === 'project') {
         this.mapInfo.zoom = 9
         this.mapInfo.marker = this.ProjectMarkers
-        this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
+        // this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
       }
 
       if (this.mapMode === 'camera') {

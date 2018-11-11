@@ -7,7 +7,7 @@
       :key="`trow-${dIdx}`"
       :class="{'is-active': d.id==current}"
       @click="setCurrent(d)">
-        <th>{{d.cameraLocation}}</th>
+        <th>{{d.name}}</th>
         <td
         v-if="d.progress"
         v-for="(p, pIdx) in d.progress"
@@ -15,7 +15,7 @@
           <span class="progress"
           v-if="!p === false && p > 0"
           :class="{
-            'is-complete': p==2,
+            'is-complete': p>0,
             'not-complete': p==1,
             'is-cancel': p==-1
           }"></span>

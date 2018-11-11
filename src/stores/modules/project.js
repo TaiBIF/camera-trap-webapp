@@ -119,52 +119,30 @@ export const getters = {
     }))
   },
   SiteMarkers: state => {
-    return [
-      {
-        id: 11,
-        name: 'PT07A',
-        takeback: 2250,
-        num: 106,
-        last_update: '2017/05/23 15:22',
-        error: 5,
-        marker: L.latLng(24.611081, 121.605761),
-        color: 'green',
-        progress: [2, 1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0]
-      },
-      {
-        id: 12,
-        name: 'PT08A',
-        takeback: 5250,
-        num: 20,
-        last_update: '2017/05/23 15:22',
-        error: 0,
-        marker: L.latLng(24.607959, 121.601986),
-        color: 'red',
-        progress: [2, 1, 0, 0, 2, -1, -1, -1, -1, 0, 0, 0]
-      },
-      {
-        id: 13,
-        name: 'PT09A',
-        takeback: 2250,
-        num: 106,
-        last_update: '2017/05/23 15:22',
-        error: 5,
-        marker: L.latLng(24.607023, 121.60396),
-        color: 'green',
-        progress: [2, 1, 2, -1, -1, -1, -1, -1, -1, 0, 0, 0]
-      },
-      {
-        id: 14,
-        name: 'PT10A',
-        takeback: 5250,
-        num: 20,
-        last_update: '2017/05/23 15:22',
-        error: 0,
-        marker: L.latLng(24.611939, 121.60722),
-        color: 'red',
-        progress: [2, 1, 1, 1, -1, -1, -1, -1, -1, 0, 0, 0]
-      }
-    ]
+    const source = state.locationCameraAbnormalStatus
+    // {
+    //   id: 11,
+    //   name: 'PT07A',
+    //   takeback: 2250,
+    //   num: 106,
+    //   last_update: '2017/05/23 15:22',
+    //   error: 5,
+    //   marker: L.latLng(24.611081, 121.605761),
+    //   color: 'green',
+    //   progress: [2, 1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0]
+    // },
+
+    console.log('SiteMarkers', state.locationCameraAbnormalStatus)
+    return source.map(val => ({
+      id: val._id,
+      name: val.site,
+      project_id: val.projectTitle,
+      marker: L.latLng(val.wgs84dec_y, val.wgs84dec_x),
+      progress: val.monthly_num.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.month] = currentValue.num
+        return accumulator
+      }, Array(12).fill(0))
+    }))
   }
 }
 
@@ -214,6 +192,7 @@ export const actions = {
       projectTitle: state.currentProjectId,
       ...payload
     })
+    console.log('getLocationIdentifiedStatus', data)
     commit('setLocationIdentifiedStatus', data)
   },
   // 影像回收狀況
@@ -222,6 +201,7 @@ export const actions = {
       projectTitle: state.currentProjectId,
       ...payload
     })
+    console.log('getLocationRetrievedStatus', data)
     commit('setLocationRetrievedStatus', data)
   },
   // 相機異常值
@@ -230,6 +210,7 @@ export const actions = {
       projectTitle: state.currentProjectId,
       ...payload
     })
+    console.log('getLocationCameraAbnormalStatus', data)
     commit('setLocationCameraAbnormalStatus', data)
   }
 }
