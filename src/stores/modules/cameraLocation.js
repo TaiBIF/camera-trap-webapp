@@ -28,7 +28,7 @@ export const actions = {
 export default {
   namespaced: true,
   state: {
-    cameraLocked: {}
+    cameraLocked: []
   },
   getters,
   mutations,
