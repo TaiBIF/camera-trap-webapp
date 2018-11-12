@@ -66,7 +66,7 @@ export const getters = {
           label: currentValue.name,
           child:
             currentValue.children && currentValue.children[0].id !== 'NULL'
-              currentValue.children.map(val => ({
+              ? currentValue.children.map(val => ({
                 value: val.id,
                 label: val.name,
                 // 塞入 camera 資料
@@ -83,7 +83,7 @@ export const getters = {
                   [],
                 ),
               }))
-              [],
+              : [],
         };
         accumulator.push(tmp);
 
