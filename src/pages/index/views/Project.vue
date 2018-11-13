@@ -251,15 +251,24 @@
 </template>
 
 <script>
-import L from 'leaflet'
-import { LMap, LTileLayer, LMarker, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
-import moment from 'moment'
-import { createNamespacedHelpers } from 'vuex'
-import VueHighcharts from 'vue2-highcharts'
-import SiteChart from '../components/SiteChart'
-import ReportModal from '../components/ReportModal'
+import L from 'leaflet';
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LControlZoom,
+  LTooltip,
+  LCircle,
+  LLayerGroup,
+  LPolygon,
+} from 'vue2-leaflet';
+import moment from 'moment';
+import { createNamespacedHelpers } from 'vuex';
+import VueHighcharts from 'vue2-highcharts';
+import SiteChart from '../components/SiteChart';
+import ReportModal from '../components/ReportModal';
 
-const project = createNamespacedHelpers('project')
+const project = createNamespacedHelpers('project');
 
 // 設定未選擇/已選擇 Icon
 const Icon = L.icon({
@@ -268,8 +277,8 @@ const Icon = L.icon({
   iconAnchor: [31, 77],
   popupAnchor: [-3, -76],
   shadowSize: [60, 109],
-  shadowAnchor: [31, 77]
-})
+  shadowAnchor: [31, 77],
+});
 
 const IconSelect = L.icon({
   iconUrl: '/assets/common/marker-icon-select@2x.png',
@@ -277,8 +286,8 @@ const IconSelect = L.icon({
   iconAnchor: [33, 80],
   popupAnchor: [-3, -76],
   shadowSize: [66, 120],
-  shadowAnchor: [31, 77]
-})
+  shadowAnchor: [31, 77],
+});
 
 const ErrorIcon = L.icon({
   iconUrl: '/assets/common/marker-icon-error@2x.png',
@@ -286,8 +295,8 @@ const ErrorIcon = L.icon({
   iconAnchor: [30, 77],
   popupAnchor: [-3, -76],
   shadowSize: [66, 109],
-  shadowAnchor: [33, 77]
-})
+  shadowAnchor: [33, 77],
+});
 
 const ErrorIconSelect = L.icon({
   iconUrl: '/assets/common/marker-icon-error-select@2x.png',
@@ -295,8 +304,8 @@ const ErrorIconSelect = L.icon({
   iconAnchor: [30, 80],
   popupAnchor: [-3, -80],
   shadowSize: [66, 120],
-  shadowAnchor: [33, 80]
-})
+  shadowAnchor: [33, 80],
+});
 
 const BarChart = {
   name: '每月影像筆數',
@@ -312,92 +321,120 @@ const BarChart = {
     { name: '9月', y: 0, updated_at: '', error: 0 },
     { name: '10月', y: 0, updated_at: '', error: 0 },
     { name: '11月', y: 0, updated_at: '', error: 0 },
-    { name: '12月', y: 0, updated_at: '', error: 0 }
-  ]
-}
+    { name: '12月', y: 0, updated_at: '', error: 0 },
+  ],
+};
 
 export default {
   name: 'Project',
-  data () {
+  data() {
     return {
       today: moment(),
       currentDuration: 2018, // 紀錄目前顯示的年份
-      currentSite: {  // 紀錄目前顯示的樣站，格式需轉成 vue-select 的格式
+      currentSite: {
+        // 紀錄目前顯示的樣站，格式需轉成 vue-select 的格式
         value: 0,
-        label: '全部樣區'
+        label: '全部樣區',
       },
       siteMarkers: [],
-      currentSubSite: null,  // 紀錄目前顯示的子樣站
+      currentSubSite: null, // 紀錄目前顯示的子樣站
       currentCamera: null, // 紀錄目前顯示的相機
       errorReportOpen: false,
       pieChartRendering: false,
-      mapMode: 'project',  // 目前顯示的圖表層級
+      mapMode: 'project', // 目前顯示的圖表層級
       progressData: [], // 取得每月繳交資訊
       showWoods: false, // 是否顯示林班地
-      polygon: [  // 林班地資料示意
-        { id: 'p1',
+      polygon: [
+        // 林班地資料示意
+        {
+          id: 'p1',
           points: [
             { lat: 24.604577, lng: 121.608599 },
             { lat: 24.753846, lng: 121.175827 },
-            { lat: 24.349130, lng: 121.164845 }
+            { lat: 24.34913, lng: 121.164845 },
           ],
-          visible: true }
+          visible: true,
+        },
       ],
       mapInfo: {
         zoom: 11,
         options: {
-          zoomControl: false
+          zoomControl: false,
         },
         center: L.latLng(25.039202, 121.819413),
         url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        marker: []
+        attribution:
+          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        marker: [],
       },
       // 共用圖表顏色
-      chartColors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
+      chartColors: [
+        '#5DB897',
+        '#AACAEE',
+        '#7E99E5',
+        '#5569B5',
+        '#CC76BA',
+        '#FFC8EB',
+        '#BDE9A5',
+      ],
       currentTab: 0,
       // 長條圖設定
       barOption: {
         chart: {
           type: 'column',
-          height: 230
+          height: 230,
         },
         colors: ['#8ACFCB'],
         title: {
           enable: false,
-          text: ''
+          text: '',
         },
         tooltip: {
           headerFormat: '',
           backgroundColor: 'rgba(0, 0, 0, .8)',
           useHTML: true,
-          pointFormatter: function () {
+          pointFormatter() {
             // 顯示錯誤數
             return `
               <div>
-                <span class="red label float-right ${this.error === 0 ? 'd-none' : 'd-inline-block'}">${this.error}筆異常</span>
+                <span class="red label float-right ${
+                  this.error === 0 ? 'd-none' : 'd-inline-block'
+                }">${this.error}筆異常</span>
                 <h5 class="my-1">${this.y} <small>筆</small></h5>
               </div>
               <div class="text-gray">上傳時間：${this.updated_at}</div>
-            `
+            `;
           },
           style: {
-            color: '#FFF'
-          }
+            color: '#FFF',
+          },
         },
         plotOptions: {
           column: {
             states: {
               hover: {
-                color: '#09968F'
-              }
-            }
-          }
+                color: '#09968F',
+              },
+            },
+          },
         },
         xAxis: {
-          categories: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '9月', '9月', '10月', '11月', '12月']
+          categories: [
+            '1月',
+            '2月',
+            '3月',
+            '4月',
+            '5月',
+            '6月',
+            '7月',
+            '9月',
+            '9月',
+            '10月',
+            '11月',
+            '12月',
+          ],
         },
-        series: null
+        series: null,
       },
       // 圓餅圖設定
       pieOption: {
@@ -407,86 +444,100 @@ export default {
           plotBorderWidth: null,
           plotShadow: false,
           type: 'pie',
-          height: 340
+          height: 340,
         },
-        colors: ['#5DB897', '#AACAEE', '#7E99E5', '#5569B5', '#CC76BA', '#FFC8EB', '#BDE9A5'],
+        colors: [
+          '#5DB897',
+          '#AACAEE',
+          '#7E99E5',
+          '#5569B5',
+          '#CC76BA',
+          '#FFC8EB',
+          '#BDE9A5',
+        ],
         title: {
           enable: false,
-          text: ''
+          text: '',
         },
         subtitle: {
           enable: false,
-          text: ''
+          text: '',
         },
         tooltip: {
           headerFormat: '',
           backgroundColor: 'rgba(70,70,70,.8)',
-          pointFormatter: function () {
-            return `<span style="color:#FFF">${this.name}：${this.y} 筆辨識紀錄 (${(this.percentage).toFixed(1)}%)</span>`
+          pointFormatter() {
+            return `<span style="color:#FFF">${this.name}：${
+              this.y
+            } 筆辨識紀錄 (${this.percentage.toFixed(1)}%)</span>`;
           },
           style: {
-            color: '#FFF'
-          }
+            color: '#FFF',
+          },
         },
         plotOptions: {
           pie: {
             allowPointSelect: true,
             cursor: 'pointer',
             dataLabels: {
-              enabled: false
-            }
-          }
+              enabled: false,
+            },
+          },
         },
-        series: null
-      }
-    }
+        series: null,
+      },
+    };
   },
   components: {
-    LMap, LTileLayer, LControlZoom, LMarker, LPolygon, LCircle, LTooltip, LLayerGroup,
+    LMap,
+    LTileLayer,
+    LControlZoom,
+    LMarker,
+    LPolygon,
+    LCircle,
+    LTooltip,
+    LLayerGroup,
     SiteChart,
     'v-chart': VueHighcharts,
     ReportModal,
   },
   watch: {
-    currentProject: function (newValue) {
+    currentProject(newValue) {
       setTimeout(() => {
         this.getSpeciesGroup();
         this.fetchImageStatus();
       }, 100);
     },
-    currentSite: function (newValue) {
+    currentSite(newValue) {
       setTimeout(() => {
         this.setCamera(newValue);
         this.fetchImageStatus();
       }, 100);
     },
-    currentDuration: function (newValue) {
+    currentDuration(newValue) {
       setTimeout(() => {
         this.setCamera(newValue);
         this.fetchImageStatus();
       }, 100);
     },
-    ProjectMarkers: function (newValue) {
+    ProjectMarkers(newValue) {
       setTimeout(() => {
-        if(!this.mapInfo.marker.length && this.mapMode==='project') {
+        if (!this.mapInfo.marker.length && this.mapMode === 'project') {
           this.fetchImageStatus();
         }
       }, 100);
     },
-    SiteMarkers: function (newValue) {
+    SiteMarkers(newValue) {
       setTimeout(() => {
-        if(!this.mapInfo.marker.length && this.mapMode==='camera') {
+        if (!this.mapInfo.marker.length && this.mapMode === 'camera') {
           this.fetchImageStatus();
         }
       }, 100);
     },
-    'species': 'loadPieChart',
+    species: 'loadPieChart',
   },
   computed: {
-    ...project.mapState([
-      'speciesGroup',
-      'siteStatusTab',
-    ]),
+    ...project.mapState(['speciesGroup', 'siteStatusTab']),
     ...project.mapGetters([
       'currentProject',
       'cameraLocations',
@@ -494,13 +545,10 @@ export default {
       'sites',
       'ProjectMarkers',
       'SiteMarkers',
-    ])
+    ]),
   },
   methods: {
-    ...project.mapMutations([
-      'setCurrentProject',
-      'setSiteStatusTab',
-    ]),
+    ...project.mapMutations(['setCurrentProject', 'setSiteStatusTab']),
     ...project.mapActions([
       'getSpeciesGroup',
       'getLocationIdentifiedStatus',
@@ -513,18 +561,21 @@ export default {
       const payload = {
         year: this.currentDuration,
         ...{
-          site: this.currentSite.label !== '全部樣區' ? this.currentSite.label : undefined,
-          subSite: !this.currentSubSite ? undefined : this.currentSubSite.label
-        }
-      }
+          site:
+            this.currentSite.label !== '全部樣區' ?
+              this.currentSite.label :
+              undefined,
+          subSite: !this.currentSubSite ? undefined : this.currentSubSite.label,
+        },
+      };
 
-      this.getLocationIdentifiedStatus(payload)
-      this.getLocationRetrievedStatus(payload)
-      this.getLocationCameraAbnormalStatus(payload)
-      this.renderMap()
+      this.getLocationIdentifiedStatus(payload);
+      this.getLocationRetrievedStatus(payload);
+      this.getLocationCameraAbnormalStatus(payload);
+      this.renderMap();
     },
     timeFormat(time) {
-      return moment(time * 1000).format('YYYY/MM/DD')
+      return moment(time * 1000).format('YYYY/MM/DD');
     },
     submitReport() {
       // send error data
@@ -533,29 +584,29 @@ export default {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'project') {
         if (!value.child === false && value.child.length) {
-          this.currentCamera = null
-          this.currentSubSite = value.child[0]
-          this.siteMarkers = value.child[0].camera
+          this.currentCamera = null;
+          this.currentSubSite = value.child[0];
+          this.siteMarkers = value.child[0].camera;
           // this.mapInfo.center = window._.clone(L.latLng(tmepCamera.wgs84dec_y, tmepCamera.wgs84dec_x))
         } else {
-          this.currentCamera = null
-          this.currentSubSite = null
+          this.currentCamera = null;
+          this.currentSubSite = null;
         }
-        this.mapMode = 'camera'
-        this.renderMap()
+        this.mapMode = 'camera';
+        this.renderMap();
       }
 
       if (this.mapMode === 'camera') {
         if (!value.child) {
           // const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
-          this.currentCamera = null
-          this.currentSubSite = null
-          this.progressData = this.ProjectMarkers
-          this.mapMode = 'project'
+          this.currentCamera = null;
+          this.currentSubSite = null;
+          this.progressData = this.ProjectMarkers;
+          this.mapMode = 'project';
         } else {
-          this.currentCamera = null
-          this.currentSubSite = value.child[0]
-          this.renderMap()
+          this.currentCamera = null;
+          this.currentSubSite = value.child[0];
+          this.renderMap();
         }
       }
     },
@@ -563,13 +614,22 @@ export default {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
         this.currentCamera = this.SiteMarkers[idx];
-        this.currentCamera.icon = this.SiteMarkers[idx].error ? ErrorIconSelect : IconSelect;
-        this.mapInfo.center = window._.clone(L.latlng(this.currentCamera.twd97tm2_y, this.currentCamera.twd97tm2_x))
-        setTimeout(() => { this.loadBarChart() }, 200);
+        this.currentCamera.icon = this.SiteMarkers[idx].error ?
+          ErrorIconSelect :
+          IconSelect;
+        this.mapInfo.center = window._.clone(
+          L.latlng(
+            this.currentCamera.twd97tm2_y,
+            this.currentCamera.twd97tm2_x,
+          ),
+        );
+        setTimeout(() => {
+          this.loadBarChart();
+        }, 200);
       }
 
       if (this.mapMode === 'project') {
-        this.currentSite = this.sites.find((s) => { return s.value === val.id });
+        this.currentSite = this.sites.find(s => s.value === val.id);
         setTimeout(() => {
           this.mapInfo.center = window._.clone(val.marker);
         }, 50);
@@ -591,7 +651,7 @@ export default {
       const BarChartData = {
         name: '每月影像筆數',
         data: this.currentCamera.progress.reduce((array, value) => {
-          debugger
+          debugger;
           return {
             name: '月',
             y: value,
@@ -603,7 +663,7 @@ export default {
       barCharts.addSeries(BarChartData);
     },
     loadPieChart(val, val2) {
-      let chartData = [];
+      const chartData = [];
       if (!val.length || this.pieChartRendering) return;
       this.species.forEach((v, i) => {
         if (i > 5) {
@@ -642,13 +702,12 @@ export default {
       if (this.mapMode === 'camera') {
         this.mapInfo.zoom = 15;
         this.progressData = this.SiteMarkers;
-        this.mapInfo.marker = this.SiteMarkers.map(val => {
-        // 設定地圖要顯示的 Icon
-          return {
+        this.mapInfo.marker = this.SiteMarkers.map(val =>
+          // 設定地圖要顯示的 Icon
+          ({
             ...val,
             icon: val.error > 0 ? ErrorIconSelect : IconSelect,
-          };
-        });
+          }), );
       }
       if (this.mapInfo.marker.length) {
         this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker);

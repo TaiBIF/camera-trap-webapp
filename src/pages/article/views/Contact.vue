@@ -298,9 +298,8 @@ export default {
         type: '',
         decsription: '',
         questType: [1],
-      }
-    }
-  }
-
+      },
+    };
+  },
 };
 </script>

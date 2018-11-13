@@ -211,7 +211,7 @@ export default {
     };
   },
   watch: {
-    'currentRow': 'recordUpdate',
+    currentRow: 'recordUpdate',
   },
   components: {
     DatePicker,

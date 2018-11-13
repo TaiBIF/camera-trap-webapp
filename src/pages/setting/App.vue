@@ -7,7 +7,7 @@
           <ul class="navbar-nav main-nav">
             <li class="nav-item">
               <a class="nav-link active" role="button" href="./index.html#/">
-                專案總覽 
+                專案總覽
                 <span class="sr-only">(current)</span>
               </a>
             </li>
@@ -59,7 +59,7 @@
                     </a>
                   </h5>
                   <div class="meta">
-                    上傳失敗 
+                    上傳失敗
                     <a class="text-green link">檢視錯誤</a>
                   </div>
                 </a>
@@ -105,8 +105,8 @@ export default {
     return {};
   },
   watch: {
-    'PageLock': 'setBodyLock',
-    '$router': 'routeChange',
+    PageLock: 'setBodyLock',
+    $router: 'routeChange',
   },
   methods: {
     ...mapActions(['setPageLock']),
@@ -117,6 +117,6 @@ export default {
       if (this.PageLock) document.body.classList.add('page-lock');
       else document.body.classList.remove('page-lock');
     },
-  }
+  },
 };
 </script>

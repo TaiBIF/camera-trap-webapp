@@ -66,8 +66,8 @@ export default {
     ...mapGetters(['PageLock']),
   },
   watch: {
-    'PageLock': 'setBodyLock',
-    '$router': 'routeChange',
+    PageLock: 'setBodyLock',
+    $router: 'routeChange',
   },
   methods: {
     ...mapActions(['setPageLock']),

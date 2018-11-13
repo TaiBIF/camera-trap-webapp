@@ -116,7 +116,7 @@ export default {
         name: 'Cindy Gu',
         email: 'cindy@gmail.com',
       },
-    }
-  }
+    };
+  },
 };
 </script>

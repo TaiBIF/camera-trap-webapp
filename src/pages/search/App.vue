@@ -84,11 +84,11 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'App',
   computed: {
-    ...mapGetters(['PageLock'])
+    ...mapGetters(['PageLock']),
   },
   watch: {
-    'PageLock': 'setBodyLock',
-    '$router': 'routeChange'
+    PageLock: 'setBodyLock',
+    $router: 'routeChange',
   },
   methods: {
     ...mapActions(['setPageLock']),

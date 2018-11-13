@@ -449,7 +449,7 @@ export default {
           mm: '05',
         },
       },
-    }
+    };
   },
   methods: {
     submitSearch() {
