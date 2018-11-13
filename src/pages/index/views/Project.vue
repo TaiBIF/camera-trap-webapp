@@ -93,7 +93,7 @@
                       :draggable="false"
                       @click="setCurrent(mark)">
                         <l-tooltip :content="mark.name"
-                        :options="{permanent: true, direction: 'top'}"></l-tooltip>
+                        :options="{permanent: true, direction: 'top'}" />
                       </l-marker>
                     </l-layer-group>
 
@@ -159,8 +159,7 @@
                         <span @click="changeDuration(+1)"><i class="fa fa-3 fa-caret-right"></i></span>
                       </div>
                     </div>
-                    <site-chart :chart="progressData" v-if="mapMode=='project'" :current="currentSite.value" @update="setCurrent" />
-                    <site-chart :chart="progressData" v-if="mapMode=='camera'" :current="currentSubSite.value" @update="setCurrent" />
+                    <site-chart :chart="progressData" :current="currentSite.value" @update="setCurrent" />
                   </div>
                   <div v-if="siteStatusTab==1">
                     <div class="row chart-control">
@@ -178,14 +177,14 @@
                   <div class="camera-chart" v-if="currentCamera!==null">
                     <div class="close" @click="currentCamera=null"><i class="fa fa-times"></i></div>
                     <h1 class="display-heading">
-                      {{currentCamera.name}}
-                      <small class="text-gray">{{currentSite.label}}-{{currentSubSite.label}}</small>
+                      {{currentCamera.cameraLocation}}
+                      <small class="text-gray">{{currentCamera.site}}-{{currentCamera.subSite}}</small>
                     </h1>
                     <div class="text-gray">
-                      <div>架設日期：2018/08/17</div>
-                      <div>經緯度：X(97)213520, Y(97)2561356</div>
-                      <div>海拔：230m</div>
-                      <div>植披：闊葉林</div>
+                      <div>架設日期：{{ currentCamera.modified_at }}</div>
+                      <div>經緯度：{{ `X(${currentCamera.original_x})${currentCamera.twd97tm2_x}` }}, {{ `Y(${currentCamera.original_y})${currentCamera.twd97tm2_y}` }}</div>
+                      <div>海拔：{{ currentCamera.elevation }}m</div>
+                      <div>植披：{{ currentCamera.land_cover }}</div>
                     </div>
                     <div class="row chart-control">
                       <div class="col-12 text-center text-gray">
@@ -213,33 +212,28 @@
                   <h3>
                     本計畫已辨識物種 <big>{{speciesGroup.species_group.length}}</big> 種
                   </h3>
-                  <small class="sub-heading text-center text-gray" v-if="speciesGroup.modified">最後更新時間：{{timeFormat(speciesGroup.modified)}}</small>
+                  <small class="sub-heading text-gray" v-if="speciesGroup.modified">最後更新時間：{{timeFormat(speciesGroup.modified)}}</small>
                   <hr>
                   <div class="row">
                     <div class="col-5">
                       <div class="speices-item"
                       v-for="(sp, sid) in species"
                       :key="`speices-item-${sid}`"
-                      v-if="sp.name!=='其他'">
+                      v-if="sid<=5">
                         <span class="circle" :style="{backgroundColor: chartColors[sid]}"></span>
                         <span class="text">{{sp.name}} {{ countPercentage(sid, species)}}%</span>
                       </div>
                     </div>
                     <div class="col-7">
-                      <div class="speices-item"
-                      v-for="(sp, sid) in species"
-                      :key="`speices-item-${sid}`"
-                      v-if="sp.name=='其他'">
-                        <span class="circle" :style="{backgroundColor: chartColors[sid]}"></span>
+                      <div class="speices-item">
+                        <span class="circle" :style="{backgroundColor: chartColors[6]}"></span>
                         <span class="text">
-                          {{sp.name}} {{ countPercentage(sid, species)}}%
-                          <div class="text-gray">
-                            <div class="sub-item">鼠 (非單一物種) 1%</div>
-                            <div class="sub-item">白鼻心 1%</div>
-                            <div class="sub-item">人 1%</div>
-                            <div class="sub-item">藍腹鷴 1%</div>
-                            <div class="sub-item">食蟹獴 1%</div>
-                            <div class="sub-item">狗 0.8%</div>
+                          其他
+                          <div class="text-gray"
+                          v-for="(sp, sid) in species"
+                          :key="`speices-item-${sid}`"
+                          v-if="sid>5">
+                            <div class="sub-item">{{sp.name}} {{ countPercentage(sid, species)}}%</div>
                           </div>
                         </span>
                       </div>
@@ -258,7 +252,7 @@
 
 <script>
 import L from 'leaflet'
-import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
 import moment from 'moment'
 import { createNamespacedHelpers } from 'vuex'
 import VueHighcharts from 'vue2-highcharts'
@@ -304,12 +298,6 @@ const ErrorIconSelect = L.icon({
   shadowAnchor: [33, 80]
 })
 
-const PieChart = {
-  name: 'speices',
-  size: '80%',
-  innerSize: '50%'
-}
-
 const BarChart = {
   name: '每月影像筆數',
   data: [
@@ -338,9 +326,11 @@ export default {
         value: 0,
         label: '全部樣區'
       },
+      siteMarkers: [],
       currentSubSite: null,  // 紀錄目前顯示的子樣站
       currentCamera: null, // 紀錄目前顯示的相機
       errorReportOpen: false,
+      pieChartRendering: false,
       mapMode: 'project',  // 目前顯示的圖表層級
       progressData: [], // 取得每月繳交資訊
       showWoods: false, // 是否顯示林班地
@@ -452,7 +442,7 @@ export default {
     }
   },
   components: {
-    LMap, LTileLayer, LControlZoom, LMarker, LPopup, LPolygon, LCircle, LTooltip, LLayerGroup,
+    LMap, LTileLayer, LControlZoom, LMarker, LPolygon, LCircle, LTooltip, LLayerGroup,
     SiteChart,
     'v-chart': VueHighcharts,
     ReportModal
@@ -460,8 +450,6 @@ export default {
   watch: {
     currentProject: function (newValue) {
       setTimeout(() => {
-        this.renderMap()
-        this.loadPieChart()
         this.getSpeciesGroup()
         this.fetchImageStatus()
       }, 100)
@@ -477,7 +465,22 @@ export default {
         this.setCamera(newValue)
         this.fetchImageStatus()
       }, 100)
-    }
+    },
+    ProjectMarkers: function (newValue) {
+      setTimeout(() => {
+        if(!this.mapInfo.marker.length && this.mapMode==='project') {
+          this.fetchImageStatus()
+        }
+      }, 100)
+    },
+    SiteMarkers: function (newValue) {
+      setTimeout(() => {
+        if(!this.mapInfo.marker.length && this.mapMode==='camera') {
+          this.fetchImageStatus()
+        }
+      }, 100)
+    },
+    'species': 'loadPieChart'
   },
   computed: {
     ...project.mapState([
@@ -490,7 +493,7 @@ export default {
       'species',
       'sites',
       'ProjectMarkers',
-      'SiteMarkers'
+      'SiteMarkers',
     ])
   },
   methods: {
@@ -505,14 +508,19 @@ export default {
       'getLocationCameraAbnormalStatus'
     ]),
     fetchImageStatus () {
+      this.mapInfo.marker = []
       const payload = {
         year: this.currentDuration,
-        ...{ site: this.currentSite.label !== '全部樣區' ? this.currentSite.label : undefined }
+        ...{
+          site: this.currentSite.label !== '全部樣區' ? this.currentSite.label : undefined,
+          subSite: !this.currentSubSite ? undefined : this.currentSubSite.label
+        }
       }
 
       this.getLocationIdentifiedStatus(payload)
       this.getLocationRetrievedStatus(payload)
       this.getLocationCameraAbnormalStatus(payload)
+      this.renderMap()
     },
     timeFormat (time) {
       return moment(time * 1000).format('YYYY/MM/DD')
@@ -526,43 +534,40 @@ export default {
         if (!value.child === false && value.child.length) {
           this.currentCamera = null
           this.currentSubSite = value.child[0]
-          this.progressData = this.SiteMarkers
-
-          this.mapInfo.center = window._.clone(this.SiteMarkers[0].marker)
-          this.mapMode = 'camera'
+          this.siteMarkers = value.child[0].camera
+          // this.mapInfo.center = window._.clone(L.latLng(tmepCamera.wgs84dec_y, tmepCamera.wgs84dec_x))
         } else {
           this.currentCamera = null
           this.currentSubSite = null
-          this.progressData = this.ProjectMarkers
-          this.mapMode = 'project'
         }
+        this.mapMode = 'camera'
         this.renderMap()
       }
 
       if (this.mapMode === 'camera') {
         if (!value.child) {
-          const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
+          // const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
           this.currentCamera = null
           this.currentSubSite = null
           this.progressData = this.ProjectMarkers
           this.mapMode = 'project'
+        } else {
+          this.currentCamera = null
+          this.currentSubSite = value.child[0]
           this.renderMap()
-          setTimeout(() => {
-            this.mapInfo.center = window._.clone(proj.marker)
-          }, 100)
         }
       }
     },
     setCurrent (val) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
-        this.SiteMarkers.forEach(site => {
+        this.siteMarkers.forEach(site => {
           site.icon = site.error ? ErrorIcon : Icon
         })
 
         this.currentCamera = val
         this.currentCamera.icon = val.error ? ErrorIconSelect : IconSelect
-        this.mapInfo.center = window._.clone(this.currentCamera.marker)
+        this.mapInfo.center = window._.clone(L.latlng(this.currentCamera.twd97tm2_y, this.currentCamera.twd97tm2_x))
         setTimeout(() => { this.loadBarChart() }, 200)
       }
 
@@ -590,9 +595,25 @@ export default {
       barCharts.removeSeries()
       barCharts.addSeries(BarChart)
     },
-    loadPieChart () {
+    loadPieChart (val, val2) {
+      if (!val.length || this.pieChartRendering) return
+      var data = []
+      this.species.forEach((v, i) => {
+        if (i > 5) {
+          if (!data[6]) data[6] = { name: '其他', y: 0 }
+          else data[6].y += v.y
+        } else data.push(v)
+      })
       const pieCharts = this.$refs.pieCharts
-      pieCharts.addSeries(PieChart)
+      const PieChartOpt = {
+        type: 'pie',
+        name: 'speices',
+        size: '80%',
+        innerSize: '50%',
+        data: data
+      }
+      pieCharts.addSeries(PieChartOpt)
+      this.pieChartRendering = true
     },
     // 切換顯示年份
     changeDuration (count) {
@@ -604,24 +625,27 @@ export default {
     },
     // 根據層級切換地圖顯示大小
     renderMap () {
-      if (this.ProjectMarkers.length === 0) return
+      // if (this.ProjectMarkers.length === 0) return
 
       if (this.mapMode === 'project') {
         this.mapInfo.zoom = 9
         this.mapInfo.marker = this.ProjectMarkers
-        this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
+        this.progressData = this.ProjectMarkers
+        // this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
       }
+
       if (this.mapMode === 'camera') {
         this.mapInfo.zoom = 15
+        this.progressData = this.SiteMarkers
         this.mapInfo.marker = this.SiteMarkers.map(val => {
         // 設定地圖要顯示的 Icon
           return {
             ...val,
-            icon: val.error > 0 ? IconSelect : ErrorIconSelect
+            icon: val.error > 0 ? ErrorIconSelect : IconSelect
           }
         })
-        this.mapInfo.center = window._.clone(this.SiteMarkers[0].marker)
       }
+      if (this.mapInfo.marker.length) this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker)
     }
   },
   mounted () {

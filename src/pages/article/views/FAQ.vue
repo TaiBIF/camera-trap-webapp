@@ -39,9 +39,9 @@
           <div class="panel-body p-0">
             <div class="accordion">
               <!-- Render QA list -->
-              <div class="accordion-item" 
-              v-for="(accord, idx) in faqList[current].list" 
-              :key="`accord-${idx}`" 
+              <div class="accordion-item"
+              v-for="(accord, idx) in faqList[current].list"
+              :key="`accord-${idx}`"
               :class="collapse==idx ? 'is-open' : ''">
                 <!-- Toggle collapse -->
                 <div class="accordion-heading" @click="collapse= collapse==idx ? null : idx">
@@ -63,8 +63,8 @@
 <script>
 // FAQ 架構
 const faq = [
-  { 
-    name: "系統操作", 
+  {
+    name: '系統操作',
     list: [
       {
         title: '計畫管理員的權限？',
@@ -79,37 +79,32 @@ const faq = [
         content: ''
       }
     ]
-  },
-  { 
-    name: "帳號相關", 
+  }, {
+    name: '帳號相關',
     list: [{
       title: '',
       content: ''
     }]
-  },
-  { 
-    name: "計畫管理", 
+  }, {
+    name: '計畫管理',
     list: [{
       title: '',
       content: ''
     }]
-  },
-  { 
-    name: "檔案上傳", 
+  }, {
+    name: '檔案上傳',
     list: [{
       title: '',
       content: ''
     }]
-  },
-  { 
-    name: "資料編輯", 
+  }, {
+    name: '資料編輯',
     list: [{
       title: '',
       content: ''
     }]
-  },
-  { 
-    name: "篩選及下載", 
+  }, {
+    name: '篩選及下載',
     list: [{
       title: '',
       content: ''
@@ -119,7 +114,7 @@ const faq = [
 
 export default {
   name: 'FAQ',
-  data() {
+  data () {
     return {
       current: 0,
       collapse: 0,
@@ -127,10 +122,10 @@ export default {
     }
   },
   watch: {
-    "current": "changeSection"
+    'current': 'changeSection'
   },
   methods: {
-    changeSection() {
+    changeSection () {
       this.collapse = 0
     }
   }

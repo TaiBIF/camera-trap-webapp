@@ -7,7 +7,7 @@
         </div>
       </div>
       <h1 class="heading">計畫總覽</h1>
-      <div v-if="!Projects.length">
+      <div v-if="!Projects.length && !loading">
         <div class="empty-content">
           <img src="/assets/common/empty-project.png" width="212px" srcset="/assets/common/empty-project@2x.png">
           <h1 class="empty">您目前沒有任何計畫</h1>
@@ -80,10 +80,21 @@ export default {
       'Message'
     ])
   },
+  data () {
+    return {
+      loading: false
+    }
+  },
+  watch: {
+    'Projects': 'ProjectInit'
+  },
   methods: {
     ...project.mapMutations([
       'setCurrentProject'
-    ])
+    ]),
+    ProjectInit () {
+      this.loading = false
+    }
   },
   beforeMount () {
     this.setCurrentProject('')

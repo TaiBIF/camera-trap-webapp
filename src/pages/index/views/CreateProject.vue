@@ -13,15 +13,34 @@
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">計畫名稱：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name" class="form-control"
-                  v-model="form.name" placeholder="請輸入計畫名稱">
+                  <input type="text"
+                  placeholder="請輸入計畫名稱"
+                  id="project-name"
+                  name="project_name"
+                  class="form-control"
+                  v-validate="'required'"
+                  v-model="form.name"
+                  :class="{'is-invalid': errors.has('project_name')}">
+                  <span v-show="errors.has('project_name')" class="invalid-feedback">
+                    計畫名稱不能留空
+                    <!-- {{ errors.first('project_name') }} -->
+                  </span>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="project-name" class="col-2 required">計畫簡稱：</label>
+                <label for="project-slot" class="col-2 required">計畫簡稱：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name"
-                  v-model="form.slot" placeholder="請輸入計畫簡稱 (限4字)" class="form-control">
+                  <input type="text"
+                  id="project-slot"
+                  name="project_slot"
+                  placeholder="請輸入計畫簡稱 (限4字)"
+                  class="form-control"
+                  v-validate="'required'"
+                  v-model="form.slot"
+                  :class="{'is-invalid': errors.has('project_slot')}">
+                  <span v-show="errors.has('project_slot')" class="invalid-feedback">
+                    計畫簡稱不能留空
+                  </span>
                 </div>
                 <div class="col-6 pl-0">
                   <span class="btn btn-text px-0"
@@ -33,37 +52,91 @@
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">委辦單位：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name" v-model="form.agency" placeholder="請輸入委辦單位" class="form-control">
+                  <input type="text"
+                  id="project-agent"
+                  name="project_agent"
+                  v-model="form.agency"
+                  placeholder="請輸入委辦單位"
+                  class="form-control"
+                  v-validate="'required'"
+                  :class="{'is-invalid': errors.has('project_agent')}">
+                  <span v-show="errors.has('project_agent')" class="invalid-feedback">
+                    委辦單位不能留空
+                  </span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">計畫編號：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name" v-model="form.no" placeholder="請輸入計畫編號" class="form-control">
+                  <input type="text"
+                  id="project-no"
+                  name="project_no"
+                  v-validate="'required'"
+                  v-model="form.no"
+                  placeholder="請輸入計畫編號"
+                  class="form-control"
+                  :class="{'is-invalid': errors.has('project_no')}">
+                  <span v-show="errors.has('project_no')" class="invalid-feedback">
+                    計畫編號不能留空
+                  </span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">計畫主持人：</label>
                 <div class="col-4">
-                  <input type="text" id="project-name" v-model="form.owner" placeholder="請輸入計畫主持人" class="form-control">
+                  <input type="text"
+                  id="project-owner"
+                  name="project_owner"
+                  v-validate="'required'"
+                  v-model="form.owner"
+                  placeholder="請輸入計畫主持人"
+                  class="form-control"
+                  :class="{'is-invalid': errors.has('project_owner')}">
+                  <span v-show="errors.has('project_owner')" class="invalid-feedback">
+                    計畫主持人不能留空
+                  </span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2 required">計畫時間：</label>
                 <div class="col-4 input-group-inline">
                   <div class="input-group">
-                    <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                    <date-picker
+                    :placeholder="'2018/09/20'"
+                    :format="'YYYY/MM/DD'"
+                    :first-day-of-week="1"
+                    v-model="form.start_at"/>
                     <div class="input-group-append">
                       <i class="icon icon-calendar"></i>
                     </div>
                   </div>
                   <div class="input-text">到</div>
                   <div class="input-group">
-                    <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                    <date-picker
+                    :not-before="form.start_at"
+                    :placeholder="'2018/09/20'"
+                    :format="'YYYY/MM/DD'"
+                    v-model="form.end_at"
+                    :first-day-of-week="1"></date-picker>
                     <div class="input-group-append">
                       <i class="icon icon-calendar"></i>
                     </div>
                   </div>
+                  <input
+                  type="hidden"
+                  id="project_start"
+                  name="project_start"
+                  v-validate="'required'"
+                  v-model="form.start_at">
+                  <input
+                  type="hidden"
+                  id="project_end"
+                  name="project_end"
+                  v-validate="'required'"
+                  v-model="form.end_at">
+                  <span v-show="errors.has('project_start') || errors.has('project_end')" class="invalid-feedback">
+                    計畫時間不能留空
+                  </span>
                 </div>
               </div>
               <div class="form-group row">
@@ -220,7 +293,9 @@
 
           <div class="action">
             <router-link to="/" class="btn btn-default">取消</router-link>
-            <button type="submit" @click.stop.prevent="doSubmit()" class="btn btn-orange">新增計畫</button>
+            <button type="submit" @click.stop.prevent="doSubmit()" class="btn btn-orange">
+              新增計畫
+            </button>
           </div>
         </form>
       </div>
@@ -300,8 +375,10 @@ export default {
       .then(() => this.$router.push('/'))
     },
     nextStep () {
-      // 儲存現階段資料，或直接跳下一步一次送出
-      this.step++
+      this.$validator.validateAll().then((result) => {
+        if (!result) return false
+        else this.step++
+      })
     }
   }
 }

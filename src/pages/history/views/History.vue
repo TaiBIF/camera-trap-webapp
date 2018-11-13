@@ -39,7 +39,7 @@
               <span class="icon"><i class="icon-upload-fail"></i></span>
               <span class="text">{{row.msg}}</span>
             </div>
-            
+
             <a href="./upload.html" v-if="row.status==2" class="link text-underline mr-2">補上傳影像檔</a>
             <a v-if="row.status==2" class="link text-underline">查看</a>
             <a v-if="row.status==-1" class="text-danger text-underline">檢視錯誤</a>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import {commonMixin} from '../../../mixins/common.js'
+import { commonMixin } from '../../../mixins/common.js'
 
 const history = [
   {
@@ -59,8 +59,8 @@ const history = [
     list: [
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'jpg',
         size: '240 KB',
         site: '屏東處',
@@ -71,8 +71,8 @@ const history = [
       },
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'csv',
         size: '240 KB',
         site: '屏東處',
@@ -83,8 +83,8 @@ const history = [
       },
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'zip',
         size: '240 KB',
         site: '屏東處',
@@ -95,8 +95,8 @@ const history = [
       },
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'folder',
         size: '240 KB',
         site: '屏東處',
@@ -112,8 +112,8 @@ const history = [
     list: [
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'folder',
         size: '240 KB',
         site: '屏東處',
@@ -124,8 +124,8 @@ const history = [
       },
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'csv',
         size: '240 KB',
         site: '屏東處',
@@ -141,8 +141,8 @@ const history = [
     list: [
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'csv',
         size: '240 KB',
         site: '屏東處',
@@ -153,8 +153,8 @@ const history = [
       },
       {
         created_at: '2017/07/08 17:23',
-        project: "全島鼬獾",
-        name: "PT12A-151129-1051223",
+        project: '全島鼬獾',
+        name: 'PT12A-151129-1051223',
         type: 'jpg',
         size: '240 KB',
         site: '屏東處',
@@ -168,21 +168,18 @@ const history = [
 ]
 
 export default {
-  name: "History",
+  name: 'History',
   mixins: [commonMixin],
-  data() {
+  data () {
     return {
       history: history
     }
   },
   methods: {
-    
   },
-  beforeMount() {
-    
+  beforeMount () {
   },
-  mounted() {
-    
+  mounted () {
   }
 }
 </script>

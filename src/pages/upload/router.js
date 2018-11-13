@@ -5,7 +5,7 @@ import Upload from './views/Upload'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'hash',
+  mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
@@ -14,4 +14,4 @@ export default new Router({
       component: Upload
     }
   ]
-});
+})

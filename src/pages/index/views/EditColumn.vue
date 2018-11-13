@@ -107,91 +107,117 @@
     <close-window-dialog :open="closeWindowOpen" @close="closeWindowOpen=false" />
     <new-column-modal :open="newColumnOpen" @close='newColumnOpen=false' @submit="submitColumn" />
     <invitation-dialog :open="invitationOpen" @close="invitationOpen=false" />
-    <delete-column-dialog :open="deleteColumnOpen" @close="deleteColumnOpen=false"  />
+    <delete-column-dialog
+    :open="deleteColumnOpen"
+    :column="delColumn.data"
+    @close="deleteColumnOpen=false"
+    @submit="confirmDeleteColumn" />
   </div>
 </template>
 
 <script>
-import { commonMixin } from '../../../mixins/common'
-import draggable from 'vuedraggable'
-import CloseWindowDialog from '../components/CloseWindowDialog'
-import NewColumnModal from '../components/NewColumn'
-import DeleteColumnDialog from '../components/DeleteColumnDialog'
-import EditNav from '../components/EditNav'
+import draggable from 'vuedraggable';
+import { commonMixin } from '../../../mixins/common';
+import CloseWindowDialog from '../components/CloseWindowDialog';
+import NewColumnModal from '../components/NewColumn';
+import DeleteColumnDialog from '../components/DeleteColumnDialog';
+import EditNav from '../components/EditNav';
 
 const column = [
   {
     name: '樣區',
     type: '下拉選單',
     description: '樣區-子樣區',
-    default: true
-  }, {
+    default: true,
+  },
+  {
     name: '相機位置',
     type: '下拉選單',
     description: '相機位置名稱',
-    default: true
-  }, {
+    default: true,
+  },
+  {
     name: '檔名',
     type: '輸入框',
     description: '01234.jpg',
-    default: true
-  }, {
+    default: true,
+  },
+  {
     name: '時間',
     type: '日期時間',
     description: 'YY/MM/DD hh:mm',
-    default: true
-  }, {
+    default: true,
+  },
+  {
     name: '物種',
     type: '下拉選單',
     description: '編輯常見物種排序',
-    default: true
-  }, {
+    default: true,
+  },
+  {
     name: '性別',
     type: '下拉選單',
     description: '公、母',
-    default: false
-  }, {
+    default: false,
+  },
+  {
     name: '年齡',
     type: '下拉選單',
     description: '成體、亞成體、幼體',
-    default: false
-  }, {
+    default: false,
+  },
+  {
     name: '備註',
     type: '下拉選單',
     description: '輸入框',
-    default: false
-  }
-]
+    default: false,
+  },
+];
 
 export default {
   name: 'EditColumn',
   mixins: [commonMixin],
   components: {
-    NewColumnModal, draggable, EditNav, DeleteColumnDialog, CloseWindowDialog
+    NewColumnModal,
+    draggable,
+    EditNav,
+    DeleteColumnDialog,
+    CloseWindowDialog,
   },
-  data () {
+  data() {
     return {
-      column: column,
+      column,
       newColumnOpen: false,
       closeWindowOpen: false,
-      deleteColumnOpen: false
-    }
+      deleteItem: {
+        index: 0,
+        data: null,
+      },
+      deleteColumnOpen: false,
+    };
   },
   methods: {
-    removeItem (i) {
-      this.column.splice(i, 1)
+    confirmDeleteColumn() {
+      this.column.splice(this.deleteItem.index, 1);
+      this.deleteColumnOpen = false;
     },
-    doSubmit () {
-      this.$router.push('/')
+    removeItem(i) {
+      this.deleteItem = {
+        index: i,
+        data: this.column[i],
+      };
+      this.deleteColumnOpen = true;
     },
-    submitColumn (form) {
+    doSubmit() {
+      this.$router.push('/');
+    },
+    submitColumn(form) {
       this.column.push({
         default: false,
-        ...form
-      })
-
-      this.newColumnOpen = false
-    }
-  }
-}
+        ...form,
+      });
+      this.newColumnOpen = false;
+    },
+  },
+};
 </script>

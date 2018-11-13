@@ -9,12 +9,17 @@
   .mx-calendar-content .cell
     &.today
       color: $gray
+    
+    &.disabled
+      background: none
+
     &.actived,
     &.actived:hover,
     &.actived:focus
       color: #FFF
       background: $light-green
       +border-radius(50%)
-    &:hover
+
+    &:not(.disabled):hover
       background: $bg-gray
       +border-radius(50%)

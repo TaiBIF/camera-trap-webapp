@@ -71,40 +71,52 @@
     <species-order-panel :open="speciesOpen" @close='speciesOpen=false' />
     <close-window-dialog :open="closeWindowOpen" @close="closeWindowOpen=false" />
     <invitation-dialog :open="invitationOpen" @close="invitationOpen=false" />
-    <delete-column-dialog :open="deleteColumnOpen" @close="deleteColumnOpen=false"  />
     <remove-member-dialog :open="removeMemberOpen" @close="removeMemberOpen=false" @submit="confirmRemove" />
+
   </div>
 </template>
 
 <script>
-import { commonMixin } from '../../../mixins/common'
-import DatePicker from 'vue2-datepicker'
-import draggable from 'vuedraggable'
-import NewColumnModal from '../components/NewColumn'
-import SpeciesOrderPanel from '../components/SpeciesOrder'
-import CloseWindowDialog from '../components/CloseWindowDialog'
-import InvitationDialog from '../components/InvitationDialog'
-import RemoveMemberDialog from '../components/RemoveMemberDialog'
-import DeleteColumnDialog from '../components/DeleteColumnDialog'
-import SiteMenu from '../components/SiteMenu'
-import SiteItem from '../components/SiteItem'
-import EditNav from '../components/EditNav'
+import DatePicker from 'vue2-datepicker';
+import draggable from 'vuedraggable';
+import { commonMixin } from '../../../mixins/common';
+import NewColumnModal from '../components/NewColumn';
+import SpeciesOrderPanel from '../components/SpeciesOrder';
+import CloseWindowDialog from '../components/CloseWindowDialog';
+import InvitationDialog from '../components/InvitationDialog';
+import RemoveMemberDialog from '../components/RemoveMemberDialog';
+import DeleteColumnDialog from '../components/DeleteColumnDialog';
+import SiteMenu from '../components/SiteMenu';
+import SiteItem from '../components/SiteItem';
+import EditNav from '../components/EditNav';
 
 export default {
   name: 'EditMember',
   mixins: [commonMixin],
   components: {
     EditNav,
-    NewColumnModal, SpeciesOrderPanel, DatePicker, draggable, SiteMenu, SiteItem, CloseWindowDialog, InvitationDialog, DeleteColumnDialog, RemoveMemberDialog
+    NewColumnModal,
+    SpeciesOrderPanel,
+    DatePicker,
+    draggable,
+    SiteMenu,
+    SiteItem,
+    CloseWindowDialog,
+    InvitationDialog,
+    DeleteColumnDialog,
+    RemoveMemberDialog,
   },
-  data () {
+  data() {
     return {
       currentItem: 3,
       step: 1,
       newColumnOpen: false,
       speciesOpen: false,
       closeWindowOpen: false,
-      deleteColumnOpen: false,
+      deleteItem: {
+        index: 0,
+        data: null,
+      },
       removeMemberOpen: false,
       invitationOpen: false,
       roles: ['計畫管理員', '承辦人員', '巡山員'],
@@ -113,12 +125,13 @@ export default {
         {
           name: 'James Olson',
           email: 'madelyn_ziemann@hilpert.ca',
-          role: 0
-        }, {
+          role: 0,
+        },
+        {
           name: 'Calvin Barnes',
           email: 'cade_haag@gmail.com',
-          role: 1
-        }
+          role: 1,
+        },
       ],
       form: {
         cover: '',
@@ -131,39 +144,39 @@ export default {
         public_at: '',
         area: '',
         description: '',
-        comment: ''
+        comment: '',
       },
       licenseForm: {
         forData: '',
         forInfo: '',
-        forImg: ''
+        forImg: '',
       },
-      currentMember: null
-    }
+      currentMember: null,
+    };
   },
   methods: {
-    confirmRemove () {
-      this.members.splice(this.currentMember, 1)
-      this.removeMemberOpen = false
+    confirmRemove() {
+      this.members.splice(this.currentMember, 1);
+      this.removeMemberOpen = false;
     },
-    removeMember (i) {
-      this.removeMemberOpen = true
-      this.currentMember = i
+    removeMember(i) {
+      this.removeMemberOpen = true;
+      this.currentMember = i;
     },
-    removeItem (i) {
-      this.column.splice(i, 1)
+    removeItem(i) {
+      this.column.splice(i, 1);
     },
-    doSubmit () {
-      this.$router.push('/')
+    doSubmit() {
+      this.$router.push('/');
     },
-    submitColumn (form) {
+    submitColumn(form) {
       this.column.push({
         default: false,
-        ...form
-      })
+        ...form,
+      });
 
-      this.newColumnOpen = false
-    }
-  }
-}
+      this.newColumnOpen = false;
+    },
+  },
+};
 </script>

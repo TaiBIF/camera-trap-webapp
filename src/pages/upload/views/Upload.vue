@@ -12,7 +12,7 @@
         <a @click="modalOpen('trialModalOpen')" class="link text-green">檢閱詳細上傳說明</a>
       </div>
       <div id="dropzone" class="upload-area text-center">
-        <img src="/assets/upload/upload-img.png" height="180" srcset="/assets/upload/upload-img@2x.png">
+        <img src="/assets/upinfo/upload-img.png" height="180" srcset="/assets/upinfo/upload-img@2x.png">
         <h1>將檔案拖曳於此並上傳</h1>
         <p>或 <label for="upload" class="text-green underline">點此瀏覽檔案</label></p>
         <input type="file" class="d-none" id="upload">
@@ -79,7 +79,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr 
+                <tr
                 :class="{'is-selected': selectedFile.indexOf(f_id)>-1}"
                 v-for="(file, f_id) in fileList" :key="`file-${f_id}`"
                 @click.stop.prevent="toggleSelect($event, f_id)">
@@ -130,26 +130,26 @@
               </p>
               <div class="form-group">
                 <label class="required">樣區：</label>
-                <v-select 
-                :options="siteOpts" 
-                v-model="form.site" 
-                :on-change="updateSiteValue" 
+                <v-select
+                :options="siteOpts"
+                v-model="form.site"
+                :on-change="updateSiteValue"
                 :placeholder="multiSite ? '多個樣區位置' : '請選擇檔案所屬樣區'" />
               </div>
               <div class="form-group">
                 <label class="required">子樣區：</label>
-                <v-select 
-                :options="subSiteOpts" 
-                v-model="form.subsite" 
-                :on-change="updateSubsiteValue"  
+                <v-select
+                :options="subSiteOpts"
+                v-model="form.subsite"
+                :on-change="updateSubsiteValue"
                 :placeholder="multiSite ? '多個子樣區位置' : '請選擇檔案所屬子樣區'" />
               </div>
               <div class="form-group">
                 <label class="required">相機位置：</label>
-                <v-select 
-                :options="cameraOpts" 
-                v-model="form.camera" 
-                :on-change="updateCameraValue" 
+                <v-select
+                :options="cameraOpts"
+                v-model="form.camera"
+                :on-change="updateCameraValue"
                 :placeholder="multiCamera ? '多個相機位置' : '請選擇檔案所屬相機位置'" />
               </div>
             </form>
@@ -173,15 +173,15 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import TrailModal from '../components/TrialModal'
 // import {awsMixins} from '../mixins/aws.js'
-import {commonMixin} from '../../../mixins/common.js'
+import { commonMixin } from '../../../mixins/common.js'
 import ProgressBar from 'progressbar.js'
 
 const files = [
   {
-    name: "PT12A-151129-1051223",
+    name: 'PT12A-151129-1051223',
     type: 'folder',
     size: '240 KB',
     site: '屏東處',
@@ -190,7 +190,7 @@ const files = [
     state: 0
   },
   {
-    name: "PT12A-151129-1051223.csv",
+    name: 'PT12A-151129-1051223.csv',
     type: 'csv',
     size: '240 KB',
     site: '屏東處',
@@ -199,7 +199,7 @@ const files = [
     state: 0
   },
   {
-    name: "PT12A-151129-1051223.jpg",
+    name: 'PT12A-151129-1051223.jpg',
     type: 'jpg',
     size: '240 KB',
     site: '屏東處',
@@ -208,7 +208,7 @@ const files = [
     state: 0
   },
   {
-    name: "PT12A-151129-1051223.zip",
+    name: 'PT12A-151129-1051223.zip',
     type: 'zip',
     size: '240 KB',
     site: '',
@@ -218,13 +218,13 @@ const files = [
 ]
 
 export default {
-  name: "Upload",
+  name: 'Upload',
   mixins: [commonMixin],
-  data() {
+  data () {
     return {
-      siteOpts: [{value: '新竹處', label:'新竹處'}],
-      subSiteOpts: [{value: '關山站', label:'關山站'}],
-      cameraOpts: [{value: 'PT01A', label:'PT01A'},{value: 'PT02A', label:'PT02A'},{value: 'PT03A', label:'PT03A'}],
+      siteOpts: [{ value: '新竹處', label: '新竹處' }],
+      subSiteOpts: [{ value: '關山站', label: '關山站' }],
+      cameraOpts: [{ value: 'PT01A', label: 'PT01A' }, { value: 'PT02A', label: 'PT02A' }, { value: 'PT03A', label: 'PT03A' }],
       form: {
         site: 0,
         subsite: 0,
@@ -265,20 +265,20 @@ export default {
       'setFileReady'
     ]),
     // 上傳前部署
-    startUpload() {
-      let tr = this.$el.querySelector('#upload-list').querySelector('tbody').querySelectorAll('tr')
+    startUpload () {
+      const tr = this.$el.querySelector('#upload-list').querySelector('tbody').querySelectorAll('tr')
       this.selectedFile = []
 
       // 取消選取
       tr.forEach(t => t.classList.remove('is-selected'))
-      
+
       // 改變畫面狀態
       this.isUploading = true
-      
+
       // 給予 200 毫秒時間差，讓 HTML 可以被偵測
       setTimeout(() => {
         this.fileList.forEach((file, index) => {
-          let container = `#upload-progress-${index}`
+          const container = `#upload-progress-${index}`
           var bar = new ProgressBar.Circle(container, {
             strokeWidth: 5,
             easing: 'easeInOut',
@@ -297,14 +297,14 @@ export default {
             },
             step: (state, bar) => {
               // 預設文字
-              bar.setText('等待上傳');
+              bar.setText('等待上傳')
 
-              if(Math.round(bar.value() * 100)==100) {
-                bar.setText('正在檢核資料...');
+              if (Math.round(bar.value() * 100) === 100) {
+                bar.setText('正在檢核資料...')
                 // 上傳完成進行檢核
-              } 
+              }
             }
-          });
+          })
 
           this.progress.push(bar)
         })
@@ -312,14 +312,14 @@ export default {
         this.doUpload()
       }, 200)
     },
-    doUpload() {
-      let file = this.fileList[this.uploadIndex];
-      let bar = this.progress[this.uploadIndex];
+    doUpload () {
+      const file = this.fileList[this.uploadIndex]
+      const bar = this.progress[this.uploadIndex]
 
       setTimeout(() => {
         // 從等待改變為上傳狀態
-        file.state==1
-        bar.setText(Math.round(bar.value() * 100) + ' %');
+        file.state = 1
+        bar.setText(Math.round(bar.value() * 100) + ' %')
         bar.animate(1.0, {
           duration: 1000,
           text: {
@@ -329,33 +329,32 @@ export default {
           }
         }, () => {
           // 上傳完成
-          if(this.uploadIndex<=this.fileList.length-1) {
+          if (this.uploadIndex <= this.fileList.length - 1) {
             setTimeout(() => {
-              file.state = this.uploadIndex===3 ? -1 : 2;
-            }, 1000);
+              file.state = this.uploadIndex === 3 ? -1 : 2
+            }, 1000)
 
-            this.uploadIndex++;
-            this.doUpload();
+            this.uploadIndex++
+            this.doUpload()
           } else {
-            this.uploadComplete = true;
+            this.uploadComplete = true
           }
-        });  // Number from 0.0 to 1.0
+        })  // Number from 0.0 to 1.0
       }, 1000)
-      
     },
-    detectValue() {
+    detectValue () {
       // 偵測是否有空值
       let empty = false
-      
+
       this.fileList.forEach(f => {
-        if(f.site=='' || f.subsite=='' || f.camera=='') empty = true
+        if (f.site === '' || f.subsite === '' || f.camera === '') empty = true
       })
 
       this.hasEmpty = empty
     },
     // 選取下拉後同步資料給選取的檔案
-    updateSiteValue(item) {
-      if(this.selecting) return
+    updateSiteValue (item) {
+      if (this.selecting) return
 
       this.selectedFile.forEach(sf => {
         this.fileList[sf].site = item.value
@@ -363,8 +362,8 @@ export default {
 
       this.detectValue()
     },
-    updateSubsiteValue(item) {
-      if(this.selecting) return
+    updateSubsiteValue (item) {
+      if (this.selecting) return
 
       this.selectedFile.forEach(sf => {
         this.fileList[sf].subsite = item.value
@@ -372,8 +371,8 @@ export default {
 
       this.detectValue()
     },
-    updateCameraValue(item) {
-      if(this.selecting) return
+    updateCameraValue (item) {
+      if (this.selecting) return
 
       this.selectedFile.forEach(sf => {
         this.fileList[sf].camera = item.value
@@ -381,17 +380,18 @@ export default {
 
       this.detectValue()
     },
-    selectAll() {
+    selectAll () {
       // 避免切換選取時自動賦值
       this.selecting = true
 
-      if(this.selectedFile.length!==this.fileList.length) {
+      if (this.selectedFile.length !== this.fileList.length) {
         this.fileList.forEach((file, i) => {
-          if(this.selectedFile.indexOf(i)==-1)
+          if (this.selectedFile.indexOf(i) === -1) {
             this.selectedFile.push(i)
+          }
         })
       } else {
-        let tr = this.$el.querySelector('#upload-list').querySelector('tbody').querySelectorAll('tr')
+        const tr = this.$el.querySelector('#upload-list').querySelector('tbody').querySelectorAll('tr')
         this.selectedFile = []
 
         tr.forEach(t => t.classList.remove('is-selected'))
@@ -408,15 +408,15 @@ export default {
         this.selecting = false
       }, 300)
     },
-    toggleSelect(evt, index) {
-      if(this.isUploading) return
+    toggleSelect (evt, index) {
+      if (this.isUploading) return
       this.selecting = true
-      let tr = this.$el.querySelector('#upload-list').querySelector('tbody').querySelectorAll('tr'),
-          indexOF = this.selectedFile.indexOf(index)
-      
+      const tr = this.$el.querySelector('#upload-list').querySelector('tbody').querySelectorAll('tr')
+      const indexOF = this.selectedFile.indexOf(index)
+
       // 多選
-      if(this.isKeyDown && this.currentKey==16) {
-        if(indexOF > -1) {
+      if (this.isKeyDown && this.currentKey === 16) {
+        if (indexOF > -1) {
           this.selectedFile.splice(indexOF, 1)
           tr[index].classList.remove('is-selected')
         } else {
@@ -424,25 +424,26 @@ export default {
           tr[index].classList.add('is-selected')
         }
 
-        let site = '', subsite = '', camera = '';
-        
-        this.selectedFile.forEach(f => {
-          if(site=='') site = this.fileList[f].site
-          else if(this.fileList[f].site!==site) this.multiSite = true
-            
-          if(subsite=='') subsite = this.fileList[f].subsite
-          else if(this.fileList[f].subsite!==subsite) this.multiSubSite = true
+        let site = ''
+        let subsite = ''
+        let camera = ''
 
-          if(camera=='') camera = this.fileList[f].camera
-          else if(this.fileList[f].camera!==camera) this.multiCamera = true
+        this.selectedFile.forEach(f => {
+          if (site === '') site = this.fileList[f].site
+          else if (this.fileList[f].site !== site) this.multiSite = true
+
+          if (subsite === '') subsite = this.fileList[f].subsite
+          else if (this.fileList[f].subsite !== subsite) this.multiSubSite = true
+
+          if (camera === '') camera = this.fileList[f].camera
+          else if (this.fileList[f].camera !== camera) this.multiCamera = true
         })
 
         this.form = {
           site: this.multiSite ? '' : this.fileList[this.selectedFile[0]].site,
           subsite: this.multiSubsite ? '' : this.fileList[this.selectedFile[0]].subsite,
           camera: this.multiCamera ? '' : this.fileList[this.selectedFile[0]].camera
-        } 
-
+        }
       } else {
         // 單選
         this.selectedFile = [index]
@@ -453,59 +454,55 @@ export default {
         }
 
         tr.forEach((row, i) => {
-          if(i==index) row.classList.add('is-selected')
+          if (i === index) row.classList.add('is-selected')
           else row.classList.remove('is-selected')
         })
-      } 
-
+      }
       setTimeout(() => {
         this.selecting = false
       }, 300)
     },
-    closeModal(name) {
+    closeModal (name) {
       this.modalClose(name)
     },
     s3ErrorHandle (err, data) {
-      console.log(err, data);
+      console.log(err, data)
     },
-    traverseDirectory(entry) {
-      const reader = entry.createReader();
-      
+    traverseDirectory (entry) {
+      const reader = entry.createReader()
       return new Promise((resolve, reject) => {
-        const iterationAttempts = [];
-        function readEntries() {
+        const iterationAttempts = []
+        function readEntries () {
           reader.readEntries((entries) => {
             if (!entries.length) {
-              resolve(Promise.all(iterationAttempts));
+              resolve(Promise.all(iterationAttempts))
             } else {
               iterationAttempts.push(Promise.all(entries.map((ientry) => {
                 if (ientry.isFile) {
-                  return ientry;
+                  return ientry
                 }
-                return this.traverseDirectory(ientry);
-              })));
-              
-              readEntries();
+                return this.traverseDirectory(ientry)
+              })))
+
+              readEntries()
             }
-          }, error => reject(error));
+          }, error => reject(error))
         }
-        readEntries();
-      });
+        readEntries()
+      })
     }
   },
-  beforeMount() {
-    
-  },
-  mounted() {
-    this.dropzone = this.$el.querySelector("#dropzone")
-    this.dropzone.ondragenter = function (event) {event.preventDefault();}
-    this.dropzone.ondragover = function (event) {event.preventDefault();}
+  beforeMount () { },
+  mounted () {
+    this.dropzone = this.$el.querySelector('#dropzone')
+    this.dropzone.ondragenter = function (event) { event.preventDefault() }
+    this.dropzone.ondragover = function (event) { event.preventDefault() }
     this.dropzone.ondrop = (evt) => {
-      evt.preventDefault();
+      evt.preventDefault()
       this.fileList = files
     }
 
-    this.$el.querySelector("#upload").onchange = () => {
+    this.$el.querySelector('#upload').onchange = () => {
       this.fileList = files
     }
 

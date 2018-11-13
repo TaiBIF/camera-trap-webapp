@@ -33,14 +33,14 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { createNamespacedHelpers } from 'vuex'
 
-const auth = createNamespacedHelpers('auth');
+const auth = createNamespacedHelpers('auth')
 
 export default {
-  name: "Login",
-  methods:{
-    ...auth.mapActions(['doLogin']),
+  name: 'Login',
+  methods: {
+    ...auth.mapActions(['doLogin'])
   }
 }
 </script>

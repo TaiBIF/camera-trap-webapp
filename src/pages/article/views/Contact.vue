@@ -202,7 +202,7 @@ import VueRecaptcha from 'vue-recaptcha'
 export default {
   name: 'Contact',
   components: { VueRecaptcha },
-  data() {
+  data () {
     return {
       form: {
         type: '',
