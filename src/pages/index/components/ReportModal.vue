@@ -16,7 +16,7 @@
             <div class="form-group row">
               <label for="" class="col-3 px-0 text-right required">子樣區：</label>
               <div class="col-9">
-                <v-select v-model="form.sub_site" :options="['旗山站']"/>
+                <v-select v-model="form.subSite" :options="['旗山站']"/>
               </div>
             </div>
             <div class="form-group row">
@@ -29,14 +29,14 @@
               <label for="" class="col-3 px-0 text-right required">異常資料時間：</label>
               <div class="col-6 input-group-inline">
                 <div class="input-group">
-                  <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                  <date-picker v-model="form.startAt" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
                   <div class="input-group-append">
                     <i class="icon icon-calendar"></i>
                   </div>
                 </div>
                 <div class="input-text">到</div>
                 <div class="input-group">
-                  <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                  <date-picker v-model="form.endAt" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
                   <div class="input-group-append">
                     <i class="icon icon-calendar"></i>
                   </div>
@@ -83,10 +83,10 @@ export default {
   data () {
     return {
       form: {
-        start_at: '',
-        end_at: '',
+        startAt: '',
+        endAt: '',
         site: '',
-        sub_site: '',
+        subSite: '',
         camera: '',
         note: ''
       }

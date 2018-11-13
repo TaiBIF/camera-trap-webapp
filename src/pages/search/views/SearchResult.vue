@@ -23,25 +23,25 @@
           <div class="col-3">
             <div class="form-group">
               <label for="">計畫名稱：</label>
-              <v-select :placeholder="'請選擇計畫名稱'"></v-select>
+              <v-select v-model="form.name" :placeholder="'請選擇計畫名稱'"></v-select>
             </div>
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
                   <label for="">樣區：</label>
-                  <v-select :placeholder="'請選擇樣區'"></v-select>
+                  <v-select v-model="form.site" :placeholder="'請選擇樣區'"></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">子樣區：</label>
-                  <v-select :placeholder="'請選擇子樣區'"></v-select>
+                  <v-select v-model="form.subSite" :placeholder="'請選擇子樣區'"></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">相機位置：</label>
-                  <v-select :placeholder="'請選擇相機位置'"></v-select>
+                  <v-select v-model="form.camera" :placeholder="'請選擇相機位置'"></v-select>
                 </div>
               </div>
             </div>
@@ -120,56 +120,83 @@
             <div class="item">
               <label>資料來源：</label>
               <div class="content">
-                林務局全島鼬獾監測 ：<br/>屏東處-旗山站-PT06A、PT07A  |  台東處-全部子樣區-全部相機位置 
+                {{form.funder}}：<br/>{{form.site}}-{{form.subSite}}-{{form.camera.toString()}}
+                <!-- 林務局全島鼬獾監測 ：<br/>屏東處-旗山站-PT06A、PT07A  |  台東處-全部子樣區-全部相機位置  -->
               </div>
             </div>
             <div class="item">
               <label>物種：</label>
               <div class="content">
-                山羌、獼猴、鼬獾、白鼻心、食蟹獴、山羊
+                {{form.species}}
+                <!-- 山羌、獼猴、鼬獾、白鼻心、食蟹獴、山羊 -->
               </div>
             </div>
             <div class="item">
               <label>資料時間：</label>
               <div class="content">
-                2015/01/01 ~ 2018/09/08
+                {{form.modified}}
+                <!-- 2015/01/01 ~ 2018/09/08 -->
               </div>
             </div>
           </div>
           <div class="col-4">
             <div class="item short-label">
               <label>性別：</label>
-              <div class="content">公</div>
+              <div class="content">
+                {{form.sex}}
+                <!-- 公 -->
+              </div>
             </div>
             <div class="item short-label">
               <label>年齡：</label>
-              <div class="content">成體、亞成體</div>
+              <div class="content">
+                {{form.age}}
+                <!-- 成體、亞成體 -->
+              </div>
             </div>
             <div class="item short-label">
               <label>角況：</label>
-              <div class="content">茸角一尖、茸角二尖、茸角三尖、茸角四尖</div>
+              <div class="content">
+                {{form.horn}}
+                <!-- 茸角一尖、茸角二尖、茸角三尖、茸角四尖 -->
+              </div>
             </div>
             <div class="item short-label">
               <label>備註：</label>
-              <div class="content">覓食行為</div>
+              <div class="content">
+                {{form.note}}
+                <!-- 覓食行為 -->
+              </div>
             </div>
           </div>
           <div class="col-4">
             <div class="item long-label">
               <label>海拔：</label>
-              <div class="content">1,001~1,500 公尺</div>
+              <div class="content">
+                {{form.elevation}}
+                <!-- 1,001~1,500 公尺 -->
+              </div>
             </div>
             <div class="item long-label">
               <label>植披：</label>
-              <div class="content">闊葉林</div>
+              <div class="content">
+                {{form.vegetation}}
+                <!-- 闊葉林 -->
+              </div>
             </div>
             <div class="item long-label">
               <label>土地覆蓋類型：</label>
-              <div class="content">森林使用土地</div>
+              <div class="content">
+                {{form.land_cover}}
+                <!-- 森林使用土地 -->
+              </div>
             </div>
             <div class="item long-label">
               <label>拍攝時段：</label>
-              <div class="content">18:00 ~ 05:00</div>
+              <div class="content">
+                {{form.time}}
+                <!-- 18:00 ~ 05:00 -->
+              </div>
             </div>
           </div>
           <div class="col-12">
@@ -319,6 +346,9 @@ export default {
       isContinuous: false,
       continuousTime: 1,
       form: {
+        name: '',
+        site: '',
+        subSIte: '',
         camera: [],
         start_at: '',
         end_at: '',
@@ -329,7 +359,19 @@ export default {
         end_time: {
           HH: "10",
           mm: "05"
-        }
+        },
+        funder: '',
+        camera: [],
+        species: [],
+        modified: '',
+        sex: '',
+        age: '',
+        horn: '',
+        note: '',
+        elevation: '',
+        vegetation: '',
+        land_cover: '',
+        time: '',
       },
       selection: null,
       currentRow: 0,

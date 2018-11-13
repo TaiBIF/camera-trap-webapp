@@ -67,18 +67,22 @@
               id="notification-container"
               class="dropdown-menu dropdown-menu-right"
               aria-labelledby="notification">
-                <a class="dropdown-item notification-item">
+                <a class="dropdown-item notification-item"
+                v-for="(msg, mid) in logMessage" :key="`log-msg-${mid}`">
                   <div class="meta text-gray date">
-                    2018/07/23 17:25 你 上傳了
+                    {{msg.updateAt}} 你 上傳了
                   </div>
                   <h5 class="text-green">
                     <a href="#" class="link">
-                      全島鼬獾 屏東處-潮州站 PT09A<br/>
-                      2018/06/01-2018/07/31
+                      {{msg.project_id}} {{msg.site}}-{{msg.subSite}} {{msg.camera}}<br/>
+                      {{msg.startAt}}-{{msg.endAt}}
                     </a>
                   </h5>
-                  <div class="meta">
+                  <div class="meta" v-if="msg.status==-1">
                     上傳失敗 <a class="text-green link">檢視錯誤</a>
+                  </div>
+                  <div class="meta" v-else>
+                    上傳成功
                   </div>
                 </a>
               </div>
@@ -112,6 +116,18 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+const logMessage = [
+  {
+    updateAt: '2018/07/23 17:25',
+    project_id: '全島鼬獾',
+    site: '屏東處',
+    subSite: '潮州站', 
+    camera: 'PT09A',
+    startAt: '2018/06/01',
+    endAt: '2018/07/31',
+    status: 1 // 1: success, -1: fail
+  },
+];
 
 export default {
   name: 'App',
@@ -119,7 +135,7 @@ export default {
     ...mapGetters(['PageLock']),
   },
   data() {
-    return {};
+    return { logMessage };
   },
   watch: {
     PageLock: 'setBodyLock',

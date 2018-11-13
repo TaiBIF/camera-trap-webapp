@@ -308,24 +308,6 @@ const ErrorIconSelect = L.icon({
   shadowAnchor: [33, 80],
 });
 
-const BarChart = {
-  name: '每月影像筆數',
-  data: [
-    { name: '1月', y: 1365, updated_at: '2018/01/26', error: 0 },
-    { name: '2月', y: 1184, updated_at: '2018/02/26', error: 1 },
-    { name: '3月', y: 1085, updated_at: '2018/05/26', error: 0 },
-    { name: '4月', y: 467, updated_at: '2018/06/26', error: 1 },
-    { name: '5月', y: 705, updated_at: '2018/07/26', error: 0 },
-    { name: '6月', y: 208, updated_at: '2018/08/26', error: 3 },
-    { name: '1月', y: 0, updated_at: '', error: 0 },
-    { name: '8月', y: 0, updated_at: '', error: 0 },
-    { name: '9月', y: 0, updated_at: '', error: 0 },
-    { name: '10月', y: 0, updated_at: '', error: 0 },
-    { name: '11月', y: 0, updated_at: '', error: 0 },
-    { name: '12月', y: 0, updated_at: '', error: 0 },
-  ],
-};
-
 export default {
   name: 'Project',
   data() {

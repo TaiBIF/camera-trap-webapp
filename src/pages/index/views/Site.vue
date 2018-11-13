@@ -5,14 +5,14 @@
       <div v-if="editMode" class="edit-container">
         <div class="row">
           <div class="col-7">
-            <span class="text-gray">花蓮處 - 南華站</span>
+            <span class="text-gray">{{projectInfo.site}} - {{projectInfo.subSite}}</span>
             <span class="divider"></span>
-            <span class="text-gray">PT01A、PT04A、PT09A</span>
+            <span class="text-gray">{{projectInfo.camera.toString()}}</span>
             <span class="divider"></span>
-            <span class="text-gray"> 16/03/01 上午12:00 到 18/07/01 上午12:00</span>
+            <span class="text-gray">{{projectInfo.startAt}} 到 {{projectInfo.endAt}}</span>
           </div>
           <div class="col-5 text-right">
-            <span class="text-gray">最後儲存時間：1 分鐘前</span>
+            <span class="text-gray">最後儲存時間：{{projectInfo.lastUpdate}} 分鐘前</span>
             <span class="divider"></span>
             <button @click.stop.prevent="changeMode('editMode', false)" class="btn btn-circle"><i class="icon-save"></i></button>
             <span class="divider"></span>
@@ -254,6 +254,15 @@ const formDefault = {
     HH: '23',
     mm: '59'
   }
+}
+
+const projectInfo = {
+  site: '花蓮處',
+  subSite: '南華站',
+  camera: ['PT01A', 'PT04A', 'PT09A'],
+  startAt: '16/03/01 上午12:00',
+  endAt: '18/07/01 上午12:00',
+  lastUpdate: 1
 }
 
 // debugger

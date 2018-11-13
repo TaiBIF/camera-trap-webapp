@@ -74,10 +74,10 @@
           <tbody>
             <tr>
               <td width="22%">
-                <v-select :options="[{label:'空拍', value: '1'}]" />
+                <v-select v-model='keyword.description' :options="[{label:'空拍', value: '1'}]" />
               </td>
               <td width="22%">
-                <v-select :options="[{label:'SP', value: '1'}]" />
+                <v-select v-model='keyword.key' :options="[{label:'SP', value: '1'}]" />
               </td>
               <td class="text-right">
                 <a class="close"><i class="icon-remove"></i></a>
@@ -112,6 +112,10 @@ export default {
   name: 'Setting',
   data() {
     return {
+      keyword: {
+        description: '',
+        key: ''
+      },
       form: {
         name: 'Cindy Gu',
         email: 'cindy@gmail.com',
