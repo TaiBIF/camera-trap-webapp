@@ -6,7 +6,7 @@
       v-for="(d, dIdx) in chart"
       :key="`trow-${dIdx}`"
       :class="{'is-active': d.id==current}"
-      @click="setCurrent(d)">
+      @click="setCurrent(dIdx)">
         <th>{{d.name}}</th>
         <td
         v-for="(p, pIdx) in d.progress"

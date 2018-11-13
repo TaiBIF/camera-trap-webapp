@@ -172,7 +172,8 @@
                         <span @click="changeDuration(+1)"><i class="fa fa-3 fa-caret-right"></i></span>
                       </div>
                     </div>
-                    <site-chart :chart="progressData" :type="'identify'" :current="currentSite.value" @update="setCurrent" />
+                    <site-chart :chart="progressData" v-if="mapMode==='project'" :type="'identify'" :current="currentSite.value" @update="setCurrent" />
+                    <site-chart :chart="progressData" v-if="mapMode==='camera'" :type="'identify'" :current="currentSite.value" @update="setCurrent" />
                   </div>
                   <div class="camera-chart" v-if="currentCamera!==null">
                     <div class="close" @click="currentCamera=null"><i class="fa fa-times"></i></div>
@@ -587,7 +588,6 @@ export default {
           this.currentCamera = null;
           this.currentSubSite = value.child[0];
           this.siteMarkers = value.child[0].camera;
-          // this.mapInfo.center = window._.clone(L.latLng(tmepCamera.wgs84dec_y, tmepCamera.wgs84dec_x))
         } else {
           this.currentCamera = null;
           this.currentSubSite = null;
@@ -613,25 +613,23 @@ export default {
     setCurrent(idx) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
-        this.currentCamera = this.SiteMarkers[idx];
-        this.currentCamera.icon = this.SiteMarkers[idx].error ?
-          ErrorIconSelect :
-          IconSelect;
-        this.mapInfo.center = window._.clone(
-          L.latlng(
-            this.currentCamera.twd97tm2_y,
-            this.currentCamera.twd97tm2_x,
-          ),
-        );
+        this.currentCamera = {
+          ...(!this.currentSubSite ? this.currentSite.camera[idx] : this.currentSubSite.camera[idx]),
+          ...this.SiteMarkers[idx].progress
+        };
+        this.currentCamera.icon = !this.SiteMarkers[idx].error ?
+          IconSelect :
+          ErrorIconSelect;
+        this.mapInfo.center = window._.clone(this.currentCamera.marker);
         setTimeout(() => {
           this.loadBarChart();
         }, 200);
       }
 
       if (this.mapMode === 'project') {
-        this.currentSite = this.sites.find(s => s.value === val.id);
+        this.currentSite = this.SiteMarkers[idx];
         setTimeout(() => {
-          this.mapInfo.center = window._.clone(val.marker);
+          this.mapInfo.center = window._.clone(this.SiteMarkers[idx].marker);
         }, 50);
       }
     },
@@ -650,13 +648,14 @@ export default {
     loadBarChart() {
       const BarChartData = {
         name: '每月影像筆數',
-        data: this.currentCamera.progress.reduce((array, value) => {
-          debugger;
-          return {
-            name: '月',
+        data: [0, 355, 178, 96, 0, 0, 0, 0, 0, 0, 0, 0].reduce((array, value, i) => {
+          array.push({
+            name: (i+1) + '月',
             y: value,
-          };
-        }, this.currentCamera.progress),
+            error: 0,
+          });
+          return array;
+        }, []),
       };
       const barCharts = this.$refs.barCharts;
       barCharts.removeSeries();
