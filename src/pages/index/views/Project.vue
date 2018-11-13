@@ -91,7 +91,7 @@
                       :title="mark.num"
                       :lat-lng="mark.marker"
                       :draggable="false"
-                      @click="setCurrent(mark)">
+                      @click="setCurrent(idx)">
                         <l-tooltip :content="mark.name"
                         :options="{permanent: true, direction: 'top'}" />
                       </l-marker>
@@ -107,7 +107,7 @@
                       :fillColor="'#2A7F60'"
                       :fillOpacity="1"
                       :color="'rgba(42,127,96,.43)'"
-                      @click="setCurrent(mark)">
+                      @click="setCurrent(idx)">
                         <l-tooltip :content="mark.name"
                         :options="{permanent: true, direction: 'center'}"></l-tooltip>
                       </l-circle>
@@ -445,47 +445,47 @@ export default {
     LMap, LTileLayer, LControlZoom, LMarker, LPolygon, LCircle, LTooltip, LLayerGroup,
     SiteChart,
     'v-chart': VueHighcharts,
-    ReportModal
+    ReportModal,
   },
   watch: {
     currentProject: function (newValue) {
       setTimeout(() => {
-        this.getSpeciesGroup()
-        this.fetchImageStatus()
-      }, 100)
+        this.getSpeciesGroup();
+        this.fetchImageStatus();
+      }, 100);
     },
     currentSite: function (newValue) {
       setTimeout(() => {
-        this.setCamera(newValue)
-        this.fetchImageStatus()
-      }, 100)
+        this.setCamera(newValue);
+        this.fetchImageStatus();
+      }, 100);
     },
     currentDuration: function (newValue) {
       setTimeout(() => {
-        this.setCamera(newValue)
-        this.fetchImageStatus()
-      }, 100)
+        this.setCamera(newValue);
+        this.fetchImageStatus();
+      }, 100);
     },
     ProjectMarkers: function (newValue) {
       setTimeout(() => {
         if(!this.mapInfo.marker.length && this.mapMode==='project') {
-          this.fetchImageStatus()
+          this.fetchImageStatus();
         }
-      }, 100)
+      }, 100);
     },
     SiteMarkers: function (newValue) {
       setTimeout(() => {
         if(!this.mapInfo.marker.length && this.mapMode==='camera') {
-          this.fetchImageStatus()
+          this.fetchImageStatus();
         }
-      }, 100)
+      }, 100);
     },
-    'species': 'loadPieChart'
+    'species': 'loadPieChart',
   },
   computed: {
     ...project.mapState([
       'speciesGroup',
-      'siteStatusTab'
+      'siteStatusTab',
     ]),
     ...project.mapGetters([
       'currentProject',
@@ -499,16 +499,17 @@ export default {
   methods: {
     ...project.mapMutations([
       'setCurrentProject',
-      'setSiteStatusTab'
+      'setSiteStatusTab',
     ]),
     ...project.mapActions([
       'getSpeciesGroup',
       'getLocationIdentifiedStatus',
       'getLocationRetrievedStatus',
-      'getLocationCameraAbnormalStatus'
+      'getLocationCameraAbnormalStatus',
     ]),
-    fetchImageStatus () {
-      this.mapInfo.marker = []
+    fetchImageStatus() {
+      this.mapInfo.marker = [];
+      this.progressData = [];
       const payload = {
         year: this.currentDuration,
         ...{
@@ -522,13 +523,13 @@ export default {
       this.getLocationCameraAbnormalStatus(payload)
       this.renderMap()
     },
-    timeFormat (time) {
+    timeFormat(time) {
       return moment(time * 1000).format('YYYY/MM/DD')
     },
-    submitReport () {
+    submitReport() {
       // send error data
     },
-    setCamera (value) {
+    setCamera(value) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'project') {
         if (!value.child === false && value.child.length) {
@@ -558,99 +559,105 @@ export default {
         }
       }
     },
-    setCurrent (val) {
+    setCurrent(idx) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
-        this.siteMarkers.forEach(site => {
-          site.icon = site.error ? ErrorIcon : Icon
-        })
-
-        this.currentCamera = val
-        this.currentCamera.icon = val.error ? ErrorIconSelect : IconSelect
+        this.currentCamera = this.SiteMarkers[idx];
+        this.currentCamera.icon = this.SiteMarkers[idx].error ? ErrorIconSelect : IconSelect;
         this.mapInfo.center = window._.clone(L.latlng(this.currentCamera.twd97tm2_y, this.currentCamera.twd97tm2_x))
-        setTimeout(() => { this.loadBarChart() }, 200)
+        setTimeout(() => { this.loadBarChart() }, 200);
       }
 
       if (this.mapMode === 'project') {
-        this.currentSite = this.sites.find((s) => { return s.value === val.id })
+        this.currentSite = this.sites.find((s) => { return s.value === val.id });
         setTimeout(() => {
-          this.mapInfo.center = window._.clone(val.marker)
-        }, 50)
+          this.mapInfo.center = window._.clone(val.marker);
+        }, 50);
       }
     },
-    countPercentage (idx, array) {
-      let total = 0
-      let current = 0
+    countPercentage(idx, array) {
+      let total = 0;
+      let current = 0;
 
       array.forEach((r, i) => {
-        total += r.y
-        if (i === idx) current = r.y
-      })
+        total += r.y;
+        if (i === idx) current = r.y;
+      });
 
-      return (100 * (current / total)).toFixed(1)
+      return (100 * (current / total)).toFixed(1);
     },
     // 更新圖表
-    loadBarChart () {
-      const barCharts = this.$refs.barCharts
-      barCharts.removeSeries()
-      barCharts.addSeries(BarChart)
+    loadBarChart() {
+      const BarChartData = {
+        name: '每月影像筆數',
+        data: this.currentCamera.progress.reduce((array, value) => {
+          debugger
+          return {
+            name: '月',
+            y: value,
+          };
+        }, this.currentCamera.progress),
+      };
+      const barCharts = this.$refs.barCharts;
+      barCharts.removeSeries();
+      barCharts.addSeries(BarChartData);
     },
-    loadPieChart (val, val2) {
-      if (!val.length || this.pieChartRendering) return
-      var data = []
+    loadPieChart(val, val2) {
+      let chartData = [];
+      if (!val.length || this.pieChartRendering) return;
       this.species.forEach((v, i) => {
         if (i > 5) {
-          if (!data[6]) data[6] = { name: '其他', y: 0 }
-          else data[6].y += v.y
-        } else data.push(v)
-      })
-      const pieCharts = this.$refs.pieCharts
+          if (!chartData[6]) chartData[6] = { name: '其他', y: 0 };
+          else chartData[6].y += v.y;
+        } else chartData.push(v);
+      });
+      const pieCharts = this.$refs.pieCharts;
       const PieChartOpt = {
         type: 'pie',
         name: 'speices',
         size: '80%',
         innerSize: '50%',
-        data: data
-      }
-      pieCharts.addSeries(PieChartOpt)
-      this.pieChartRendering = true
+        data: chartData,
+      };
+      pieCharts.addSeries(PieChartOpt);
+      this.pieChartRendering = true;
     },
     // 切換顯示年份
-    changeDuration (count) {
+    changeDuration(count) {
       if (this.currentDuration === this.today.year() && count > 0) {
-        return
+        return;
       }
-      this.currentDuration += count
+      this.currentDuration += count;
       // get New Data
     },
     // 根據層級切換地圖顯示大小
-    renderMap () {
+    renderMap() {
       // if (this.ProjectMarkers.length === 0) return
-
       if (this.mapMode === 'project') {
-        this.mapInfo.zoom = 9
-        this.mapInfo.marker = this.ProjectMarkers
-        this.progressData = this.ProjectMarkers
-        // this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
+        this.mapInfo.zoom = 9;
+        this.mapInfo.marker = this.ProjectMarkers;
+        this.progressData = this.ProjectMarkers;
       }
 
       if (this.mapMode === 'camera') {
-        this.mapInfo.zoom = 15
-        this.progressData = this.SiteMarkers
+        this.mapInfo.zoom = 15;
+        this.progressData = this.SiteMarkers;
         this.mapInfo.marker = this.SiteMarkers.map(val => {
         // 設定地圖要顯示的 Icon
           return {
             ...val,
-            icon: val.error > 0 ? ErrorIconSelect : IconSelect
-          }
-        })
+            icon: val.error > 0 ? ErrorIconSelect : IconSelect,
+          };
+        });
       }
-      if (this.mapInfo.marker.length) this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker)
-    }
+      if (this.mapInfo.marker.length) {
+        this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker);
+      }
+    },
   },
-  mounted () {
-    this.setCurrentProject(this.$route.params.id)
-    this.progressData = this.ProjectMarkers
-  }
-}
+  mounted() {
+    this.setCurrentProject(this.$route.params.id);
+    this.progressData = this.ProjectMarkers;
+  },
+};
 </script>

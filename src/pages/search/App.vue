@@ -21,10 +21,23 @@
           <div class="navbar-nav subnav">
             <div class="divider"></div>
             <div class="nav-item dropdown">
-              <a class="nav-item nav-link dropdown-toggle" id="notification" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell"></i></a>
-              <div id="notification-container" class="dropdown-menu dropdown-menu-right" aria-labelledby="notification">
+              <a
+              class="nav-item nav-link dropdown-toggle"
+              id="notification"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+                <i class="fa fa-bell"></i>
+              </a>
+              <div
+              id="notification-container"
+              class="dropdown-menu dropdown-menu-right"
+              aria-labelledby="notification">
                 <a class="dropdown-item notification-item">
-                  <div class="meta text-gray date">2018/07/23 17:25 你 上傳了</div>
+                  <div class="meta text-gray date">
+                    2018/07/23 17:25 你 上傳了
+                  </div>
                   <h5 class="text-green">
                     <a href="#" class="link">
                       全島鼬獾 屏東處-潮州站 PT09A<br/>
@@ -39,10 +52,18 @@
             </div>
             <div class="divider"></div>
             <div class="nav-item dropdown">
-              <a class="nav-item nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a
+              class="nav-item nav-link dropdown-toggle"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
                 黃智賢
               </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+              <div
+              class="dropdown-menu dropdown-menu-right"
+              aria-labelledby="navbarDropdownMenuLink">
                 <a class="dropdown-item" href="setting.html#/">設定</a>
                 <a class="dropdown-item" href="#">登出</a>
               </div>
@@ -58,34 +79,26 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'App',
   computed: {
-    ...mapGetters([
-      'PageLock'
-    ])
-  },
-  data () {
-    return {
-    }
+    ...mapGetters(['PageLock'])
   },
   watch: {
     'PageLock': 'setBodyLock',
     '$router': 'routeChange'
   },
   methods: {
-    ...mapActions([
-      'setPageLock'
-    ]),
-    routeChange () {
-      this.setPageLock(false)
+    ...mapActions(['setPageLock']),
+    routeChange() {
+      this.setPageLock(false);
     },
-    setBodyLock () {
-      if (this.PageLock) document.body.classList.add('page-lock')
-      else document.body.classList.remove('page-lock')
-    }
-  }
-}
+    setBodyLock() {
+      if (this.PageLock) document.body.classList.add('page-lock');
+      else document.body.classList.remove('page-lock');
+    },
+  },
+};
 </script>

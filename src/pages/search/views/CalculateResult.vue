@@ -3,13 +3,21 @@
     <div class="search-container">
       <div class="col-12 pt-2">
         <div class="float-right">
-          <a class="btn btn-green-border btn-sm" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
+          <a
+          class="btn btn-green-border btn-sm"
+          v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
             <span class="icon"><i class="icon-download-green"></i></span>
             <span class="text">下載篩選結果</span>
           </a>
-          <button class="btn btn-orange btn-sm ml-2">計算</button>
+          <button class="btn btn-orange btn-sm ml-2">
+            計算
+          </button>
         </div>
-        <router-link to="/"><small class="text-gray"><i class="fa fa-chevron-left"></i> 返回資料篩選及計算</small></router-link>
+        <router-link to="/">
+          <small class="text-gray">
+            <i class="fa fa-chevron-left"></i> 返回資料篩選及計算
+          </small>
+        </router-link>
         <h3 class="text-green mb-2 mt-2">資料計算結果</h3>
       </div>
       <form action="" class="form filter-form">
@@ -48,7 +56,16 @@
               <div class="col-4">
                 <div class="form-group">
                   <label>物種：</label>
-                  <v-select :options="[{label:'山羌', value:'山羌'},{label:'鼬獾', value:'鼬獾'},{label:'台灣獼猴', value:'台灣獼猴'},{label:'山羊', value:'山羊'},{label:'赤腹松鼠', value:'赤腹松鼠'},{label:'白鼻心', value:'白鼻心'}]" multiple />
+                  <v-select
+                  :options="[
+                    {label:'山羌', value:'山羌'},
+                    {label:'鼬獾', value:'鼬獾'},
+                    {label:'台灣獼猴', value:'台灣獼猴'},
+                    {label:'山羊', value:'山羊'},
+                    {label:'赤腹松鼠', value:'赤腹松鼠'},
+                    {label:'白鼻心', value:'白鼻心'}
+                  ]"
+                  multiple />
                 </div>
               </div>
             </div>
@@ -58,13 +75,19 @@
                   <label>資料起始時間：</label>
                   <div class="input-group-inline">
                     <div class="input-group">
-                      <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                      <date-picker
+                      v-model="form.startAt"
+                      :placeholder="'18/9/20'"
+                      :format="'YY/M/DD'"
+                      :first-day-of-week="1" />
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
-                      <vue-timepicker v-model="form.start_time" format=""></vue-timepicker>
+                      <vue-timepicker
+                      v-model="form.startTime"
+                      format="" />
                     </div>
                   </div>
                 </div>
@@ -77,13 +100,19 @@
                   <label>資料結束時間：</label>
                   <div class="input-group-inline">
                     <div class="input-group">
-                      <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                      <date-picker
+                      v-model="form.endAt"
+                      :placeholder="'18/9/20'"
+                      :format="'YY/M/DD'"
+                      :first-day-of-week="1" />
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
-                      <vue-timepicker v-model="form.end_time" format=""></vue-timepicker>
+                      <vue-timepicker
+                      v-model="form.endTime"
+                      format=""/>
                     </div>
                   </div>
                 </div>
@@ -116,18 +145,17 @@
 </template>
 
 <script>
-import moment from 'moment'
-import DatePicker from 'vue2-datepicker'
-import VueTimepicker from 'vue2-timepicker'
-import Handsontable from 'handsontable'
-import 'handsontable/languages/all'
-import ZoomDrag from '../../index/components/ZoomDrag'
+import moment from 'moment';
+import DatePicker from 'vue2-datepicker';
+import VueTimepicker from 'vue2-timepicker';
+import Handsontable from 'handsontable';
+import 'handsontable/languages/all';
 
 // debugger
 
 export default {
   name: 'CalculateResult',
-  data () {
+  data() {
     return {
       today: moment(),
       isRender: false,
@@ -135,122 +163,121 @@ export default {
       continuousTime: 1,
       form: {
         camera: [],
-        start_at: '',
-        end_at: '',
-        start_time: {
+        startAt: '',
+        endAt: '',
+        startTime: {
           HH: '10',
-          mm: '05'
+          mm: '05',
         },
-        end_time: {
+        endTime: {
           HH: '10',
-          mm: '05'
-        }
+          mm: '05',
+        },
       },
-      row_data: [],
-      rowData: {},
+      rowData: [],
       settings: {
         data: [],
         columns: [
           {
             data: 'item',
             type: 'text',
-            editor: false
+            editor: false,
           },
           {
             data: 'result',
             type: 'text',
             width: 200,
-            editor: false
-          }
+            editor: false,
+          },
         ],
         language: 'zh-TW',
         autoWrapRow: true,
         manualRowResize: true,
         manualColumnResize: true,
         rowHeaders: true,
-        colHeaders: [
-          '項目',
-          '計算結果'
-        ],
+        colHeaders: ['項目', '計算結果'],
         width: 'auto',
         manualRowMove: true,
         manualColumnMove: true,
         filters: true,
         contextMenu: false,
         dropdownMenu: true,
-        afterSelectionEnd: (r) => {
-          this.currentRow = r
-        }
+        afterSelectionEnd: r => {
+          this.currentRow = r;
+        },
       },
       sheetContainer: null,
-      sheet: null
-    }
+      sheet: null,
+    };
   },
   watch: {
-    'currentRow': 'recordUpdate'
+    'currentRow': 'recordUpdate',
   },
   components: {
-    DatePicker, VueTimepicker, ZoomDrag
+    DatePicker,
+    VueTimepicker,
   },
   methods: {
-    dragStart () {
-      this.isDrag = true
+    dragStart() {
+      this.isDrag = true;
     },
-    dragMove (e) {
-      if (!this.isDrag) return
-      this.galleryWidth = window.innerWidth - e.pageX
+    dragMove(e) {
+      if (!this.isDrag) return;
+      this.galleryWidth = window.innerWidth - e.pageX;
     },
-    dragEnd () {
-      this.isDrag = false
+    dragEnd() {
+      this.isDrag = false;
     },
-    getSheetData () {
-      this.row_data = [
+    getSheetData() {
+      this.rowData = [
         {
           item: '相機工作時數',
-          result: '306 小時'
+          result: '306 小時',
         },
         {
           item: '有效照片',
-          result: '1,360 張'
+          result: '1,360 張',
         },
         {
           item: '目擊事件',
-          result: '45 次'
+          result: '45 次',
         },
         {
           item: '平均偵測天數比例',
-          result: '15 %'
+          result: '15 %',
         },
         {
           item: '有效照片除以相機工作時長',
-          result: '306 小時'
+          result: '306 小時',
         },
         {
           item: '目擊事件除以相機工作時長',
-          result: '306 小時'
-        }
-      ]
+          result: '306 小時',
+        },
+      ];
 
-      this.settings.data = this.row_data
+      this.settings.data = this.rowData;
 
-      this.sheet = new Handsontable(this.sheetContainer, this.settings)
-      this.isRender = true
+      this.sheet = new Handsontable(this.sheetContainer, this.settings);
+      this.isRender = true;
     },
-    settingSheetHeight () {
-      const sheetHeight = window.innerHeight - (64 + this.$el.querySelector('.search-container').clientHeight)
-      this.settings.height = sheetHeight
+    settingSheetHeight() {
+      const sheetHeight =
+        window.innerHeight -
+        (64 + this.$el.querySelector('.search-container').clientHeight);
+      this.settings.height = sheetHeight;
       // debugger
       if (this.isRender) {
-        this.sheet.updateSettings(this.settings)
+        this.sheet.updateSettings(this.settings);
       }
-    }
+    },
   },
-  mounted () {
-    this.sheetContainer = this.$el.querySelector('#spreadsheet')
-    this.settingSheetHeight()
-    this.getSheetData()
+  mounted() {
+    this.sheetContainer = this.$el.querySelector('#spreadsheet');
+    this.settingSheetHeight();
+    this.getSheetData();
 
-    window.onresize = () => this.settingSheetHeight()
-  }
-}
+    window.onresize = () => this.settingSheetHeight();
+  },
+};
 </script>

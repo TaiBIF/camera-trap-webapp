@@ -105,7 +105,7 @@
                     :placeholder="'2018/09/20'"
                     :format="'YYYY/MM/DD'"
                     :first-day-of-week="1"
-                    v-model="form.start_at"/>
+                    v-model="form.startAt"/>
                     <div class="input-group-append">
                       <i class="icon icon-calendar"></i>
                     </div>
@@ -113,10 +113,10 @@
                   <div class="input-text">到</div>
                   <div class="input-group">
                     <date-picker
-                    :not-before="form.start_at"
+                    :not-before="form.startAt"
                     :placeholder="'2018/09/20'"
                     :format="'YYYY/MM/DD'"
-                    v-model="form.end_at"
+                    v-model="form.endAt"
                     :first-day-of-week="1"></date-picker>
                     <div class="input-group-append">
                       <i class="icon icon-calendar"></i>
@@ -127,14 +127,16 @@
                   id="project_start"
                   name="project_start"
                   v-validate="'required'"
-                  v-model="form.start_at">
+                  v-model="form.startAt">
                   <input
                   type="hidden"
                   id="project_end"
                   name="project_end"
                   v-validate="'required'"
-                  v-model="form.end_at">
-                  <span v-show="errors.has('project_start') || errors.has('project_end')" class="invalid-feedback">
+                  v-model="form.endAt">
+                  <span
+                  v-show="errors.has('project_start') || errors.has('project_end')"
+                  class="invalid-feedback">
                     計畫時間不能留空
                   </span>
                 </div>
@@ -143,20 +145,29 @@
                 <label for="project-name" class="col-2">計畫地區：</label>
                 <div class="col-4">
                   <div class="select">
-                    <v-select v-model="form.area" :options="options" multiple></v-select>
+                    <v-select
+                    v-model="form.area"
+                    :options="options"
+                    multiple></v-select>
                   </div>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2">計畫摘要：</label>
                 <div class="col-6">
-                  <textarea v-model="form.description" class="form-control" placeholder="請簡單描述計畫目的"></textarea>
+                  <textarea
+                  v-model="form.description"
+                  class="form-control"
+                  placeholder="請簡單描述計畫目的"></textarea>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="project-name" class="col-2">備註：</label>
                 <div class="col-6">
-                  <textarea v-model="form.comment" class="form-control" placeholder="您可以輸入任何補註資料"></textarea>
+                  <textarea
+                  v-model="form.comment"
+                  class="form-control"
+                  placeholder="您可以輸入任何補註資料"></textarea>
                 </div>
               </div>
               <div class="form-group row">
@@ -192,7 +203,12 @@
 
           <div class="action">
             <router-link to="/" class="btn btn-default">取消</router-link>
-            <button type="submit" @click.stop.prevent="nextStep()" class="btn btn-orange">下一步</button>
+            <button
+            type="submit"
+            @click.stop.prevent="nextStep()"
+            class="btn btn-orange">
+              下一步
+            </button>
           </div>
         </form>
       </div>
@@ -211,23 +227,44 @@
                 <label for="">詮釋資料：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" id="for-data-1" v-model="licenseForm.forData" value="CC0">
+                    <input
+                    type="radio"
+                    id="for-data-1"
+                    v-model="licenseForm.forData"
+                    value="CC0">
                     <label for="for-data-1">
-                      <img src="/assets/common/cc-0.png" height="40px" srcset="/assets/common/cc-0@2x.png">
+                      <img
+                      src="/assets/common/cc-0.png"
+                      height="40px"
+                      srcset="/assets/common/cc-0@2x.png">
                       <span class="text">無著作權 (CC0)</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-data-2" v-model="licenseForm.forData" value="CC BY 4.0">
+                    <input
+                    type="radio"
+                    id="for-data-2"
+                    v-model="licenseForm.forData"
+                    value="CC BY 4.0">
                     <label for="for-data-2">
-                      <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
+                      <img
+                      src="/assets/common/cc-1.png"
+                      height="40px"
+                      srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-data-3" v-model="licenseForm.forData" value="CC BY-NC">
+                    <input
+                    type="radio"
+                    id="for-data-3"
+                    v-model="licenseForm.forData"
+                    value="CC BY-NC">
                     <label for="for-data-3">
-                      <img src="/assets/common/cc-2.png" height="40px" srcset="/assets/common/cc-2@2x.png">
+                      <img
+                      src="/assets/common/cc-2.png"
+                      height="40px"
+                      srcset="/assets/common/cc-2@2x.png">
                       <span class="text">姓名標示-非商業性</span>
                     </label>
                   </div>
@@ -237,9 +274,16 @@
                 <label for="">鑑定資訊：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" id="for-info-1" v-model="licenseForm.forInfo" value="CC BY 4.0">
+                    <input
+                    type="radio"
+                    id="for-info-1"
+                    v-model="licenseForm.forInfo"
+                    value="CC BY 4.0">
                     <label for="for-info-1">
-                      <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
+                      <img
+                      src="/assets/common/cc-1.png"
+                      height="40px"
+                      srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
@@ -249,23 +293,44 @@
                 <label for="">影像資料：</label>
                 <div>
                   <div class="radio">
-                    <input type="radio" id="for-img-1" v-model="licenseForm.forImg" value="CC0">
+                    <input
+                    type="radio"
+                    id="for-img-1"
+                    v-model="licenseForm.forImg"
+                    value="CC0">
                     <label for="for-img-1">
-                      <img src="/assets/common/cc-0.png" height="40px" srcset="/assets/common/cc-0@2x.png">
+                      <img
+                      src="/assets/common/cc-0.png"
+                      height="40px"
+                      srcset="/assets/common/cc-0@2x.png">
                       <span class="text">無著作權 (CC0)</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-img-2" v-model="licenseForm.forImg" value="CC BY 4.0">
+                    <input
+                    type="radio"
+                    id="for-img-2"
+                    v-model="licenseForm.forImg"
+                    value="CC BY 4.0">
                     <label for="for-img-2">
-                      <img src="/assets/common/cc-1.png" height="40px" srcset="/assets/common/cc-1@2x.png">
+                      <img
+                      src="/assets/common/cc-1.png"
+                      height="40px"
+                      srcset="/assets/common/cc-1@2x.png">
                       <span class="text">姓名標示</span>
                     </label>
                   </div>
                   <div class="radio">
-                    <input type="radio" id="for-img-3" v-model="licenseForm.forImg" value="CC BY-NC">
+                    <input
+                    type="radio"
+                    id="for-img-3"
+                    v-model="licenseForm.forImg"
+                    value="CC BY-NC">
                     <label for="for-img-3">
-                      <img src="/assets/common/cc-2.png" height="40px" srcset="/assets/common/cc-2@2x.png">
+                      <img
+                      src="/assets/common/cc-2.png"
+                      height="40px"
+                      srcset="/assets/common/cc-2@2x.png">
                       <span class="text">姓名標示-非商業性</span>
                     </label>
                   </div>
@@ -276,7 +341,11 @@
                 <label for="" class="pl-3 required">公開日期：</label>
                 <div class="d-inline-block pl-3">
                   <div class="input-group">
-                    <date-picker v-model="form.public_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                    <date-picker
+                    v-model="form.publicAt"
+                    :placeholder="'18/9/20'"
+                    :format="'YY/M/DD'"
+                    :first-day-of-week="1" />
                     <div class="input-group-append">
                       <i class="icon icon-calendar"></i>
                     </div>
@@ -292,8 +361,13 @@
           </div>
 
           <div class="action">
-            <router-link to="/" class="btn btn-default">取消</router-link>
-            <button type="submit" @click.stop.prevent="doSubmit()" class="btn btn-orange">
+            <router-link to="/" class="btn btn-default">
+              取消
+            </router-link>
+            <button
+            type="submit"
+            @click.stop.prevent="doSubmit()"
+            class="btn btn-orange">
               新增計畫
             </button>
           </div>
@@ -304,19 +378,17 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
-import DatePicker from 'vue2-datepicker'
-import { commonMixin } from '../../../mixins/common'
+import { createNamespacedHelpers } from 'vuex';
+import DatePicker from 'vue2-datepicker';
+import { commonMixin } from '../../../mixins/common';
 
-const project = createNamespacedHelpers('project')
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'CreateProject',
   mixins: [commonMixin],
-  components: {
-    DatePicker
-  },
-  data () {
+  components: { DatePicker },
+  data() {
     return {
       step: 1,
       options: [
@@ -340,7 +412,7 @@ export default {
         '台東縣',
         '澎湖縣',
         '金門縣',
-        '連江縣'
+        '連江縣',
       ],
       form: {
         cover: '',
@@ -348,38 +420,35 @@ export default {
         slot: '',
         agency: '',
         owner: '',
-        start_at: '',
-        end_at: '',
-        public_at: '',
+        startAt: '',
+        endAt: '',
+        publicAt: '',
         area: '',
         description: '',
         comment: '',
-        no: ''
+        no: '',
       },
       licenseForm: {
         forData: '',
         forInfo: '',
-        forImg: ''
-      }
-    }
+        forImg: '',
+      },
+    };
   },
   methods: {
-    ...project.mapActions([
-      'createProject'
-    ]),
-    doSubmit () {
+    ...project.mapActions(['createProject']),
+    doSubmit() {
       this.createProject({
         form: this.form,
-        licenseForm: this.licenseForm
-      })
-      .then(() => this.$router.push('/'))
+        licenseForm: this.licenseForm,
+      }).then(() => this.$router.push('/'));
     },
-    nextStep () {
-      this.$validator.validateAll().then((result) => {
-        if (!result) return false
-        else this.step++
-      })
-    }
-  }
-}
+    nextStep() {
+      this.$validator.validateAll().then(result => {
+        if (result) this.step += 1;
+        else return false;
+      });
+    },
+  },
+};
 </script>

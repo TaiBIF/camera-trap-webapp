@@ -1,8 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Search from './views/Search'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Search from './views/Search';
+import SearchResult from './views/SearchResult.vue';
+import CalculateResult from './views/CalculateResult.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -11,17 +13,17 @@ export default new Router({
     {
       path: '/',
       name: 'Search',
-      component: Search
+      component: Search,
     },
     {
       path: '/search',
       name: 'SearchResult',
-      component: () => import('./views/SearchResult.vue')
+      component: SearchResult,
     },
     {
       path: '/calculate',
       name: 'Calculate',
-      component: () => import('./views/CalculateResult.vue')
-    }
-  ]
-})
+      component: CalculateResult,
+    },
+  ],
+});

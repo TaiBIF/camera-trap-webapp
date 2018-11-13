@@ -31,34 +31,26 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'App',
   computed: {
-    ...mapGetters([
-      'PageLock'
-    ])
-  },
-  data () {
-    return {
-    }
+    ...mapGetters(['PageLock']),
   },
   watch: {
     'PageLock': 'setBodyLock',
     '$router': 'routeChange'
   },
   methods: {
-    ...mapActions([
-      'setPageLock'
-    ]),
-    routeChange () {
-      this.setPageLock(false)
+    ...mapActions(['setPageLock']),
+    routeChange() {
+      this.setPageLock(false);
     },
-    setBodyLock () {
-      if (this.PageLock) document.body.classList.add('page-lock')
-      else document.body.classList.remove('page-lock')
-    }
-  }
-}
+    setBodyLock() {
+      if (this.PageLock) document.body.classList.add('page-lock');
+      else document.body.classList.remove('page-lock');
+    },
+  },
+};
 </script>

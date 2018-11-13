@@ -1,8 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Article from './views/Article'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Article from './views/Article';
+import FAQPage from './views/FAQ.vue';
+import Contact from './views/Contact.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -11,22 +13,22 @@ export default new Router({
     {
       path: '/',
       name: 'article',
-      component: Article
+      component: Article,
     },
     {
       path: '/faq',
       name: 'faq',
-      component: () => import('./views/FAQ.vue')
+      component: FAQPage,
     },
     {
       path: '/contact',
       name: 'contact',
-      component: () => import('./views/Contact.vue')
+      component: Contact,
     },
     {
       path: '/:slug',
       name: 'article',
-      component: Article
-    }
-  ]
-})
+      component: Article,
+    },
+  ],
+});

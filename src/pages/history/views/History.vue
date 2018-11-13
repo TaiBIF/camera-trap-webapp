@@ -19,12 +19,20 @@
           </td>
         </tr>
         <tr v-for="(row, rid) in group.list" :key="`trow-${gid}-${rid}`">
-          <td>{{row.created_at}}</td>
+          <td>{{row.createdAt}}</td>
           <td>
-            <span class="icon" v-if="row.type==='jpg'"><i class="icon-photo"></i></span>
-            <span class="icon" v-if="row.type==='csv'"><i class="icon-csv"></i></span>
-            <span class="icon" v-if="row.type==='zip'"><i class="icon-zip"></i></span>
-            <span class="icon" v-if="row.type==='folder'"><i class="icon-folder"></i></span>
+            <span class="icon" v-if="row.type==='jpg'">
+              <i class="icon-photo"></i>
+            </span>
+            <span class="icon" v-if="row.type==='csv'">
+              <i class="icon-csv"></i>
+            </span>
+            <span class="icon" v-if="row.type==='zip'">
+              <i class="icon-zip"></i>
+            </span>
+            <span class="icon" v-if="row.type==='folder'">
+              <i class="icon-folder"></i>
+            </span>
             <span class="text">{{row.name}}</span>
           </td>
           <td>{{row.project}}</td>
@@ -40,9 +48,20 @@
               <span class="text">{{row.msg}}</span>
             </div>
 
-            <a href="./upload.html" v-if="row.status==2" class="link text-underline mr-2">補上傳影像檔</a>
-            <a v-if="row.status==2" class="link text-underline">查看</a>
-            <a v-if="row.status==-1" class="text-danger text-underline">檢視錯誤</a>
+            <a
+            href="./upload.html"
+            v-if="row.status==2"
+            class="link text-underline mr-2">
+              補上傳影像檔
+            </a>
+            <a v-if="row.status==2"
+            class="link text-underline">
+              查看
+            </a>
+            <a v-if="row.status==-1"
+            class="text-danger text-underline">
+              檢視錯誤
+            </a>
           </td>
         </tr>
       </tbody>
@@ -51,14 +70,14 @@
 </template>
 
 <script>
-import { commonMixin } from '../../../mixins/common.js'
+import { commonMixin } from '../../../mixins/common.js';
 
-const history = [
+const HistoryData = [
   {
     name: '今天',
     list: [
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'jpg',
@@ -67,10 +86,10 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
+        msg: '',
       },
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'csv',
@@ -79,10 +98,10 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
+        msg: '',
       },
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'zip',
@@ -91,10 +110,10 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: -1,
-        msg: '上傳失敗，格式錯誤'
+        msg: '上傳失敗，格式錯誤',
       },
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'folder',
@@ -103,15 +122,15 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
-      }
-    ]
+        msg: '',
+      },
+    ],
   },
   {
     name: '昨天',
     list: [
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'folder',
@@ -120,10 +139,10 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
+        msg: '',
       },
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'csv',
@@ -132,15 +151,15 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
-      }
-    ]
+        msg: '',
+      },
+    ],
   },
   {
     name: '7 天前',
     list: [
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'csv',
@@ -149,10 +168,10 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
+        msg: '',
       },
       {
-        created_at: '2017/07/08 17:23',
+        createdAt: '2017/07/08 17:23',
         project: '全島鼬獾',
         name: 'PT12A-151129-1051223',
         type: 'jpg',
@@ -161,25 +180,19 @@ const history = [
         subsite: '潮州站',
         camera: 'PT01A',
         status: 2,
-        msg: ''
-      }
-    ]
-  }
-]
+        msg: '',
+      },
+    ],
+  },
+];
 
 export default {
   name: 'History',
   mixins: [commonMixin],
-  data () {
+  data() {
     return {
-      history: history
-    }
+      history: HistoryData,
+    };
   },
-  methods: {
-  },
-  beforeMount () {
-  },
-  mounted () {
-  }
-}
+};
 </script>

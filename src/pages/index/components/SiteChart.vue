@@ -9,16 +9,17 @@
       @click="setCurrent(d)">
         <th>{{d.name}}</th>
         <td
-        v-if="d.progress"
         v-for="(p, pIdx) in d.progress"
         :key="`trow-${dIdx}-${pIdx}`">
-          <span class="progress"
-          v-if="!p === false && p > 0"
-          :class="{
-            'is-complete': p>0,
-            'not-complete': p==1,
-            'is-cancel': p==-1
-          }"></span>
+          <div v-if="d.progress">
+            <span class="progress"
+            v-if="!p === false && p > 0"
+            :class="{
+              'is-complete': p>0,
+              'not-complete': p==1,
+              'is-cancel': p==-1
+            }"></span>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -72,22 +73,21 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'normal'
+      default: 'normal',
     },
     current: {
       type: [Number, String],
-      default: null
+      default: null,
     },
     chart: {
       type: Array,
-      default: null
-    }
+      default: null,
+    },
   },
   methods: {
-    setCurrent (d) {
-      this.$emit('update', d)
-    }
-  }
-}
+    setCurrent(d) {
+      this.$emit('update', d);
+    },
+  },
+};
 </script>
-

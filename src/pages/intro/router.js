@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Intro from './views/Intro'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Intro from './views/Intro';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'hash',
@@ -11,7 +11,7 @@ export default new Router({
     {
       path: '/',
       name: 'Intro',
-      component: Intro
-    }
-  ]
-})
+      component: Intro,
+    },
+  ],
+});

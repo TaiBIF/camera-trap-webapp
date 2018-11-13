@@ -14,31 +14,45 @@
         <div id="search" class="tab-pane" :class="{'active': currentTab==0}">
           <form action="" class="form" @submit.stop.prevent="submitSearch()">
             <h5>資料來源</h5>
-            <div class="gray-block" v-for="(data, did) in form.data" :key="`data-form-${did}`">
+            <div class="gray-block"
+            v-for="(data, did) in form.data"
+            :key="`data-form-${did}`">
               <div class="form-content">
                 <div class="row">
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">計畫名稱：</label>
-                      <v-select :options="[{label: '林務局全島鼬獾監測', value:'1'}]" v-model="data.project" :placeholder="'請選擇計畫名稱'" />
+                      <v-select
+                      :options="[{label: '林務局全島鼬獾監測', value:'1'}]"
+                      v-model="data.project"
+                      :placeholder="'請選擇計畫名稱'" />
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">樣區：</label>
-                      <v-select :options="[{label: '屏東處', value:'屏東處'}]"  v-model="data.site" :placeholder="'請選擇樣區'" />
+                      <v-select
+                      :options="[{label: '屏東處', value:'屏東處'}]"
+                      v-model="data.site"
+                      :placeholder="'請選擇樣區'" />
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">子樣區：</label>
-                      <v-select :options="[{label: '旗山站', value:'旗山站'}]"  v-model="data.subsite" :placeholder="'請選擇子樣區'" />
+                      <v-select
+                      :options="[{label: '旗山站', value:'旗山站'}]"
+                      v-model="data.subsite"
+                      :placeholder="'請選擇子樣區'" />
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">相機位置：</label>
-                      <v-select :options="[{label: 'PT10A', value:'PT10A'}]"  v-model="data.camera" :placeholder="'請選擇相機位置'" />
+                      <v-select
+                      :options="[{label: 'PT10A', value:'PT10A'}]"
+                      v-model="data.camera"
+                      :placeholder="'請選擇相機位置'" />
                     </div>
                   </div>
                 </div>
@@ -69,13 +83,19 @@
                   <label>資料起始時間：</label>
                   <div class="input-group-inline">
                     <div class="input-group">
-                      <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                      <date-picker
+                      v-model="form.startAt"
+                      :placeholder="'18/9/20'"
+                      :format="'YY/M/DD'"
+                      :first-day-of-week="1"/>
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
-                      <vue-timepicker v-model="form.start_time" format=""></vue-timepicker>
+                      <vue-timepicker
+                      v-model="form.startTime"
+                      format=""/>
                     </div>
                   </div>
                 </div>
@@ -88,13 +108,17 @@
                   <label>資料結束時間：</label>
                   <div class="input-group-inline">
                     <div class="input-group">
-                      <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                      <date-picker
+                      v-model="form.endAt"
+                      :placeholder="'18/9/20'"
+                      :format="'YY/M/DD'"
+                      :first-day-of-week="1"/>
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
-                      <vue-timepicker v-model="form.end_time" format=""></vue-timepicker>
+                      <vue-timepicker v-model="form.endTime" format=""/>
                     </div>
                   </div>
                 </div>
@@ -118,21 +142,30 @@
                   <div class="form-group">
                     <label>性別：</label>
                     <v-select
-                    :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
+                    :options="[
+                      {label:'公', value: 'male'},
+                      {label:'母', value: 'female'}
+                    ]"
                     :placeholder="'請選擇性別'" />
                   </div>
                 </div>
                 <div class="col-2">
                   <div class="form-group">
                     <label>年齡：</label>
-                    <v-select :options="[{label:'幼仔', value: '1'},{label:'成熟', value: '2'}]"
+                    <v-select :options="[
+                      {label:'幼仔', value: '1'},
+                      {label:'成熟', value: '2'}
+                    ]"
                     :placeholder="'請選擇年齡'" />
                   </div>
                 </div>
                 <div class="col-4">
                   <div class="form-group">
                     <label>角況：</label>
-                    <v-select :options="[{label:'幼仔', value: '1'}, {label:'成熟', value: '2'}]"
+                    <v-select :options="[
+                      {label:'幼仔', value: '1'},
+                      {label:'成熟', value: '2'}
+                    ]"
                     :placeholder="'請選擇角況'" />
                   </div>
                 </div>
@@ -161,7 +194,10 @@
                   <div class="form-group">
                     <label>植被：</label>
                     <v-select
-                    :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
+                    :options="[
+                      {label:'公', value: 'male'},
+                      {label:'母', value: 'female'}
+                    ]"
                     :placeholder="'請選擇植被'" />
                   </div>
                 </div>
@@ -169,7 +205,10 @@
                   <div class="form-group">
                     <label>土地覆蓋類型：</label>
                     <v-select
-                    :options="[{label:'公', value: 'male'},{label:'母', value: 'female'}]"
+                    :options="[
+                      {label:'公', value: 'male'},
+                      {label:'母', value: 'female'}
+                    ]"
                     :placeholder="'請選擇土地覆蓋類型'" />
                   </div>
                 </div>
@@ -180,11 +219,15 @@
                     <label>拍攝時段：</label>
                     <div class="input-group-inline">
                       <div class="input-group">
-                        <vue-timepicker v-model="form.camera_start" format=""></vue-timepicker>
+                        <vue-timepicker
+                        v-model="form.cameraStart"
+                        format=""/>
                       </div>
                       <div class="text px-2">到</div>
                       <div class="input-group">
-                        <vue-timepicker v-model="form.camera_end" format=""></vue-timepicker>
+                        <vue-timepicker
+                        v-model="form.cameraEnd"
+                        format=""/>
                       </div>
                     </div>
                   </div>
@@ -200,7 +243,8 @@
         </div>
 
         <div id="calculate" class="tab-pane" :class="{'active': currentTab==1}">
-          <form action="" class="form"  @submit.stop.prevent="submitCalculate()">
+          <form action="" class="form"
+          @submit.stop.prevent="submitCalculate()">
             <div class="green-block">
               <div class="row">
                 <div class="col-6 offset-3">
@@ -219,31 +263,41 @@
               基本欄位
               <span class="text-gray">( 請選擇單一相機位置及物種進行計算 )</span>
             </h5>
-            <div class="gray-block" v-for="(data, did) in form.data" :key="`data-form-${did}`">
+            <div class="gray-block"
+            v-for="(data, did) in form.data"
+            :key="`data-form-${did}`">
               <div class="form-content">
                 <div class="row">
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">計畫名稱：</label>
-                      <v-select :options="[{label: '林務局全島鼬獾監測', value:'1'}]" :placeholder="'請選擇計畫名稱'" />
+                      <v-select
+                      :options="[{label: '林務局全島鼬獾監測', value:'1'}]"
+                      :placeholder="'請選擇計畫名稱'" />
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">樣區：</label>
-                      <v-select :options="[{label: '屏東處', value:'屏東處'}]"  :placeholder="'請選擇樣區'" />
+                      <v-select
+                      :options="[{label: '屏東處', value:'屏東處'}]"
+                      :placeholder="'請選擇樣區'" />
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">子樣區：</label>
-                      <v-select :options="[{label: '旗山站', value:'旗山站'}]"  :placeholder="'請選擇子樣區'" />
+                      <v-select
+                      :options="[{label: '旗山站', value:'旗山站'}]"
+                      :placeholder="'請選擇子樣區'" />
                     </div>
                   </div>
                   <div class="col-3">
                     <div class="form-group">
                       <label for="" class="required">相機位置：</label>
-                      <v-select :options="[{label: 'PT10A', value:'PT10A'}]"  :placeholder="'請選擇相機位置'" />
+                      <v-select
+                      :options="[{label: 'PT10A', value:'PT10A'}]"
+                      :placeholder="'請選擇相機位置'" />
                     </div>
                   </div>
                 </div>
@@ -254,7 +308,16 @@
               <div class="col-4">
                 <div class="form-group">
                   <label>物種：</label>
-                  <v-select :options="[{label:'山羌', value:'山羌'},{label:'鼬獾', value:'鼬獾'},{label:'台灣獼猴', value:'台灣獼猴'},{label:'山羊', value:'山羊'},{label:'赤腹松鼠', value:'赤腹松鼠'},{label:'白鼻心', value:'白鼻心'}]" multiple />
+                  <v-select :options="[
+                      {label:'山羌', value:'山羌'},
+                      {label:'鼬獾', value:'鼬獾'},
+                      {label:'台灣獼猴', value:'台灣獼猴'},
+                      {label:'山羊', value:'山羊'},
+                      {label:'赤腹松鼠', value:'赤腹松鼠'},
+                      {label:'白鼻心', value:'白鼻心'}
+                    ]"
+                    multiple
+                  />
                 </div>
               </div>
             </div>
@@ -264,13 +327,19 @@
                   <label>資料起始時間：</label>
                   <div class="input-group-inline">
                     <div class="input-group">
-                      <date-picker v-model="form.start_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                      <date-picker
+                      v-model="form.startAt"
+                      :placeholder="'18/9/20'"
+                      :format="'YY/M/DD'"
+                      :first-day-of-week="1"/>
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
-                      <vue-timepicker v-model="form.start_time" format=""></vue-timepicker>
+                      <vue-timepicker
+                      v-model="form.startTime"
+                      format=""/>
                     </div>
                   </div>
                 </div>
@@ -283,13 +352,19 @@
                   <label>資料結束時間：</label>
                   <div class="input-group-inline">
                     <div class="input-group">
-                      <date-picker v-model="form.end_at" :placeholder="'18/9/20'" :format="'YY/M/DD'" :first-day-of-week="1"></date-picker>
+                      <date-picker
+                      v-model="form.endAt"
+                      :placeholder="'18/9/20'"
+                      :format="'YY/M/DD'"
+                      :first-day-of-week="1"/>
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
-                      <vue-timepicker v-model="form.end_time" format=""></vue-timepicker>
+                      <vue-timepicker
+                      v-model="form.endTime"
+                      format=""/>
                     </div>
                   </div>
                 </div>
@@ -316,8 +391,14 @@
             </div>
 
             <div class="col-12 text-right action">
-              <button type="reset" class="btn btn-green-border">清空選項</button>
-              <button type="submit" class="btn btn-orange">計算</button>
+              <button type="reset"
+              class="btn btn-green-border">
+                清空選項
+              </button>
+              <button type="submit"
+              class="btn btn-orange">
+                計算
+              </button>
             </div>
 
           </form>
@@ -328,15 +409,15 @@
 </template>
 
 <script>
-import { commonMixin } from '../../../mixins/common.js'
-import DatePicker from 'vue2-datepicker'
-import VueTimepicker from 'vue2-timepicker'
+import DatePicker from 'vue2-datepicker';
+import VueTimepicker from 'vue2-timepicker';
+import { commonMixin } from '../../../mixins/common.js';
 
 export default {
   name: 'Search',
   mixins: [commonMixin],
   components: { DatePicker, VueTimepicker },
-  data () {
+  data() {
     return {
       currentTab: 1,
       advSecOpen: true,
@@ -346,54 +427,48 @@ export default {
             project: '',
             site: '',
             subsite: '',
-            camera: ''
-          }
+            camera: '',
+          },
         ],
-        start_at: '',
-        end_at: '',
-        start_time: {
+        startAt: '',
+        endAt: '',
+        startTime: {
           HH: '10',
-          mm: '05'
+          mm: '05',
         },
-        end_time: {
+        endTime: {
           HH: '10',
-          mm: '05'
+          mm: '05',
         },
-        camera_start: {
+        cameraStart: {
           HH: '10',
-          mm: '05'
+          mm: '05',
         },
-        camera_end: {
+        cameraEnd: {
           HH: '10',
-          mm: '05'
-        }
-      }
+          mm: '05',
+        },
+      },
     }
   },
   methods: {
-    submitSearch () {
-      this.$router.push('/search')
+    submitSearch() {
+      this.$router.push('/search');
     },
-    submitCalculate () {
-      this.$router.push('/calculate')
+    submitCalculate() {
+      this.$router.push('/calculate');
     },
-    removeFormData (idx) {
-      this.form.data.splice(idx, 1)
+    removeFormData(idx) {
+      this.form.data.splice(idx, 1);
     },
-    addFormData () {
-      this.form.data.push(
-        {
-          project: '',
-          site: '',
-          subsite: '',
-          camera: ''
-        }
-      )
-    }
+    addFormData() {
+      this.form.data.push({
+        project: '',
+        site: '',
+        subsite: '',
+        camera: '',
+      });
+    },
   },
-  beforeMount () {
-  },
-  mounted () {
-  }
-}
+};
 </script>

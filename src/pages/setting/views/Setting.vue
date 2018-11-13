@@ -110,13 +110,13 @@
 <script>
 export default {
   name: 'Setting',
-  data () {
+  data() {
     return {
       form: {
         name: 'Cindy Gu',
-        email: 'cindy@gmail.com'
-      }
+        email: 'cindy@gmail.com',
+      },
     }
   }
-}
+};
 </script>

@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Upload from './views/Upload'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Upload from './views/Upload';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -11,7 +11,7 @@ export default new Router({
     {
       path: '/',
       name: 'upload',
-      component: Upload
-    }
-  ]
-})
+      component: Upload,
+    },
+  ],
+});

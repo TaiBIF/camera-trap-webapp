@@ -68,66 +68,82 @@ const faq = [
     list: [
       {
         title: '計畫管理員的權限？',
-        content: '<p>問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答．問題解答問題解答問題解答問，問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答．問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答。</p>'
+        content:
+          '<p>問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答．問題解答問題解答問題解答問，問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答．問題解答．問題解答問題解答問題解答．問題解答問題解答問題解答問題解答問題解答。</p>',
       },
       {
         title: '如何更改權限？',
-        content: ''
+        content: '',
       },
       {
         title: '如何更改帳號設定？',
-        content: ''
-      }
-    ]
-  }, {
+        content: '',
+      },
+    ],
+  },
+  {
     name: '帳號相關',
-    list: [{
-      title: '',
-      content: ''
-    }]
-  }, {
+    list: [
+      {
+        title: '',
+        content: '',
+      },
+    ],
+  },
+  {
     name: '計畫管理',
-    list: [{
-      title: '',
-      content: ''
-    }]
-  }, {
+    list: [
+      {
+        title: '',
+        content: '',
+      },
+    ],
+  },
+  {
     name: '檔案上傳',
-    list: [{
-      title: '',
-      content: ''
-    }]
-  }, {
+    list: [
+      {
+        title: '',
+        content: '',
+      },
+    ],
+  },
+  {
     name: '資料編輯',
-    list: [{
-      title: '',
-      content: ''
-    }]
-  }, {
+    list: [
+      {
+        title: '',
+        content: '',
+      },
+    ],
+  },
+  {
     name: '篩選及下載',
-    list: [{
-      title: '',
-      content: ''
-    }]
-  }
-]
+    list: [
+      {
+        title: '',
+        content: '',
+      },
+    ],
+  },
+];
 
 export default {
   name: 'FAQ',
-  data () {
+  data() {
     return {
       current: 0,
       collapse: 0,
-      faqList: faq
-    }
+      faqList: faq,
+    };
   },
   watch: {
-    'current': 'changeSection'
+    current: 'changeSection',
   },
   methods: {
-    changeSection () {
-      this.collapse = 0
-    }
-  }
-}
+    changeSection() {
+      this.collapse = 0;
+    },
+  },
+};
 </script>
