@@ -11,7 +11,7 @@ import {
 export const getters = {
   Projects: state => state.projects,
   currentProject: state =>
-    state.projects.find(val => val.projectTitle === state.currentProjectId),
+    state.projects.find(val => val.projectTitle === state.current_project_id),
   cameraLocations: (_, getters) => {
     if (!getters.currentProject || !getters.currentProject.cameraLocations) {
       return [];
@@ -48,7 +48,7 @@ export const getters = {
     return Object.values(table);
   },
   species: state => {
-    const data = state.speciesGroup.speciesGroup.map(val => [
+    const data = state.speciesGroup.species_group.map(val => [
       val.species,
       val.count,
     ]);
@@ -107,34 +107,44 @@ export const getters = {
         ? state.locationRetrievedStatus
         : state.locationIdentifiedStatus;
 
-    return source.map(val => ({
-      id: val._id,
-      name: val.site,
-      projectId: val.projectTitle,
-      marker: L.latLng(val.wgs84dec_y, val.wgs84dec_x),
-      progress: val.monthly_num.reduce((accumulator, currentValue) => {
-        accumulator[currentValue.month] = currentValue.num;
-        return accumulator;
-      }, Array(12).fill(0)),
-    }));
+    return source.reduce((accumulator, currentValue) => {
+      let siteIdx= null;
+      if(accumulator.length) {
+        accumulator.forEach((accu, i) => {
+          if (accu.name === currentValue.site) {
+            siteIdx = i
+          }
+        });
+      }
+      
+      if (siteIdx === null) {
+        accumulator.push({
+          id: currentValue._id,
+          name: currentValue.site,
+          projectId: currentValue.projectTitle,
+          marker: L.latLng(currentValue.wgs84dec_y, currentValue.wgs84dec_x),
+          progress: currentValue.monthly_num.reduce((progress, currentValue) => {
+            progress[currentValue.month] = currentValue.num;
+            return progress;
+          }, Array(12).fill(0)),
+        })
+      } else {
+        accumulator[siteIdx].progress = currentValue.monthly_num.reduce((progress, value) => {
+          progress[value.month] += value.num;
+          return progress;
+        }, accumulator[siteIdx].progress)
+      }
+      return accumulator;
+    }, []);
   },
   SiteMarkers: state => {
-    const source = state.locationCameraAbnormalStatus;
-    // {
-    //   id: 11,
-    //   name: 'PT07A',
-    //   takeback: 2250,
-    //   num: 106,
-    //   last_update: '2017/05/23 15:22',
-    //   error: 5,
-    //   marker: L.latLng(24.611081, 121.605761),
-    //   color: 'green',
-    //   progress: [2, 1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0]
-    // },
-    console.log('SiteMarkers', state.locationCameraAbnormalStatus);
+    const source =
+      state.siteStatusTab === 0
+        ? state.locationRetrievedStatus
+        : state.locationIdentifiedStatus;
     return source.map(val => ({
       id: val._id,
-      name: val.site,
+      name: val.cameraLocation,
       projectId: val.projectTitle,
       marker: L.latLng(val.wgs84dec_y, val.wgs84dec_x),
       progress: val.monthly_num.reduce((accumulator, currentValue) => {
@@ -150,7 +160,7 @@ export const mutations = {
     state.projects = payload;
   },
   setCurrentProject(state, payload) {
-    state.currentProjectId = payload;
+    state.current_project_id = payload;
   },
   setSpeciesGroup(state, payload) {
     state.speciesGroup = payload;
@@ -182,13 +192,13 @@ export const actions = {
   },
   // 取得辨識物種列表
   async getSpeciesGroup({ state, commit }) {
-    const data = await getSpeciesGroup(state.currentProjectId);
+    const data = await getSpeciesGroup(state.current_project_id);
     commit('setSpeciesGroup', data);
   },
   // 影像辨識狀況
   async getLocationIdentifiedStatus({ state, commit }, payload) {
     const data = await getLocationIdentifiedStatus({
-      projectTitle: state.currentProjectId,
+      projectTitle: state.current_project_id,
       ...payload,
     });
     console.log('getLocationIdentifiedStatus', data);
@@ -197,7 +207,7 @@ export const actions = {
   // 影像回收狀況
   async getLocationRetrievedStatus({ state, commit }, payload) {
     const data = await getLocationRetrievedStatus({
-      projectTitle: state.currentProjectId,
+      projectTitle: state.current_project_id,
       ...payload,
     });
     console.log('getLocationRetrievedStatus', data);
@@ -206,7 +216,7 @@ export const actions = {
   // 相機異常值
   async getLocationCameraAbnormalStatus({ state, commit }, payload) {
     const data = await getLocationAbnormalStatus({
-      projectTitle: state.currentProjectId,
+      projectTitle: state.current_project_id,
       ...payload,
     });
     console.log('getLocationCameraAbnormalStatus', data);
@@ -218,9 +228,9 @@ export default {
   namespaced: true,
   state: {
     projects: [],
-    currentProjectId: null,
+    current_project_id: null,
     speciesGroup: {
-      speciesGroup: [],
+      species_group: [],
       total: 0,
       modified: null,
     },

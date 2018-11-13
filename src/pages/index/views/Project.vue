@@ -92,8 +92,8 @@
                       :lat-lng="mark.marker"
                       :draggable="false"
                       @click="setCurrent(mark)">
-                        <l-tooltip :content="mark.cameraLocation"
-                        :options="{permanent: true, direction: 'top'}"></l-tooltip>
+                        <l-tooltip :content="mark.name"
+                        :options="{permanent: true, direction: 'top'}" />
                       </l-marker>
                     </l-layer-group>
 
@@ -159,8 +159,7 @@
                         <span @click="changeDuration(+1)"><i class="fa fa-3 fa-caret-right"></i></span>
                       </div>
                     </div>
-                    <site-chart :chart="progressData" v-if="mapMode=='project'" :current="currentSite.value" @update="setCurrent" />
-                    <site-chart :chart="progressData" v-if="mapMode=='camera'" :current="currentSubSite.value" @update="setCurrent" />
+                    <site-chart :chart="progressData" :current="currentSite.value" @update="setCurrent" />
                   </div>
                   <div v-if="siteStatusTab==1">
                     <div class="row chart-control">
@@ -253,7 +252,7 @@
 
 <script>
 import L from 'leaflet'
-import { LMap, LTileLayer, LMarker, LPopup, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker, LControlZoom, LTooltip, LCircle, LLayerGroup, LPolygon } from 'vue2-leaflet'
 import moment from 'moment'
 import { createNamespacedHelpers } from 'vuex'
 import VueHighcharts from 'vue2-highcharts'
@@ -443,7 +442,7 @@ export default {
     }
   },
   components: {
-    LMap, LTileLayer, LControlZoom, LMarker, LPopup, LPolygon, LCircle, LTooltip, LLayerGroup,
+    LMap, LTileLayer, LControlZoom, LMarker, LPolygon, LCircle, LTooltip, LLayerGroup,
     SiteChart,
     'v-chart': VueHighcharts,
     ReportModal
@@ -451,7 +450,6 @@ export default {
   watch: {
     currentProject: function (newValue) {
       setTimeout(() => {
-        this.renderMap()
         this.getSpeciesGroup()
         this.fetchImageStatus()
       }, 100)
@@ -468,6 +466,20 @@ export default {
         this.fetchImageStatus()
       }, 100)
     },
+    ProjectMarkers: function (newValue) {
+      setTimeout(() => {
+        if(!this.mapInfo.marker.length && this.mapMode==='project') {
+          this.fetchImageStatus()
+        }
+      }, 100)
+    },
+    SiteMarkers: function (newValue) {
+      setTimeout(() => {
+        if(!this.mapInfo.marker.length && this.mapMode==='camera') {
+          this.fetchImageStatus()
+        }
+      }, 100)
+    },
     'species': 'loadPieChart'
   },
   computed: {
@@ -481,7 +493,7 @@ export default {
       'species',
       'sites',
       'ProjectMarkers',
-      'SiteMarkers'
+      'SiteMarkers',
     ])
   },
   methods: {
@@ -496,14 +508,19 @@ export default {
       'getLocationCameraAbnormalStatus'
     ]),
     fetchImageStatus () {
+      this.mapInfo.marker = []
       const payload = {
         year: this.currentDuration,
-        ...{ site: this.currentSite.label !== '全部樣區' ? this.currentSite.label : undefined }
+        ...{
+          site: this.currentSite.label !== '全部樣區' ? this.currentSite.label : undefined,
+          subSite: !this.currentSubSite ? undefined : this.currentSubSite.label
+        }
       }
 
       this.getLocationIdentifiedStatus(payload)
       this.getLocationRetrievedStatus(payload)
       this.getLocationCameraAbnormalStatus(payload)
+      this.renderMap()
     },
     timeFormat (time) {
       return moment(time * 1000).format('YYYY/MM/DD')
@@ -517,16 +534,13 @@ export default {
         if (!value.child === false && value.child.length) {
           this.currentCamera = null
           this.currentSubSite = value.child[0]
-          this.progressData = value.child[0].camera
           this.siteMarkers = value.child[0].camera
           // this.mapInfo.center = window._.clone(L.latLng(tmepCamera.wgs84dec_y, tmepCamera.wgs84dec_x))
-          this.mapMode = 'camera'
         } else {
           this.currentCamera = null
           this.currentSubSite = null
-          this.progressData = this.ProjectMarkers
-          this.mapMode = 'project'
         }
+        this.mapMode = 'camera'
         this.renderMap()
       }
 
@@ -540,8 +554,6 @@ export default {
         } else {
           this.currentCamera = null
           this.currentSubSite = value.child[0]
-          this.progressData = value.child[0].camera
-          this.siteMarkers = value.child[0].camera
           this.renderMap()
         }
       }
@@ -618,22 +630,22 @@ export default {
       if (this.mapMode === 'project') {
         this.mapInfo.zoom = 9
         this.mapInfo.marker = this.ProjectMarkers
+        this.progressData = this.ProjectMarkers
         // this.mapInfo.center = window._.clone(this.ProjectMarkers[0].marker)
       }
 
       if (this.mapMode === 'camera') {
         this.mapInfo.zoom = 15
-        this.mapInfo.marker = this.siteMarkers.map(val => {
+        this.progressData = this.SiteMarkers
+        this.mapInfo.marker = this.SiteMarkers.map(val => {
         // 設定地圖要顯示的 Icon
           return {
             ...val,
-            marker: L.latLng(val.wgs84dec_y, val.wgs84dec_x),
             icon: val.error > 0 ? ErrorIconSelect : IconSelect
           }
         })
-
-        this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker)
       }
+      if (this.mapInfo.marker.length) this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker)
     }
   },
   mounted () {
