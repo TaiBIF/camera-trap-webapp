@@ -87,9 +87,9 @@ export const getters = {
       ...sites,
     ];
   },
-  ProjectMarkers: (state, getters) =>
+  ProjectMarkers: (state, getters) => {
     // siteStatusTab, 0 = 影像回收狀況, 1 = 影像辨識進度
-    !getters.currentProject ?
+    return !getters.currentProject 
       ? []
       : getters.currentProject.cameraLocations.reduce(
           (accumulator, currentValue) => {
@@ -152,7 +152,8 @@ export const getters = {
             return accumulator;
           },
           [],
-        ),
+        );
+  },
 };
 
 export const mutations = {
