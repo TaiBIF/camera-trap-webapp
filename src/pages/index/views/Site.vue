@@ -448,7 +448,8 @@ export default {
       },
       sheetContainer: null,
       sheet: null,
-      isDrag: false
+      isDrag: false,
+      fetchCameraLockTimer: null
     }
   },
   watch: {
@@ -754,6 +755,11 @@ export default {
     // 拖拉側欄照片區塊大小
     document.body.addEventListener('mousemove', (e) => { this.dragMove(e) })
     document.body.addEventListener('mouseup', (e) => { this.dragEnd(e) })
+
+    this.fetchCameraLockTimer = setInterval(() => this.fetchCameraLocked(), 18000000)
+  },
+  beforeDestroy () {
+    clearInterval(this.fetchCameraLockTimer)
   }
 }
 </script>
