@@ -87,82 +87,72 @@ export const getters = {
       ...sites,
     ];
   },
-  ProjectMarkers: (state, getters) => {
+  ProjectMarkers: (state, getters) =>
     // siteStatusTab, 0 = 影像回收狀況, 1 = 影像辨識進度
-    return !getters.currentProject ?
-      [] :
-      getters.currentProject.cameraLocations.reduce((accumulator, currentValue) => {
-        let siteIdx= null;
-        if(accumulator.length) {
-          accumulator.forEach((accu, i) => {
-            if (accu.site === currentValue.site) {
-              siteIdx = i
+    !getters.currentProject ?
+      ? []
+      : getters.currentProject.cameraLocations.reduce(
+          (accumulator, currentValue) => {
+            let siteIdx = null;
+            if (accumulator.length) {
+              accumulator.forEach((accu, i) => {
+                if (accu.site === currentValue.site) {
+                  siteIdx = i;
+                }
+              });
             }
-          });
-        }
-        // locationIdentifiedStatus
-        // locationCameraAbnormalStatus
-        // locationRetrievedStatus
-        if (siteIdx === null) {
-          let retrievedStatus = Array(12).fill(0);
-          let cameraAbnormalStatus = Array(12).fill(0);
-          let identifiedStatus = Array(12).fill(0);
-          
+            // locationIdentifiedStatus
+            // locationCameraAbnormalStatus
+            // locationRetrievedStatus
+            if (siteIdx === null) {
+              const retrievedStatus = Array(12).fill(0);
+              let cameraAbnormalStatus = Array(12).fill(0);
+              let identifiedStatus = Array(12).fill(0);
+
           state.locationRetrievedStatus.forEach(status => {
-            if(status.site === currentValue.site) {
-              status.monthly_num.forEach((value) => {
-                retrievedStatus[value.month] += value.num;
-              })
+                if (status.site === currentValue.site) {
+                  (!status.month ? status.monthly_num : status.month).forEach(
+                    value => {
+                      retrievedStatus[value.month] += value.num;
+                    },
+                  );
+                }
+              });
+              state.locationCameraAbnormalStatus.forEach(status => {
+                if (status.site === currentValue.site) {
+                  (!status.month ? status.monthly_num : status.month).forEach(
+                    value => {
+                      cameraAbnormalStatus[value.month] += value.num;
+                    },
+                  );
+                }
+              });
+              state.locationIdentifiedStatus.forEach(status => {
+                if (status.site === currentValue.site) {
+                  (!status.month ? status.monthly_num : status.month).forEach(
+                    value => {
+                      identifiedStatus[value.month] += value.num;
+                    },
+                  );
+                }
+              });
+              accumulator.push({
+                name: currentValue.site,
+                ...currentValue,
+                marker: L.latLng(
+                  currentValue.wgs84dec_y,
+                  currentValue.wgs84dec_x,
+                ),
+                identifiedStatus,
+                cameraAbnormalStatus: cameraAbnormalStatus,
+                retrievedStatus: retrievedStatus,
+              });
             }
-          });
-          state.locationCameraAbnormalStatus.forEach(status => {
-            if(status.site === currentValue.site) {
-              status.monthly_num.forEach((value) => {
-                cameraAbnormalStatus[value.month] += value.num;
-              })
-            }
-          });
-          state.locationIdentifiedStatus.forEach(status => {
-            if(status.site === currentValue.site) {
-              status.monthly_num.forEach((value) => {
-                identifiedStatus[value.month] += value.num;
-              })
-            }
-          });
-          accumulator.push({
-            name: currentValue.site,
-            ...currentValue,
-            marker: L.latLng(currentValue.wgs84dec_y, currentValue.wgs84dec_x),
-            identifiedStatus: identifiedStatus,
-            cameraAbnormalStatus: cameraAbnormalStatus,
-            retrievedStatus: retrievedStatus,
-          })
-        } 
-        
-        return accumulator;
-      }, []);
-  },
-  SiteMarkers: state => {
-    const source =
-      state.siteStatusTab === 0
-        ? state.locationRetrievedStatus
-        : state.locationIdentifiedStatus;
-    
-    return source.map(val => ({
-      id: val._id,
-      name: val.cameraLocation,
-      site: val.site,
-      subSite: val.subSite,
-      projectId: val.projectTitle,
-      wgs84dec_y: val.wgs84dec_y, 
-      wgs84dec_x: val.wgs84dec_x,
-      marker: L.latLng(val.wgs84dec_y, val.wgs84dec_x),
-      progress: val.monthly_num.reduce((accumulator, currentValue) => {
-        accumulator[currentValue.month] = currentValue.num;
-        return accumulator;
-      }, Array(12).fill(0)),
-    }));
-  },
+
+            return accumulator;
+          },
+          [],
+        ),
 };
 
 export const mutations = {
