@@ -136,7 +136,7 @@
             </select>
           </span>
           <span class="text-gray">筆資料，您正在檢視：</span>
-          <span>第 2001-3501 筆</span>
+          <span>第 2001 - 3501 筆</span>
           <div class="float-right">
             <div class="input-group pager">
               <div class="input-group-prepend">

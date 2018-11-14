@@ -64,37 +64,11 @@ export const getters = {
         const tmp = {
           value: currentValue.id,
           label: currentValue.name,
-          camera: 
-            getters.currentProject.cameraLocations.reduce(
-              (array, camera) => {
-                if (
-                  currentValue.id === camera.site &&
-                    'NULL' === camera.subSite
-                ) {
-                  array.push(camera);
-                }
-                return array;
-              },
-              [],
-            ),
           child:
             currentValue.children && currentValue.children[0].id !== 'NULL'
               ? currentValue.children.map(val => ({
                 value: val.id,
                 label: val.name,
-                // 塞入 camera 資料
-                camera: getters.currentProject.cameraLocations.reduce(
-                  (array, camera) => {
-                    if (
-                      currentValue.id === camera.site &&
-                        val.id === camera.subSite
-                    ) {
-                      array.push(camera);
-                    }
-                    return array;
-                  },
-                  [],
-                ),
               }))
               : [],
         };
@@ -113,44 +87,60 @@ export const getters = {
       ...sites,
     ];
   },
-  ProjectMarkers: state => {
+  ProjectMarkers: (state, getters) => {
     // siteStatusTab, 0 = 影像回收狀況, 1 = 影像辨識進度
-    const source =
-      state.siteStatusTab === 0
-        ? state.locationRetrievedStatus
-        : state.locationIdentifiedStatus;
-
-    return source.reduce((accumulator, currentValue) => {
-      let siteIdx= null;
-      if(accumulator.length) {
-        accumulator.forEach((accu, i) => {
-          if (accu.name === currentValue.site) {
-            siteIdx = i
-          }
-        });
-      }
-      
-      if (siteIdx === null) {
-        accumulator.push({
-          id: currentValue._id,
-          name: currentValue.site,
-          projectId: currentValue.projectTitle,
-          wgs84dec_y: currentValue.wgs84dec_y, 
-          wgs84dec_x: currentValue.wgs84dec_x,
-          marker: L.latLng(currentValue.wgs84dec_y, currentValue.wgs84dec_x),
-          progress: currentValue.monthly_num.reduce((progress, currentValue) => {
-            progress[currentValue.month] = currentValue.num;
-            return progress;
-          }, Array(12).fill(0)),
-        })
-      } else {
-        accumulator[siteIdx].progress = currentValue.monthly_num.reduce((progress, value) => {
-          progress[value.month] += value.num;
-          return progress;
-        }, accumulator[siteIdx].progress)
-      }
-      return accumulator;
-    }, []);
+    return !getters.currentProject ?
+      [] :
+      getters.currentProject.cameraLocations.reduce((accumulator, currentValue) => {
+        let siteIdx= null;
+        if(accumulator.length) {
+          accumulator.forEach((accu, i) => {
+            if (accu.site === currentValue.site) {
+              siteIdx = i
+            }
+          });
+        }
+        // locationIdentifiedStatus
+        // locationCameraAbnormalStatus
+        // locationRetrievedStatus
+        if (siteIdx === null) {
+          let retrievedStatus = Array(12).fill(0);
+          let cameraAbnormalStatus = Array(12).fill(0);
+          let identifiedStatus = Array(12).fill(0);
+          
+          state.locationRetrievedStatus.forEach(status => {
+            if(status.site === currentValue.site) {
+              status.monthly_num.forEach((value) => {
+                retrievedStatus[value.month] += value.num;
+              })
+            }
+          });
+          state.locationCameraAbnormalStatus.forEach(status => {
+            if(status.site === currentValue.site) {
+              status.monthly_num.forEach((value) => {
+                cameraAbnormalStatus[value.month] += value.num;
+              })
+            }
+          });
+          state.locationIdentifiedStatus.forEach(status => {
+            if(status.site === currentValue.site) {
+              status.monthly_num.forEach((value) => {
+                identifiedStatus[value.month] += value.num;
+              })
+            }
+          });
+          accumulator.push({
+            name: currentValue.site,
+            ...currentValue,
+            marker: L.latLng(currentValue.wgs84dec_y, currentValue.wgs84dec_x),
+            identifiedStatus: identifiedStatus,
+            cameraAbnormalStatus: cameraAbnormalStatus,
+            retrievedStatus: retrievedStatus,
+          })
+        } 
+        
+        return accumulator;
+      }, []);
   },
   SiteMarkers: state => {
     const source =

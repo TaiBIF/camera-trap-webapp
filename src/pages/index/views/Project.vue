@@ -91,7 +91,7 @@
                       :title="mark.num"
                       :lat-lng="mark.marker"
                       :draggable="false"
-                      @click="setCurrent(idx)">
+                      @click="setCurrent(mark, idx)">
                         <l-tooltip :content="mark.name"
                         :options="{permanent: true, direction: 'top'}" />
                       </l-marker>
@@ -107,7 +107,7 @@
                       :fillColor="'#2A7F60'"
                       :fillOpacity="1"
                       :color="'rgba(42,127,96,.43)'"
-                      @click="setCurrent(idx)">
+                      @click="setCurrent(mark, idx)">
                         <l-tooltip :content="mark.name"
                         :options="{permanent: true, direction: 'center'}"></l-tooltip>
                       </l-circle>
@@ -159,7 +159,7 @@
                         <span @click="changeDuration(+1)"><i class="fa fa-3 fa-caret-right"></i></span>
                       </div>
                     </div>
-                    <site-chart :chart="progressData" :current="currentSite.value" @update="setCurrent" />
+                    <site-chart :chart="progressData" :type="siteStatusTab" :current="currentSite.value" @update="setCurrent" />
                   </div>
                   <div v-if="siteStatusTab==1">
                     <div class="row chart-control">
@@ -172,8 +172,11 @@
                         <span @click="changeDuration(+1)"><i class="fa fa-3 fa-caret-right"></i></span>
                       </div>
                     </div>
-                    <site-chart :chart="progressData" v-if="mapMode==='project'" :type="'identify'" :current="currentSite.value" @update="setCurrent" />
-                    <site-chart :chart="progressData" v-if="mapMode==='camera'" :type="'identify'" :current="currentSite.value" @update="setCurrent" />
+                    <site-chart
+                    :chart="progressData"
+                    :type="siteStatusTab"
+                    :current="currentSite.value"
+                    @update="setCurrent" />
                   </div>
                   <div class="camera-chart" v-if="currentCamera!==null">
                     <div class="close" @click="currentCamera=null"><i class="fa fa-times"></i></div>
@@ -319,7 +322,7 @@ export default {
         value: 0,
         label: '全部樣區',
       },
-      siteMarkers: [],
+      SiteMarkers: [],
       currentSubSite: null, // 紀錄目前顯示的子樣站
       currentCamera: null, // 紀錄目前顯示的相機
       errorReportOpen: false,
@@ -520,14 +523,19 @@ export default {
     species: 'loadPieChart',
   },
   computed: {
-    ...project.mapState(['speciesGroup', 'siteStatusTab']),
+    ...project.mapState([
+      'speciesGroup', 
+      'siteStatusTab', 
+      'locationIdentifiedStatus', 
+      'locationRetrievedStatus', 
+      'locationCameraAbnormalStatus',
+    ]),
     ...project.mapGetters([
       'currentProject',
       'cameraLocations',
       'species',
       'sites',
       'ProjectMarkers',
-      'SiteMarkers',
     ]),
   },
   methods: {
@@ -551,10 +559,11 @@ export default {
           subSite: !this.currentSubSite ? undefined : this.currentSubSite.label,
         },
       };
-
+      
       this.getLocationIdentifiedStatus(payload);
       this.getLocationRetrievedStatus(payload);
       this.getLocationCameraAbnormalStatus(payload);
+
       this.renderMap();
     },
     timeFormat(time) {
@@ -569,13 +578,13 @@ export default {
         if (!value.child === false && value.child.length) {
           this.currentCamera = null;
           this.currentSubSite = value.child[0];
-          this.siteMarkers = value.child[0].camera;
+          if(!this.SiteMarkers.length) this.setSiteMarker(value);
         } else {
           this.currentCamera = null;
           this.currentSubSite = null;
         }
         this.mapMode = 'camera';
-        this.renderMap();
+        // this.renderMap();
       }
 
       if (this.mapMode === 'camera') {
@@ -588,18 +597,15 @@ export default {
         } else {
           this.currentCamera = null;
           this.currentSubSite = value.child[0];
-          this.renderMap();
+          // this.renderMap();
         }
       }
     },
-    setCurrent(idx) {
+    setCurrent(value, index) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
-        this.currentCamera = {
-          ...(!this.currentSubSite ? this.currentSite.camera[idx] : this.currentSubSite.camera[idx]),
-          ...this.SiteMarkers[idx].progress
-        };
-        this.currentCamera.icon = !this.SiteMarkers[idx].error ?
+        this.currentCamera = value;
+        this.currentCamera.icon = !value.error ?
           IconSelect :
           ErrorIconSelect;
         this.mapInfo.center = window._.clone(this.currentCamera.marker);
@@ -609,11 +615,58 @@ export default {
       }
 
       if (this.mapMode === 'project') {
-        this.currentSite = this.SiteMarkers[idx];
-        setTimeout(() => {
-          this.mapInfo.center = window._.clone(this.SiteMarkers[idx].marker);
-        }, 50);
+        this.currentSite = this.sites.find((item, index, array) => {
+          return item.value === value.site
+        }); 
+
+        this.setSiteMarker(value, index);
       }
+    },
+    setSiteMarker(value, index) {
+      this.SiteMarkers = this.currentProject.cameraLocations.reduce((accumulator, currentValue) => {
+        if (currentValue.site===value.site && currentValue.subSite===value.subSite) {
+          let locationIdentifiedStatus
+          let locationRetrievedStatus
+          let locationCameraAbnormalStatus
+
+          let retrievedStatus = Array(12).fill(0);
+          let cameraAbnormalStatus = Array(12).fill(0);
+          let identifiedStatus = Array(12).fill(0);
+          
+          this.locationRetrievedStatus.forEach(status => {
+            if(status.site === currentValue.site) {
+              status.monthly_num.forEach((value) => {
+                retrievedStatus[value.month] += value.num;
+              })
+            }
+          });
+          this.locationCameraAbnormalStatus.forEach(status => {
+            if(status.site === currentValue.site) {
+              status.monthly_num.forEach((value) => {
+                cameraAbnormalStatus[value.month] += value.num;
+              })
+            }
+          });
+          this.locationIdentifiedStatus.forEach(status => {
+            if(status.site === currentValue.site) {
+              status.monthly_num.forEach((value) => {
+                identifiedStatus[value.month] += value.num;
+              })
+            }
+          });
+
+          accumulator.push({
+            name: currentValue.cameraLocation,
+            marker: L.latLng(currentValue.wgs84dec_y, currentValue.wgs84dec_x),
+            ...currentValue,
+            retrievedStatus,
+            cameraAbnormalStatus,
+            identifiedStatus,
+          });
+        }
+        return accumulator;
+      }, []);
+
     },
     countPercentage(idx, array) {
       let total = 0;
@@ -630,7 +683,7 @@ export default {
     loadBarChart() {
       const BarChartData = {
         name: '每月影像筆數',
-        data: [0, 355, 178, 96, 0, 0, 0, 0, 0, 0, 0, 0].reduce((array, value, i) => {
+        data: this.currentCamera.retrievedStatus.reduce((array, value, i) => {
           array.push({
             name: (i+1) + '月',
             y: value,
@@ -688,7 +741,7 @@ export default {
           ({
             ...val,
             icon: val.error > 0 ? ErrorIconSelect : IconSelect,
-          }), );
+          }));
       }
       if (this.mapInfo.marker.length) {
         this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker);

@@ -1,25 +1,43 @@
 <template>
   <table class="site-table"
-  :class="{'normal': type=='normal', 'identify': type=='identify'}">
-    <tbody>
+  :class="{'normal': type===0, 'identify': type===1}">
+    <tbody v-if="type===0">
       <tr
       v-for="(d, dIdx) in chart"
       :key="`trow-${dIdx}`"
       :class="{'is-active': d.id==current}"
-      @click="setCurrent(dIdx)">
+      @click="setCurrent(d, dIdx)">
         <th>{{d.name}}</th>
         <td
-        v-for="(p, pIdx) in d.progress"
-        :key="`trow-${dIdx}-${pIdx}`">
-          <div v-if="d.progress">
-            <span class="progress"
-            v-if="!p === false && p > 0"
-            :class="{
-              'is-complete': p>0,
-              'not-complete': p==1,
-              'is-cancel': p==-1
-            }"></span>
-          </div>
+        v-for="(data, rid) in d.retrievedStatus"
+        :key="`retrievedStatus-${type}-${rid}`">
+          <span class="progress"
+          v-if="data !== 0"
+          :class="{
+            'is-complete': data>0,
+            'not-complete': d.cameraAbnormalStatus[rid] > 0,
+            'is-cancel': data==-1
+          }"></span>
+        </td>
+      </tr>
+    </tbody>
+    <tbody v-if="type===1">
+      <tr
+      v-for="(d, dIdx) in chart"
+      :key="`trow-${dIdx}`"
+      :class="{'is-active': d.id==current}"
+      @click="setCurrent(d, dIdx)">
+        <th>{{d.name}}</th>
+        <td
+        v-for="(data, rid) in d.identifiedStatus"
+        :key="`identifiedStatus-${type}-${rid}`">
+          <span class="progress"
+          v-if="data !== 0"
+          :class="{
+            'is-complete': data === d.retrievedStatus[rid],
+            'not-complete': data < d.retrievedStatus[rid],
+            'is-cancel': data==-1
+          }"></span>
         </td>
       </tr>
     </tbody>
@@ -40,7 +58,7 @@
         <td>12 月</td>
       </tr>
     </tfoot>
-    <caption v-if="type=='normal'">
+    <caption v-if="type===0">
       <span class="legend">
         <span class="progress float-left is-complete"></span>
         <span class="text">當月資料完整</span>
@@ -72,8 +90,8 @@ export default {
   name: 'SiteChart',
   props: {
     type: {
-      type: String,
-      default: 'normal',
+      type: Number,
+      default: 0,
     },
     current: {
       type: [Number, String],
@@ -85,8 +103,8 @@ export default {
     },
   },
   methods: {
-    setCurrent(d) {
-      this.$emit('update', d);
+    setCurrent(d, dIdx) {
+      this.$emit('update', d, dIdx);
     },
   },
 };

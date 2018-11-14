@@ -74,7 +74,7 @@
                   </div>
                   <h5 class="text-green">
                     <a href="#" class="link">
-                      {{msg.project_id}} {{msg.site}}-{{msg.subSite}} {{msg.camera}}<br/>
+                      {{msg.projectId}} {{msg.site}}-{{msg.subSite}} {{msg.camera}}<br/>
                       {{msg.startAt}}-{{msg.endAt}}
                     </a>
                   </h5>
@@ -96,7 +96,7 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false">
-                黃智賢
+                {{ loginUser }}
               </a>
               <div class="dropdown-menu dropdown-menu-right"
               aria-labelledby="navbarDropdownMenuLink">
@@ -119,13 +119,13 @@ import { mapGetters, mapActions } from 'vuex';
 const logMessage = [
   {
     updateAt: '2018/07/23 17:25',
-    project_id: '全島鼬獾',
+    projectId: '全島鼬獾',
     site: '屏東處',
-    subSite: '潮州站', 
+    subSite: '潮州站',
     camera: 'PT09A',
     startAt: '2018/06/01',
     endAt: '2018/07/31',
-    status: 1 // 1: success, -1: fail
+    status: 1, // 1: success, -1: fail
   },
 ];
 
@@ -135,7 +135,10 @@ export default {
     ...mapGetters(['PageLock']),
   },
   data() {
-    return { logMessage };
+    return {
+      logMessage,
+      loginUser: '黃智賢',
+    };
   },
   watch: {
     PageLock: 'setBodyLock',
