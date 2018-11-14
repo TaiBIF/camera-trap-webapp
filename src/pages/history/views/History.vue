@@ -49,7 +49,7 @@
             </div>
 
             <a
-            href="./upload.html"
+            href="/upload.html"
             v-if="row.status==2"
             class="link text-underline mr-2">
               補上傳影像檔
