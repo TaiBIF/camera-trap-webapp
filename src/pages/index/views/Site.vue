@@ -5,14 +5,14 @@
       <div v-if="editMode" class="edit-container">
         <div class="row">
           <div class="col-7">
-            <span class="text-gray">{{projectInfo.site}} - {{projectInfo.subSite}}</span>
+            <span class="text-gray">{{this.$route.params.site_id}} - {{this.$route.params.subsite_id}}</span>
             <span class="divider"></span>
-            <span class="text-gray">{{projectInfo.camera.toString()}}</span>
+            <span class="text-gray">{{editViewCameraList.join(',')}}</span>
             <span class="divider"></span>
-            <span class="text-gray">{{projectInfo.startAt}} 到 {{projectInfo.endAt}}</span>
+            <span class="text-gray">{{editViewTimeRange.start}} 到 {{editViewTimeRange.end}}</span>
           </div>
           <div class="col-5 text-right">
-            <span class="text-gray">最後儲存時間：{{projectInfo.lastUpdate}} 分鐘前</span>
+            <span class="text-gray">最後儲存時間：{{`todo`}} 分鐘前</span>
             <span class="divider"></span>
             <button @click.stop.prevent="changeMode('editMode', false)" class="btn btn-circle"><i class="icon-save"></i></button>
             <span class="divider"></span>
@@ -37,9 +37,7 @@
               </div>
               <div class="mb-2">
                 <div class="checkbox checkbox-inline" :key="camera.fullCameraLocationMd5" v-for="camera in cameraList">
-                  <input type="checkbox" v-model="form.camera" :id="camera.fullCameraLocationMd5" :value="camera.fullCameraLocationMd5"
-                    :disabled = "!cameraLocked[camera.fullCameraLocationMd5] || cameraLocked[camera.fullCameraLocationMd5].locked"
-                  >
+                  <input type="checkbox" v-model="form.camera" :id="camera.fullCameraLocationMd5" :value="camera.fullCameraLocationMd5">
                   <label :for="camera.fullCameraLocationMd5">
                     <span class="text">{{camera.cameraLocation}}</span>
                     <span class="icon" v-if="cameraLocked[camera.fullCameraLocationMd5] && cameraLocked[camera.fullCameraLocationMd5].locked">
@@ -77,7 +75,7 @@
             </div>
           </div>
           <div>
-            <button @click.stop.prevent="changeMode('editMode', true)" class="btn btn-sm btn-block btn-green">
+            <button @click.stop.prevent="changeMode('editMode', true)" class="btn btn-sm btn-block btn-green" :disabled="!enableEditeMode">
               <i class="fa fa-pencil-alt"></i> 進入編輯模式
             </button>
           </div>
@@ -254,15 +252,6 @@ const formDefault = {
     HH: '23',
     mm: '59'
   }
-}
-
-const projectInfo = {
-  site: '花蓮處',
-  subSite: '南華站',
-  camera: ['PT01A', 'PT04A', 'PT09A'],
-  startAt: '16/03/01 上午12:00',
-  endAt: '18/07/01 上午12:00',
-  lastUpdate: 1
 }
 
 // debugger
@@ -528,6 +517,32 @@ export default {
       return this.currentProject
         ? this.currentProject.cameraLocations.filter(val => val.subSite === this.$route.params.subsite_id)
         : []
+    },
+    // 編輯視窗用相機列表
+    editViewCameraList () {
+      return this.form.camera.indexOf('all') !== -1
+        ? this.cameraList.map(val => val.cameraLocation)
+        : this.form.camera.map(val => this.cameraList.find(v => v.fullCameraLocationMd5 === val).cameraLocation)
+    },
+    // 編輯視窗用資料時間
+    editViewTimeRange () {
+      const getTime = (day, time) => {
+        return moment(day)
+            .hour(time.HH)
+            .minute(time.mm)
+            .format('YYYY/MM/DD HH:mm:ss')
+      }
+
+      return {
+        start: getTime(this.form.start_at, this.form.start_time),
+        end: getTime(this.form.end_at, this.form.end_time)
+      }
+    },
+    // 判斷是否可以進入編輯模式
+    enableEditeMode () {
+      return this.form.camera.indexOf('all') !== -1
+        ? this.cameraList.every(val => this.cameraLocked[val.fullCameraLocationMd5].locked === false)
+        : this.siteData.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
     }
   },
   methods: {
@@ -633,8 +648,8 @@ export default {
         const nDt = !next ? null : new Date(next)
         const time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
-        let isStart = false
-        let isEnd = false
+        // let isStart = false
+        // let isEnd = false
 
         if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false
@@ -653,7 +668,7 @@ export default {
 
         // 是不是連拍第一張
         if (isContinue && !pDt && nDt - cDt <= time || cDt - pDt >= time) {
-          isStart = true
+          // isStart = true
           this.continuousCount = 1
           this.continuousStart = i
           $row.is_continuous_start = true
@@ -664,7 +679,7 @@ export default {
 
         // 是不是連拍最後一張
         if (isContinue && !nDt && cDt - pDt <= time || nDt - cDt >= time) {
-          isEnd = true
+          // isEnd = true
           $row.is_continuous_end = true
 
           rowData[this.continuousStart].continuous_count = this.continuousCount
