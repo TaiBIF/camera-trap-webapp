@@ -22,7 +22,7 @@
       </div>
       <!-- Overview mode -->
       <div v-else class="search-content">
-        <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
+        <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'" @click="exportCsv">
           下載篩選結果
         </a>
         <h3 class="text-green mb-2">{{this.$route.params.site_id}} - {{this.$route.params.subsite_id}}</h3>
@@ -235,6 +235,7 @@ import VueTimepicker from 'vue2-timepicker'
 import Handsontable from 'handsontable'
 import 'handsontable/languages/all'
 import ZoomDrag from '../components/ZoomDrag'
+import downloadCSV from '../../../util/downloadCsv.js'
 
 const project = createNamespacedHelpers('project')
 const media = createNamespacedHelpers('media')
@@ -556,6 +557,9 @@ export default {
     ...cameraLocation.mapActions([
       'getCameraLocked'
     ]),
+    exportCsv () {
+      downloadCSV([this.settings.colHeaders, ...this.sheet.getData()])
+    },
     fetchCameraLocked () {
       this.getCameraLocked({
         projectTitle: this.$route.params.id,
