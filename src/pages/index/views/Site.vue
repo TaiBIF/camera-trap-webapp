@@ -442,6 +442,13 @@ export default {
         filters: true,
         contextMenu: false,
         dropdownMenu: true,
+        cells: (row, col) => {
+          let cellProperties = {}
+          if (col === 4) {
+            cellProperties.renderer = 'continousRenderer';
+          }
+          return cellProperties
+        },
         afterChange: (changes) => {
           if (!changes) return
           // chagnes: [[index, column, old value, new value]]
@@ -589,11 +596,12 @@ export default {
       this.isDrag = false
     },
     continousRenderer (instance, TD, row, col, prop, value) {
+      Handsontable.renderers.TextRenderer.apply(this, arguments);
+      
       if (prop === 'species' && !value === false && value !== '') {
         const $row = this.row_data[row]
         let clsName = ''
         let error = ''
-
         // 不在預設物種資料顯示錯誤
         if (this.species.indexOf(value) === -1 && value.indexOf('測試') === -1) {
           clsName += 'htInvalid '
@@ -650,25 +658,25 @@ export default {
       this.setContinuous()
     },
     setContinuous (data) {
-      const rowData = !data ? this.row_data : data
+      let rowData = !data ? this.row_data : data
       // 判斷連拍
       rowData.forEach((r, i) => {
         const $row = r
-        const current = r.datetime
-        const prev = i > 0 ? rowData[i - 1].datetime : null
-        const next = i + 1 < rowData.length ? rowData[i + 1].datetime : null
+        const current = r.corrected_date_time
+        const prev = i > 0 ? rowData[i - 1].corrected_date_time : null
+        const next = i + 1 < rowData.length ? rowData[i + 1].corrected_date_time : null
         const cDt = new Date(current)
         const pDt = !prev ? null : new Date(prev)
         const nDt = !next ? null : new Date(next)
         const time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
-        // let isStart = false
-        // let isEnd = false
+        let isStart = false
+        let isEnd = false
 
         if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false
         }
-
+        
         // 排除測試、空拍
         if (
           !nDt === false &&
@@ -705,7 +713,10 @@ export default {
     },
     getSheetData () {
       // 產出 sheet 畫面
+      this.row_data = this.siteData.data
+      Handsontable.renderers.registerRenderer('continousRenderer', this.continousRenderer);
       this.sheet = new Handsontable(this.sheetContainer, { ...this.settings, ...this.siteData })
+      
       this.isRender = true
     },
     changeMode (key, val) {
@@ -733,7 +744,7 @@ export default {
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
       if (this.isRender) this.sheet.updateSettings({ ...this.settings, ...this.siteData })
-    }
+    },
   },
   mounted () {
     this.setCurrentProject(this.$route.params.id)
@@ -753,6 +764,6 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.fetchCameraLockTimer)
-  }
-}
+  },
+};
 </script>
