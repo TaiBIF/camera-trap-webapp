@@ -96,7 +96,7 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false">
-                {{ loginUser }}
+                {{ loginUser.name }}
               </a>
               <div class="dropdown-menu dropdown-menu-right"
               aria-labelledby="navbarDropdownMenuLink">
@@ -137,7 +137,7 @@ export default {
   data() {
     return {
       logMessage,
-      loginUser: '黃智賢',
+      loginUser: {name: '黃智賢'},
     };
   },
   watch: {

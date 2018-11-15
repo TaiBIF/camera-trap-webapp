@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <ul class="breadcrumbs">
-      <li><a href="index.html/">計畫總覽</a></li>
-      <li><a href="index.html#/project/1">林務局全島鼬獾監測</a></li>
-      <li><a>檔案上傳</a></li>
+      <li><a href="index.html/">{{breadcrumb[0]}}</a></li>
+      <li><a href="index.html#/project/1">{{breadcrumb[1]}}</a></li>
+      <li><a>{{breadcrumb[2]}}</a></li>
     </ul>
 
     <!-- 拖拉或選擇檔案 -->
@@ -40,8 +40,8 @@
           </div>
           <!-- 顯示上傳資訊 -->
           <div class="float-right text-right" v-if="isUploading">
-            剩餘時間：40 分鐘<br/>
-            <small class="text-gray">正在上傳檔案：5 %</small>
+            剩餘時間：{{40}} 分鐘<br/>
+            <small class="text-gray">正在上傳檔案：{{5}} %</small>
           </div>
           <!-- 顯示選取與刪除 -->
           <div class="float-right" v-else>
@@ -222,6 +222,9 @@ export default {
   mixins: [commonMixin],
   data () {
     return {
+      breadcrumb: [
+        '計畫總覽','林務局全島鼬獾監測','檔案上傳'
+      ],
       siteOpts: [{ value: '新竹處', label: '新竹處' }],
       subSiteOpts: [{ value: '關山站', label: '關山站' }],
       cameraOpts: [{ value: 'PT01A', label: 'PT01A' }, { value: 'PT02A', label: 'PT02A' }, { value: 'PT03A', label: 'PT03A' }],

@@ -28,25 +28,33 @@
           <div class="col-3">
             <div class="form-group">
               <label for="">計畫名稱：</label>
-              <v-select :placeholder="'請選擇計畫名稱'"></v-select>
+              <v-select
+              v-model="form.project"
+              :placeholder="'請選擇計畫名稱'"></v-select>
             </div>
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
                   <label for="">樣區：</label>
-                  <v-select :placeholder="'請選擇樣區'"></v-select>
+                  <v-select
+                  v-model="form.site"
+                  :placeholder="'請選擇樣區'"></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">子樣區：</label>
-                  <v-select :placeholder="'請選擇子樣區'"></v-select>
+                  <v-select
+                  v-model="form.subSite"
+                  :placeholder="'請選擇子樣區'"></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">相機位置：</label>
-                  <v-select :placeholder="'請選擇相機位置'"></v-select>
+                  <v-select
+                  v-model="form.camera"
+                  :placeholder="'請選擇相機位置'"></v-select>
                 </div>
               </div>
             </div>
@@ -162,6 +170,9 @@ export default {
       isContinuous: false,
       continuousTime: 1,
       form: {
+        project: '',
+        site: '',
+        subSite: '',
         camera: [],
         startAt: '',
         endAt: '',

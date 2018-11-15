@@ -202,20 +202,15 @@
           <div class="version-body">
             <table class="table version-list">
               <tbody>
-                <tr>
-                  <td>2018/09/05 17:37</td>
-                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
-                  <td class="text-gray">目前版本</td>
-                </tr>
-                <tr>
-                  <td>2018/09/05 17:37</td>
-                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
-                  <td class="text-gray"><a class="btn btn-basic btn-sm">還原成此版本</a></td>
-                </tr>
-                <tr>
-                  <td>2018/09/05 17:37</td>
-                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
-                  <td class="text-gray"><a class="btn btn-basic btn-sm">還原成此版本</a></td>
+                <tr 
+                v-for="(history, i) in historyList"
+                :key="`history-${i}`">
+                  <td>{{history.updateAt}}</td>
+                  <td class="text-gray">由 <b>{{history.updateBy}}</b> 編輯</td>
+                  <td class="text-gray" v-if="i===0">目前版本</td>
+                  <td class="text-gray" v-else>
+                    <a class="btn btn-basic btn-sm">還原成此版本</a>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -273,6 +268,20 @@ export default {
       selection: null,
       currentRow: 0,
       row_data: [],
+      historyList: [
+        {
+          updateAt: '2018/09/05 17:37',
+          updateBy: '黃智賢'
+        },
+        {
+          updateAt: '2018/09/05 17:37',
+          updateBy: '黃智賢'
+        },
+        {
+          updateAt: '2018/09/05 17:37',
+          updateBy: '黃智賢'
+        },
+      ],
       rowData: {},
       // 連拍紀錄
       continuousCount: 0,
