@@ -280,7 +280,7 @@ export default {
         {
           updateAt: '2018/09/05 17:37',
           updateBy: '黃智賢'
-        },
+        }
       ],
       rowData: {},
       // 連拍紀錄
@@ -291,9 +291,6 @@ export default {
         current: 0,
         total: 0
       },
-      updateRow: {},
-      // [API] 需要透過 API 帶入常用分類
-      species: ['測試', '空拍', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
       contextMenuSetting: {
         callback: (key, selection) => {
           const idx = selection[0].start.row
@@ -526,7 +523,8 @@ export default {
       'currentProject'
     ]),
     ...media.mapGetters([
-      'siteData'
+      'siteData',
+      'species'
     ]),
     ...cameraLocation.mapGetters([
       'cameraLocked'

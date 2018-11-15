@@ -1,12 +1,14 @@
-import { getSiteData } from '../../service/api'
+import { getSiteData, getDataFields } from '../../service/api'
 
 export const getters = {
+  species: state => state.dataFields.speciesList,
   siteData: state => {
     const defaultColumn = {
       subSite: '樣區',
       cameraLocation: '相機位置',
       fileName: '檔名',
-      corrected_date_time: '時間'
+      corrected_date_time: '時間',
+      species: '物種'
     }
 
     // 組合 column header
@@ -49,6 +51,9 @@ export const getters = {
 }
 
 export const mutations = {
+  updateDataFields (state, payload) {
+    state.dataFields = payload
+  },
   updateSiteData (state, payload) {
     state.siteData = payload
   }
@@ -56,6 +61,8 @@ export const mutations = {
 
 export const actions = {
   async getSiteData ({ commit }, payload) {
+    const dataFields = await getDataFields({ projectTitle: payload.query.projectTitle })
+    commit('updateDataFields', dataFields)
     const data = await getSiteData(payload)
     commit('updateSiteData', data)
   }
@@ -64,6 +71,7 @@ export const actions = {
 export default {
   namespaced: true,
   state: {
+    dataFields: [],
     siteData: []
   },
   getters,
