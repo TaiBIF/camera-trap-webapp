@@ -123,6 +123,15 @@
               </a>
             </div>
           </div>
+          <div class="error-message" v-if="hasColumnError">
+            <a class="close">
+              <i class="fa fa-times"></i>
+            </a>
+            <span class="alert-box"></span>
+            <span class="text">
+              物種名稱不在預設中，請修正名稱，或<a class="link">回報管理員</a>
+            </span>
+          </div>
         </div>
         <div id="spreadsheet"></div>
         <!-- Pagination -->
@@ -219,6 +228,7 @@
         <div class="drag-bar" @mousedown="dragStart"></div>
       </div>
     </div>
+    <idle-timeout-dialog :open="idleTimeoutOpen" @close="idleTimeoutOpen=false; editMode = false" />
   </div>
 </template>
 
@@ -230,6 +240,7 @@ import VueTimepicker from 'vue2-timepicker'
 import Handsontable from 'handsontable'
 import 'handsontable/languages/all'
 import ZoomDrag from '../components/ZoomDrag'
+import IdleTimeoutDialog from '../components/IdleTimeoutDialog'
 
 const project = createNamespacedHelpers('project')
 const media = createNamespacedHelpers('media')
@@ -255,6 +266,9 @@ export default {
   data () {
     return {
       today: moment(),
+      idleTimeout: null,
+      idleTimeoutOpen: false,
+      hasColumnError: false,
       editMode: false,
       galleryShow: true,
       historyShow: true,
@@ -510,7 +524,7 @@ export default {
     }
   },
   components: {
-    DatePicker, VueTimepicker, ZoomDrag
+    DatePicker, VueTimepicker, ZoomDrag, IdleTimeoutDialog
   },
   computed: {
     ...project.mapGetters([
@@ -584,6 +598,7 @@ export default {
       this.isDrag = false
     },
     continousRenderer (instance, TD, row, col, prop, value) {
+      this.hasColumnError = false
       if (prop === 'species' && !value === false && value !== '') {
         const $row = this.row_data[row]
         let clsName = ''
@@ -591,6 +606,7 @@ export default {
 
         // 不在預設物種資料顯示錯誤
         if (this.species.indexOf(value) === -1 && value.indexOf('測試') === -1) {
+          this.hasColumnError = true
           clsName += 'htInvalid '
           error = '<span class="alert-box">!</span>'
         }
@@ -761,8 +777,26 @@ export default {
     window.onresize = () => { this.settingSheetHeight() }
 
     // 拖拉側欄照片區塊大小
-    document.body.addEventListener('mousemove', (e) => { this.dragMove(e) })
+    document.body.addEventListener('mousemove', (e) => { 
+      this.dragMove(e) 
+      if(this.editMode) {
+        this.idleTimeoutOpen = false
+        clearTimeout(this.idleTimeout)
+        this.idleTimeout = setTimeout(() => {
+          this.idleTimeoutOpen = true
+          this.editMode = false
+        }, 1800)
+      }
+    })
+    
     document.body.addEventListener('mouseup', (e) => { this.dragEnd(e) })
+
+    if(this.editMode) {
+      this.idleTimeout = setTimeout(() => {
+        this.idleTimeoutOpen = true
+      }, 1800000)
+    }
+    
   }
 }
 </script>
