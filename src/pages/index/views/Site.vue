@@ -567,7 +567,7 @@ export default {
       'getCameraLocked'
     ]),
     exportCsv () {
-      downloadCSV([this.settings.colHeaders, ...this.sheet.getData()])
+      downloadCSV([this.siteData.colHeaders, ...this.sheet.getData()])
     },
     fetchCameraLocked () {
       this.getCameraLocked({
