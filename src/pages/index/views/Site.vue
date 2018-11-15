@@ -269,7 +269,7 @@ export default {
       galleryWidth: 450,
       isContinuous: false,
       continuousTime: 1,
-      form: formDefault,
+      form: Object.assign({}, formDefault),
       selection: null,
       currentRow: 0,
       row_data: [],
@@ -457,6 +457,7 @@ export default {
     'currentRow': 'recordUpdate',
     $route (to, from) {
       // 清空篩選條件
+      console.log(formDefault)
       this.form = Object.assign({}, formDefault)
       this.fetchCameraLocked()
     },
