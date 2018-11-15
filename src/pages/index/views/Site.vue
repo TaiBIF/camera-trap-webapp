@@ -87,7 +87,7 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-8">
-              <small class="text-gray">共 {{siteData.length -1}} 筆資料</small>
+              <small class="text-gray">共 {{siteData.data.length}} 筆資料</small>
               <div class="divider"></div>
               <div class="dropdown" :class="{'d-none': !editMode}">
                 <div class="btn-group btn-grayscale" :class="{'active': isContinuous}">
@@ -155,14 +155,14 @@
         </div>
       </div>
       <div class="sidebar" :style="{'width': `${historyShow || galleryShow ? galleryWidth : 0}px`}">
-        <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false && galleryShow">
+        <div class="photo-container" v-if="siteData.data[currentRow] && !siteData.data[currentRow].imageUrl==false && galleryShow">
           <div class="gallery-header">
             <a @click="changeMode('galleryShow', false)" class="close mt-1 float-right">
               <i class="icon-remove-sm"></i>
             </a>
             影像檢視
           </div>
-          <div class="gallery-body" v-if="!row_data[currentRow].url || row_data[currentRow].url==''">
+          <div class="gallery-body" v-if="!siteData.data[currentRow].imageUrl || siteData.data[currentRow].imageUrl==''">
             <div class="empty-result">
               <img src="/assets/common/empty-site.png" width="174" srcset="/assets/common/empty-site@2x.png">
               <h5 class="text-gray">尚未上傳照片資料</h5>
@@ -173,15 +173,15 @@
             </div>
           </div>
           <div class="gallery-body" v-else>
-            <zoom-drag :row="row_data[currentRow]" :index="currentRow" :total="row_data.length" />
+            <zoom-drag :row="siteData.data[currentRow]" :index="currentRow" :total="siteData.data.length" />
             <div class="control">
               <span class="prev" @click="currentRow>0 ? currentRow--: currentRow">
                 <i class="fa fa-caret-left"></i>
               </span>
               <span class="text">
-                {{row_data[currentRow].filename}} | {{row_data[currentRow].datetime}}
+                {{siteData.data[currentRow].fileName}} | {{siteData.data[currentRow].corrected_date_time}}
               </span>
-              <span class="prev" @click="currentRow>row_data.length-1?currentRow: currentRow++">
+              <span class="prev" @click="currentRow>siteData.data[currentRow].length-1?currentRow: currentRow++">
                 <i class="fa fa-caret-right"></i>
               </span>
             </div>
@@ -243,7 +243,7 @@ const cameraLocation = createNamespacedHelpers('cameraLocation')
 
 const formDefault = {
   camera: [],
-  start_at: moment('2018/1/1'),
+  start_at: moment('2017/1/1'),
   end_at: moment('2018/12/31'),
   start_time: {
     HH: '00',
@@ -457,7 +457,6 @@ export default {
     'currentRow': 'recordUpdate',
     $route (to, from) {
       // 清空篩選條件
-      console.log(formDefault)
       this.form = Object.assign({}, formDefault)
       this.fetchCameraLocked()
     },
@@ -545,7 +544,7 @@ export default {
     enableEditeMode () {
       return this.form.camera.indexOf('all') !== -1
         ? this.cameraList.every(val => this.cameraLocked[val.fullCameraLocationMd5].locked === false)
-        : this.siteData.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
+        : this.siteData.data.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
     }
   },
   methods: {
@@ -696,28 +695,8 @@ export default {
       return rowData
     },
     getSheetData () {
-      const data = []
-      this.siteData.forEach((ref, idx) => {
-        var row = ref.split(/,/g)
-        // debugger
-        if (idx === 0) {
-          // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
-          this.rowData = row
-        } else {
-          var item = {}
-
-          row.forEach((r, i) => {
-            item[this.rowData[i].toLowerCase()] = r
-          })
-
-          data.push(item)
-        }
-      })
-
-      this.row_data = this.setContinuous(data)
-      this.settings.data = this.row_data
       // 產出 sheet 畫面
-      this.sheet = new Handsontable(this.sheetContainer, this.settings)
+      this.sheet = new Handsontable(this.sheetContainer, { ...this.settings, ...this.siteData })
       this.isRender = true
     },
     changeMode (key, val) {
@@ -731,7 +710,7 @@ export default {
           col.editor = !val ? false : col.type
         })
         // 更新 sheet
-        this.sheet.updateSettings(this.settings)
+        this.sheet.updateSettings({ ...this.settings, ...this.siteData })
       }
 
       setTimeout(() => {
@@ -744,7 +723,7 @@ export default {
       this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
-      if (this.isRender) this.sheet.updateSettings(this.settings)
+      if (this.isRender) this.sheet.updateSettings({ ...this.settings, ...this.siteData })
     }
   },
   mounted () {

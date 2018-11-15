@@ -5,7 +5,7 @@
         <a @click="$emit('close')" class="close">
           <i class="icon-remove-white"></i>
         </a>
-        <img :src="row.url">
+        <img :src="row.imageUrl">
         <div class="caption">
           <small class="float-right">
             ( {{total}} 筆資料中的第 {{index}} 筆  )
