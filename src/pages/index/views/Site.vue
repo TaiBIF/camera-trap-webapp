@@ -10,6 +10,7 @@
             <span class="text-gray">{{editViewCameraList.join(',')}}</span>
             <span class="divider"></span>
             <span class="text-gray">{{editViewTimeRange.start}} 到 {{editViewTimeRange.end}}</span>
+            <span class="error-label">20</span>
           </div>
           <div class="col-5 text-right">
             <span class="text-gray">最後儲存時間：{{`todo`}} 分鐘前</span>
@@ -43,6 +44,7 @@
                     <span class="icon" v-if="cameraLocked[camera.fullCameraLocationMd5] && cameraLocked[camera.fullCameraLocationMd5].locked">
                       <i class="icon-lock align-middle" v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy} 正在編輯中`"></i>
                     </span>
+                    <span class="error-label">1</span>
                   </label>
                 </div>
               </div>
@@ -111,12 +113,14 @@
             <div class="col-4 text-right">
               <div class="divider"></div>
               <a class="btn btn-icon"
+              v-tooltip.top="'影像檢視'"
               @click="changeMode('galleryShow', !galleryShow)"
               :class="{'active': galleryShow}">
                 <i class="icon-gallery"></i>
               </a>
               <div class="divider"></div>
               <a class="btn btn-icon"
+              v-tooltip.top="'版本紀錄'"
               @click="changeMode('historyShow', !historyShow)"
               :class="{'active': historyShow}">
                 <i class="icon-time-machine"></i>
@@ -124,7 +128,7 @@
             </div>
           </div>
           <div class="error-message" v-if="hasColumnError">
-            <a class="close">
+            <a class="close" @click="hasColumnError=false">
               <i class="fa fa-times"></i>
             </a>
             <span class="alert-box"></span>
@@ -184,13 +188,17 @@
           <div class="gallery-body" v-else>
             <zoom-drag :row="siteData.data[currentRow]" :index="currentRow" :total="siteData.data.length" />
             <div class="control">
-              <span class="prev" @click="currentRow>0 ? currentRow--: currentRow">
+              <span class="prev"
+              v-tooltip.top="'上一張'"
+              @click="currentRow>0 ? currentRow--: currentRow">
                 <i class="fa fa-caret-left"></i>
               </span>
               <span class="text">
                 {{siteData.data[currentRow].fileName}} | {{siteData.data[currentRow].corrected_date_time}}
               </span>
-              <span class="prev" @click="currentRow>siteData.data[currentRow].length-1?currentRow: currentRow++">
+              <span class="prev"
+              v-tooltip.top="'下一張'"
+              @click="currentRow>siteData.data[currentRow].length-1?currentRow: currentRow++">
                 <i class="fa fa-caret-right"></i>
               </span>
             </div>
@@ -211,7 +219,7 @@
           <div class="version-body">
             <table class="table version-list">
               <tbody>
-                <tr 
+                <tr
                 v-for="(history, i) in historyList"
                 :key="`history-${i}`">
                   <td>{{history.updateAt}}</td>
@@ -225,7 +233,7 @@
             </table>
           </div>
         </div>
-        <div class="drag-bar" @mousedown="dragStart"></div>
+        <div class="drag-bar" @mousedown="dragStart" v-tooltip.top="'拖曳拉大影像檢視範圍'"></div>
       </div>
     </div>
     <idle-timeout-dialog :open="idleTimeoutOpen" @close="idleTimeoutOpen=false; editMode = false" />
@@ -454,21 +462,32 @@ export default {
         contextMenu: false,
         dropdownMenu: true,
         cells: (row, col) => {
-          let cellProperties = {}
+          const cellProperties = {}
           if (col === 4) {
-            cellProperties.renderer = 'continousRenderer';
+            cellProperties.renderer = 'continousRenderer'
           }
           return cellProperties
         },
-        afterChange: (changes) => {
+        afterChange: (changes, source) => {
           if (!changes) return
-          // chagnes: [[index, column, old value, new value]]
-          // updateRow 紀錄有更新的欄位
-          changes.forEach(change => {
-            const idx = change[0]
-            if (!this.updateRow[idx]) this.updateRow[idx] = {}
-            this.updateRow[idx][change[1]] = change[3]
-          })
+          const payload = changes.reduce((arr, change) => {
+            const [row, prop, oldVal, newVal] = change
+            const value = this.siteData.data[row]
+
+            if (oldVal !== newVal) {
+              arr.push({
+                _id: value._id,
+                projectTitle: value.projectTitle,
+                fullCameraLocationMd5: value.fullCameraLocationMd5,
+                '$set': {
+                  [`tokens.${value.index.token}.data.${value.index.column[prop]}.value`]: newVal
+                }
+              })
+            }
+
+            return arr
+          }, [])
+          console.log(payload)
         },
         afterSelectionEnd: (r) => {
           this.currentRow = r
@@ -573,6 +592,19 @@ export default {
       return this.form.camera.indexOf('all') !== -1
         ? this.cameraList.every(val => this.cameraLocked[val.fullCameraLocationMd5].locked === false)
         : this.siteData.data.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
+    },
+    sheetSetting () {
+      const columns = this.siteData.columns.map(column => (
+        {
+          ...column,
+          editor: this.editMode ? column.editorMode : false
+        }))
+
+      return {
+        ...this.settings,
+        ...this.siteData,
+        ...{ columns }
+      }
     }
   },
   methods: {
@@ -608,15 +640,18 @@ export default {
       this.isDrag = false
     },
     continousRenderer (instance, TD, row, col, prop, value) {
-      this.hasColumnError = false
-      Handsontable.renderers.TextRenderer.apply(this, arguments);
-      
+      Handsontable.renderers.TextRenderer.apply(this, arguments)
+
       if (prop === 'species' && !value === false && value !== '') {
         const $row = this.row_data[row]
         let clsName = ''
         let error = ''
+
+        TD.dataset.tooltip = $row.sciName
         // 不在預設物種資料顯示錯誤
         if (this.species.indexOf(value) === -1 && value.indexOf('測試') === -1) {
+          // 設定錯誤提示文字
+          TD.dataset.tooltip = '物種不在預設中'
           this.hasColumnError = true
           clsName += 'htInvalid '
           error = '<span class="alert-box">!</span>'
@@ -634,6 +669,7 @@ export default {
           }
 
           if ($row.is_continuous_start) {
+            TD.dataset.tooltip = '連拍'
             clsName += ' is-continuous-start '
           }
 
@@ -642,8 +678,6 @@ export default {
           }
         }
 
-        // 設定錯誤提示文字
-        TD.dataset.tooltip = '物種不在預設中'
         TD.innerHTML = value + error
         TD.className = clsName
       }
@@ -672,7 +706,7 @@ export default {
       this.setContinuous()
     },
     setContinuous (data) {
-      let rowData = !data ? this.row_data : data
+      const rowData = !data ? this.row_data : data
       // 判斷連拍
       rowData.forEach((r, i) => {
         const $row = r
@@ -684,13 +718,13 @@ export default {
         const nDt = !next ? null : new Date(next)
         const time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
-        let isStart = false
-        let isEnd = false
+        // const isStart = false
+        // const isEnd = false
 
         if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false
         }
-        
+
         // 排除測試、空拍
         if (
           !nDt === false &&
@@ -728,9 +762,9 @@ export default {
     getSheetData () {
       // 產出 sheet 畫面
       this.row_data = this.siteData.data
-      Handsontable.renderers.registerRenderer('continousRenderer', this.continousRenderer);
-      this.sheet = new Handsontable(this.sheetContainer, { ...this.settings, ...this.siteData })
-      
+      Handsontable.renderers.registerRenderer('continousRenderer', this.continousRenderer)
+      this.sheet = new Handsontable(this.sheetContainer, this.sheetSetting)
+
       this.isRender = true
     },
     changeMode (key, val) {
@@ -744,7 +778,7 @@ export default {
           col.editor = !val ? false : col.type
         })
         // 更新 sheet
-        this.sheet.updateSettings({ ...this.settings, ...this.siteData })
+        this.sheet.updateSettings(this.sheetSetting)
       }
 
       setTimeout(() => {
@@ -757,8 +791,8 @@ export default {
       this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
-      if (this.isRender) this.sheet.updateSettings({ ...this.settings, ...this.siteData })
-    },
+      if (this.isRender) this.sheet.updateSettings(this.sheetSetting)
+    }
   },
   mounted () {
     this.setCurrentProject(this.$route.params.id)
@@ -779,7 +813,7 @@ export default {
         this.idleTimeout = setTimeout(() => {
           this.idleTimeoutOpen = true
           this.editMode = false
-        }, 1800)
+        }, 18000000)
       }
     })
     
@@ -789,6 +823,6 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.fetchCameraLockTimer)
-  },
-};
+  }
+}
 </script>

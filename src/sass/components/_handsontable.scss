@@ -184,7 +184,6 @@
   /* top, bottom padding different than 0 is handled poorly by FF with HTML5 doctype */
   background-color: #FFF;
   vertical-align: top;
-  overflow: hidden;
   outline-width: 0;
   white-space: pre-line;
   /* preserve new line character in cell */
@@ -194,6 +193,48 @@
     vertical-align: middle;
   }
 
+  &:after {
+    content: "";
+    display: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 80%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 399;
+    border-top: 10px solid $black;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 10px solid transparent;
+  }
+
+  &[data-tooltip]:before {
+    content: attr(data-tooltip) !important;
+    position: absolute !important;
+    background: $black !important;
+    display: none;
+    color: #FFF !important;
+    width: 150px !important;
+    bottom: 100% !important;
+    left: -100% !important;
+    right: -100% !important;
+    line-height: 1.25;
+    z-index: 399;
+    margin: auto auto 10px !important;
+    text-align: center !important;
+    padding: 5px 10px !important;
+    border-radius: 4px !important;
+  }
+
+  &[data-tooltip]:hover:before,
+  &[data-tooltip]:focus:before,
+  &[data-tooltip]:hover:after,
+  &[data-tooltip]:focus:after {
+    display: block !important;
+  }
+  
   &.is-continuoust:not(.is-continuoust_apart):before {
     content: "";
     position: absolute;
@@ -220,45 +261,6 @@
     float: left;
     margin-left: -7px;
     margin-top: 1px;
-  }
-
-  &:after {
-    content: "";
-    display: none;
-    position: absolute;
-    width: 0;
-    height: 0;
-    bottom: 80%;
-    left: 0;
-    right: 0;
-    margin: auto;
-    border-top: 10px solid $black;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 10px solid transparent;
-  }
-
-  &[data-tooltip]:before {
-    content: attr(data-tooltip) !important;
-    position: absolute !important;
-    background: $black !important;
-    display: none !important;
-    color: #FFF !important;
-    width: 120px !important;
-    bottom: 100% !important;
-    left: -100% !important;
-    right: -100% !important;
-    margin: auto auto 10px !important;
-    text-align: center !important;
-    padding: 5px 10px !important;
-    border-radius: 4px !important;
-  }
-
-  &:hover:before,
-  &:focus:before,
-  &:hover:after,
-  &:focus:after {
-    display: block !important;
   }
 }
 

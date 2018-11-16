@@ -10,16 +10,20 @@
     <div class="control-buttons">
       <div class="btn-group">
         <div class="btn btn-sm btn-basic"
+        v-tooltip.left="'影像局部放大'"
         @click="changeScale('increase')">
           <i class="icon-plus"></i>
         </div>
         <div class="btn btn-sm btn-basic"
+        v-tooltip.left="'影像局部縮小'"
         @click="changeScale('decrease')">
           <i class="icon-minus"></i>
         </div>
       </div>
       <div class="btn-group">
-        <div class="btn btn-sm btn-basic" @click="openLightBox()">
+        <div class="btn btn-sm btn-basic"
+        v-tooltip.left="'影像整張放大'"
+        @click="openLightBox()">
           <i class="icon-expand"></i>
         </div>
       </div>
