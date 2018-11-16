@@ -4,20 +4,41 @@ export const getters = {
   species: state => state.dataFields.speciesList,
   siteData: state => {
     const defaultColumn = {
-      subSite: '樣區',
-      cameraLocation: '相機位置',
-      fileName: '檔名',
-      corrected_date_time: '時間',
-      species: '物種'
+      subSite: {
+        data: 'subSite',
+        label: '樣區',
+        editorMode: false
+      },
+      cameraLocation: {
+        data: 'cameraLocation',
+        label: '相機位置',
+        editorMode: false
+      },
+      fileName: {
+        data: 'fileName',
+        label: '檔名',
+        editorMode: false
+      },
+      corrected_date_time: {
+        data: 'corrected_date_time',
+        label: '時間',
+        editorMode: false
+      },
+      species: {
+        data: 'species',
+        label: '物種',
+        editorMode: 'text'
+      }
     }
 
     // 組合 column header
-    const column = state.siteData.reduce((obj, val) => {
-      val.tokens.map(token => {
-        token.data.map(d => {
-          obj[d.key] = d.label !== '' ? d.label : obj[d.key]
-        })
-      })
+    const column = state.dataFields.fieldDetails.reduce((obj, val) => {
+      obj[val.key] = {
+        data: val.key,
+        label: val.label,
+        editorMode: val.widget_type,
+        selectOptions: val.widget_select_options
+      }
       return obj
     }, defaultColumn)
 
@@ -43,9 +64,9 @@ export const getters = {
     }, [])
 
     return {
-      data: data,
-      colHeaders: Object.values(column),
-      columns: Object.keys(column).map(val => ({ data: val }))
+      data,
+      colHeaders: Object.values(column).map(v => v.label),
+      columns: Object.values(column)
     }
   }
 }
@@ -71,7 +92,7 @@ export const actions = {
 export default {
   namespaced: true,
   state: {
-    dataFields: [],
+    dataFields: { fieldDetails: [] },
     siteData: []
   },
   getters,

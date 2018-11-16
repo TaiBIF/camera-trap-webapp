@@ -202,7 +202,7 @@
           <div class="version-body">
             <table class="table version-list">
               <tbody>
-                <tr 
+                <tr
                 v-for="(history, i) in historyList"
                 :key="`history-${i}`">
                   <td>{{history.updateAt}}</td>
@@ -440,9 +440,9 @@ export default {
         contextMenu: false,
         dropdownMenu: true,
         cells: (row, col) => {
-          let cellProperties = {}
+          const cellProperties = {}
           if (col === 4) {
-            cellProperties.renderer = 'continousRenderer';
+            cellProperties.renderer = 'continousRenderer'
           }
           return cellProperties
         },
@@ -451,9 +451,14 @@ export default {
           // chagnes: [[index, column, old value, new value]]
           // updateRow 紀錄有更新的欄位
           changes.forEach(change => {
-            const idx = change[0]
-            if (!this.updateRow[idx]) this.updateRow[idx] = {}
-            this.updateRow[idx][change[1]] = change[3]
+            //   const idx = change[0]
+            //   if (!this.updateRow[idx]) this.updateRow[idx] = {}
+            //   this.updateRow[idx][change[1]] = change[3]
+
+            // chagne: [row, prop, oldVal, newVal]
+            const { 0: row, 1: prop, 3: newVal } = change
+            console.table(this.siteData.data[row])
+            console.log({ row, prop, newVal })
           })
         },
         afterSelectionEnd: (r) => {
@@ -559,6 +564,19 @@ export default {
       return this.form.camera.indexOf('all') !== -1
         ? this.cameraList.every(val => this.cameraLocked[val.fullCameraLocationMd5].locked === false)
         : this.siteData.data.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
+    },
+    sheetSetting () {
+      const columns = this.siteData.columns.map(column => (
+        {
+          ...column,
+          editor: this.editMode ? column.editorMode : false
+        }))
+
+      return {
+        ...this.settings,
+        ...this.siteData,
+        ...{ columns }
+      }
     }
   },
   methods: {
@@ -594,8 +612,8 @@ export default {
       this.isDrag = false
     },
     continousRenderer (instance, TD, row, col, prop, value) {
-      Handsontable.renderers.TextRenderer.apply(this, arguments);
-      
+      Handsontable.renderers.TextRenderer.apply(this, arguments)
+
       if (prop === 'species' && !value === false && value !== '') {
         const $row = this.row_data[row]
         let clsName = ''
@@ -656,7 +674,7 @@ export default {
       this.setContinuous()
     },
     setContinuous (data) {
-      let rowData = !data ? this.row_data : data
+      const rowData = !data ? this.row_data : data
       // 判斷連拍
       rowData.forEach((r, i) => {
         const $row = r
@@ -668,13 +686,13 @@ export default {
         const nDt = !next ? null : new Date(next)
         const time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
-        let isStart = false
-        let isEnd = false
+        // const isStart = false
+        // const isEnd = false
 
         if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false
         }
-        
+
         // 排除測試、空拍
         if (
           !nDt === false &&
@@ -712,9 +730,9 @@ export default {
     getSheetData () {
       // 產出 sheet 畫面
       this.row_data = this.siteData.data
-      Handsontable.renderers.registerRenderer('continousRenderer', this.continousRenderer);
-      this.sheet = new Handsontable(this.sheetContainer, { ...this.settings, ...this.siteData })
-      
+      Handsontable.renderers.registerRenderer('continousRenderer', this.continousRenderer)
+      this.sheet = new Handsontable(this.sheetContainer, this.sheetSetting)
+
       this.isRender = true
     },
     changeMode (key, val) {
@@ -728,7 +746,7 @@ export default {
           col.editor = !val ? false : col.type
         })
         // 更新 sheet
-        this.sheet.updateSettings({ ...this.settings, ...this.siteData })
+        this.sheet.updateSettings(this.sheetSetting)
       }
 
       setTimeout(() => {
@@ -741,8 +759,8 @@ export default {
       this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
-      if (this.isRender) this.sheet.updateSettings({ ...this.settings, ...this.siteData })
-    },
+      if (this.isRender) this.sheet.updateSettings(this.sheetSetting)
+    }
   },
   mounted () {
     this.setCurrentProject(this.$route.params.id)
@@ -762,6 +780,6 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.fetchCameraLockTimer)
-  },
-};
+  }
+}
 </script>
