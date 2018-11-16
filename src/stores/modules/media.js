@@ -44,7 +44,7 @@ export const getters = {
 
     // 拆解實際顯示資料
     const data = state.siteData.reduce((obj, val) => {
-      val.tokens.map(token => {
+      val.tokens.map((token, tokenIdx) => {
         const ret = {
           subSite: val.subSite,
           cameraLocation: val.cameraLocation,
@@ -53,10 +53,16 @@ export const getters = {
           imageUrl: val.url,
           projectTitle: val.projectTitle,
           fullCameraLocationMd5: val.fullCameraLocationMd5,
-          _id: val._id
+          _id: val._id,
+          // 編輯封包需要使用，因為打散後就不知道原本資料的編號
+          index: {
+            token: tokenIdx,
+            column: {}
+          }
         }
-        token.data.map(d => {
+        token.data.map((d, columnIdx) => {
           ret[d.key] = d.value
+          ret.index.column[d.key] = columnIdx
         })
         obj.push(ret)
       })

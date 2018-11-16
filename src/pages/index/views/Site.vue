@@ -446,20 +446,26 @@ export default {
           }
           return cellProperties
         },
-        afterChange: (changes) => {
+        afterChange: (changes, source) => {
           if (!changes) return
-          // chagnes: [[index, column, old value, new value]]
-          // updateRow 紀錄有更新的欄位
-          changes.forEach(change => {
-            //   const idx = change[0]
-            //   if (!this.updateRow[idx]) this.updateRow[idx] = {}
-            //   this.updateRow[idx][change[1]] = change[3]
+          const payload = changes.reduce((arr, change) => {
+            const [row, prop, oldVal, newVal] = change
+            const value = this.siteData.data[row]
 
-            // chagne: [row, prop, oldVal, newVal]
-            const { 0: row, 1: prop, 3: newVal } = change
-            console.table(this.siteData.data[row])
-            console.log({ row, prop, newVal })
-          })
+            if (oldVal !== newVal) {
+              arr.push({
+                _id: value._id,
+                projectTitle: value.projectTitle,
+                fullCameraLocationMd5: value.fullCameraLocationMd5,
+                '$set': {
+                  [`tokens.${value.index.token}.data.${value.index.column[prop]}.value`]: newVal
+                }
+              })
+            }
+
+            return arr
+          }, [])
+          console.log(payload)
         },
         afterSelectionEnd: (r) => {
           this.currentRow = r
