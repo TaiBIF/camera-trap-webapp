@@ -2,7 +2,7 @@
   <div class="img-container">
     <img class="img"
     id="img-preview"
-    :src="row.url"
+    :src="row.imageUrl"
     draggable="true"
     @dragstart="onDragStart($event)"
     @drag="onDrag($event)"

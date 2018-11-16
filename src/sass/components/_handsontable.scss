@@ -238,27 +238,27 @@
     border-bottom: 10px solid transparent;
   }
 
-  &:before {
-    content: attr(data-tooltip);
-    position: absolute;
-    background: $black;
-    display: none;
-    color: #FFF;
-    width: 120px;
-    bottom: 100%;
-    left: -100%;
-    right: -100%;
-    margin: auto auto 10px;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 4px;
+  &[data-tooltip]:before {
+    content: attr(data-tooltip) !important;
+    position: absolute !important;
+    background: $black !important;
+    display: none !important;
+    color: #FFF !important;
+    width: 120px !important;
+    bottom: 100% !important;
+    left: -100% !important;
+    right: -100% !important;
+    margin: auto auto 10px !important;
+    text-align: center !important;
+    padding: 5px 10px !important;
+    border-radius: 4px !important;
   }
 
   &:hover:before,
   &:focus:before,
   &:hover:after,
   &:focus:after {
-    display: block;
+    display: block !important;
   }
 }
 

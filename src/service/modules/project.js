@@ -88,11 +88,22 @@ const getLocationAbnormalStatus = async payload => {
   return res.ret
 }
 
+const getDataFields = async payload => {
+  const res = await fetchWrap({
+    url: '/project/data-fields',
+    method: 'POST',
+    body: payload
+  })
+
+  return res.ret[0]
+}
+
 export {
   getProjects,
   createProject,
   getSpeciesGroup,
   getLocationIdentifiedStatus,
   getLocationRetrievedStatus,
-  getLocationAbnormalStatus
+  getLocationAbnormalStatus,
+  getDataFields
 }

@@ -22,7 +22,7 @@
       </div>
       <!-- Overview mode -->
       <div v-else class="search-content">
-        <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
+        <a class="btn btn-green-border btn-sm float-right" v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'" @click="exportCsv">
           下載篩選結果
         </a>
         <h3 class="text-green mb-2">{{this.$route.params.site_id}} - {{this.$route.params.subsite_id}}</h3>
@@ -87,7 +87,7 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-8">
-              <small class="text-gray">共 {{siteData.length -1}} 筆資料</small>
+              <small class="text-gray">共 {{siteData.data.length}} 筆資料</small>
               <div class="divider"></div>
               <div class="dropdown" :class="{'d-none': !editMode}">
                 <div class="btn-group btn-grayscale" :class="{'active': isContinuous}">
@@ -164,14 +164,14 @@
         </div>
       </div>
       <div class="sidebar" :style="{'width': `${historyShow || galleryShow ? galleryWidth : 0}px`}">
-        <div class="photo-container" v-if="row_data.length && !row_data[currentRow].url==false && galleryShow">
+        <div class="photo-container" v-if="siteData.data[currentRow] && !siteData.data[currentRow].imageUrl==false && galleryShow">
           <div class="gallery-header">
             <a @click="changeMode('galleryShow', false)" class="close mt-1 float-right">
               <i class="icon-remove-sm"></i>
             </a>
             影像檢視
           </div>
-          <div class="gallery-body" v-if="!row_data[currentRow].url || row_data[currentRow].url==''">
+          <div class="gallery-body" v-if="!siteData.data[currentRow].imageUrl || siteData.data[currentRow].imageUrl==''">
             <div class="empty-result">
               <img src="/assets/common/empty-site.png" width="174" srcset="/assets/common/empty-site@2x.png">
               <h5 class="text-gray">尚未上傳照片資料</h5>
@@ -182,15 +182,15 @@
             </div>
           </div>
           <div class="gallery-body" v-else>
-            <zoom-drag :row="row_data[currentRow]" :index="currentRow" :total="row_data.length" />
+            <zoom-drag :row="siteData.data[currentRow]" :index="currentRow" :total="siteData.data.length" />
             <div class="control">
               <span class="prev" @click="currentRow>0 ? currentRow--: currentRow">
                 <i class="fa fa-caret-left"></i>
               </span>
               <span class="text">
-                {{row_data[currentRow].filename}} | {{row_data[currentRow].datetime}}
+                {{siteData.data[currentRow].fileName}} | {{siteData.data[currentRow].corrected_date_time}}
               </span>
-              <span class="prev" @click="currentRow>row_data.length-1?currentRow: currentRow++">
+              <span class="prev" @click="currentRow>siteData.data[currentRow].length-1?currentRow: currentRow++">
                 <i class="fa fa-caret-right"></i>
               </span>
             </div>
@@ -241,6 +241,7 @@ import Handsontable from 'handsontable'
 import 'handsontable/languages/all'
 import ZoomDrag from '../components/ZoomDrag'
 import IdleTimeoutDialog from '../components/IdleTimeoutDialog'
+import downloadCSV from '../../../util/downloadCsv.js'
 
 const project = createNamespacedHelpers('project')
 const media = createNamespacedHelpers('media')
@@ -248,7 +249,7 @@ const cameraLocation = createNamespacedHelpers('cameraLocation')
 
 const formDefault = {
   camera: [],
-  start_at: moment('2018/1/1'),
+  start_at: moment('2017/1/1'),
   end_at: moment('2018/12/31'),
   start_time: {
     HH: '00',
@@ -277,7 +278,7 @@ export default {
       galleryWidth: 450,
       isContinuous: false,
       continuousTime: 1,
-      form: formDefault,
+      form: Object.assign({}, formDefault),
       selection: null,
       currentRow: 0,
       row_data: [],
@@ -293,7 +294,7 @@ export default {
         {
           updateAt: '2018/09/05 17:37',
           updateBy: '黃智賢'
-        },
+        }
       ],
       rowData: {},
       // 連拍紀錄
@@ -304,9 +305,6 @@ export default {
         current: 0,
         total: 0
       },
-      updateRow: {},
-      // [API] 需要透過 API 帶入常用分類
-      species: ['測試', '空拍', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
       contextMenuSetting: {
         callback: (key, selection) => {
           const idx = selection[0].start.row
@@ -455,6 +453,13 @@ export default {
         filters: true,
         contextMenu: false,
         dropdownMenu: true,
+        cells: (row, col) => {
+          let cellProperties = {}
+          if (col === 4) {
+            cellProperties.renderer = 'continousRenderer';
+          }
+          return cellProperties
+        },
         afterChange: (changes) => {
           if (!changes) return
           // chagnes: [[index, column, old value, new value]]
@@ -471,7 +476,8 @@ export default {
       },
       sheetContainer: null,
       sheet: null,
-      isDrag: false
+      isDrag: false,
+      fetchCameraLockTimer: null
     }
   },
   watch: {
@@ -531,7 +537,8 @@ export default {
       'currentProject'
     ]),
     ...media.mapGetters([
-      'siteData'
+      'siteData',
+      'species'
     ]),
     ...cameraLocation.mapGetters([
       'cameraLocked'
@@ -565,7 +572,7 @@ export default {
     enableEditeMode () {
       return this.form.camera.indexOf('all') !== -1
         ? this.cameraList.every(val => this.cameraLocked[val.fullCameraLocationMd5].locked === false)
-        : this.siteData.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
+        : this.siteData.data.length > 1 && this.form.camera.every(val => this.cameraLocked[val].locked === false)
     }
   },
   methods: {
@@ -578,6 +585,9 @@ export default {
     ...cameraLocation.mapActions([
       'getCameraLocked'
     ]),
+    exportCsv () {
+      downloadCSV([this.siteData.colHeaders, ...this.sheet.getData()])
+    },
     fetchCameraLocked () {
       this.getCameraLocked({
         projectTitle: this.$route.params.id,
@@ -599,11 +609,12 @@ export default {
     },
     continousRenderer (instance, TD, row, col, prop, value) {
       this.hasColumnError = false
+      Handsontable.renderers.TextRenderer.apply(this, arguments);
+      
       if (prop === 'species' && !value === false && value !== '') {
         const $row = this.row_data[row]
         let clsName = ''
         let error = ''
-
         // 不在預設物種資料顯示錯誤
         if (this.species.indexOf(value) === -1 && value.indexOf('測試') === -1) {
           this.hasColumnError = true
@@ -661,25 +672,25 @@ export default {
       this.setContinuous()
     },
     setContinuous (data) {
-      const rowData = !data ? this.row_data : data
+      let rowData = !data ? this.row_data : data
       // 判斷連拍
       rowData.forEach((r, i) => {
         const $row = r
-        const current = r.datetime
-        const prev = i > 0 ? rowData[i - 1].datetime : null
-        const next = i + 1 < rowData.length ? rowData[i + 1].datetime : null
+        const current = r.corrected_date_time
+        const prev = i > 0 ? rowData[i - 1].corrected_date_time : null
+        const next = i + 1 < rowData.length ? rowData[i + 1].corrected_date_time : null
         const cDt = new Date(current)
         const pDt = !prev ? null : new Date(prev)
         const nDt = !next ? null : new Date(next)
         const time = Number(this.continuousTime) * 60 * 1000
         let isContinue = false
-        // let isStart = false
-        // let isEnd = false
+        let isStart = false
+        let isEnd = false
 
         if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false
         }
-
+        
         // 排除測試、空拍
         if (
           !nDt === false &&
@@ -715,28 +726,11 @@ export default {
       return rowData
     },
     getSheetData () {
-      const data = []
-      this.siteData.forEach((ref, idx) => {
-        var row = ref.split(/,/g)
-        // debugger
-        if (idx === 0) {
-          // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
-          this.rowData = row
-        } else {
-          var item = {}
-
-          row.forEach((r, i) => {
-            item[this.rowData[i].toLowerCase()] = r
-          })
-
-          data.push(item)
-        }
-      })
-
-      this.row_data = this.setContinuous(data)
-      this.settings.data = this.row_data
       // 產出 sheet 畫面
-      this.sheet = new Handsontable(this.sheetContainer, this.settings)
+      this.row_data = this.siteData.data
+      Handsontable.renderers.registerRenderer('continousRenderer', this.continousRenderer);
+      this.sheet = new Handsontable(this.sheetContainer, { ...this.settings, ...this.siteData })
+      
       this.isRender = true
     },
     changeMode (key, val) {
@@ -750,7 +744,7 @@ export default {
           col.editor = !val ? false : col.type
         })
         // 更新 sheet
-        this.sheet.updateSettings(this.settings)
+        this.sheet.updateSettings({ ...this.settings, ...this.siteData })
       }
 
       setTimeout(() => {
@@ -763,8 +757,8 @@ export default {
       this.settings.height = sheetHeight - 80
       this.$el.querySelector('.sheet-container').querySelector('.sidebar').style.height = sheetHeight + 'px'
       // debugger
-      if (this.isRender) this.sheet.updateSettings(this.settings)
-    }
+      if (this.isRender) this.sheet.updateSettings({ ...this.settings, ...this.siteData })
+    },
   },
   mounted () {
     this.setCurrentProject(this.$route.params.id)
@@ -791,12 +785,10 @@ export default {
     
     document.body.addEventListener('mouseup', (e) => { this.dragEnd(e) })
 
-    if(this.editMode) {
-      this.idleTimeout = setTimeout(() => {
-        this.idleTimeoutOpen = true
-      }, 1800000)
-    }
-    
-  }
-}
+    this.fetchCameraLockTimer = setInterval(() => this.fetchCameraLocked(), 18000000)
+  },
+  beforeDestroy () {
+    clearInterval(this.fetchCameraLockTimer)
+  },
+};
 </script>

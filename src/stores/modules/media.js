@@ -1,33 +1,59 @@
-import { getSiteData } from '../../service/api'
+import { getSiteData, getDataFields } from '../../service/api'
 
 export const getters = {
+  species: state => state.dataFields.speciesList,
   siteData: state => {
-    return [
-      'URL,Project,Station,Camera,FileName,DateTime,Species,Sex,Age,ID,IdvCount,Category,SciName,Behavior',
-      ...state.siteData.map(val => {
-        // 順序對照 index 0 的設定
-        return [
-          val.url, // 圖片網址
-          val.projectTitle, // 計畫名稱
-          val.subSite, // 子樣區
-          val.cameraLocation, // 相機編號
-          val.url.split('/').pop(), // 圖片檔名
-          val.corrected_date_time, // 日期
-          val.tokens[0].data[0].value, // Species
-          val.tokens[0].data[1].value, // Sex
-          val.tokens[0].data[2].value, // Age
-          'ID 無資料', // ID
-          'IdvCount 無資料', // IdvCount
-          'Category 無資料', // Category
-          'SciName 無資料', // SciName
-          'Behavior 無資料' // Behavior
-        ].join(',')
+    const defaultColumn = {
+      subSite: '樣區',
+      cameraLocation: '相機位置',
+      fileName: '檔名',
+      corrected_date_time: '時間',
+      species: '物種'
+    }
+
+    // 組合 column header
+    const column = state.siteData.reduce((obj, val) => {
+      val.tokens.map(token => {
+        token.data.map(d => {
+          obj[d.key] = d.label !== '' ? d.label : obj[d.key]
+        })
       })
-    ]
+      return obj
+    }, defaultColumn)
+
+    // 拆解實際顯示資料
+    const data = state.siteData.reduce((obj, val) => {
+      val.tokens.map(token => {
+        const ret = {
+          subSite: val.subSite,
+          cameraLocation: val.cameraLocation,
+          fileName: val.url.split('/').pop(),
+          corrected_date_time: val.corrected_date_time,
+          imageUrl: val.url,
+          projectTitle: val.projectTitle,
+          fullCameraLocationMd5: val.fullCameraLocationMd5,
+          _id: val._id
+        }
+        token.data.map(d => {
+          ret[d.key] = d.value
+        })
+        obj.push(ret)
+      })
+      return obj
+    }, [])
+
+    return {
+      data: data,
+      colHeaders: Object.values(column),
+      columns: Object.keys(column).map(val => ({ data: val }))
+    }
   }
 }
 
 export const mutations = {
+  updateDataFields (state, payload) {
+    state.dataFields = payload
+  },
   updateSiteData (state, payload) {
     state.siteData = payload
   }
@@ -35,6 +61,8 @@ export const mutations = {
 
 export const actions = {
   async getSiteData ({ commit }, payload) {
+    const dataFields = await getDataFields({ projectTitle: payload.query.projectTitle })
+    commit('updateDataFields', dataFields)
     const data = await getSiteData(payload)
     commit('updateSiteData', data)
   }
@@ -43,6 +71,7 @@ export const actions = {
 export default {
   namespaced: true,
   state: {
+    dataFields: [],
     siteData: []
   },
   getters,
