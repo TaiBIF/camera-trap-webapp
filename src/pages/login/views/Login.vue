@@ -1,6 +1,6 @@
 <template>
   <main class="page-login" :style="{'background': 'url(/assets/common/bg-login.png)'}">
-    <div class="row">
+    <div class="row m-0">
       <div class="col-6 offset-3">
 
         <div class="panel mt-5 panel-basic">

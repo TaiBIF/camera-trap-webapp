@@ -390,7 +390,6 @@ export default {
             data: 'species',
             type: 'autocomplete',
             source: ['測試', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
-            renderer: this.continousRenderer,
             editor: false
           },
           {
@@ -463,7 +462,7 @@ export default {
         dropdownMenu: true,
         cells: (row, col) => {
           const cellProperties = {}
-          if (col === 4) {
+          if (col === 4 || col ===3) {
             cellProperties.renderer = 'continousRenderer'
           }
           return cellProperties
@@ -643,13 +642,12 @@ export default {
     },
     continousRenderer (instance, TD, row, col, prop, value) {
       Handsontable.renderers.TextRenderer.apply(this, arguments)
-
+      const $row = this.row_data[row]
+      let clsName = ''
+      let error = ''
+      
       if (prop === 'species' && !value === false && value !== '') {
-        const $row = this.row_data[row]
-        let clsName = ''
-        let error = ''
-
-        TD.dataset.tooltip = $row.sciName
+        if (!$row === false) TD.dataset.tooltip = $row.sciName
         // 不在預設物種資料顯示錯誤
         if (this.species.indexOf(value) === -1 && value.indexOf('測試') === -1) {
           // 設定錯誤提示文字
@@ -658,12 +656,11 @@ export default {
           clsName += 'htInvalid '
           error = '<span class="alert-box">!</span>'
         }
-
+      }
+      if (prop === 'corrected_date_time' && !value === false && value !== '') {
         // 是否為連拍照片
-        if (this.isContinuous) {
-          if ($row.is_continuous) {
-            clsName += 'is-continuoust'
-          }
+        if ($row.is_continuous) {
+          clsName += 'is-continuoust'
 
           // 是否與連拍分離
           if ($row.is_continuous_apart) {
@@ -679,10 +676,9 @@ export default {
             clsName += ' is-continuous-end '
           }
         }
-
-        TD.innerHTML = value + error
-        TD.className = clsName
       }
+      TD.innerHTML = value + error
+      TD.className = clsName
     },
     setCurrentContinuous () {
       // 取得目前資料的連拍資訊

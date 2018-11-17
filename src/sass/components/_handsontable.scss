@@ -235,15 +235,12 @@
     display: block !important;
   }
   
-  &.is-continuoust:not(.is-continuoust_apart):before {
-    content: "";
-    position: absolute;
-    top: 0 !important;
-    left: 0 !important;
-    width: 2px !important;
-    height: 100% !important;
-    display: block !important;
-    background: #2A7F60 !important;
+  &.is-continuoust:not(.is-continuoust_apart) {
+    background: #d3d3d3;
+  }
+  &.is-continuoust {
+    padding-left: 6px;
+    border-left: 2px solid #2A7F60 !important;
   } 
 }
 .page-project-edit .handsontable th,
