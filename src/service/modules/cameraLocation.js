@@ -10,4 +10,14 @@ const getCameraLocked = async payload => {
   return res.ret.map(val => val.cameraLocationDataLock)
 }
 
-export { getCameraLocked }
+const setCameraLocked = async payload => {
+  const res = await fetchWrap({
+    url: '/camera-location/data-lock/bulk-replace',
+    method: 'POST',
+    body: payload
+  })
+
+  return res
+}
+
+export { getCameraLocked, setCameraLocked }

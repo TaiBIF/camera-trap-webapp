@@ -1,4 +1,4 @@
-import { getSiteData, getDataFields } from '../../service/api'
+import { getSiteData, getDataFields, updateAnnotation } from '../../service/api'
 
 export const getters = {
   species: state => state.dataFields.speciesList,
@@ -92,6 +92,9 @@ export const actions = {
     commit('updateDataFields', dataFields)
     const data = await getSiteData(payload)
     commit('updateSiteData', data)
+  },
+  async updateAnnotation (_, payload) {
+    await updateAnnotation(payload)
   }
 }
 

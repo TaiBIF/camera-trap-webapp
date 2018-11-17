@@ -28,4 +28,13 @@ const getSiteData = async payload => {
   }))
 }
 
-export { getSiteData }
+const updateAnnotation = async payload => {
+  const res = await fetchWrap({
+    url: '/media/annotation/bulk-update',
+    method: 'POST',
+    body: payload
+  })
+  return res
+}
+
+export { getSiteData, updateAnnotation }

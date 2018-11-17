@@ -487,7 +487,7 @@ export default {
 
             return arr
           }, [])
-          console.log(payload)
+          this.updateAnnotation(payload)
         },
         afterSelectionEnd: (r) => {
           this.currentRow = r
@@ -612,10 +612,12 @@ export default {
       'setCurrentProject'
     ]),
     ...media.mapActions([
-      'getSiteData'
+      'getSiteData',
+      'updateAnnotation'
     ]),
     ...cameraLocation.mapActions([
-      'getCameraLocked'
+      'getCameraLocked',
+      'setCameraLocked'
     ]),
     exportCsv () {
       downloadCSV([this.siteData.colHeaders, ...this.sheet.getData()])
@@ -772,6 +774,17 @@ export default {
       this[key] = val
 
       if (key === 'editMode') {
+        // 使用 api 鎖定相機位置
+        const list = this.form.camera.indexOf('all') !== -1
+          ? this.cameraList.map(val => val.fullCameraLocationMd5)
+          : this.form.camera
+
+        this.setCameraLocked(list.map(v => ({
+          'fullCameraLocationMd5': v,
+          'projectTitle': this.$route.params.id,
+          'locked': val
+        })))
+
         // 打開右鍵選單，打開欄位編輯模式
         this.settings.contextMenu = !val ? false : this.contextMenuSetting
         this.settings.columns.forEach((col) => {
@@ -805,9 +818,9 @@ export default {
     window.onresize = () => { this.settingSheetHeight() }
 
     // 拖拉側欄照片區塊大小
-    document.body.addEventListener('mousemove', (e) => { 
-      this.dragMove(e) 
-      if(this.editMode) {
+    document.body.addEventListener('mousemove', (e) => {
+      this.dragMove(e)
+      if (this.editMode) {
         this.idleTimeoutOpen = false
         clearTimeout(this.idleTimeout)
         this.idleTimeout = setTimeout(() => {
@@ -816,7 +829,7 @@ export default {
         }, 18000000)
       }
     })
-    
+
     document.body.addEventListener('mouseup', (e) => { this.dragEnd(e) })
 
     this.fetchCameraLockTimer = setInterval(() => this.fetchCameraLocked(), 18000000)
