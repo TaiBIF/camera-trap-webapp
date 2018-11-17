@@ -4,8 +4,8 @@ export const getters = {
   species: state => state.dataFields.speciesList,
   siteData: state => {
     const defaultColumn = {
-      subSite: {
-        data: 'subSite',
+      fullSite: {
+        data: 'fullSite',
         label: '樣區',
         editorMode: false
       },
@@ -46,7 +46,7 @@ export const getters = {
     const data = state.siteData.reduce((obj, val) => {
       val.tokens.map((token, tokenIdx) => {
         const ret = {
-          subSite: val.subSite,
+          fullSite: (val.subSite) ? `${val.site}-${val.subSite}` : `${val.site}`,
           cameraLocation: val.cameraLocation,
           fileName: val.url.split('/').pop(),
           corrected_date_time: val.corrected_date_time,
