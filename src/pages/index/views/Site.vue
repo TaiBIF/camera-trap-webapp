@@ -657,7 +657,7 @@ export default {
           error = '<span class="alert-box">!</span>'
         }
       }
-      if (prop === 'corrected_date_time' && !value === false && value !== '') {
+      if (this.isContinuous && prop === 'corrected_date_time' && !value === false && value !== '') {
         // 是否為連拍照片
         if ($row.is_continuous) {
           clsName += 'is-continuoust'
