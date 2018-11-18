@@ -250,12 +250,14 @@
         </div>
       </div>
     </div>
-    <report-modal :open="errorReportOpen" @close="errorReportOpen=false" @submit="submitReport" />
+    <report-modal :open="errorReportOpen" @close="errorReportOpen=false" @submit="submitReport"
+      :options="reportOptions" :defaultValue="reportDefaultValue"
+    />
   </div>
 </template>
 
 <script>
-import L from 'leaflet';
+import L from 'leaflet'
 import {
   LMap,
   LTileLayer,
@@ -264,15 +266,15 @@ import {
   LTooltip,
   LCircle,
   LLayerGroup,
-  LPolygon,
-} from 'vue2-leaflet';
-import moment from 'moment';
-import { createNamespacedHelpers } from 'vuex';
-import VueHighcharts from 'vue2-highcharts';
-import SiteChart from '../components/SiteChart';
-import ReportModal from '../components/ReportModal';
+  LPolygon
+} from 'vue2-leaflet'
+import moment from 'moment'
+import { createNamespacedHelpers } from 'vuex'
+import VueHighcharts from 'vue2-highcharts'
+import SiteChart from '../components/SiteChart'
+import ReportModal from '../components/ReportModal'
 
-const project = createNamespacedHelpers('project');
+const project = createNamespacedHelpers('project')
 
 // 設定未選擇/已選擇 Icon
 const Icon = L.icon({
@@ -281,8 +283,8 @@ const Icon = L.icon({
   iconAnchor: [31, 77],
   popupAnchor: [-3, -76],
   shadowSize: [60, 109],
-  shadowAnchor: [31, 77],
-});
+  shadowAnchor: [31, 77]
+})
 
 const IconSelect = L.icon({
   iconUrl: '/assets/common/marker-icon-select@2x.png',
@@ -290,8 +292,8 @@ const IconSelect = L.icon({
   iconAnchor: [33, 80],
   popupAnchor: [-3, -76],
   shadowSize: [66, 120],
-  shadowAnchor: [31, 77],
-});
+  shadowAnchor: [31, 77]
+})
 
 const ErrorIcon = L.icon({
   iconUrl: '/assets/common/marker-icon-error@2x.png',
@@ -299,8 +301,8 @@ const ErrorIcon = L.icon({
   iconAnchor: [30, 77],
   popupAnchor: [-3, -76],
   shadowSize: [66, 109],
-  shadowAnchor: [33, 77],
-});
+  shadowAnchor: [33, 77]
+})
 
 const ErrorIconSelect = L.icon({
   iconUrl: '/assets/common/marker-icon-error-select@2x.png',
@@ -308,19 +310,19 @@ const ErrorIconSelect = L.icon({
   iconAnchor: [30, 80],
   popupAnchor: [-3, -80],
   shadowSize: [66, 120],
-  shadowAnchor: [33, 80],
-});
+  shadowAnchor: [33, 80]
+})
 
 export default {
   name: 'Project',
-  data() {
+  data () {
     return {
       today: moment(),
       currentDuration: 2018, // 紀錄目前顯示的年份
       currentSite: {
         // 紀錄目前顯示的樣站，格式需轉成 vue-select 的格式
         value: 0,
-        label: '全部樣區',
+        label: '全部樣區'
       },
       SiteMarkers: [],
       currentSubSite: null, // 紀錄目前顯示的子樣站
@@ -337,21 +339,21 @@ export default {
           points: [
             { lat: 24.604577, lng: 121.608599 },
             { lat: 24.753846, lng: 121.175827 },
-            { lat: 24.34913, lng: 121.164845 },
+            { lat: 24.34913, lng: 121.164845 }
           ],
-          visible: true,
-        },
+          visible: true
+        }
       ],
       mapInfo: {
         zoom: 11,
         options: {
-          zoomControl: false,
+          zoomControl: false
         },
         center: L.latLng(25.039202, 121.819413),
         url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
         attribution:
           '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        marker: [],
+        marker: []
       },
       // 共用圖表顏色
       chartColors: [
@@ -361,48 +363,48 @@ export default {
         '#5569B5',
         '#CC76BA',
         '#FFC8EB',
-        '#BDE9A5',
+        '#BDE9A5'
       ],
       currentTab: 0,
       // 長條圖設定
       barOption: {
         chart: {
           type: 'column',
-          height: 230,
+          height: 230
         },
         colors: ['#8ACFCB'],
         title: {
           enable: false,
-          text: '',
+          text: ''
         },
         tooltip: {
           headerFormat: '',
           backgroundColor: 'rgba(0, 0, 0, .8)',
           useHTML: true,
-          pointFormatter() {
+          pointFormatter () {
             // 顯示錯誤數
             return `
               <div>
                 <span class="red label float-right ${
-                  this.error === 0 ? 'd-none' : 'd-inline-block'
-                }">${this.error}筆異常</span>
+  this.error === 0 ? 'd-none' : 'd-inline-block'
+}">${this.error}筆異常</span>
                 <h5 class="my-1">${this.y} <small>筆</small></h5>
               </div>
               <div class="text-gray">上傳時間：${this.updated_at}</div>
-            `;
+            `
           },
           style: {
-            color: '#FFF',
-          },
+            color: '#FFF'
+          }
         },
         plotOptions: {
           column: {
             states: {
               hover: {
-                color: '#09968F',
-              },
-            },
-          },
+                color: '#09968F'
+              }
+            }
+          }
         },
         xAxis: {
           categories: [
@@ -417,10 +419,10 @@ export default {
             '9月',
             '10月',
             '11月',
-            '12月',
-          ],
+            '12月'
+          ]
         },
-        series: null,
+        series: null
       },
       // 圓餅圖設定
       pieOption: {
@@ -430,7 +432,7 @@ export default {
           plotBorderWidth: null,
           plotShadow: false,
           type: 'pie',
-          height: 340,
+          height: 340
         },
         colors: [
           '#5DB897',
@@ -439,40 +441,40 @@ export default {
           '#5569B5',
           '#CC76BA',
           '#FFC8EB',
-          '#BDE9A5',
+          '#BDE9A5'
         ],
         title: {
           enable: false,
-          text: '',
+          text: ''
         },
         subtitle: {
           enable: false,
-          text: '',
+          text: ''
         },
         tooltip: {
           headerFormat: '',
           backgroundColor: 'rgba(70,70,70,.8)',
-          pointFormatter() {
+          pointFormatter () {
             return `<span style="color:#FFF">${this.name}：${
               this.y
-            } 筆辨識紀錄 (${this.percentage.toFixed(1)}%)</span>`;
+            } 筆辨識紀錄 (${this.percentage.toFixed(1)}%)</span>`
           },
           style: {
-            color: '#FFF',
-          },
+            color: '#FFF'
+          }
         },
         plotOptions: {
           pie: {
             allowPointSelect: true,
             cursor: 'pointer',
             dataLabels: {
-              enabled: false,
-            },
-          },
+              enabled: false
+            }
+          }
         },
-        series: null,
-      },
-    };
+        series: null
+      }
+    }
   },
   components: {
     LMap,
@@ -485,58 +487,85 @@ export default {
     LLayerGroup,
     SiteChart,
     'v-chart': VueHighcharts,
-    ReportModal,
+    ReportModal
   },
   watch: {
-    currentProject(newValue) {
+    currentProject (newValue) {
       setTimeout(() => {
-        this.getSpeciesGroup();
-        this.fetchImageStatus();
-      }, 100);
+        this.getSpeciesGroup()
+        this.fetchImageStatus()
+      }, 100)
     },
-    currentSite(newValue) {
+    currentSite (newValue) {
       setTimeout(() => {
-        this.setCamera(newValue);
-        this.fetchImageStatus();
-      }, 100);
+        this.setCamera(newValue)
+        this.fetchImageStatus()
+      }, 100)
     },
-    currentDuration(newValue) {
+    currentDuration (newValue) {
       setTimeout(() => {
-        this.setCamera(newValue);
-        this.fetchImageStatus();
-      }, 100);
+        this.setCamera(newValue)
+        this.fetchImageStatus()
+      }, 100)
     },
-    ProjectMarkers(newValue) {
+    ProjectMarkers (newValue) {
       setTimeout(() => {
         if (!this.mapInfo.marker.length && this.mapMode === 'project') {
-          this.fetchImageStatus();
+          this.fetchImageStatus()
         }
-      }, 100);
+      }, 100)
     },
-    SiteMarkers(newValue) {
+    SiteMarkers (newValue) {
       setTimeout(() => {
         if (!this.mapInfo.marker.length && this.mapMode === 'camera') {
-          this.fetchImageStatus();
+          this.fetchImageStatus()
         }
-      }, 100);
+      }, 100)
     },
-    species: 'loadPieChart',
+    species: 'loadPieChart'
   },
   computed: {
     ...project.mapState([
-      'speciesGroup', 
-      'siteStatusTab', 
-      'locationIdentifiedStatus', 
-      'locationRetrievedStatus', 
-      'locationCameraAbnormalStatus',
+      'speciesGroup',
+      'siteStatusTab',
+      'locationIdentifiedStatus',
+      'locationRetrievedStatus',
+      'locationCameraAbnormalStatus'
     ]),
     ...project.mapGetters([
       'currentProject',
       'cameraLocations',
       'species',
       'sites',
-      'ProjectMarkers',
+      'ProjectMarkers'
     ]),
+    reportOptions () {
+      const tmp = JSON.parse(JSON.stringify(this.cameraLocations || []))
+
+      // this.cameraLocations 只有 site 跟 subsite 資訊，並沒有相機資訊
+      // 下面補上相機資訊以及相機 md5
+      tmp.map(v => {
+        v.children.map(c => {
+          c.cameraList = this.currentProject
+            ? this.currentProject.cameraLocations
+                .filter(val => val.subSite === c.id)
+                .reduce((obj, val) => {
+                  obj[val.cameraLocation] = val.fullCameraLocationMd5
+                  return obj
+                }, {})
+            : []
+        })
+      })
+
+      return tmp
+    },
+    reportDefaultValue () {
+      return {
+        site: this.currentSite && this.currentSite.label,
+        subSite: this.currentSubSite && this.currentSubSite.label,
+        camera: this.currentCamera && this.currentCamera.cameraLocation
+      }
+    }
   },
   methods: {
     ...project.mapMutations(['setCurrentProject', 'setSiteStatusTab']),
@@ -545,115 +574,115 @@ export default {
       'getLocationIdentifiedStatus',
       'getLocationRetrievedStatus',
       'getLocationCameraAbnormalStatus',
+      'updateAbnormalCamera'
     ]),
-    fetchImageStatus() {
-      this.mapInfo.marker = [];
-      this.progressData = [];
+    fetchImageStatus () {
+      this.mapInfo.marker = []
+      this.progressData = []
       const payload = {
         year: this.currentDuration,
         ...{
           site:
-            this.currentSite.label !== '全部樣區' ?
-              this.currentSite.label :
-              undefined,
-          subSite: !this.currentSubSite ? undefined : this.currentSubSite.label,
-        },
-      };
-      
-      this.getLocationIdentifiedStatus(payload);
-      this.getLocationRetrievedStatus(payload);
-      this.getLocationCameraAbnormalStatus(payload);
+            this.currentSite.label !== '全部樣區'
+              ? this.currentSite.label
+              : undefined,
+          subSite: !this.currentSubSite ? undefined : this.currentSubSite.label
+        }
+      }
 
-      this.renderMap();
+      this.getLocationIdentifiedStatus(payload)
+      this.getLocationRetrievedStatus(payload)
+      this.getLocationCameraAbnormalStatus(payload)
+
+      this.renderMap()
     },
-    timeFormat(time) {
-      return moment(time * 1000).format('YYYY/MM/DD');
+    timeFormat (time) {
+      return moment(time * 1000).format('YYYY/MM/DD')
     },
-    submitReport() {
-      // send error data
+    submitReport (val) {
+      this.updateAbnormalCamera([{
+        ...val,
+        projectTitle: this.currentProject.projectTitle
+      }])
     },
-    setCamera(value) {
+    setCamera (value) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'project') {
         if (!value.child === false && value.child.length) {
-          this.currentCamera = null;
-          this.currentSubSite = value.child[0];
-          if(!this.SiteMarkers.length) this.setSiteMarker(value);
+          this.currentCamera = null
+          this.currentSubSite = value.child[0]
+          if (!this.SiteMarkers.length) this.setSiteMarker(value)
         } else {
-          this.currentCamera = null;
-          this.currentSubSite = null;
+          this.currentCamera = null
+          this.currentSubSite = null
         }
-        this.mapMode = 'camera';
+        this.mapMode = 'camera'
         // this.renderMap();
       }
 
       if (this.mapMode === 'camera') {
         if (!value.child) {
           // const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
-          this.currentCamera = null;
-          this.currentSubSite = null;
-          this.progressData = this.ProjectMarkers;
-          this.mapMode = 'project';
+          this.currentCamera = null
+          this.currentSubSite = null
+          this.progressData = this.ProjectMarkers
+          this.mapMode = 'project'
         } else {
-          this.currentCamera = null;
-          this.currentSubSite = value.child[0];
+          this.currentCamera = null
+          this.currentSubSite = value.child[0]
           // this.renderMap();
         }
       }
     },
-    setCurrent(value, index) {
+    setCurrent (value, index) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
-        this.currentCamera = value;
-        this.currentCamera.icon = !value.error ?
-          IconSelect :
-          ErrorIconSelect;
-        this.mapInfo.center = window._.clone(this.currentCamera.marker);
+        this.currentCamera = value
+        this.currentCamera.icon = !value.error
+          ? IconSelect
+          : ErrorIconSelect
+        this.mapInfo.center = window._.clone(this.currentCamera.marker)
         setTimeout(() => {
-          this.loadBarChart();
-        }, 200);
+          this.loadBarChart()
+        }, 200)
       }
 
       if (this.mapMode === 'project') {
         this.currentSite = this.sites.find((item, index, array) => {
           return item.value === value.site
-        }); 
+        })
 
-        this.setSiteMarker(value, index);
+        this.setSiteMarker(value, index)
       }
     },
-    setSiteMarker(value, index) {
+    setSiteMarker (value, index) {
       this.SiteMarkers = this.currentProject.cameraLocations.reduce((accumulator, currentValue) => {
-        if (currentValue.site===value.site && currentValue.subSite===value.subSite) {
-          let locationIdentifiedStatus
-          let locationRetrievedStatus
-          let locationCameraAbnormalStatus
+        if (currentValue.site === value.site && currentValue.subSite === value.subSite) {
+          const retrievedStatus = Array(12).fill(0)
+          const cameraAbnormalStatus = Array(12).fill(0)
+          const identifiedStatus = Array(12).fill(0)
 
-          let retrievedStatus = Array(12).fill(0);
-          let cameraAbnormalStatus = Array(12).fill(0);
-          let identifiedStatus = Array(12).fill(0);
-          
           this.locationRetrievedStatus.forEach(status => {
-            if(status.site === currentValue.site) {
+            if (status.site === currentValue.site) {
               status.monthly_num.forEach((value) => {
-                retrievedStatus[value.month] += value.num;
+                retrievedStatus[value.month] += value.num
               })
             }
-          });
+          })
           this.locationCameraAbnormalStatus.forEach(status => {
-            if(status.site === currentValue.site) {
+            if (status.site === currentValue.site) {
               status.monthly_num.forEach((value) => {
-                cameraAbnormalStatus[value.month] += value.num;
+                cameraAbnormalStatus[value.month] += value.num
               })
             }
-          });
+          })
           this.locationIdentifiedStatus.forEach(status => {
-            if(status.site === currentValue.site) {
+            if (status.site === currentValue.site) {
               status.monthly_num.forEach((value) => {
-                identifiedStatus[value.month] += value.num;
+                identifiedStatus[value.month] += value.num
               })
             }
-          });
+          })
 
           accumulator.push({
             name: currentValue.cameraLocation,
@@ -661,96 +690,95 @@ export default {
             ...currentValue,
             retrievedStatus,
             cameraAbnormalStatus,
-            identifiedStatus,
-          });
+            identifiedStatus
+          })
         }
-        return accumulator;
-      }, []);
-
+        return accumulator
+      }, [])
     },
-    countPercentage(idx, array) {
-      let total = 0;
-      let current = 0;
+    countPercentage (idx, array) {
+      let total = 0
+      let current = 0
 
       array.forEach((r, i) => {
-        total += r.y;
-        if (i === idx) current = r.y;
-      });
+        total += r.y
+        if (i === idx) current = r.y
+      })
 
-      return (100 * (current / total)).toFixed(1);
+      return (100 * (current / total)).toFixed(1)
     },
     // 更新圖表
-    loadBarChart() {
+    loadBarChart () {
       const BarChartData = {
         name: '每月影像筆數',
         data: this.currentCamera.retrievedStatus.reduce((array, value, i) => {
           array.push({
-            name: (i+1) + '月',
+            name: (i + 1) + '月',
             y: value,
-            error: 0,
-          });
-          return array;
-        }, []),
-      };
-      const barCharts = this.$refs.barCharts;
-      barCharts.removeSeries();
-      barCharts.addSeries(BarChartData);
+            error: 0
+          })
+          return array
+        }, [])
+      }
+      const barCharts = this.$refs.barCharts
+      barCharts.removeSeries()
+      barCharts.addSeries(BarChartData)
     },
-    loadPieChart(val, val2) {
-      const chartData = [];
-      if (!val.length || this.pieChartRendering) return;
+    loadPieChart (val, val2) {
+      const chartData = []
+      if (!val.length || this.pieChartRendering) return
       this.species.forEach((v, i) => {
         if (i > 5) {
-          if (!chartData[6]) chartData[6] = { name: '其他', y: 0 };
-          else chartData[6].y += v.y;
-        } else chartData.push(v);
-      });
-      const pieCharts = this.$refs.pieCharts;
+          if (!chartData[6]) chartData[6] = { name: '其他', y: 0 }
+          else chartData[6].y += v.y
+        } else chartData.push(v)
+      })
+      const pieCharts = this.$refs.pieCharts
       const PieChartOpt = {
         type: 'pie',
         name: 'speices',
         size: '80%',
         innerSize: '50%',
-        data: chartData,
-      };
-      pieCharts.addSeries(PieChartOpt);
-      this.pieChartRendering = true;
+        data: chartData
+      }
+      pieCharts.addSeries(PieChartOpt)
+      this.pieChartRendering = true
     },
     // 切換顯示年份
-    changeDuration(count) {
+    changeDuration (count) {
       if (this.currentDuration === this.today.year() && count > 0) {
-        return;
+        return
       }
-      this.currentDuration += count;
+      this.currentDuration += count
       // get New Data
     },
     // 根據層級切換地圖顯示大小
-    renderMap() {
+    renderMap () {
       // if (this.ProjectMarkers.length === 0) return
       if (this.mapMode === 'project') {
-        this.mapInfo.zoom = 9;
-        this.mapInfo.marker = this.ProjectMarkers;
-        this.progressData = this.ProjectMarkers;
+        this.mapInfo.zoom = 9
+        this.mapInfo.marker = this.ProjectMarkers
+        this.progressData = this.ProjectMarkers
       }
 
       if (this.mapMode === 'camera') {
-        this.mapInfo.zoom = 15;
-        this.progressData = this.SiteMarkers;
+        this.mapInfo.zoom = 15
+        this.progressData = this.SiteMarkers
         this.mapInfo.marker = this.SiteMarkers.map(val =>
           // 設定地圖要顯示的 Icon
           ({
             ...val,
-            icon: val.error > 0 ? ErrorIconSelect : IconSelect,
-          }));
+            icon: val.error > 0 ? ErrorIconSelect : IconSelect
+          }))
       }
       if (this.mapInfo.marker.length) {
-        this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker);
+        this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker)
       }
-    },
+    }
   },
-  mounted() {
-    this.setCurrentProject(this.$route.params.id);
-    this.progressData = this.ProjectMarkers;
-  },
-};
+  mounted () {
+    this.setCurrentProject(this.$route.params.id)
+    this.progressData = this.ProjectMarkers
+  }
+}
 </script>

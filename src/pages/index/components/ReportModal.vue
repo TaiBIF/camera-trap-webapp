@@ -10,19 +10,19 @@
             <div class="form-group row">
               <label for="" class="col-3 px-0 text-right required">樣區：</label>
               <div class="col-9">
-                <v-select v-model="form.site" :options="['屏東處']"/>
+                <v-select v-model="form.site" :options="siteOptions"/>
               </div>
             </div>
             <div class="form-group row">
               <label for="" class="col-3 px-0 text-right required">子樣區：</label>
               <div class="col-9">
-                <v-select v-model="form.subSite" :options="['旗山站']"/>
+                <v-select v-model="form.subSite" :options="subSiteOptions" resetOnOptionsChange/>
               </div>
             </div>
             <div class="form-group row">
               <label for="" class="col-3 px-0 text-right required">相機位置：</label>
               <div class="col-9">
-                <v-select v-model="form.camera" :options="['PT97A']"/>
+                <v-select v-model="form.camera" :options="cameraOptions" resetOnOptionsChange/>
               </div>
             </div>
             <div class="form-group row">
@@ -46,7 +46,7 @@
             <div class="form-group row">
               <label for="" class="col-3 px-0 text-right required">異常狀況：</label>
               <div class="col-9">
-                <v-select v-model="form.status" :options="['相機故障（空拍過多）']"/>
+                <v-select v-model="form.status" :options="abnormalType"/>
               </div>
             </div>
             <div class="form-group row">
@@ -68,10 +68,17 @@
 
 <script>
 import DatePicker from 'vue2-datepicker'
+import moment from 'moment'
 
 export default {
   name: 'ReportModal',
   props: {
+    options: {
+      type: Array
+    },
+    defaultValue: {
+      type: Object
+    },
     open: {
       type: Boolean,
       default: false
@@ -88,13 +95,54 @@ export default {
         site: '',
         subSite: '',
         camera: '',
-        note: ''
-      }
+        note: '',
+        status: ''
+      },
+      abnormalType: ['相機故障（空拍過多', '相機故障 (沒有影像)', '相機失竊', '相機電量耗損過快', '其他']
+    }
+  },
+  watch: {
+    'open': function () {
+      Object.assign(this.form, this.defaultValue)
+    }
+  },
+  computed: {
+    siteOptions () {
+      return this.options.map(v => v.id)
+    },
+    subSiteOptions () {
+      return this.form.site
+        ? this.options.find(v => v.id === this.form.site).children.map(v => v.id)
+        : []
+    },
+    cameraOptions () {
+      const tmp = this.form.site && this.form.subSite
+        ? this.options.find(v => v.id === this.form.site).children.find(v => v.id === this.form.subSite)
+        : undefined
+
+      return tmp ? Object.keys(tmp.cameraList) : []
+    },
+    cameraMD5 () {
+      const tmp = this.form.site && this.form.subSite
+        ? this.options.find(v => v.id === this.form.site).children.find(v => v.id === this.form.subSite)
+        : undefined
+
+      return tmp ? tmp.cameraList : []
     }
   },
   methods: {
     submit () {
       this.$emit('close')
+      this.$emit('submit', {
+        site: this.form.site,
+        subSite: this.form.subSite,
+        cameraLocation: this.form.camera,
+        fullCameraLocationMd5: this.cameraMD5[this.form.camera],
+        abnormalStartDate: moment(this.form.startAt).format('YYYY/MM/DD'),
+        abnormalEndDate: moment(this.form.endAt).format('YYYY/MM/DD'),
+        abnormalType: this.form.status,
+        remarks: this.form.note
+      })
     }
   }
 }
