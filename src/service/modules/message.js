@@ -1,4 +1,4 @@
-import fetchWrap from '../../util/fetch'
+import fetchWrap from '../../util/fetch';
 
 const getMessage = async () => {
   const res = await fetchWrap({
@@ -7,14 +7,14 @@ const getMessage = async () => {
     body: {
       query: {},
       limit: 3,
-      sort: { modified: -1 }
-    }
-  })
+      sort: { modified: -1 },
+    },
+  });
 
   return res.results.map(val => ({
     id: val.announcement_id,
-    title: val.message
-  }))
-}
+    title: val.message,
+  }));
+};
 
-export { getMessage }
+export { getMessage };

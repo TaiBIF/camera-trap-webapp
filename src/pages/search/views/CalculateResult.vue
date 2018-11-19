@@ -4,8 +4,9 @@
       <div class="col-12 pt-2">
         <div class="float-right">
           <a
-          class="btn btn-green-border btn-sm"
-          v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'">
+            class="btn btn-green-border btn-sm"
+            v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'"
+          >
             <span class="icon"><i class="icon-download-green"></i></span>
             <span class="text">下載篩選結果</span>
           </a>
@@ -20,7 +21,10 @@
         </router-link>
         <h3 class="text-green mb-2 mt-2">資料計算結果</h3>
       </div>
-      <form action="" class="form filter-form">
+      <form
+        action=""
+        class="form filter-form"
+      >
         <div class="col-12">
           <h6 class="text-gray mt-3">資料來源</h6>
         </div>
@@ -29,32 +33,36 @@
             <div class="form-group">
               <label for="">計畫名稱：</label>
               <v-select
-              v-model="form.project"
-              :placeholder="'請選擇計畫名稱'"></v-select>
+                v-model="form.project"
+                :placeholder="'請選擇計畫名稱'"
+              ></v-select>
             </div>
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
                   <label for="">樣區：</label>
                   <v-select
-                  v-model="form.site"
-                  :placeholder="'請選擇樣區'"></v-select>
+                    v-model="form.site"
+                    :placeholder="'請選擇樣區'"
+                  ></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">子樣區：</label>
                   <v-select
-                  v-model="form.subSite"
-                  :placeholder="'請選擇子樣區'"></v-select>
+                    v-model="form.subSite"
+                    :placeholder="'請選擇子樣區'"
+                  ></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">相機位置：</label>
                   <v-select
-                  v-model="form.camera"
-                  :placeholder="'請選擇相機位置'"></v-select>
+                    v-model="form.camera"
+                    :placeholder="'請選擇相機位置'"
+                  ></v-select>
                 </div>
               </div>
             </div>
@@ -65,7 +73,7 @@
                 <div class="form-group">
                   <label>物種：</label>
                   <v-select
-                  :options="[
+                    :options="[
                     {label:'山羌', value:'山羌'},
                     {label:'鼬獾', value:'鼬獾'},
                     {label:'台灣獼猴', value:'台灣獼猴'},
@@ -73,7 +81,8 @@
                     {label:'赤腹松鼠', value:'赤腹松鼠'},
                     {label:'白鼻心', value:'白鼻心'}
                   ]"
-                  multiple />
+                    multiple
+                  />
                 </div>
               </div>
             </div>
@@ -84,18 +93,20 @@
                   <div class="input-group-inline">
                     <div class="input-group">
                       <date-picker
-                      v-model="form.startAt"
-                      :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
-                      :first-day-of-week="1" />
+                        v-model="form.startAt"
+                        :placeholder="'18/9/20'"
+                        :format="'YY/M/DD'"
+                        :first-day-of-week="1"
+                      />
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
                       <vue-timepicker
-                      v-model="form.startTime"
-                      format="" />
+                        v-model="form.startTime"
+                        format=""
+                      />
                     </div>
                   </div>
                 </div>
@@ -109,18 +120,20 @@
                   <div class="input-group-inline">
                     <div class="input-group">
                       <date-picker
-                      v-model="form.endAt"
-                      :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
-                      :first-day-of-week="1" />
+                        v-model="form.endAt"
+                        :placeholder="'18/9/20'"
+                        :format="'YY/M/DD'"
+                        :first-day-of-week="1"
+                      />
                       <div class="input-group-append">
                         <i class="icon icon-calendar"></i>
                       </div>
                     </div>
                     <div class="input-group ml-2">
                       <vue-timepicker
-                      v-model="form.endTime"
-                      format=""/>
+                        v-model="form.endTime"
+                        format=""
+                      />
                     </div>
                   </div>
                 </div>

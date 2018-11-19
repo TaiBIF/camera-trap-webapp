@@ -6,30 +6,27 @@
       :key="`menu-${item.id}`"
       :item="item"
       :level="1"
-      :idx="idx" />
+      :idx="idx"
+    />
   </ul>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import TreeItem from './TreeItem'
+import { mapGetters, mapActions } from 'vuex';
+import TreeItem from './TreeItem';
 
 export default {
   name: 'tree-menu',
   props: {
     items: Array,
-    defaultOpenLevel: Number
+    defaultOpenLevel: Number,
   },
   computed: {
-    ...mapGetters([
-      'currentProject'
-    ])
+    ...mapGetters(['currentProject']),
   },
   components: { TreeItem },
   methods: {
-    ...mapActions([
-      'setCurrentProject'
-    ])
-  }
-}
+    ...mapActions(['setCurrentProject']),
+  },
+};
 </script>

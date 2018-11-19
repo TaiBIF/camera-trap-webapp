@@ -1,43 +1,53 @@
 <template>
-  <table class="site-table"
-  :class="{'normal': type===0, 'identify': type===1}">
+  <table
+    class="site-table"
+    :class="{'normal': type===0, 'identify': type===1}"
+  >
     <tbody v-if="type===0">
       <tr
-      v-for="(d, dIdx) in chart"
-      :key="`trow-${dIdx}`"
-      :class="{'is-active': d.id==current}"
-      @click="setCurrent(d, dIdx)">
+        v-for="(d, dIdx) in chart"
+        :key="`trow-${dIdx}`"
+        :class="{'is-active': d.id==current}"
+        @click="setCurrent(d, dIdx)"
+      >
         <th>{{d.name}}</th>
         <td
-        v-for="(data, rid) in d.retrievedStatus"
-        :key="`retrievedStatus-${type}-${rid}`">
-          <span class="progress"
-          v-if="data !== 0"
-          :class="{
+          v-for="(data, rid) in d.retrievedStatus"
+          :key="`retrievedStatus-${type}-${rid}`"
+        >
+          <span
+            class="progress"
+            v-if="data !== 0"
+            :class="{
             'is-complete': data>0,
             'not-complete': d.cameraAbnormalStatus[rid] > 0,
             'is-cancel': data==-1
-          }"></span>
+          }"
+          ></span>
         </td>
       </tr>
     </tbody>
     <tbody v-if="type===1">
       <tr
-      v-for="(d, dIdx) in chart"
-      :key="`trow-${dIdx}`"
-      :class="{'is-active': d.id==current}"
-      @click="setCurrent(d, dIdx)">
+        v-for="(d, dIdx) in chart"
+        :key="`trow-${dIdx}`"
+        :class="{'is-active': d.id==current}"
+        @click="setCurrent(d, dIdx)"
+      >
         <th>{{d.name}}</th>
         <td
-        v-for="(data, rid) in d.identifiedStatus"
-        :key="`identifiedStatus-${type}-${rid}`">
-          <span class="progress"
-          v-if="data !== 0"
-          :class="{
+          v-for="(data, rid) in d.identifiedStatus"
+          :key="`identifiedStatus-${type}-${rid}`"
+        >
+          <span
+            class="progress"
+            v-if="data !== 0"
+            :class="{
             'is-complete': data === d.retrievedStatus[rid],
             'not-complete': data < d.retrievedStatus[rid],
             'is-cancel': data==-1
-          }"></span>
+          }"
+          ></span>
         </td>
       </tr>
     </tbody>

@@ -10,7 +10,7 @@
         </p>
       </div>
 
-     <div class="col-12 pb-5">
+      <div class="col-12 pb-5">
         <table class="table auth-table">
           <thead>
             <tr>
@@ -327,10 +327,10 @@
 </template>
 
 <script>
-import { commonMixin } from '../../../mixins/common'
+import { commonMixin } from '../../../mixins/common';
 
 export default {
   name: 'MemberDescription',
-  mixins: [commonMixin]
-}
+  mixins: [commonMixin],
+};
 </script>

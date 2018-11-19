@@ -17,7 +17,10 @@
         <div class="row service-items">
           <div class="col-xs-12 col-sm-12 col-md-4">
             <div class="image">
-              <img src="/assets/intro/service-1.png" srcset="/assets/intro/service-1@2x.png">
+              <img
+                src="/assets/intro/service-1.png"
+                srcset="/assets/intro/service-1@2x.png"
+              >
             </div>
             <div class="content">
               <h2 class="text-green">資料彙整</h2>
@@ -26,7 +29,10 @@
           </div>
           <div class="col-xs-12 col-sm-12 col-md-4">
             <div class="image">
-              <img src="/assets/intro/service-2.png" srcset="/assets/intro/service-2@2x.png">
+              <img
+                src="/assets/intro/service-2.png"
+                srcset="/assets/intro/service-2@2x.png"
+              >
             </div>
             <div class="content">
               <h2 class="text-green">資料處理</h2>
@@ -35,7 +41,10 @@
           </div>
           <div class="col-xs-12 col-sm-12 col-md-4">
             <div class="image">
-              <img src="/assets/intro/service-3.png" srcset="/assets/intro/service-3@2x.png">
+              <img
+                src="/assets/intro/service-3.png"
+                srcset="/assets/intro/service-3@2x.png"
+              >
             </div>
             <div class="content">
               <h2 class="text-green">資料共享</h2>
@@ -50,17 +59,21 @@
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-5">
             <h2 class="text-green">
-              <big>簡單</big><br/>
+              <big>簡單</big><br />
               熟悉的工作介面
             </h2>
             <p class="desp">
               彈性的管理模組讓你可以自行建立專案所需之樣區層級，並透過目錄結構管理，像使用電腦資料夾一樣，輕鬆歸納大量資料。Camera Trap將慣用的Excel工作介面，套用至平台中，延續原有使用習慣，減少學習時間，能更專注於研究工作！
             </p>
-          
+
             <div class="img-items text-right">
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/easy-item-1.png" srcset="/assets/intro/easy-item-1@2x.png" width="120">
+                  <img
+                    src="/assets/intro/easy-item-1.png"
+                    srcset="/assets/intro/easy-item-1@2x.png"
+                    width="120"
+                  >
                 </div>
                 <div class="content">
                   目錄式結構
@@ -68,7 +81,11 @@
               </div>
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/easy-item-2.png" srcset="/assets/intro/easy-item-2@2x.png" width="120">
+                  <img
+                    src="/assets/intro/easy-item-2.png"
+                    srcset="/assets/intro/easy-item-2@2x.png"
+                    width="120"
+                  >
                 </div>
                 <div class="content">
                   Excel 工作介面
@@ -84,17 +101,21 @@
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-6 offset-md-6 text-right">
             <h2 class="text-green">
-              <big>效率</big><br/>
+              <big>效率</big><br />
               高效的管理系統
             </h2>
             <p class="desp pl-5">
               統計各樣區資料回收狀況，透過圖表呈現一目了然，讓管理者能迅速掌握資料進度。連拍補齊功能加速您的標註作業，當您辨識第一筆資料時，被標示為該次連拍的資料會同步填入相同內容。Camera Trap會自動檢核常見錯誤狀況，維持資料正確性，利於進一步的分析
             </p>
-            
+
             <div class="img-items text-left">
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/effect-item-1.png" srcset="/assets/intro/effect-item-1@2x.png" width="120">
+                  <img
+                    src="/assets/intro/effect-item-1.png"
+                    srcset="/assets/intro/effect-item-1@2x.png"
+                    width="120"
+                  >
                 </div>
                 <div class="content">
                   掌握進度
@@ -102,7 +123,11 @@
               </div>
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/effect-item-2.png" srcset="/assets/intro/effect-item-2@2x.png" width="120">
+                  <img
+                    src="/assets/intro/effect-item-2.png"
+                    srcset="/assets/intro/effect-item-2@2x.png"
+                    width="120"
+                  >
                 </div>
                 <div class="content">
                   連拍補齊
@@ -110,7 +135,11 @@
               </div>
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/effect-item-3.png" srcset="/assets/intro/effect-item-3@2x.png" width="120">
+                  <img
+                    src="/assets/intro/effect-item-3.png"
+                    srcset="/assets/intro/effect-item-3@2x.png"
+                    width="120"
+                  >
                 </div>
                 <div class="content">
                   自動檢核
@@ -126,7 +155,7 @@
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-5">
             <h2 class="text-green">
-              <big>專業</big><br/>
+              <big>專業</big><br />
               標準化的資料處理
             </h2>
             <p class="desp">
@@ -139,19 +168,28 @@
             <div class="img-items text-right">
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/pro-item-1.png" srcset="/assets/intro/pro-item-1@2x.png">
+                  <img
+                    src="/assets/intro/pro-item-1.png"
+                    srcset="/assets/intro/pro-item-1@2x.png"
+                  >
                 </div>
                 <div class="content">篩選提煉資料</div>
               </div>
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/pro-item-2.png" srcset="/assets/intro/pro-item-2@2x.png">
+                  <img
+                    src="/assets/intro/pro-item-2.png"
+                    srcset="/assets/intro/pro-item-2@2x.png"
+                  >
                 </div>
                 <div class="content">線上計算</div>
               </div>
               <div class="item">
                 <div class="image">
-                  <img src="/assets/intro/pro-item-3.png" srcset="/assets/intro/pro-item-3@2x.png">
+                  <img
+                    src="/assets/intro/pro-item-3.png"
+                    srcset="/assets/intro/pro-item-3@2x.png"
+                  >
                 </div>
                 <div class="content">留存共享</div>
               </div>
@@ -164,11 +202,15 @@
       <div class="container">
         <h1 class="text-green">
           Camera Trap
-          <br/>
+          <br />
           <small>簡易操作，高效管理，輕鬆串連</small>
         </h1>
         <div class="my-5">
-          <img src="/assets/intro/demo-img.png" width="903" srcset="/assets/intro/demo-img@2x.png">
+          <img
+            src="/assets/intro/demo-img.png"
+            width="903"
+            srcset="/assets/intro/demo-img@2x.png"
+          >
         </div>
 
         <a class="btn btn-orange btn-lg">
@@ -180,10 +222,14 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-4 text-center pt-4">
-            <img src="/assets/intro/footer-logo.png" class="logo" srcset="/assets/intro/footer-logo@2x.png">
+            <img
+              src="/assets/intro/footer-logo.png"
+              class="logo"
+              srcset="/assets/intro/footer-logo@2x.png"
+            >
             <div class="mt-2">
               <small class="text-gray">
-                Copyright © 2018 Forestry Bureau<br/>
+                Copyright © 2018 Forestry Bureau<br />
                 行政院農業委員會林務局 版權所有
               </small>
             </div>
@@ -194,17 +240,26 @@
                 <label class="text-gray">相關連結</label>
                 <ul>
                   <li>
-                    <a href="#" target="_blank">
+                    <a
+                      href="#"
+                      target="_blank"
+                    >
                       林務局網站
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a
+                      href="#"
+                      target="_blank"
+                    >
                       特有生物研究保育中心
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a
+                      href="#"
+                      target="_blank"
+                    >
                       台灣生物多樣性資訊入口網
                     </a>
                   </li>
@@ -214,12 +269,18 @@
                 <label class="text-gray">幫助</label>
                 <ul>
                   <li>
-                    <a href="#" target="_blank">
+                    <a
+                      href="#"
+                      target="_blank"
+                    >
                       常見問題
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a
+                      href="#"
+                      target="_blank"
+                    >
                       隱私權聲明及使用條款
                     </a>
                   </li>
@@ -229,12 +290,18 @@
                 <label class="text-gray">聯絡我們</label>
                 <ul>
                   <li>
-                    <a href="mailto:TaiBIF@gmail.com" target="_blank">
+                    <a
+                      href="mailto:TaiBIF@gmail.com"
+                      target="_blank"
+                    >
                       <i class="icon icon-mail-gray"></i> <span class="text">TaiBIF@gmail.com</span>
                     </a>
                   </li>
                   <li>
-                    <a href="tel:+886227899621" target="_blank">
+                    <a
+                      href="tel:+886227899621"
+                      target="_blank"
+                    >
                       <i class="icon icon-phone-gray"></i>
                       <span class="text">02-27899621</span>
                     </a>
@@ -248,21 +315,33 @@
             <small class="text-center d-block">
               <span class="text-gray">主辦機關：</span>
               <span class="gov-item">
-                <img class="gov-logo" src="/assets/intro/logo-forest.png" srcset="/assets/intro/logo-forest@2x.png">
+                <img
+                  class="gov-logo"
+                  src="/assets/intro/logo-forest.png"
+                  srcset="/assets/intro/logo-forest@2x.png"
+                >
                 <span class="text">
                   <small>行政院農委會</small>
-                  林  務  局
+                  林 務 局
                 </span>
               </span>
               <span class="gov-item">
-                <img class="gov-logo" src="/assets/intro/logo-tesri.png" srcset="/assets/intro/logo-tesri@2x.png">
+                <img
+                  class="gov-logo"
+                  src="/assets/intro/logo-tesri.png"
+                  srcset="/assets/intro/logo-tesri@2x.png"
+                >
                 <span class="text">
                   <small>行政院農委會</small>
                   特有生物研究保育中心
                 </span>
               </span>
               <span class="gov-item">
-                <img class="gov-logo" src="/assets/intro/logo-taibif.png" srcset="/assets/intro/logo-taibif@2x.png">
+                <img
+                  class="gov-logo"
+                  src="/assets/intro/logo-taibif.png"
+                  srcset="/assets/intro/logo-taibif@2x.png"
+                >
                 <span class="text">
                   台灣生物多樣性資訊入口網
                 </span>
@@ -276,7 +355,5 @@
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>

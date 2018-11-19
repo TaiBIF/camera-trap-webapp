@@ -21,29 +21,37 @@
               </div>
               <div class="column-body">
                 <draggable
-                :options="{ handle: '.drag-item' }"
-                @start="drag=true"
-                @end="drag=false">
+                  :options="{ handle: '.drag-item' }"
+                  @start="drag=true"
+                  @end="drag=false"
+                >
                   <transition-group>
                     <div
-                    class="row column-item"
-                    v-for="(td, idx) in column"
-                    :key="`tr-${idx}`"
-                    :class="{ 'disabled': td.default }">
+                      class="row column-item"
+                      v-for="(td, idx) in column"
+                      :key="`tr-${idx}`"
+                      :class="{ 'disabled': td.default }"
+                    >
                       <div class="col-3">{{ td.name }}</div>
                       <div class="col-3">{{ td.type }}</div>
                       <div class="text-gray col-3">
                         <div
-                        v-if="td.name === '物種'"
-                        class="link text-green underline"
-                        @click="speciesOpen=true">
+                          v-if="td.name === '物種'"
+                          class="link text-green underline"
+                          @click="speciesOpen=true"
+                        >
                           <i class="fa fa-pencil-alt"></i> {{ td.description }}
                         </div>
                         <span v-else>{{ td.description }}</span>
                       </div>
-                      <div class="text-right col-3" v-if="!td.default">
-                        <a @click="removeItem(idx)"
-                        class="d-inline-block align-middle ml-2">
+                      <div
+                        class="text-right col-3"
+                        v-if="!td.default"
+                      >
+                        <a
+                          @click="removeItem(idx)"
+                          class="d-inline-block align-middle ml-2"
+                        >
                           <i class="icon-remove-sm"></i>
                         </a>
                         <a class="d-inline-block align-middle ml-2 drag-item">
@@ -56,25 +64,29 @@
               </div>
               <div class="column-footer">
                 <a
-                id="new-column"
-                class="btn btn-text text-left dropdown-toggle"
-                data-toggle="dropdown">
+                  id="new-column"
+                  class="btn btn-text text-left dropdown-toggle"
+                  data-toggle="dropdown"
+                >
                   <i class="fa fa-plus"></i> 新增欄位
                 </a>
                 <div
-                id="new-column-container"
-                aria-labelledby="new-column"
-                class="dropdown-menu dropdown-menu-right">
+                  id="new-column-container"
+                  aria-labelledby="new-column"
+                  class="dropdown-menu dropdown-menu-right"
+                >
                   <div
-                  class="dropdown-item"
-                  v-for="(td, idx) in column"
-                  :key="`item-${idx}`">
+                    class="dropdown-item"
+                    v-for="(td, idx) in column"
+                    :key="`item-${idx}`"
+                  >
                     <span v-if="!td.default">{{td.name}}</span>
                   </div>
                   <hr>
                   <div
-                  class="dropdown-item"
-                  @click="newColumnOpen=true">
+                    class="dropdown-item"
+                    @click="newColumnOpen=true"
+                  >
                     申請新增欄位
                   </div>
                 </div>
@@ -115,22 +127,28 @@
               <div class="col-9">
                 <div class="radio radio-inline">
                   <input
-                  type="radio"
-                  name="camera_time"
-                  id="camera-time-1"
-                  value="0">
+                    type="radio"
+                    name="camera_time"
+                    id="camera-time-1"
+                    value="0"
+                  >
                   <label for="camera-time-1">無設定</label>
                 </div>
                 <div class="radio radio-inline">
                   <input
-                  type="radio"
-                  name="camera_time"
-                  id="camera-time-2"
-                  value="1">
+                    type="radio"
+                    name="camera_time"
+                    id="camera-time-2"
+                    value="1"
+                  >
                   <label for="camera-time-2">
                     已設定，時間為每日
                     <div class="select d-inline-block">
-                      <select name="" id="" class="form-control">
+                      <select
+                        name=""
+                        id=""
+                        class="form-control"
+                      >
                         <option value="">12:00</option>
                       </select>
                     </div>
@@ -143,34 +161,40 @@
 
         <div class="action">
           <router-link
-          to="/project/1"
-          class="btn btn-default">
+            to="/project/1"
+            class="btn btn-default"
+          >
             返回
           </router-link>
           <button
-          type="submit"
-          @click.stop.prevent="nextStep()"
-          class="btn btn-orange">
+            type="submit"
+            @click.stop.prevent="nextStep()"
+            class="btn btn-orange"
+          >
             儲存設定
           </button>
         </div>
       </div>
     </div>
     <close-window-dialog
-    :open="closeWindowOpen"
-    @close="closeWindowOpen=false" />
+      :open="closeWindowOpen"
+      @close="closeWindowOpen=false"
+    />
     <new-column-modal
-    :open="newColumnOpen"
-    @close='newColumnOpen=false'
-    @submit="submitColumn" />
+      :open="newColumnOpen"
+      @close='newColumnOpen=false'
+      @submit="submitColumn"
+    />
     <invitation-dialog
-    :open="invitationOpen"
-    @close="invitationOpen=false" />
+      :open="invitationOpen"
+      @close="invitationOpen=false"
+    />
     <delete-column-dialog
-    :open="deleteColumnOpen"
-    :column="delColumn.data"
-    @close="deleteColumnOpen=false"
-    @submit="confirmDeleteColumn" />
+      :open="deleteColumnOpen"
+      :column="delColumn.data"
+      @close="deleteColumnOpen=false"
+      @submit="confirmDeleteColumn"
+    />
   </div>
 </template>
 

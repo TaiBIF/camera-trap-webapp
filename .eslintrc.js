@@ -1,31 +1,16 @@
 module.exports = {
-  extends: ['@tbif/base', 'plugin:vue/essential'],
-  plugins: ['node'],
+  root: true,
   env: {
-    jest: true,
+    node: true,
   },
+  extends: ['plugin:vue/essential', '@vue/prettier'],
   rules: {
-    'space-before-function-paren': 0,
-    indent: [
-      'error',
-      2,
-      {
-        MemberExpression: 'off',
-      },
-    ],
-    'node/no-extraneous-require': [
-      'error',
-      {
-        allowModules: ['@vue/cli-test-utils'],
-      },
-    ],
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'linebreak-style': ['error', 'unix'],
+    quotes: ['error', 'single'],
   },
-  overrides: [
-    {
-      files: ['**/__tests__/**/*.js', '**/cli-test-utils/**/*.js'],
-      rules: {
-        'node/no-extraneous-require': 'off',
-      },
-    },
-  ],
+  parserOptions: {
+    parser: 'babel-eslint',
+  },
 };

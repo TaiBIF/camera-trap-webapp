@@ -1,4 +1,4 @@
-import fetchWrap from '../../util/fetch'
+import fetchWrap from '../../util/fetch';
 
 const getSiteData = async payload => {
   const res = await fetchWrap({
@@ -17,24 +17,24 @@ const getSiteData = async payload => {
         'tokens.data.value': true,
         corrected_date_time: true,
         date_time_corrected_timestamp: true,
-        url: true
-      }
-    })
-  })
+        url: true,
+      },
+    }),
+  });
 
   return res.results.map(val => ({
     ...val,
-    url: `https://camera-trap.tw/${val.url}`
-  }))
-}
+    url: `https://camera-trap.tw/${val.url}`,
+  }));
+};
 
 const updateAnnotation = async payload => {
   const res = await fetchWrap({
     url: '/media/annotation/bulk-update',
     method: 'POST',
-    body: payload
-  })
-  return res
-}
+    body: payload,
+  });
+  return res;
+};
 
-export { getSiteData, updateAnnotation }
+export { getSiteData, updateAnnotation };

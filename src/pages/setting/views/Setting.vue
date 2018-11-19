@@ -6,7 +6,10 @@
         <h4>帳號設定</h4>
       </div>
       <div class="panel-body">
-        <form action="" class="form">
+        <form
+          action=""
+          class="form"
+        >
           <div class="form-group row">
             <label class="required col-2 text-right">
               帳號連結：
@@ -26,7 +29,10 @@
               使用者名稱：
             </label>
             <div class="col-6">
-              <v-select :options="[{label:'Cindy Gu', value: '1'}]" v-model="form.name" />
+              <v-select
+                :options="[{label:'Cindy Gu', value: '1'}]"
+                v-model="form.name"
+              />
               <small class="note d-block text-gray">
                 您對外公開的稱呼
               </small>
@@ -37,7 +43,10 @@
               電子郵件：
             </label>
             <div class="col-6">
-              <v-select :options="[{label:'cindy@gmail.com', value: '1'}]" v-model="form.email" />
+              <v-select
+                :options="[{label:'cindy@gmail.com', value: '1'}]"
+                v-model="form.email"
+              />
               <small class="note d-block text-gray">
                 此電子郵件僅作通知及聯絡用途
               </small>
@@ -55,7 +64,7 @@
         <div class="gray-block">
           <div class="row">
             <div class="col-10">
-              鍵盤快速鍵能幫助您提高工作效率，您可以使用本平台預設快速鍵設定，或是自行創建屬於您習慣的快速鍵設定。<br/>
+              鍵盤快速鍵能幫助您提高工作效率，您可以使用本平台預設快速鍵設定，或是自行創建屬於您習慣的快速鍵設定。<br />
               * 提醒您：您可以設定任一英文字、數字作為輸入物種時的快速鍵，但不接受空白鍵和符號
             </div>
             <div class="col-2 text-right">
@@ -74,17 +83,26 @@
           <tbody>
             <tr>
               <td width="22%">
-                <v-select v-model='keyword.description' :options="[{label:'空拍', value: '1'}]" />
+                <v-select
+                  v-model='keyword.description'
+                  :options="[{label:'空拍', value: '1'}]"
+                />
               </td>
               <td width="22%">
-                <v-select v-model='keyword.key' :options="[{label:'SP', value: '1'}]" />
+                <v-select
+                  v-model='keyword.key'
+                  :options="[{label:'SP', value: '1'}]"
+                />
               </td>
               <td class="text-right">
                 <a class="close"><i class="icon-remove"></i></a>
               </td>
             </tr>
             <tr>
-              <td colspan="3" class="add">
+              <td
+                colspan="3"
+                class="add"
+              >
                 <a class="btn btn-block btn-text text-green text-left">
                   <span class="icon"><i class="icon-add-green"></i></span>
                   <span class="text">新增快速鍵</span>
@@ -99,7 +117,10 @@
       <button class="btn btn-green-border">
         取消
       </button>
-      <button type="submit" class="btn btn-orange">
+      <button
+        type="submit"
+        class="btn btn-orange"
+      >
         儲存設定
       </button>
     </div>
@@ -114,7 +135,7 @@ export default {
     return {
       keyword: {
         description: '',
-        key: ''
+        key: '',
       },
       form: {
         name: 'Cindy Gu',

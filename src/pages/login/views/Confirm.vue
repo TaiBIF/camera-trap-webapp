@@ -7,7 +7,11 @@
         <div class="col-12">
           <div class="panel mt-5">
             <div class="panel-body text-center pt-5">
-              <img src="/assets/common/logo-lg.png" height="81" srcset="/assets/common/logo-lg@2x.png">
+              <img
+                src="/assets/common/logo-lg.png"
+                height="81"
+                srcset="/assets/common/logo-lg@2x.png"
+              >
               <h5 class="mt-5">透過您的 ORCID 帳號登入</h5>
               <p class="text-gray">本系統將會取用您的電子郵件、姓名及ORCID ID</p>
             </div>
@@ -28,6 +32,6 @@
 
 <script>
 export default {
-  name: 'Login'
-}
+  name: 'Login',
+};
 </script>

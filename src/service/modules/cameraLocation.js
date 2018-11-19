@@ -1,23 +1,23 @@
-import fetchWrap from '../../util/fetch'
+import fetchWrap from '../../util/fetch';
 
 const getCameraLocked = async payload => {
   const res = await fetchWrap({
     url: '/camera-location/data-lock/locked',
     method: 'POST',
-    body: payload
-  })
+    body: payload,
+  });
 
-  return res.ret.map(val => val.cameraLocationDataLock)
-}
+  return res.ret.map(val => val.cameraLocationDataLock);
+};
 
 const setCameraLocked = async payload => {
   const res = await fetchWrap({
     url: '/camera-location/data-lock/bulk-replace',
     method: 'POST',
-    body: payload
-  })
+    body: payload,
+  });
 
-  return res
-}
+  return res;
+};
 
-export { getCameraLocked, setCameraLocked }
+export { getCameraLocked, setCameraLocked };
