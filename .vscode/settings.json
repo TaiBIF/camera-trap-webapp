@@ -1,4 +1,7 @@
 {
+  "editor.formatOnSave": true,
+  "eslint.autoFixOnSave": true,
+  "files.autoSave": "onFocusChange",
   "vetur.format.scriptInitialIndent": true,
   "vetur.format.styleInitialIndent": true,
   "vetur.format.defaultFormatter.html": "js-beautify-html",
@@ -9,5 +12,13 @@
     }
   },
   "prettier.eslintIntegration": true,
-  "prettier.singleQuote": true
+  "prettier.semi": true,
+  "prettier.singleQuote": true,
+  "eslint.validate": [
+    "javascript",
+    {
+      "language": "vue",
+      "autoFix": true
+    }
+  ]
 }
