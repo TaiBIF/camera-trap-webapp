@@ -1,12 +1,12 @@
-import fetchWrap from '../../util/fetch'
+import fetchWrap from '../../util/fetch';
 
 const updateAbnormalCamera = async payload => {
   const res = await fetchWrap({
     url: '/abnormal-data/bulk-replace',
     method: 'POST',
-    body: payload
-  })
-  return res
-}
+    body: payload,
+  });
+  return res;
+};
 
-export { updateAbnormalCamera }
+export { updateAbnormalCamera };

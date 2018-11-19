@@ -20,15 +20,15 @@
 <script>
 export default {
   name: 'Article',
-  data () {
+  data() {
     return {
       article: {
         title: 'Title',
         description: 'Description',
         content: 'Content',
-        updated_at: '2018/08/14'
-      }
-    }
-  }
-}
+        updated_at: '2018/08/14',
+      },
+    };
+  },
+};
 </script>

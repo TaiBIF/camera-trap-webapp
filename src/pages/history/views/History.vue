@@ -12,25 +12,43 @@
           <th>上傳結果</th>
         </tr>
       </thead>
-      <tbody v-for="(group, gid) in history" :key="`tgroup-${gid}`">
+      <tbody
+        v-for="(group, gid) in history"
+        :key="`tgroup-${gid}`"
+      >
         <tr>
           <td colspan="7">
             {{group.name}}
           </td>
         </tr>
-        <tr v-for="(row, rid) in group.list" :key="`trow-${gid}-${rid}`">
+        <tr
+          v-for="(row, rid) in group.list"
+          :key="`trow-${gid}-${rid}`"
+        >
           <td>{{row.createdAt}}</td>
           <td>
-            <span class="icon" v-if="row.type==='jpg'">
+            <span
+              class="icon"
+              v-if="row.type==='jpg'"
+            >
               <i class="icon-photo"></i>
             </span>
-            <span class="icon" v-if="row.type==='csv'">
+            <span
+              class="icon"
+              v-if="row.type==='csv'"
+            >
               <i class="icon-csv"></i>
             </span>
-            <span class="icon" v-if="row.type==='zip'">
+            <span
+              class="icon"
+              v-if="row.type==='zip'"
+            >
               <i class="icon-zip"></i>
             </span>
-            <span class="icon" v-if="row.type==='folder'">
+            <span
+              class="icon"
+              v-if="row.type==='folder'"
+            >
               <i class="icon-folder"></i>
             </span>
             <span class="text">{{row.name}}</span>
@@ -39,27 +57,38 @@
           <td>{{row.site}}-{{row.subsite}}</td>
           <td>{{row.camera}}</td>
           <td class="text-right">
-            <div v-if="row.status==2" class="float-left">
+            <div
+              v-if="row.status==2"
+              class="float-left"
+            >
               <span class="icon"><i class="icon-upload-success"></i></span>
               <span class="text">上傳成功</span>
             </div>
-            <div v-if="row.status==-1" class="float-left">
+            <div
+              v-if="row.status==-1"
+              class="float-left"
+            >
               <span class="icon"><i class="icon-upload-fail"></i></span>
               <span class="text">{{row.msg}}</span>
             </div>
 
             <a
-            href="/upload.html"
-            v-if="row.status==2"
-            class="link text-underline mr-2">
+              href="/upload.html"
+              v-if="row.status==2"
+              class="link text-underline mr-2"
+            >
               補上傳影像檔
             </a>
-            <a v-if="row.status==2"
-            class="link text-underline">
+            <a
+              v-if="row.status==2"
+              class="link text-underline"
+            >
               查看
             </a>
-            <a v-if="row.status==-1"
-            class="text-danger text-underline">
+            <a
+              v-if="row.status==-1"
+              class="text-danger text-underline"
+            >
               檢視錯誤
             </a>
           </td>

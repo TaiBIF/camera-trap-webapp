@@ -15,28 +15,35 @@
             <div class="invite-block">
               <form class="form-horizontal">
                 <div class="form-group row mb-0">
-                  <label for="" class="col-2 text-right">加入成員</label>
+                  <label
+                    for=""
+                    class="col-2 text-right"
+                  >加入成員</label>
                   <div class="col-4">
-                    <input type="text"
-                    class="form-control is-invalid"
-                    placeholder="請輸入成員ROCID名稱或電子郵件" />
+                    <input
+                      type="text"
+                      class="form-control is-invalid"
+                      placeholder="請輸入成員ROCID名稱或電子郵件"
+                    />
                     <div class="invalid-feedback">
                       <span class="alert-box">!</span>
                       <span class="text">電子郵件輸入不正確</span>
                     </div>
                   </div>
                   <div class="col-4">
-                    <v-select :options="roles"/>
+                    <v-select :options="roles" />
                     <router-link
-                    to="/member/description"
-                    class="d-block link text-green underline mt-1">
+                      to="/member/description"
+                      class="d-block link text-green underline mt-1"
+                    >
                       成員權限說明
                     </router-link>
                   </div>
                   <div class="col-2">
                     <button
-                    @click.prevent="invitationOpen=true"
-                    class="btn btn-orange">邀請</button>
+                      @click.prevent="invitationOpen=true"
+                      class="btn btn-orange"
+                    >邀請</button>
                   </div>
                 </div>
               </form>
@@ -52,13 +59,17 @@
               </thead>
               <tbody>
                 <tr
-                v-for="(mem, i) in members"
-                :class="{'disabled': mem.role==0}"
-                :key="`member-${i}`">
+                  v-for="(mem, i) in members"
+                  :class="{'disabled': mem.role==0}"
+                  :key="`member-${i}`"
+                >
                   <td>{{mem.name}}</td>
                   <td class="text-gray">{{mem.email}}</td>
                   <td>
-                    <v-select :options="roles" v-model="roles[mem.role]" />
+                    <v-select
+                      :options="roles"
+                      v-model="roles[mem.role]"
+                    />
                   </td>
                   <td class="text-right">
                     <a @click="removeMember(i)">
@@ -73,14 +84,16 @@
 
         <div class="action">
           <router-link
-          to="/project/1"
-          class="btn btn-default">
+            to="/project/1"
+            class="btn btn-default"
+          >
             返回
           </router-link>
           <button
-          type="submit"
-          @click.stop.prevent="doSubmit()"
-          class="btn btn-orange">
+            type="submit"
+            @click.stop.prevent="doSubmit()"
+            class="btn btn-orange"
+          >
             儲存設定
           </button>
         </div>
@@ -88,26 +101,31 @@
     </div>
 
     <new-column-modal
-    :open="newColumnOpen"
-    @close='newColumnOpen=false'
-    @submit="submitColumn" />
+      :open="newColumnOpen"
+      @close='newColumnOpen=false'
+      @submit="submitColumn"
+    />
 
     <species-order-panel
-    :open="speciesOpen"
-    @close='speciesOpen=false' />
+      :open="speciesOpen"
+      @close='speciesOpen=false'
+    />
 
     <close-window-dialog
-    :open="closeWindowOpen"
-    @close="closeWindowOpen=false" />
+      :open="closeWindowOpen"
+      @close="closeWindowOpen=false"
+    />
 
     <invitation-dialog
-    :open="invitationOpen"
-    @close="invitationOpen=false" />
+      :open="invitationOpen"
+      @close="invitationOpen=false"
+    />
 
     <remove-member-dialog
-    :open="removeMemberOpen"
-    @close="removeMemberOpen=false"
-    @submit="confirmRemove" />
+      :open="removeMemberOpen"
+      @close="removeMemberOpen=false"
+      @submit="confirmRemove"
+    />
 
   </div>
 </template>

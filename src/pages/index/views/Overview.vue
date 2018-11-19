@@ -1,7 +1,10 @@
 <template>
   <main class="page-project">
     <div class="container">
-      <div class="message" v-if="Message !== null">
+      <div
+        class="message"
+        v-if="Message !== null"
+      >
         <div class="container">
           {{ Message[0].title }}
         </div>
@@ -9,9 +12,16 @@
       <h1 class="heading">計畫總覽</h1>
       <div v-if="!Projects.length && !loading">
         <div class="empty-content">
-          <img src="/assets/common/empty-project.png" width="212px" srcset="/assets/common/empty-project@2x.png">
+          <img
+            src="/assets/common/empty-project.png"
+            width="212px"
+            srcset="/assets/common/empty-project@2x.png"
+          >
           <h1 class="empty">您目前沒有任何計畫</h1>
-          <router-link to="/project/create" class="btn btn-orange">新增計畫</router-link>
+          <router-link
+            to="/project/create"
+            class="btn btn-orange"
+          >新增計畫</router-link>
         </div>
       </div>
 
@@ -20,24 +30,53 @@
         <div class="row">
           <div class="col-8">
             <div class="dropdown">
-              <a class="btn btn-link pl-0 dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a
+                class="btn btn-link pl-0 dropdown-toggle"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
                 依建立時間排序
               </a>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">依資料起始時間排序 (新→舊)</a>
-                <a class="dropdown-item" href="#">依最後更新時間排序 (新→舊) </a>
-                <a class="dropdown-item" href="#">依委託單位筆畫排序</a>
-                <a class="dropdown-item" href="#">依專案名稱筆畫排序</a>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="dropdownMenuButton"
+              >
+                <a
+                  class="dropdown-item"
+                  href="#"
+                >依資料起始時間排序 (新→舊)</a>
+                <a
+                  class="dropdown-item"
+                  href="#"
+                >依最後更新時間排序 (新→舊) </a>
+                <a
+                  class="dropdown-item"
+                  href="#"
+                >依委託單位筆畫排序</a>
+                <a
+                  class="dropdown-item"
+                  href="#"
+                >依專案名稱筆畫排序</a>
               </div>
             </div>
           </div>
           <div class="col-4 text-right">
-            <router-link to="/project/create" class="btn btn-orange">新增計畫</router-link>
+            <router-link
+              to="/project/create"
+              class="btn btn-orange"
+            >新增計畫</router-link>
           </div>
         </div>
         <!-- Cards -->
         <div class="three cards">
-          <router-link :to="`/project/${proj._id}`" class="card" v-for="(proj) in Projects" :key="`proj-${proj._id}`">
+          <router-link
+            :to="`/project/${proj._id}`"
+            class="card"
+            v-for="(proj) in Projects"
+            :key="`proj-${proj._id}`"
+          >
             <div class="image">
               <img :src="proj.coverImage">
               <div class="badget">
@@ -65,39 +104,33 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from 'vuex';
 
-const project = createNamespacedHelpers('project')
-const message = createNamespacedHelpers('message')
+const project = createNamespacedHelpers('project');
+const message = createNamespacedHelpers('message');
 
 export default {
   name: 'Overview',
   computed: {
-    ...project.mapGetters([
-      'Projects'
-    ]),
-    ...message.mapGetters([
-      'Message'
-    ])
+    ...project.mapGetters(['Projects']),
+    ...message.mapGetters(['Message']),
   },
-  data () {
+  data() {
     return {
-      loading: false
-    }
+      loading: false,
+    };
   },
   watch: {
-    'Projects': 'ProjectInit'
+    Projects: 'ProjectInit',
   },
   methods: {
-    ...project.mapMutations([
-      'setCurrentProject'
-    ]),
-    ProjectInit () {
-      this.loading = false
-    }
+    ...project.mapMutations(['setCurrentProject']),
+    ProjectInit() {
+      this.loading = false;
+    },
   },
-  beforeMount () {
-    this.setCurrentProject('')
-  }
-}
+  beforeMount() {
+    this.setCurrentProject('');
+  },
+};
 </script>

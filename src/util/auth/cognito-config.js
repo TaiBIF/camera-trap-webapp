@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Cookies from 'js-cookie';
 
 import { CognitoAuth } from 'amazon-cognito-auth-js';

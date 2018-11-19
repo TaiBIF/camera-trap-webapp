@@ -1,26 +1,26 @@
-import { auth } from '../../util/auth/cognito-config'
+import { auth } from '../../util/auth/cognito-config';
 
 export const getters = {
-  isLogin: state => () => !!state.awsToken
-}
+  isLogin: state => () => !!state.awsToken,
+};
 
-export const mutations = {}
+export const mutations = {};
 
 export const actions = {
-  async doLogin () {
-    auth.getSession()
+  async doLogin() {
+    auth.getSession();
   },
-  async doSignOut () {
-    auth.signOut()
-  }
-}
+  async doSignOut() {
+    auth.signOut();
+  },
+};
 
 export default {
   namespaced: true,
   state: {
-    awsToken: null
+    awsToken: null,
   },
   getters,
   mutations,
-  actions
-}
+  actions,
+};
