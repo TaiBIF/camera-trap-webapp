@@ -6,7 +6,60 @@
         role="button"
         class="navbar-brand"
       >Camara Capture</a>
-      <div class="collapse navbar-collapse">
+      <button
+        v-if="!isLogin"
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div
+        v-if="!isLogin"
+        class="collapse navbar-collapse justify-content-end"
+        id="navbarSupportedContent"
+      >
+        <div class="navbar-nav justify-content-md-end subnav">
+          <div class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >幫助</a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a
+                href="/article.html#/faq"
+                class="dropdown-item"
+              >常見問題</a>
+              <a
+                href="/article.html#/contact"
+                class="dropdown-item"
+              >聯絡我們</a>
+              <a
+                href="/article.html#/private-policy"
+                class="dropdown-item"
+              >隱私權政策</a>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="nav-item ml-3">
+            <a
+              href="login.html"
+              class="btn btn-orange"
+            >登入</a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="collapse navbar-collapse"
+        v-if="isLogin"
+      >
         <ul class="navbar-nav main-nav">
           <li class="nav-item">
             <a
@@ -104,14 +157,13 @@
                   上傳成功
                 </div>
               </a>
-
             </div>
           </div>
           <div class="divider"></div>
           <div class="nav-item dropdown">
             <a
               class="nav-item nav-link dropdown-toggle"
-              id="navbarDropdownMenuLink21"
+              id="navbarDropdownMenuLink"
               role="button"
               data-toggle="dropdown"
               aria-haspopup="true"
@@ -160,6 +212,12 @@ export default {
       logMessage,
       loginUser: { name: '黃智賢' },
     };
+  },
+  props: {
+    isLogin: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>

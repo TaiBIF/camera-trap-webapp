@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <the-header />
+    <the-header :is-login="true" />
     <main class="page-project">
       <aside v-if="asideElem.indexOf($route.name)==-1 && !!currentProject">
         <!-- Render Project structure -->
