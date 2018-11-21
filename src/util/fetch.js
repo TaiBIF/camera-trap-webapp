@@ -1,4 +1,4 @@
-const BASE_URL = 'https://camera-trap.tw/api/v0.8';
+const BASE_URL = 'https://api.camera-trap.tw/api/v0.8';
 
 const fetchWrap = async ({ url, method, body }) => {
   const res = await fetch(`${BASE_URL}${url}`, {

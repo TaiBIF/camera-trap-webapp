@@ -35,7 +35,7 @@ function initCognitoSDK() {
   auth.setState(Cookies.get('AWSELB'));
   auth.userhandler = {
     onSuccess(awsCognitoSession) {
-      fetch('https://camera-trap.tw/api/ctp-user/sign-in', {
+      fetch('https://api.camera-trap.tw/api/ctp-user/sign-in', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
