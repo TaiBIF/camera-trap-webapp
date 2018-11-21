@@ -2,6 +2,7 @@ import Cookies from 'js-cookie';
 
 import { CognitoAuth } from 'amazon-cognito-auth-js';
 import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
+import { BASE_URL } from '../fetch';
 
 const { AWSCognito, localStorage } = window;
 
@@ -35,7 +36,7 @@ function initCognitoSDK() {
   auth.setState(Cookies.get('AWSELB'));
   auth.userhandler = {
     onSuccess(awsCognitoSession) {
-      fetch('https://api.camera-trap.tw/api/ctp-user/sign-in', {
+      fetch(`${BASE_URL}/ctp-user/sign-in`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
