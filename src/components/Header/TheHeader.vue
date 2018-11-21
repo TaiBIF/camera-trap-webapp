@@ -24,7 +24,7 @@
         id="navbarSupportedContent"
       >
         <div class="navbar-nav justify-content-md-end subnav">
-          <div class="nav-item dropdown">
+          <div class="nav-item dropdown help">
             <a
               class="nav-link dropdown-toggle"
               role="button"
@@ -63,26 +63,42 @@
         <ul class="navbar-nav main-nav">
           <li class="nav-item">
             <a
-              class="nav-link active"
+              class="nav-link"
+              :class="isIndex ? 'active' : ''"
               role="button"
               href="/index.html#/"
             >專案總覽
-              <span class="sr-only">(current)</span>
+              <span
+                class="sr-only"
+                v-if="isIndex"
+              >(current)</span>
             </a>
           </li>
           <li class="nav-item">
             <a
               class="nav-link"
+              :class="isSearch ? 'active' : ''"
               role="button"
               href="/search.html"
-            >篩選及下載</a>
+            >篩選及下載
+              <span
+                class="sr-only"
+                v-if="isSearch"
+              >(current)</span>
+            </a>
           </li>
           <li class="nav-item">
             <a
               class="nav-link"
+              :class="isHistory ? 'active' : ''"
               role="button"
               href="/history.html"
-            >上傳紀錄</a>
+            >上傳紀錄
+              <span
+                class="sr-only"
+                v-if="isHistory"
+              >(current)</span>
+            </a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -111,7 +127,10 @@
         </ul>
         <div class="navbar-nav subnav">
           <div class="divider"></div>
-          <div class="nav-item dropdown">
+          <div
+            class="nav-item dropdown"
+            :class="haveNotification ? 'notification' : ''"
+          >
             <a
               class="nav-item nav-link dropdown-toggle"
               id="notification"
@@ -123,13 +142,14 @@
               <i class="fa fa-bell"></i>
             </a>
             <div
+              v-if="haveNotification"
               id="notification-container"
               class="dropdown-menu dropdown-menu-right"
               aria-labelledby="notification"
             >
               <a
                 class="dropdown-item notification-item"
-                v-for="(msg, mid) in logMessage"
+                v-for="(msg, mid) in notifications"
                 :key="`log-msg-${mid}`"
               >
                 <div class="meta text-gray date">
@@ -182,6 +202,7 @@
               <a
                 class="dropdown-item"
                 href="#"
+                @click="doSignOut()"
               >登出</a>
             </div>
           </div>
@@ -192,32 +213,68 @@
 </template>
 
 <script>
-const logMessage = [
-  {
-    updateAt: '2018/07/23 17:25',
-    project_id: '全島鼬獾',
-    site: '屏東處',
-    subSite: '潮州站',
-    camera: 'PT09A',
-    startAt: '2018/06/01',
-    endAt: '2018/07/31',
-    status: 1, // 1: success, -1: fail
-  },
-];
+import { createNamespacedHelpers } from 'vuex';
+
+const auth = createNamespacedHelpers('auth');
+const message = createNamespacedHelpers('message');
+
+// const notifications = [
+//   {
+//     updateAt: '2018/07/23 17:25',
+//     project_id: '全島鼬獾',
+//     site: '屏東處',
+//     subSite: '潮州站',
+//     camera: 'PT09A',
+//     startAt: '2018/06/01',
+//     endAt: '2018/07/31',
+//     status: 1,
+//   },
+// ];
 
 export default {
   name: 'TheHeader',
-  data() {
-    return {
-      logMessage,
-      loginUser: { name: '黃智賢' },
-    };
-  },
   props: {
     isLogin: {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      pathname: this.$route.name,
+    };
+  },
+  computed: {
+    ...auth.mapGetters(['loginUser']),
+    ...message.mapGetters(['notifications']),
+    isIndex: function() {
+      return this.pathname === 'overview';
+    },
+    isSearch: function() {
+      return this.pathname === 'Search';
+    },
+    isHistory: function() {
+      return this.pathname === 'History';
+    },
+    haveNotification: function() {
+      return this.notifications && this.notifications.length > 0;
+    },
+  },
+  methods: {
+    ...auth.mapActions(['loadProfile', 'doSignOut']),
+    ...message.mapActions(['loadNotifications']),
+    fetchData() {
+      this.loadProfile();
+      this.loadNotifications();
+    },
+  },
+  watch: {
+    $route() {
+      this.fetchData();
+    },
+  },
+  created() {
+    this.fetchData();
   },
 };
 </script>
