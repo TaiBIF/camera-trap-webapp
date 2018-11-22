@@ -6,6 +6,7 @@ import project from './modules/project';
 import message from './modules/message';
 import media from './modules/media';
 import cameraLocation from './modules/cameraLocation';
+import annotationRevision from './modules/annotationRevision';
 
 Vue.use(Vuex);
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     message,
     media,
     cameraLocation,
+    annotationRevision,
   },
   state: {
     pageLock: false,
