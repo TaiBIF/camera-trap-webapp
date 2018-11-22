@@ -2,14 +2,13 @@ import Cookies from 'js-cookie';
 
 import { CognitoAuth } from 'amazon-cognito-auth-js';
 import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
-import { BASE_URL } from '../fetch';
 
 const { AWSCognito, localStorage } = window;
 
 const clientId = '1icuqes99so6oi86l3u8506pqd';
 const appWebDomain = 'camera-trap.auth.ap-northeast-1.amazoncognito.com';
-const redirUri = 'http://localhost:8888';
-const loginUri = 'http://localhost:8888/login.html';
+const redirUri = process.env.VUE_APP_BASE_URL;
+const loginUri = `${process.env.VUE_APP_BASE_URL}/login.html`;
 const userPoolId = 'ap-northeast-1_R2iDn5W3B';
 const idpDomain = `cognito-idp.ap-northeast-1.amazonaws.com/${userPoolId}`;
 const identityPoolId = 'ap-northeast-1:3d5edbfb-834c-4284-85f5-a4ec29d38ef0';
@@ -36,7 +35,7 @@ function initCognitoSDK() {
   auth.setState(Cookies.get('AWSELB'));
   auth.userhandler = {
     onSuccess(awsCognitoSession) {
-      fetch(`${BASE_URL}/ctp-user/sign-in`, {
+      fetch(`${process.env.VUE_APP_API_URL}/ctp-user/sign-in`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',

@@ -1,7 +1,5 @@
-export const BASE_URL = 'https://api-dev.camera-trap.tw/v0.8';
-
 const fetchWrap = async ({ url, method, body }) => {
-  const res = await fetch(`${BASE_URL}${url}`, {
+  const res = await fetch(`${process.env.VUE_APP_API_URL}${url}`, {
     method,
     mode: 'cors',
     headers: {
