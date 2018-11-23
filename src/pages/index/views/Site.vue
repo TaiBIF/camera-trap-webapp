@@ -647,11 +647,28 @@ export default {
             const value = this.siteData.data[row];
 
             if (oldVal !== newVal) {
+              if (!value.index.column[prop]) {
+                //資料尚未存在需要更新 index
+                const newColumnIndex = value.index.columnLength;
+                this.addSiteDataLength({
+                  row,
+                  newColumnIndex,
+                  prop,
+                });
+              }
+
               arr.push({
                 _id: value._id,
                 projectTitle: value.projectTitle,
                 fullCameraLocationMd5: value.fullCameraLocationMd5,
                 $set: {
+                  [`tokens.${value.index.token}.data.${
+                    value.index.column[prop]
+                  }.key`]: prop,
+                  [`tokens.${value.index.token}.data.${
+                    value.index.column[prop]
+                  }.label`]: this.siteData.columns.find(v => v.data === prop)
+                    .label,
                   [`tokens.${value.index.token}.data.${
                     value.index.column[prop]
                   }.value`]: newVal,
@@ -661,6 +678,7 @@ export default {
 
             return arr;
           }, []);
+
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
@@ -733,8 +751,9 @@ export default {
   },
   computed: {
     ...project.mapGetters(['currentProject']),
-    ...media.mapGetters(['siteData', 'species']),
+    ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
+    ...media.mapState(['siteData']),
     cameraList() {
       return this.currentProject
         ? this.currentProject.cameraLocations.filter(
@@ -793,6 +812,7 @@ export default {
   },
   methods: {
     ...project.mapMutations(['setCurrentProject']),
+    ...media.mapMutations(['addSiteDataLength']),
     ...media.mapActions(['getSiteData', 'updateAnnotation']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
     exportCsv() {
