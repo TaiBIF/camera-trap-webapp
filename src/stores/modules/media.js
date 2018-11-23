@@ -55,6 +55,7 @@ export const getters = {
           fileName: val.url.split('/').pop(),
           corrected_date_time: val.corrected_date_time,
           imageUrl: val.url,
+          lowQualityImageUrl: val.lowQualityUrl,
           projectTitle: val.projectTitle,
           fullCameraLocationMd5: val.fullCameraLocationMd5,
           _id: val._id,

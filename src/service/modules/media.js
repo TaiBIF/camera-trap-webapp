@@ -18,13 +18,16 @@ const getSiteData = async payload => {
         corrected_date_time: true,
         date_time_corrected_timestamp: true,
         url: true,
+        low_quality_url: true,
+        imageUrlPrefix: true,
       },
     }),
   });
 
   return res.results.map(val => ({
     ...val,
-    url: `https://camera-trap.tw/${val.url}`,
+    url: `${val.imageUrlPrefix}${val.url}`,
+    lowQualityUrl: `${val.imageUrlPrefix}${val.low_quality_url}`,
   }));
 };
 
