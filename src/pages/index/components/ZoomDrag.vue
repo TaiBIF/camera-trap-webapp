@@ -3,7 +3,7 @@
     <img
       class="img"
       id="img-preview"
-      :src="row.imageUrl"
+      :src="row.lowQualityImageUrl"
       draggable="true"
       @dragstart="onDragStart($event)"
       @drag="onDrag($event)"
