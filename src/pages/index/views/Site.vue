@@ -537,97 +537,12 @@ export default {
       },
       settings: {
         data: [],
-        columns: [
-          {
-            data: 'station',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'camera',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'filename',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'datetime',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD HH:mm:ss',
-            editor: false,
-          },
-          {
-            data: 'species',
-            type: 'autocomplete',
-            source: ['測試', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
-            editor: false,
-          },
-          {
-            data: 'sex',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'age',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'idvcount',
-            type: 'numeric',
-            editor: false,
-          },
-          {
-            data: 'category',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'sciName',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'behavior',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'note',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'add',
-            type: 'text',
-            editor: false,
-          },
-        ],
         language: 'zh-TW',
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: true,
         manualColumnResize: true,
         rowHeaders: true,
-        colHeaders: [
-          // 'URL',
-          '樣區',
-          '相機位置',
-          '檔名',
-          '時間',
-          '物種',
-          '性別',
-          '年齡',
-          '數量',
-          '類別',
-          '學名',
-          '行為',
-          '備註',
-          '<i class="icon-add"></i>',
-        ],
         manualRowMove: true,
         manualColumnMove: true,
         filters: true,
@@ -994,9 +909,6 @@ export default {
 
         // 打開右鍵選單，打開欄位編輯模式
         this.settings.contextMenu = !val ? false : this.contextMenuSetting;
-        this.settings.columns.forEach(col => {
-          col.editor = !val ? false : col.type;
-        });
         // 更新 sheet
         this.sheet.updateSettings(this.sheetSetting);
       }
