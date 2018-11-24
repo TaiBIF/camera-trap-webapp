@@ -99,7 +99,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { commonMixin } from '../../../mixins/common.js';
+
+const uploadSession = createNamespacedHelpers('uploadSession');
 
 const HistoryData = [
   {
@@ -222,6 +226,12 @@ export default {
     return {
       history: HistoryData,
     };
+  },
+  mounted() {
+    this.getUploadHistory();
+  },
+  methods: {
+    ...uploadSession.mapActions(['getUploadHistory']),
   },
 };
 </script>
