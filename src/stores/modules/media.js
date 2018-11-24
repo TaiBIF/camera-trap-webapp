@@ -29,7 +29,8 @@ const formatSiteData = state => {
     species: {
       data: 'species',
       label: '物種',
-      editorMode: 'text',
+      editorMode: 'select',
+      selectOptions: state.dataFields.speciesList,
     },
   };
 
