@@ -51,21 +51,21 @@
             >
               <i class="icon-folder"></i>
             </span>
-            <span class="text">{{row.name}}</span>
+            <span class="text">{{row.fileName}}</span>
           </td>
           <td>{{row.project}}</td>
           <td>{{row.site}}-{{row.subsite}}</td>
           <td>{{row.camera}}</td>
           <td class="text-right">
             <div
-              v-if="row.status==2"
+              v-if="row.status=='SUCCESS'"
               class="float-left"
             >
               <span class="icon"><i class="icon-upload-success"></i></span>
               <span class="text">上傳成功</span>
             </div>
             <div
-              v-if="row.status==-1"
+              v-if="row.status=='ERROR'"
               class="float-left"
             >
               <span class="icon"><i class="icon-upload-fail"></i></span>
@@ -74,19 +74,19 @@
 
             <a
               href="/upload.html"
-              v-if="row.status==2"
+              v-if="row.status=='ERROR'"
               class="link text-underline mr-2"
             >
               補上傳影像檔
             </a>
             <a
-              v-if="row.status==2"
+              v-if="row.status=='SUCCESS'"
               class="link text-underline"
             >
               查看
             </a>
             <a
-              v-if="row.status==-1"
+              v-if="row.status=='ERROR'"
               class="text-danger text-underline"
             >
               檢視錯誤
@@ -105,130 +105,17 @@ import { commonMixin } from '../../../mixins/common.js';
 
 const uploadSession = createNamespacedHelpers('uploadSession');
 
-const HistoryData = [
-  {
-    name: '今天',
-    list: [
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'jpg',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'csv',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'zip',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: -1,
-        msg: '上傳失敗，格式錯誤',
-      },
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'folder',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-    ],
-  },
-  {
-    name: '昨天',
-    list: [
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'folder',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'csv',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-    ],
-  },
-  {
-    name: '7 天前',
-    list: [
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'csv',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-      {
-        createdAt: '2017/07/08 17:23',
-        project: '全島鼬獾',
-        name: 'PT12A-151129-1051223',
-        type: 'jpg',
-        size: '240 KB',
-        site: '屏東處',
-        subsite: '潮州站',
-        camera: 'PT01A',
-        status: 2,
-        msg: '',
-      },
-    ],
-  },
-];
-
 export default {
   name: 'History',
   mixins: [commonMixin],
   data() {
-    return {
-      history: HistoryData,
-    };
+    return {};
   },
   mounted() {
     this.getUploadHistory();
+  },
+  computed: {
+    ...uploadSession.mapGetters(['history']),
   },
   methods: {
     ...uploadSession.mapActions(['getUploadHistory']),
