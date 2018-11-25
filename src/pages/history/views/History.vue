@@ -86,6 +86,7 @@
               查看
             </a>
             <a
+              @click="modalOpen('errorModalOpen')"
               v-if="row.status=='ERROR'"
               class="text-danger text-underline"
             >
@@ -95,6 +96,11 @@
         </tr>
       </tbody>
     </table>
+    <error-modal
+      :open="errorModalOpen"
+      :error-type="1"
+      @close="modalClose('errorModalOpen')"
+    />
   </div>
 </template>
 
@@ -102,14 +108,18 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { commonMixin } from '../../../mixins/common.js';
+import ErrorModal from '../components/ErrorModal';
 
 const uploadSession = createNamespacedHelpers('uploadSession');
 
 export default {
   name: 'History',
   mixins: [commonMixin],
+  components: { ErrorModal },
   data() {
-    return {};
+    return {
+      errorModalOpen: true,
+    };
   },
   mounted() {
     this.getUploadHistory();
