@@ -355,7 +355,7 @@
                   :key="`rev-${i}`"
                 >
                   <td>{{rev.created}}</td>
-                  <td class="text-gray">由 <b>{{rev.modifiedBy}}</b> 編輯</td>
+                  <td class="text-gray">由 <b>{{rev.modifiedBy.name}}</b> 編輯</td>
                   <td
                     class="text-gray"
                     v-if="i===0"
