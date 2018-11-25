@@ -14,7 +14,10 @@
                     {{currentProject.projectTitle}}
                   </h1>
                 </div>
-                <div class="col-3 text-right">
+                <div
+                  class="col-3 text-right"
+                  v-if="isManager"
+                >
                   <router-link
                     to="/info/1/edit"
                     class="float-right btn btn-green-border btn-sm"
@@ -394,8 +397,10 @@ import { createNamespacedHelpers } from 'vuex';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
+import { isRolesManager } from '../../../util/roles.js';
 
 const project = createNamespacedHelpers('project');
+const auth = createNamespacedHelpers('auth');
 
 // 設定未選擇/已選擇 Icon
 // const Icon = L.icon({
@@ -660,6 +665,7 @@ export default {
       'sites',
       'ProjectMarkers',
     ]),
+    ...auth.mapGetters(['projectRoles']),
     reportOptions() {
       const tmp = JSON.parse(JSON.stringify(this.cameraLocations || []));
 
@@ -686,6 +692,17 @@ export default {
         subSite: this.currentSubSite && this.currentSubSite.label,
         camera: this.currentCamera && this.currentCamera.cameraLocation,
       };
+    },
+    isManager() {
+      // TODO: find by projectId after API adjust
+      const projectRoles = this.projectRoles.find(
+        projectRole =>
+          projectRole.projectTitle === this.currentProject.projectTitle,
+      );
+      if (!projectRoles) {
+        return false;
+      }
+      return isRolesManager(projectRoles.roles);
     },
   },
   methods: {
