@@ -288,44 +288,45 @@ import TrailModal from '../components/TrialModal';
 // import {awsMixins} from '../mixins/aws.js'
 import { commonMixin } from '../../../mixins/common.js';
 import ProgressBar from 'progressbar.js';
+import uploadS3 from '../../../util/uploadToS3.js';
 
-const files = [
-  {
-    name: 'PT12A-151129-1051223',
-    type: 'folder',
-    size: '240 KB',
-    site: '屏東處',
-    subsite: '潮州站',
-    camera: 'PT01A',
-    state: 0,
-  },
-  {
-    name: 'PT12A-151129-1051223.csv',
-    type: 'csv',
-    size: '240 KB',
-    site: '屏東處',
-    subsite: '潮州站',
-    camera: 'PT02A',
-    state: 0,
-  },
-  {
-    name: 'PT12A-151129-1051223.jpg',
-    type: 'jpg',
-    size: '240 KB',
-    site: '屏東處',
-    subsite: '潮州站',
-    camera: 'PT03A',
-    state: 0,
-  },
-  {
-    name: 'PT12A-151129-1051223.zip',
-    type: 'zip',
-    size: '240 KB',
-    site: '',
-    camera: '',
-    state: 0,
-  },
-];
+// const files = [
+//   {
+//     name: 'PT12A-151129-1051223',
+//     type: 'folder',
+//     size: '240 KB',
+//     site: '屏東處',
+//     subsite: '潮州站',
+//     camera: 'PT01A',
+//     state: 0,
+//   },
+//   {
+//     name: 'PT12A-151129-1051223.csv',
+//     type: 'csv',
+//     size: '240 KB',
+//     site: '屏東處',
+//     subsite: '潮州站',
+//     camera: 'PT02A',
+//     state: 0,
+//   },
+//   {
+//     name: 'PT12A-151129-1051223.jpg',
+//     type: 'jpg',
+//     size: '240 KB',
+//     site: '屏東處',
+//     subsite: '潮州站',
+//     camera: 'PT03A',
+//     state: 0,
+//   },
+//   {
+//     name: 'PT12A-151129-1051223.zip',
+//     type: 'zip',
+//     size: '240 KB',
+//     site: '',
+//     camera: '',
+//     state: 0,
+//   },
+// ];
 
 export default {
   name: 'Upload',
@@ -639,11 +640,18 @@ export default {
     };
     this.dropzone.ondrop = evt => {
       evt.preventDefault();
-      this.fileList = files;
+      // this.fileList = files;
+      console.log('a');
     };
 
-    this.$el.querySelector('#upload').onchange = () => {
-      this.fileList = files;
+    this.$el.querySelector('#upload').onchange = e => {
+      // this.fileList = files;
+      console.log('b');
+
+      Array.from(e.target.files).forEach(file => {
+        console.log(file);
+        uploadS3(file);
+      });
     };
 
     document.body.onkeydown = e => {

@@ -4,15 +4,17 @@ import { CognitoAuth } from 'amazon-cognito-auth-js';
 import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
 import AWS from 'aws-sdk';
 
-const { localStorage } = window;
+import {
+  clientId,
+  appWebDomain,
+  redirUri,
+  loginUri,
+  userPoolId,
+  idpDomain,
+  identityPoolId,
+} from '../awsDefine';
 
-const clientId = '1icuqes99so6oi86l3u8506pqd';
-const appWebDomain = 'camera-trap.auth.ap-northeast-1.amazoncognito.com';
-const redirUri = process.env.VUE_APP_BASE_URL;
-const loginUri = `${process.env.VUE_APP_BASE_URL}/login.html`;
-const userPoolId = 'ap-northeast-1_R2iDn5W3B';
-const idpDomain = `cognito-idp.ap-northeast-1.amazonaws.com/${userPoolId}`;
-const identityPoolId = 'ap-northeast-1:3d5edbfb-834c-4284-85f5-a4ec29d38ef0';
+const { localStorage } = window;
 
 function initCognitoSDK() {
   const authData = {
