@@ -4,6 +4,7 @@ import { getUserInfo } from '../../service/api';
 export const getters = {
   isLogin: state => !!state.awsToken,
   loginUser: state => state.profile,
+  projectRoles: state => (state.profile && state.profile.project_roles) || [],
 };
 
 export const mutations = {
