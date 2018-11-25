@@ -34,7 +34,7 @@
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 col-md-3 text-gray">計畫編號</div>
-                <div class="col-sm-8 col-md-9">{{currentProject.projectId}}</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.adminProjectId}}</div>
               </div>
               <div
                 class="row mb-2"
