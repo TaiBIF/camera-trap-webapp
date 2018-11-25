@@ -18,8 +18,9 @@
                   class="col-3 text-right"
                   v-if="isManager"
                 >
+                  <!-- TODO: change to project id after API adjust -->
                   <router-link
-                    to="/info/1/edit"
+                    :to="`/info/${currentProject.projectTitle}/edit`"
                     class="float-right btn btn-green-border btn-sm"
                   >
                     <i class="fa fa-pencil-alt mr-2"></i>
