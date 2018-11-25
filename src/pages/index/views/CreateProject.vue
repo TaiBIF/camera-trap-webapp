@@ -102,7 +102,7 @@
                     id="project-no"
                     name="project_no"
                     v-validate="'required'"
-                    v-model="form.adminProjectId"
+                    v-model="form.no"
                     placeholder="請輸入計畫編號"
                     class="form-control"
                     :class="{'is-invalid': errors.has('project_no')}"
