@@ -102,7 +102,7 @@
                     id="project-id"
                     name="projectId"
                     v-validate="'required'"
-                    v-model="form.projectId"
+                    v-model="form.adminProjectId"
                     placeholder="請輸入計畫編號"
                     class="form-control"
                     :class="{'is-invalid': errors.has('projectId')}"
@@ -123,7 +123,7 @@
                 <div class="col-4">
                   <input
                     type="text"
-                    id="project-owner"
+                    id="principal-investigator"
                     name="principalInvestigator"
                     v-validate="'required'"
                     v-model="form.principalInvestigator"
@@ -147,8 +147,8 @@
                 <div class="col-4 input-group-inline">
                   <div class="input-group">
                     <date-picker
-                      :placeholder="'2018/09/20'"
-                      :format="'YYYY/MM/DD'"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                       v-model="form.startAt"
                     />
@@ -160,8 +160,8 @@
                   <div class="input-group">
                     <date-picker
                       :not-before="form.startAt"
-                      :placeholder="'2018/09/20'"
-                      :format="'YYYY/MM/DD'"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       v-model="form.endAt"
                       :first-day-of-week="1"
                     ></date-picker>
@@ -525,14 +525,14 @@ export default {
         name: '',
         slot: '',
         agency: '',
-        owner: '',
+        principalInvestigator: '',
+        adminProjectId: '',
         startAt: '',
         endAt: '',
         publicAt: '',
         area: '',
         description: '',
         comment: '',
-        no: '',
       },
       licenseForm: {
         forData: '',

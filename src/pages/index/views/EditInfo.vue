@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
-        <edit-nav :project_id="1" />
+        <edit-nav :projectId="1" />
       </div>
       <div class="col-10 pt-3">
         <!-- 計畫基本資訊 -->
@@ -78,7 +78,7 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.no"
+                    v-model="form.adminProjectId"
                     placeholder="請輸入計畫編號"
                     class="form-control"
                   >
@@ -107,9 +107,9 @@
                 <div class="col-5 input-group-inline">
                   <div class="input-group">
                     <date-picker
-                      v-model="form.start_at"
-                      :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      v-model="form.startAt"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
                     <div class="input-group-append">
@@ -119,9 +119,9 @@
                   <div class="input-text">到</div>
                   <div class="input-group">
                     <date-picker
-                      v-model="form.end_at"
-                      :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      v-model="form.endAt"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
                     <div class="input-group-append">
@@ -257,10 +257,11 @@ export default {
         name: '',
         slot: '',
         agency: '',
-        owner: '',
-        start_at: '',
-        end_at: '',
-        public_at: '',
+        principalInvestigator: '',
+        adminProjectId: '',
+        startAt: '',
+        endAt: '',
+        publicAt: '',
         area: '',
         description: '',
         comment: '',
