@@ -9,7 +9,7 @@
         <!-- 計畫基本資訊 -->
         <form
           class="form form-horizontal"
-          @submit.stop.prevent="nextStep()"
+          @submit.stop.prevent="hanldeSave()"
         >
           <div class="panel">
             <div class="panel-heading">
@@ -25,9 +25,9 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.name"
-                    placeholder="請輸入計畫名稱"
+                    :value="currentProject.projectTitle"
                     class="form-control"
+                    disabled
                   >
                 </div>
               </div>
@@ -40,7 +40,8 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.slot"
+                    :value="currentProject.shortTitle"
+                    @input="handleShortTitleChange"
                     placeholder="請輸入計畫簡稱 (限4字)"
                     class="form-control"
                   >
@@ -63,7 +64,8 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.agency"
+                    :value="currentProject.funder"
+                    @input="handleFunderChange"
                     placeholder="請輸入委辦單位"
                     class="form-control"
                   >
@@ -78,7 +80,8 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.adminProjectId"
+                    :value="currentProject.projectId"
+                    @input="handleProjectIdChange"
                     placeholder="請輸入計畫編號"
                     class="form-control"
                   >
@@ -93,7 +96,8 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.owner"
+                    :value="currentProject.principalInvestigator"
+                    @input="handlePrincipalInvestigatorChange"
                     placeholder="請輸入計畫主持人"
                     class="form-control"
                   >
@@ -107,7 +111,8 @@
                 <div class="col-5 input-group-inline">
                   <div class="input-group">
                     <date-picker
-                      v-model="form.start_at"
+                      :value="currentProject.projectStartDate"
+                      @input="handleProjectStartDateChange"
                       :placeholder="'18/9/20'"
                       :format="'YY/M/DD'"
                       :first-day-of-week="1"
@@ -119,7 +124,8 @@
                   <div class="input-text">到</div>
                   <div class="input-group">
                     <date-picker
-                      v-model="form.end_at"
+                      :value="currentProject.projectEndDate"
+                      @input="handleProjectEndDateChange"
                       :placeholder="'18/9/20'"
                       :format="'YY/M/DD'"
                       :first-day-of-week="1"
@@ -137,7 +143,12 @@
                 >計畫地區：</label>
                 <div class="col-5">
                   <div class="select">
-                    <v-select v-model="form.area"></v-select>
+                    <v-select
+                      :value="currentProject.adminArea"
+                      @change="handleAdminAreaChange"
+                      :options="options"
+                      multiple
+                    ></v-select>
                   </div>
                 </div>
               </div>
@@ -148,7 +159,8 @@
                 >計畫摘要：</label>
                 <div class="col-6">
                   <textarea
-                    v-model="form.description"
+                    :value="currentProject.abstract"
+                    @input="handleAbstractChange"
                     class="form-control"
                     placeholder="請簡單描述計畫目的"
                   ></textarea>
@@ -161,7 +173,8 @@
                 >備註：</label>
                 <div class="col-6">
                   <textarea
-                    v-model="form.comment"
+                    :value="currentProject.remarks"
+                    @input="handleRemarksChange"
                     class="form-control"
                     placeholder="您可以輸入任何補註資料"
                   ></textarea>
@@ -175,7 +188,7 @@
                 <div class="col-5">
                   <input
                     type="hidden"
-                    v-model="form.cover"
+                    v-model="project.cover"
                   >
                   <label class="btn btn-default btn-upload">
                     <input
@@ -236,10 +249,14 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import DatePicker from 'vue2-datepicker';
 import EditNav from '../components/EditNav';
 import CloseWindowDialog from '../components/CloseWindowDialog';
+import { cityOptions } from '../../../util/constants';
+
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'EditInfo',
@@ -252,25 +269,78 @@ export default {
   data() {
     return {
       closeWindowOpen: false,
-      form: {
+      project: {
         cover: '',
-        name: '',
-        slot: '',
-        agency: '',
-        owner: '',
-        start_at: '',
-        end_at: '',
-        public_at: '',
-        area: '',
-        description: '',
-        comment: '',
       },
+      options: cityOptions,
     };
   },
   methods: {
-    doSubmit() {
-      this.$router.push('/');
+    ...project.mapMutations(['setCurrentProject', 'setCurrentProjectValue']),
+    ...project.mapActions(['updateProject']),
+    handleShortTitleChange(e) {
+      this.setCurrentProjectValue({
+        key: 'shortTitle',
+        value: e.target.value,
+      });
     },
+    handleFunderChange(e) {
+      this.setCurrentProjectValue({
+        key: 'funder',
+        value: e.target.value,
+      });
+    },
+    handleProjectIdChange(e) {
+      this.setCurrentProjectValue({
+        key: 'projectId',
+        value: e.target.value,
+      });
+    },
+    handlePrincipalInvestigatorChange(e) {
+      this.setCurrentProjectValue({
+        key: 'principalInvestigator',
+        value: e.target.value,
+      });
+    },
+    handleProjectStartDateChange(value) {
+      this.setCurrentProjectValue({
+        key: 'projectStartDate',
+        value,
+      });
+    },
+    handleProjectEndDateChange(value) {
+      this.setCurrentProjectValue({
+        key: 'projectEndDate',
+        value,
+      });
+    },
+    handleAdminAreaChange(e) {
+      this.setCurrentProjectValue({
+        key: 'adminArea',
+        value: e.target.value,
+      });
+    },
+    handleAbstractChange(e) {
+      this.setCurrentProjectValue({
+        key: 'abstract',
+        value: e.target.value,
+      });
+    },
+    handleRemarksChange(e) {
+      this.setCurrentProjectValue({
+        key: 'remarks',
+        value: e.target.value,
+      });
+    },
+    hanldeSave() {
+      this.updateProject(this.currentProject);
+    },
+  },
+  computed: {
+    ...project.mapGetters(['currentProject']),
+  },
+  mounted() {
+    this.setCurrentProject(this.$route.params.id);
   },
 };
 </script>
