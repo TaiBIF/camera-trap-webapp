@@ -99,16 +99,16 @@
                 <div class="col-4">
                   <input
                     type="text"
-                    id="project-no"
-                    name="project_no"
+                    id="project-id"
+                    name="projectId"
                     v-validate="'required'"
-                    v-model="form.adminProjectId"
+                    v-model="form.projectId"
                     placeholder="請輸入計畫編號"
                     class="form-control"
-                    :class="{'is-invalid': errors.has('project_no')}"
+                    :class="{'is-invalid': errors.has('projectId')}"
                   >
                   <span
-                    v-show="errors.has('project_no')"
+                    v-show="errors.has('projectId')"
                     class="invalid-feedback"
                   >
                     計畫編號不能留空
@@ -124,15 +124,15 @@
                   <input
                     type="text"
                     id="project-owner"
-                    name="project_owner"
+                    name="principalInvestigator"
                     v-validate="'required'"
-                    v-model="form.owner"
+                    v-model="form.principalInvestigator"
                     placeholder="請輸入計畫主持人"
                     class="form-control"
-                    :class="{'is-invalid': errors.has('project_owner')}"
+                    :class="{'is-invalid': errors.has('principalInvestigator')}"
                   >
                   <span
-                    v-show="errors.has('project_owner')"
+                    v-show="errors.has('principalInvestigator')"
                     class="invalid-feedback"
                   >
                     計畫主持人不能留空

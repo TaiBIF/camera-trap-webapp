@@ -31,7 +31,7 @@ const createProject = async payload => {
         shortTitle: form.slot,
         funder: form.agency,
         adminProjectId: form.adminProjectId,
-        principalInvestigator: form.owner,
+        principalInvestigator: form.principalInvestigator,
         projectStartDate: moment(form.start_at).format('YYYY-MM-DD'),
         projectEndDate: moment(form.end_at).format('YYYY-MM-DD'),
         adminArea: form.area,

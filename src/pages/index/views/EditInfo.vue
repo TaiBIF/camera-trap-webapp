@@ -93,7 +93,7 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.owner"
+                    v-model="form.principalInvestigator"
                     placeholder="請輸入計畫主持人"
                     class="form-control"
                   >
