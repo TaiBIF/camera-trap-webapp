@@ -78,7 +78,7 @@
                   <input
                     type="text"
                     id="project-name"
-                    v-model="form.adminProjectId"
+                    v-model="form.no"
                     placeholder="請輸入計畫編號"
                     class="form-control"
                   >
