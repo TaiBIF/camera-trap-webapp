@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
-        <edit-nav :project_id="1" />
+        <edit-nav :projectId="1" />
       </div>
       <div class="col-10 pt-3">
         <!-- 計畫基本資訊 -->
@@ -18,13 +18,13 @@
             <div class="panel-body">
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-project-title"
                   class="col-2 required"
                 >計畫名稱：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
+                    id="project-project-title"
                     :value="currentProject.projectTitle"
                     class="form-control"
                     disabled
@@ -33,13 +33,13 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-short-title"
                   class="col-2 required"
                 >計畫簡稱：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
+                    id="project-short-title"
                     :value="currentProject.shortTitle"
                     @input="handleShortTitleChange"
                     placeholder="請輸入計畫簡稱 (限4字)"
@@ -57,13 +57,13 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-funder"
                   class="col-2 required"
                 >委辦單位：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
+                    id="project-funder"
                     :value="currentProject.funder"
                     @input="handleFunderChange"
                     placeholder="請輸入委辦單位"
@@ -73,14 +73,14 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-admin-project-id"
                   class="col-2 required"
                 >計畫編號：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
-                    :value="currentProject.projectId"
+                    id="project-admin-project-id"
+                    :value="currentProject.adminProjectId"
                     @input="handleProjectIdChange"
                     placeholder="請輸入計畫編號"
                     class="form-control"
@@ -89,13 +89,13 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-principal-investigator"
                   class="col-2 required"
                 >計畫主持人：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
+                    id="project-principal-investigator"
                     :value="currentProject.principalInvestigator"
                     @input="handlePrincipalInvestigatorChange"
                     placeholder="請輸入計畫主持人"
@@ -105,16 +105,16 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-duration"
                   class="col-2 required"
                 >計畫時間：</label>
                 <div class="col-5 input-group-inline">
-                  <div class="input-group">
+                  <div id="project-duration" class="input-group">
                     <date-picker
                       :value="currentProject.projectStartDate"
                       @input="handleProjectStartDateChange"
-                      :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      :placeholder="'2018-9-20'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
                     <div class="input-group-append">
@@ -126,8 +126,8 @@
                     <date-picker
                       :value="currentProject.projectEndDate"
                       @input="handleProjectEndDateChange"
-                      :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
                     <div class="input-group-append">
@@ -138,12 +138,12 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-admin-area"
                   class="col-2"
                 >計畫地區：</label>
                 <div class="col-5">
                   <div class="select">
-                    <v-select
+                    <v-select id="project-admin-area"
                       :value="currentProject.adminArea"
                       @change="handleAdminAreaChange"
                       :options="options"
@@ -154,11 +154,11 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-abstract"
                   class="col-2"
                 >計畫摘要：</label>
                 <div class="col-6">
-                  <textarea
+                  <textarea id="project-abstract"
                     :value="currentProject.abstract"
                     @input="handleAbstractChange"
                     class="form-control"
@@ -168,11 +168,11 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-remarks"
                   class="col-2"
                 >備註：</label>
                 <div class="col-6">
-                  <textarea
+                  <textarea id="project-remarks"
                     :value="currentProject.remarks"
                     @input="handleRemarksChange"
                     class="form-control"
@@ -182,11 +182,11 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-cover"
                   class="col-2"
                 >計畫封面：</label>
                 <div class="col-5">
-                  <input
+                  <input id="project-cover"
                     type="hidden"
                     v-model="project.cover"
                   >

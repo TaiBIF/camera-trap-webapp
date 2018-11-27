@@ -31,7 +31,7 @@
     "vue-lodash": "^2.0.0",
     "vue-plugin-load-script": "^1.2.0",
     "vue-recaptcha": "^1.1.1",
-    "vue-router": "^3.0.1",
+    "vue-router": "^2.8.1",
     "vue-select": "^2.5.1",
     "vue2-datepicker": "^2.4.2",
     "vue2-highcharts": "^1.2.5",
