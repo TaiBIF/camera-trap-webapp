@@ -650,7 +650,9 @@ export default {
 
       Array.from(e.target.files).forEach(file => {
         console.log(file);
-        uploadS3(file);
+        uploadS3(file)
+          .then(e => console.log(e))
+          .catch(e => console.log(e));
       });
     };
 
