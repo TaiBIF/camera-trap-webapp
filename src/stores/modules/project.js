@@ -2,6 +2,7 @@ import L from 'leaflet';
 import {
   getProjects,
   createProject,
+  editProject,
   getSpeciesGroup,
   getLocationIdentifiedStatus,
   getLocationRetrievedStatus,
@@ -12,7 +13,9 @@ import {
 export const getters = {
   Projects: state => state.projects,
   currentProject: state =>
-    state.projects.find(val => val.projectTitle === state.currentProjectId),
+    state.projects.find(val => val.projectTitle === state.currentProjectId) || {
+      adminArea: [],
+    },
   cameraLocations: (_, getters) => {
     if (!getters.currentProject || !getters.currentProject.cameraLocations) {
       return [];
@@ -90,7 +93,7 @@ export const getters = {
   },
   ProjectMarkers: (state, getters) => {
     // siteStatusTab, 0 = 影像回收狀況, 1 = 影像辨識進度
-    return !getters.currentProject
+    return !getters.currentProject || !getters.currentProject.cameraLocations
       ? []
       : getters.currentProject.cameraLocations.reduce(
           (accumulator, currentValue) => {
@@ -179,6 +182,20 @@ export const mutations = {
   setSiteStatusTab(state, payload) {
     state.siteStatusTab = payload;
   },
+  setCurrentProjectValue(state, payload) {
+    const { key, value } = payload;
+    const { projects } = state;
+    state.projects = projects.map(val => {
+      // TODO: change to projectId after API adjust
+      if (val.projectTitle === state.currentProjectId) {
+        return {
+          ...val,
+          [key]: value,
+        };
+      }
+      return val;
+    });
+  },
 };
 
 export const actions = {
@@ -224,6 +241,11 @@ export const actions = {
   // 回報相機異常
   async updateAbnormalCamera(_, payload) {
     await updateAbnormalCamera(payload);
+  },
+  // 3.1 編輯計畫基本資料
+  async updateProject({ dispatch }, payload) {
+    await editProject(payload);
+    dispatch('loadProject');
   },
 };
 

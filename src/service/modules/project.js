@@ -98,6 +98,43 @@ const getDataFields = async payload => {
   return res.ret[0];
 };
 
+const editProject = async payload => {
+  const {
+    _id,
+    projectTitle,
+    shortTitle,
+    funder,
+    projectId,
+    principalInvestigator,
+    projectStartDate,
+    projectEndDate,
+    adminArea,
+    abstract,
+    remarks,
+  } = payload;
+  await fetchWrap({
+    url: '/project/bulk-update',
+    method: 'POST',
+    body: [
+      {
+        _id,
+        projectTitle,
+        $set: {
+          shortTitle,
+          funder,
+          projectId,
+          principalInvestigator,
+          projectStartDate: moment(projectStartDate).format('YYYY-MM-DD'),
+          projectEndDate: moment(projectEndDate).format('YYYY-MM-DD'),
+          adminArea,
+          abstract,
+          remarks,
+        },
+      },
+    ],
+  });
+};
+
 export {
   getProjects,
   createProject,
@@ -106,4 +143,5 @@ export {
   getLocationRetrievedStatus,
   getLocationAbnormalStatus,
   getDataFields,
+  editProject,
 };

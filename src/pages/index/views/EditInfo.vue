@@ -9,7 +9,7 @@
         <!-- 計畫基本資訊 -->
         <form
           class="form form-horizontal"
-          @submit.stop.prevent="nextStep()"
+          @submit.stop.prevent="hanldeSave()"
         >
           <div class="panel">
             <div class="panel-heading">
@@ -18,29 +18,30 @@
             <div class="panel-body">
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-project-title"
                   class="col-2 required"
                 >計畫名稱：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
-                    v-model="form.name"
-                    placeholder="請輸入計畫名稱"
+                    id="project-project-title"
+                    :value="currentProject.projectTitle"
                     class="form-control"
+                    disabled
                   >
                 </div>
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-short-title"
                   class="col-2 required"
                 >計畫簡稱：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
-                    v-model="form.slot"
+                    id="project-short-title"
+                    :value="currentProject.shortTitle"
+                    @input="handleShortTitleChange"
                     placeholder="請輸入計畫簡稱 (限4字)"
                     class="form-control"
                   >
@@ -56,14 +57,15 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-funder"
                   class="col-2 required"
                 >委辦單位：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
-                    v-model="form.agency"
+                    id="project-funder"
+                    :value="currentProject.funder"
+                    @input="handleFunderChange"
                     placeholder="請輸入委辦單位"
                     class="form-control"
                   >
@@ -71,14 +73,15 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-admin-project-id"
                   class="col-2 required"
                 >計畫編號：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
-                    v-model="form.adminProjectId"
+                    id="project-admin-project-id"
+                    :value="currentProject.adminProjectId"
+                    @input="handleProjectIdChange"
                     placeholder="請輸入計畫編號"
                     class="form-control"
                   >
@@ -86,14 +89,15 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-principal-investigator"
                   class="col-2 required"
                 >計畫主持人：</label>
                 <div class="col-5">
                   <input
                     type="text"
-                    id="project-name"
-                    v-model="form.principalInvestigator"
+                    id="project-principal-investigator"
+                    :value="currentProject.principalInvestigator"
+                    @input="handlePrincipalInvestigatorChange"
                     placeholder="請輸入計畫主持人"
                     class="form-control"
                   >
@@ -101,14 +105,15 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-duration"
                   class="col-2 required"
                 >計畫時間：</label>
                 <div class="col-5 input-group-inline">
-                  <div class="input-group">
+                  <div id="project-duration" class="input-group">
                     <date-picker
-                      v-model="form.startAt"
-                      :placeholder="'2018-09-20'"
+                      :value="currentProject.projectStartDate"
+                      @input="handleProjectStartDateChange"
+                      :placeholder="'2018-9-20'"
                       :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
@@ -119,7 +124,8 @@
                   <div class="input-text">到</div>
                   <div class="input-group">
                     <date-picker
-                      v-model="form.endAt"
+                      :value="currentProject.projectEndDate"
+                      @input="handleProjectEndDateChange"
                       :placeholder="'2018-09-20'"
                       :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
@@ -132,23 +138,29 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-admin-area"
                   class="col-2"
                 >計畫地區：</label>
                 <div class="col-5">
                   <div class="select">
-                    <v-select v-model="form.area"></v-select>
+                    <v-select id="project-admin-area"
+                      :value="currentProject.adminArea"
+                      @change="handleAdminAreaChange"
+                      :options="options"
+                      multiple
+                    ></v-select>
                   </div>
                 </div>
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-abstract"
                   class="col-2"
                 >計畫摘要：</label>
                 <div class="col-6">
-                  <textarea
-                    v-model="form.description"
+                  <textarea id="project-abstract"
+                    :value="currentProject.abstract"
+                    @input="handleAbstractChange"
                     class="form-control"
                     placeholder="請簡單描述計畫目的"
                   ></textarea>
@@ -156,12 +168,13 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-remarks"
                   class="col-2"
                 >備註：</label>
                 <div class="col-6">
-                  <textarea
-                    v-model="form.comment"
+                  <textarea id="project-remarks"
+                    :value="currentProject.remarks"
+                    @input="handleRemarksChange"
                     class="form-control"
                     placeholder="您可以輸入任何補註資料"
                   ></textarea>
@@ -169,13 +182,13 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="project-name"
+                  for="project-cover"
                   class="col-2"
                 >計畫封面：</label>
                 <div class="col-5">
-                  <input
+                  <input id="project-cover"
                     type="hidden"
-                    v-model="form.cover"
+                    v-model="project.cover"
                   >
                   <label class="btn btn-default btn-upload">
                     <input
@@ -236,10 +249,14 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import DatePicker from 'vue2-datepicker';
 import EditNav from '../components/EditNav';
 import CloseWindowDialog from '../components/CloseWindowDialog';
+import { cityOptions } from '../../../util/constants';
+
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'EditInfo',
@@ -252,26 +269,78 @@ export default {
   data() {
     return {
       closeWindowOpen: false,
-      form: {
+      project: {
         cover: '',
-        name: '',
-        slot: '',
-        agency: '',
-        principalInvestigator: '',
-        adminProjectId: '',
-        startAt: '',
-        endAt: '',
-        publicAt: '',
-        area: '',
-        description: '',
-        comment: '',
       },
+      options: cityOptions,
     };
   },
   methods: {
-    doSubmit() {
-      this.$router.push('/');
+    ...project.mapMutations(['setCurrentProject', 'setCurrentProjectValue']),
+    ...project.mapActions(['updateProject']),
+    handleShortTitleChange(e) {
+      this.setCurrentProjectValue({
+        key: 'shortTitle',
+        value: e.target.value,
+      });
     },
+    handleFunderChange(e) {
+      this.setCurrentProjectValue({
+        key: 'funder',
+        value: e.target.value,
+      });
+    },
+    handleProjectIdChange(e) {
+      this.setCurrentProjectValue({
+        key: 'projectId',
+        value: e.target.value,
+      });
+    },
+    handlePrincipalInvestigatorChange(e) {
+      this.setCurrentProjectValue({
+        key: 'principalInvestigator',
+        value: e.target.value,
+      });
+    },
+    handleProjectStartDateChange(value) {
+      this.setCurrentProjectValue({
+        key: 'projectStartDate',
+        value,
+      });
+    },
+    handleProjectEndDateChange(value) {
+      this.setCurrentProjectValue({
+        key: 'projectEndDate',
+        value,
+      });
+    },
+    handleAdminAreaChange(e) {
+      this.setCurrentProjectValue({
+        key: 'adminArea',
+        value: e.target.value,
+      });
+    },
+    handleAbstractChange(e) {
+      this.setCurrentProjectValue({
+        key: 'abstract',
+        value: e.target.value,
+      });
+    },
+    handleRemarksChange(e) {
+      this.setCurrentProjectValue({
+        key: 'remarks',
+        value: e.target.value,
+      });
+    },
+    hanldeSave() {
+      this.updateProject(this.currentProject);
+    },
+  },
+  computed: {
+    ...project.mapGetters(['currentProject']),
+  },
+  mounted() {
+    this.setCurrentProject(this.$route.params.id);
   },
 };
 </script>
