@@ -5,7 +5,7 @@ const fetchWrap = async ({ url, method, body }) => {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json; charset=utf-8',
-      'camera-trap-user-id': localStorage.getItem('user_id'),
+      'camera-trap-user-id': localStorage.getItem('userId'),
       'camera-trap-user-id-token': localStorage.getItem('awsIdToken'),
     },
     body: JSON.stringify(body),

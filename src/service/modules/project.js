@@ -5,7 +5,7 @@ const getProjects = async () => {
   const res = await fetchWrap({
     url: '/project/related-to-me',
     method: 'POST',
-    body: { user_id: localStorage.getItem('user_id') },
+    body: { userId: localStorage.getItem('userId') },
   });
 
   return res.ret.map(val => val.project_metadata);
@@ -19,7 +19,7 @@ const createProject = async payload => {
     method: 'POST',
     body: {
       projectTitle: form.name,
-      user_id: localStorage.getItem('user_id'),
+      userId: localStorage.getItem('userId'),
     },
   });
   await fetchWrap({

@@ -9,21 +9,21 @@
 	<script src="./vendor/aws/aws-cognito-sdk.min.js"></script>
 </head>
 <body onload="onLoad()">
-  
+
 	<script>
     var loginUri = "http://localhost:8888/tagphoto/dummy.html";
     var userPoolId ='ap-northeast-1_JACElFd4C';
-  
+
     // Operations when the web page is loaded.
     function onLoad() {
-      
+
       // Initiatlize CognitoAuth object
       var auth = initCognitoSDK();
       auth.getSession();
       var curUrl = window.location.href;
       auth.parseCognitoWebResponse(curUrl);
     }
-  
+
     // Perform user operations.
     function userButton(auth) {
       var state = document.getElementById('signInButton').innerHTML;
@@ -35,18 +35,18 @@
         auth.getSession();
       }
     }
-  
-    
+
+
     // Initialize a cognito auth object.
     function initCognitoSDK() {
       var authData = {
         ClientId : '2a630eoreacbi4c3tqbjjdtjkk', // Your client id here
-        AppWebDomain : 'tagphoto.auth.ap-northeast-1.amazoncognito.com', // Exclude the "https://" part. 
+        AppWebDomain : 'tagphoto.auth.ap-northeast-1.amazoncognito.com', // Exclude the "https://" part.
         TokenScopesArray : ['openid', 'email', 'profile', 'aws.cognito.signin.user.admin'], // like ['openid','email','phone']...
         RedirectUriSignIn : loginUri,
         RedirectUriSignOut : loginUri,
         IdentityProvider : 'OrcID',
-        UserPoolId : userPoolId, 
+        UserPoolId : userPoolId,
         AdvancedSecurityDataCollectionFlag : 0
       };
       var auth = new AmazonCognitoIdentity.CognitoAuth(authData);
@@ -56,7 +56,7 @@
       auth.userhandler = {
         onSuccess: function(result) {
           AWSCognito.config.update({region: 'ap-northeast-1'});
-  
+
           // 前端取得登入使用者的 credential 法
           AWSCognito.config.credentials = new AWSCognito.CognitoIdentityCredentials({
             IdentityPoolId: 'ap-northeast-1:83570204-11bb-4601-8094-2dc2ccfbc88a',
@@ -64,7 +64,7 @@
               'cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_JACElFd4C': result.getIdToken().getJwtToken()
             }
           });
-  
+
           AWSCognito.config.credentials.get(function(err){
             if (err) return console.log("Error", err);
             // ************************************************ 這樣寫可以嘎？
@@ -73,23 +73,23 @@
             var identity_id = AWSCognito.config.credentials.identityId;
             console.log("Cognito Identity Id", AWSCognito.config.credentials.identityId);
           });
-  
+
           console.log("Sign in success");
-  
+
           window.open("http://localhost:8888/upload.html#/", 'camera_trap_photo_upload');
-  
+
         },
         onFailure: function(err) {
           // put some error message test here
-  
+
           let allowedProviders = ['Facebook', 'Google', 'OrcID'];
           console.log ("Error!" + err);
-  
+
           let err_ = decodeURIComponent(err).replace(/\+/g, " ");
           let providerRegexp = new RegExp(" ((" + allowedProviders.join("|") + ")_\\d+) ");
-  
-          let provider_user_id = providerRegexp.exec(err_);
-          if (!!provider_user_id) {
+
+          let providerUserId = providerRegexp.exec(err_);
+          if (!!providerUserId) {
             let provider = providerRegexp.exec(err_)[2];
             authData.IdentityProvider = provider;
             let reAuth = new AmazonCognitoIdentity.CognitoAuth(authData);
