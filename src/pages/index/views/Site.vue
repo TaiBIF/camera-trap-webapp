@@ -351,11 +351,11 @@
             <table class="table version-list">
               <tbody>
                 <tr
-                  v-for="(history, i) in historyList"
-                  :key="`history-${i}`"
+                  v-for="(rev, i) in revision"
+                  :key="`rev-${i}`"
                 >
-                  <td>{{history.updateAt}}</td>
-                  <td class="text-gray">由 <b>{{history.updateBy}}</b> 編輯</td>
+                  <td>{{rev.created}}</td>
+                  <td class="text-gray">由 <b>{{rev.modifiedBy.name}}</b> 編輯</td>
                   <td
                     class="text-gray"
                     v-if="i===0"
@@ -364,7 +364,10 @@
                     class="text-gray"
                     v-else
                   >
-                    <a class="btn btn-basic btn-sm">還原成此版本</a>
+                    <a
+                      class="btn btn-basic btn-sm"
+                      @click="restoreRev(i)"
+                    >還原成此版本</a>
                   </td>
                 </tr>
               </tbody>
@@ -399,6 +402,7 @@ import downloadCSV from '../../../util/downloadCsv.js';
 const project = createNamespacedHelpers('project');
 const media = createNamespacedHelpers('media');
 const cameraLocation = createNamespacedHelpers('cameraLocation');
+const annotationRevision = createNamespacedHelpers('annotationRevision');
 
 const formDefault = {
   camera: [],
@@ -435,20 +439,6 @@ export default {
       selection: null,
       currentRow: 0,
       row_data: [],
-      historyList: [
-        {
-          updateAt: '2018/09/05 17:37',
-          updateBy: '黃智賢',
-        },
-        {
-          updateAt: '2018/09/05 17:37',
-          updateBy: '黃智賢',
-        },
-        {
-          updateAt: '2018/09/05 17:37',
-          updateBy: '黃智賢',
-        },
-      ],
       rowData: {},
       // 連拍紀錄
       continuousCount: 0,
@@ -599,6 +589,9 @@ export default {
         },
         afterSelectionEnd: r => {
           this.currentRow = r;
+          this.getRevision({
+            _id: this.siteData.data[r]._id,
+          });
         },
       },
       sheetContainer: null,
@@ -666,6 +659,7 @@ export default {
     IdleTimeoutDialog,
   },
   computed: {
+    ...annotationRevision.mapState(['revision']),
     ...project.mapGetters(['currentProject']),
     ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
@@ -731,6 +725,13 @@ export default {
     ...media.mapMutations(['addSiteDataLength']),
     ...media.mapActions(['getSiteData', 'updateAnnotation']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
+    ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
+    restoreRev(idx) {
+      this.restoreRevision({
+        url_md5: this.revision[idx].url_md5,
+        revision_tokens: this.revision[idx].tokens,
+      });
+    },
     exportCsv() {
       downloadCSV([this.siteData.colHeaders, ...this.sheet.getData()]);
     },
