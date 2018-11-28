@@ -445,7 +445,7 @@
                     <date-picker
                       v-model="form.publicAt"
                       :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     />
                     <div class="input-group-append">

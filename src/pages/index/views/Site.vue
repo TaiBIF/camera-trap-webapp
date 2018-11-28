@@ -97,7 +97,7 @@
                   <date-picker
                     v-model="form.start_at"
                     :placeholder="'18/9/20'"
-                    :format="'YY/M/DD'"
+                    :format="'YYYY-MM--DD'"
                     :first-day-of-week="1"
                   ></date-picker>
                   <div class="input-group-append">
@@ -115,7 +115,7 @@
                   <date-picker
                     v-model="form.end_at"
                     :placeholder="'18/9/20'"
-                    :format="'YY/M/DD'"
+                    :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
                   <div class="input-group-append">
@@ -693,7 +693,7 @@ export default {
         return moment(day)
           .hour(time.HH)
           .minute(time.mm)
-          .format('YYYY/MM/DD HH:mm:ss');
+          .format('YYYY-MM-DD HH:mm:ss');
       };
 
       return {

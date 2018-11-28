@@ -10,6 +10,6 @@ const downloadFile = (blob, filename) => {
 export default data => {
   const csv = data.map(v => v.join(',')).join('\n');
   const csvBlob = new Blob([csv], { type: 'text/csv' });
-  const filename = `CameraTrap-${moment().format('YYYYMMDD-HHmmss')}.csv`;
+  const filename = `CameraTrap-${moment().format('YYYY-MM-DD_HH-mm-ss')}.csv`;
   downloadFile(csvBlob, filename);
 };

@@ -8,7 +8,7 @@ export const getters = {
         const dayDiff = moment().diff(moment(v.modified * 1000), 'days');
         const data = {
           _id: v._id,
-          createdAt: moment(v.modified * 1000).format('YYYY/MM/DD HH:mm:ss'),
+          createdAt: moment(v.modified * 1000).format('YYYY-MM-DD HH:mm:ss'),
           project: v.projectTitle,
           fileName: v.file,
           type: 'jpg',

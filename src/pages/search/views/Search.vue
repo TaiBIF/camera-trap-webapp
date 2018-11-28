@@ -132,8 +132,8 @@
                     <div class="input-group">
                       <date-picker
                         v-model="form.startAt"
-                        :placeholder="'18/9/20'"
-                        :format="'YY/M/DD'"
+                        :placeholder="'2018-09-20'"
+                        :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                       />
                       <div class="input-group-append">
@@ -159,8 +159,8 @@
                     <div class="input-group">
                       <date-picker
                         v-model="form.endAt"
-                        :placeholder="'18/9/20'"
-                        :format="'YY/M/DD'"
+                        :placeholder="'2018-09-20'"
+                        :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                       />
                       <div class="input-group-append">
@@ -433,8 +433,8 @@
                     <div class="input-group">
                       <date-picker
                         v-model="form.startAt"
-                        :placeholder="'18/9/20'"
-                        :format="'YY/M/DD'"
+                        :placeholder="'2018-09-20'"
+                        :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                       />
                       <div class="input-group-append">
@@ -460,8 +460,8 @@
                     <div class="input-group">
                       <date-picker
                         v-model="form.endAt"
-                        :placeholder="'18/9/20'"
-                        :format="'YY/M/DD'"
+                        :placeholder="'2018-09-20'"
+                        :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                       />
                       <div class="input-group-append">

@@ -733,7 +733,7 @@ export default {
       this.renderMap();
     },
     timeFormat(time) {
-      return moment(time * 1000).format('YYYY/MM/DD');
+      return moment(time * 1000).format('YYYY-MM-DD');
     },
     submitReport(val) {
       this.updateAbnormalCamera([

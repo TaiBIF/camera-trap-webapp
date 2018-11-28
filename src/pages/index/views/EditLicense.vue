@@ -160,7 +160,7 @@
                     <date-picker
                       v-model="licenseForm.public_at"
                       :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
                     <div class="input-group-append">
