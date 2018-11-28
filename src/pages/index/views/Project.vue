@@ -18,9 +18,8 @@
                   class="col-3 text-right"
                   v-if="isManager"
                 >
-                  <!-- TODO: change to project id after API adjust -->
                   <router-link
-                    :to="`/info/${currentProject.projectTitle}/edit`"
+                    :to="`/info/${currentProject._id}/edit`"
                     class="float-right btn btn-green-border btn-sm"
                   >
                     <i class="fa fa-pencil-alt mr-2"></i>
@@ -34,7 +33,7 @@
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 col-md-3 text-gray">計畫編號</div>
-                <div class="col-sm-8 col-md-9">{{currentProject.projectId}}</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.adminProjectId}}</div>
               </div>
               <div
                 class="row mb-2"

@@ -13,7 +13,7 @@ import {
 export const getters = {
   Projects: state => state.projects,
   currentProject: state =>
-    state.projects.find(val => val.projectTitle === state.currentProjectId) || {
+    state.projects.find(val => val._id === state.currentProjectId) || {
       adminArea: [],
     },
   cameraLocations: (_, getters) => {
@@ -148,8 +148,8 @@ export const getters = {
                   currentValue.wgs84dec_x,
                 ),
                 identifiedStatus,
-                cameraAbnormalStatus: cameraAbnormalStatus,
-                retrievedStatus: retrievedStatus,
+                cameraAbnormalStatus,
+                retrievedStatus,
               });
             }
 
@@ -186,8 +186,7 @@ export const mutations = {
     const { key, value } = payload;
     const { projects } = state;
     state.projects = projects.map(val => {
-      // TODO: change to projectId after API adjust
-      if (val.projectTitle === state.currentProjectId) {
+      if (val._id === state.currentProjectId) {
         return {
           ...val,
           [key]: value,

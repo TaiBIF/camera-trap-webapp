@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
-        <edit-nav :projectId="1" />
+        <edit-nav :projectId="currentProject._id" />
       </div>
       <div class="col-10 pt-3">
         <!-- 計畫基本資訊 -->
@@ -109,7 +109,10 @@
                   class="col-2 required"
                 >計畫時間：</label>
                 <div class="col-5 input-group-inline">
-                  <div id="project-duration" class="input-group">
+                  <div
+                    id="project-duration"
+                    class="input-group"
+                  >
                     <date-picker
                       :value="currentProject.projectStartDate"
                       @input="handleProjectStartDateChange"
@@ -143,7 +146,8 @@
                 >計畫地區：</label>
                 <div class="col-5">
                   <div class="select">
-                    <v-select id="project-admin-area"
+                    <v-select
+                      id="project-admin-area"
                       :value="currentProject.adminArea"
                       @change="handleAdminAreaChange"
                       :options="options"
@@ -158,7 +162,8 @@
                   class="col-2"
                 >計畫摘要：</label>
                 <div class="col-6">
-                  <textarea id="project-abstract"
+                  <textarea
+                    id="project-abstract"
                     :value="currentProject.abstract"
                     @input="handleAbstractChange"
                     class="form-control"
@@ -172,7 +177,8 @@
                   class="col-2"
                 >備註：</label>
                 <div class="col-6">
-                  <textarea id="project-remarks"
+                  <textarea
+                    id="project-remarks"
                     :value="currentProject.remarks"
                     @input="handleRemarksChange"
                     class="form-control"
@@ -186,7 +192,8 @@
                   class="col-2"
                 >計畫封面：</label>
                 <div class="col-5">
-                  <input id="project-cover"
+                  <input
+                    id="project-cover"
                     type="hidden"
                     v-model="project.cover"
                   >
@@ -229,7 +236,7 @@
 
           <div class="action">
             <router-link
-              to="/project/1"
+              :to="`/project/${currentProject._id}`"
               class="btn btn-default"
             >返回</router-link>
             <button
@@ -292,7 +299,7 @@ export default {
     },
     handleProjectIdChange(e) {
       this.setCurrentProjectValue({
-        key: 'projectId',
+        key: 'adminProjectId',
         value: e.target.value,
       });
     },
