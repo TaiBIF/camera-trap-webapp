@@ -104,7 +104,7 @@ const editProject = async payload => {
     projectTitle,
     shortTitle,
     funder,
-    projectId,
+    adminProjectId,
     principalInvestigator,
     projectStartDate,
     projectEndDate,
@@ -122,7 +122,7 @@ const editProject = async payload => {
         $set: {
           shortTitle,
           funder,
-          projectId,
+          adminProjectId,
           principalInvestigator,
           projectStartDate: moment(projectStartDate).format('YYYY-MM-DD'),
           projectEndDate: moment(projectEndDate).format('YYYY-MM-DD'),

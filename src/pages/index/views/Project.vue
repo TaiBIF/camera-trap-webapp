@@ -19,7 +19,7 @@
                   v-if="isManager"
                 >
                   <router-link
-                    :to="`/info/${currentProject.projectId}/edit`"
+                    :to="`/info/${currentProject._id}/edit`"
                     class="float-right btn btn-green-border btn-sm"
                   >
                     <i class="fa fa-pencil-alt mr-2"></i>
