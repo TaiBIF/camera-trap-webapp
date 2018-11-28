@@ -16,7 +16,7 @@
                 </div>
                 <div
                   class="col-3 text-right"
-                  v-if="isManager"
+                  v-if="showManageLink"
                 >
                   <router-link
                     :to="`/info/${currentProject._id}/edit`"
@@ -397,7 +397,7 @@ import { createNamespacedHelpers } from 'vuex';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
-import { isRolesManager } from '../../../util/roles.js';
+import { isAllowManageProject } from '../../../util/roles.js';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
@@ -693,14 +693,14 @@ export default {
         camera: this.currentCamera && this.currentCamera.cameraLocation,
       };
     },
-    isManager() {
+    showManageLink() {
       const projectRoles = this.projectRoles.find(
         projectRole => projectRole.projectId === this.currentProject.projectId,
       );
       if (!projectRoles) {
         return false;
       }
-      return isRolesManager(projectRoles.roles);
+      return isAllowManageProject(projectRoles.roles);
     },
   },
   methods: {
