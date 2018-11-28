@@ -574,6 +574,7 @@ export default {
 
               arr.push({
                 _id: value._id,
+                projectId: value.projectId,
                 projectTitle: value.projectTitle,
                 fullCameraLocationMd5: value.fullCameraLocationMd5,
                 $set: {
@@ -626,7 +627,7 @@ export default {
 
         const payload = {
           query: {
-            projectTitle: this.$route.params.id,
+            projectId: this.$route.params.id,
             site: this.$route.params.site_id,
             date_time_corrected_timestamp: {
               $gte: getTime(newValue.start_at, newValue.start_time),
@@ -735,7 +736,7 @@ export default {
     },
     fetchCameraLocked() {
       this.getCameraLocked({
-        projectTitle: this.$route.params.id,
+        projectId: this.$route.params.id,
         site: this.$route.params.site_id,
         subSite: this.$route.params.subsite_id,
       });
@@ -902,7 +903,7 @@ export default {
         this.setCameraLocked(
           list.map(v => ({
             fullCameraLocationMd5: v,
-            projectTitle: this.$route.params.id,
+            projectId: this.$route.params.id,
             locked: val,
           })),
         );

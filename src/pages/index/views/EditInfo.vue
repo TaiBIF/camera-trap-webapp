@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
-        <edit-nav :projectId="1" />
+        <edit-nav :projectId="currentProject.projectId" />
       </div>
       <div class="col-10 pt-3">
         <!-- 計畫基本資訊 -->

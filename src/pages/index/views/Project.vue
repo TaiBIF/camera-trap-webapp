@@ -18,9 +18,8 @@
                   class="col-3 text-right"
                   v-if="isManager"
                 >
-                  <!-- TODO: change to project id after API adjust -->
                   <router-link
-                    :to="`/info/${currentProject.projectTitle}/edit`"
+                    :to="`/info/${currentProject.projectId}/edit`"
                     class="float-right btn btn-green-border btn-sm"
                   >
                     <i class="fa fa-pencil-alt mr-2"></i>
@@ -34,7 +33,7 @@
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 col-md-3 text-gray">計畫編號</div>
-                <div class="col-sm-8 col-md-9">{{currentProject.projectId}}</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.adminProjectId}}</div>
               </div>
               <div
                 class="row mb-2"
@@ -695,10 +694,8 @@ export default {
       };
     },
     isManager() {
-      // TODO: find by projectId after API adjust
       const projectRoles = this.projectRoles.find(
-        projectRole =>
-          projectRole.projectTitle === this.currentProject.projectTitle,
+        projectRole => projectRole.projectId === this.currentProject.projectId,
       );
       if (!projectRoles) {
         return false;
@@ -742,6 +739,7 @@ export default {
       this.updateAbnormalCamera([
         {
           ...val,
+          // @todo to use projectId
           projectTitle: this.currentProject.projectTitle,
         },
       ]);

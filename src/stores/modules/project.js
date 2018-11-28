@@ -13,7 +13,7 @@ import {
 export const getters = {
   Projects: state => state.projects,
   currentProject: state =>
-    state.projects.find(val => val.projectTitle === state.currentProjectId) || {
+    state.projects.find(val => val.projectId === state.currentProjectId) || {
       adminArea: [],
     },
   cameraLocations: (_, getters) => {
@@ -186,8 +186,7 @@ export const mutations = {
     const { key, value } = payload;
     const { projects } = state;
     state.projects = projects.map(val => {
-      // TODO: change to projectId after API adjust
-      if (val.projectTitle === state.currentProjectId) {
+      if (val.projectId === state.currentProjectId) {
         return {
           ...val,
           [key]: value,
@@ -217,7 +216,7 @@ export const actions = {
   // 影像辨識狀況
   async getLocationIdentifiedStatus({ state, commit }, payload) {
     const data = await getLocationIdentifiedStatus({
-      projectTitle: state.currentProjectId,
+      projectId: state.currentProjectId,
       ...payload,
     });
     commit('setLocationIdentifiedStatus', data);
@@ -225,7 +224,7 @@ export const actions = {
   // 影像回收狀況
   async getLocationRetrievedStatus({ state, commit }, payload) {
     const data = await getLocationRetrievedStatus({
-      projectTitle: state.currentProjectId,
+      projectId: state.currentProjectId,
       ...payload,
     });
     commit('setLocationRetrievedStatus', data);
@@ -233,7 +232,7 @@ export const actions = {
   // 相機異常值
   async getLocationCameraAbnormalStatus({ state, commit }, payload) {
     const data = await getLocationAbnormalStatus({
-      projectTitle: state.currentProjectId,
+      projectId: state.currentProjectId,
       ...payload,
     });
     commit('setLocationCameraAbnormalStatus', data);
