@@ -15,23 +15,23 @@ export default file =>
   new Promise((resolve, reject) => {
     let Key = '';
 
-    switch (file.name.split('.').pop()) {
-      case 'csv':
+    switch (file.type) {
+      case 'text/csv':
         Key = `upload/${uuid_v4()}/csv/${file.name}`;
         break;
-      case 'zip':
+      case 'application/zip':
         Key = `upload/${uuid_v4()}/zip/${file.name}`;
         break;
-      case 'jpg':
+      case 'image/jpeg':
         Key = `upload/${uuid_v4()}/image/${file.name}`;
         break;
-      case 'mp4':
+      case 'video/mp4':
         Key = `upload/${uuid_v4()}/video/${file.name}`;
         break;
     }
 
     if (Key.length > 0) {
-      const upload = new AWS.S3.ManagedUpload({
+      new AWS.S3({
         params: {
           Bucket: 'camera-trap',
           Key,
@@ -45,19 +45,21 @@ export default file =>
           { Key: 'cameraLocation', Value: '$cameraLocation' },
           { Key: 'user_id', Value: '$user_id' },
         ],
-      });
-      upload.on('httpUploadProgress', progressHandle);
-      upload.send(errorHandle);
-
-      const progressHandle = progress => {
-        console.log(progress);
-      };
-
-      const errorHandle = (err, data) => {
-        console.log({ err, data });
-      };
-
-      console.log(`https://s3-ap-northeast-1.amazonaws.com/camera-trap/${Key}`);
+      })
+        .upload()
+        .on('httpUploadProgress', function(evt) {
+          console.log(evt);
+          console.log(
+            'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
+          );
+        })
+        .send(function(err, data) {
+          if (!err) {
+            resolve(data);
+          } else {
+            reject(err);
+          }
+        });
     } else {
       reject('不支援的檔案');
     }

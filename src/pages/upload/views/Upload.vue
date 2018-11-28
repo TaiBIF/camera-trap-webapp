@@ -35,6 +35,7 @@
           type="file"
           class="d-none"
           id="upload"
+          multiple="multiple"
         >
       </div>
 
