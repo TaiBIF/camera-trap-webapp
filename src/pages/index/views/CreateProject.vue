@@ -100,15 +100,15 @@
                   <input
                     type="text"
                     id="project-id"
-                    name="projectId"
+                    name="adminProjectId"
                     v-validate="'required'"
                     v-model="form.adminProjectId"
                     placeholder="請輸入計畫編號"
                     class="form-control"
-                    :class="{'is-invalid': errors.has('projectId')}"
+                    :class="{'is-invalid': errors.has('adminProjectId')}"
                   >
                   <span
-                    v-show="errors.has('projectId')"
+                    v-show="errors.has('adminProjectId')"
                     class="invalid-feedback"
                   >
                     計畫編號不能留空
