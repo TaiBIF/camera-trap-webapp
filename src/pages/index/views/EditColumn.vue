@@ -228,7 +228,7 @@ const column = [
   {
     name: '時間',
     type: '日期時間',
-    description: 'YY/MM/DD hh:mm',
+    description: 'YYYY-MM-DD hh:mm',
     default: true,
   },
   {

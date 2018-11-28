@@ -97,7 +97,7 @@
                   <date-picker
                     v-model="form.start_at"
                     :placeholder="'18/9/20'"
-                    :format="'YY/M/DD'"
+                    :format="'YYYY-MM--DD'"
                     :first-day-of-week="1"
                   ></date-picker>
                   <div class="input-group-append">
@@ -115,7 +115,7 @@
                   <date-picker
                     v-model="form.end_at"
                     :placeholder="'18/9/20'"
-                    :format="'YY/M/DD'"
+                    :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
                   <div class="input-group-append">
@@ -351,11 +351,11 @@
             <table class="table version-list">
               <tbody>
                 <tr
-                  v-for="(history, i) in historyList"
-                  :key="`history-${i}`"
+                  v-for="(rev, i) in revision"
+                  :key="`rev-${i}`"
                 >
-                  <td>{{history.updateAt}}</td>
-                  <td class="text-gray">由 <b>{{history.updateBy}}</b> 編輯</td>
+                  <td>{{rev.created}}</td>
+                  <td class="text-gray">由 <b>{{rev.modifiedBy.name}}</b> 編輯</td>
                   <td
                     class="text-gray"
                     v-if="i===0"
@@ -364,7 +364,10 @@
                     class="text-gray"
                     v-else
                   >
-                    <a class="btn btn-basic btn-sm">還原成此版本</a>
+                    <a
+                      class="btn btn-basic btn-sm"
+                      @click="restoreRev(i)"
+                    >還原成此版本</a>
                   </td>
                 </tr>
               </tbody>
@@ -399,6 +402,7 @@ import downloadCSV from '../../../util/downloadCsv.js';
 const project = createNamespacedHelpers('project');
 const media = createNamespacedHelpers('media');
 const cameraLocation = createNamespacedHelpers('cameraLocation');
+const annotationRevision = createNamespacedHelpers('annotationRevision');
 
 const formDefault = {
   camera: [],
@@ -435,20 +439,6 @@ export default {
       selection: null,
       currentRow: 0,
       row_data: [],
-      historyList: [
-        {
-          updateAt: '2018/09/05 17:37',
-          updateBy: '黃智賢',
-        },
-        {
-          updateAt: '2018/09/05 17:37',
-          updateBy: '黃智賢',
-        },
-        {
-          updateAt: '2018/09/05 17:37',
-          updateBy: '黃智賢',
-        },
-      ],
       rowData: {},
       // 連拍紀錄
       continuousCount: 0,
@@ -574,6 +564,7 @@ export default {
 
               arr.push({
                 _id: value._id,
+                projectId: value.projectId,
                 projectTitle: value.projectTitle,
                 fullCameraLocationMd5: value.fullCameraLocationMd5,
                 $set: {
@@ -598,6 +589,9 @@ export default {
         },
         afterSelectionEnd: r => {
           this.currentRow = r;
+          this.getRevision({
+            _id: this.siteData.data[r]._id,
+          });
         },
       },
       sheetContainer: null,
@@ -626,7 +620,7 @@ export default {
 
         const payload = {
           query: {
-            projectTitle: this.$route.params.id,
+            projectId: this.$route.params.id,
             site: this.$route.params.site_id,
             date_time_corrected_timestamp: {
               $gte: getTime(newValue.start_at, newValue.start_time),
@@ -665,6 +659,7 @@ export default {
     IdleTimeoutDialog,
   },
   computed: {
+    ...annotationRevision.mapState(['revision']),
     ...project.mapGetters(['currentProject']),
     ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
@@ -692,7 +687,7 @@ export default {
         return moment(day)
           .hour(time.HH)
           .minute(time.mm)
-          .format('YYYY/MM/DD HH:mm:ss');
+          .format('YYYY-MM-DD HH:mm:ss');
       };
 
       return {
@@ -730,12 +725,19 @@ export default {
     ...media.mapMutations(['addSiteDataLength']),
     ...media.mapActions(['getSiteData', 'updateAnnotation']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
+    ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
+    restoreRev(idx) {
+      this.restoreRevision({
+        url_md5: this.revision[idx].url_md5,
+        revision_tokens: this.revision[idx].tokens,
+      });
+    },
     exportCsv() {
       downloadCSV([this.siteData.colHeaders, ...this.sheet.getData()]);
     },
     fetchCameraLocked() {
       this.getCameraLocked({
-        projectTitle: this.$route.params.id,
+        projectId: this.$route.params.id,
         site: this.$route.params.site_id,
         subSite: this.$route.params.subsite_id,
       });
@@ -902,7 +904,7 @@ export default {
         this.setCameraLocked(
           list.map(v => ({
             fullCameraLocationMd5: v,
-            projectTitle: this.$route.params.id,
+            projectId: this.$route.params.id,
             locked: val,
           })),
         );

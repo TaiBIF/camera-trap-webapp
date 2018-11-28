@@ -5,3 +5,5 @@ export * from './modules/cameraLocation';
 export * from './modules/abnormalData';
 export * from './modules/user';
 export * from './modules/notification';
+export * from './modules/uploadSession';
+export * from './modules/annotationRevision';

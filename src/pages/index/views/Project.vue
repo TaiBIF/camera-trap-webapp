@@ -14,9 +14,12 @@
                     {{currentProject.projectTitle}}
                   </h1>
                 </div>
-                <div class="col-3 text-right">
+                <div
+                  class="col-3 text-right"
+                  v-if="showManageLink"
+                >
                   <router-link
-                    to="/info/1/edit"
+                    :to="`/info/${currentProject._id}/edit`"
                     class="float-right btn btn-green-border btn-sm"
                   >
                     <i class="fa fa-pencil-alt mr-2"></i>
@@ -30,7 +33,7 @@
               </div>
               <div class="row mb-2">
                 <div class="col-sm-4 col-md-3 text-gray">計畫編號</div>
-                <div class="col-sm-8 col-md-9">{{currentProject.projectId}}</div>
+                <div class="col-sm-8 col-md-9">{{currentProject.adminProjectId}}</div>
               </div>
               <div
                 class="row mb-2"
@@ -394,8 +397,10 @@ import { createNamespacedHelpers } from 'vuex';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
+import { isAllowManageProject } from '../../../util/roles.js';
 
 const project = createNamespacedHelpers('project');
+const auth = createNamespacedHelpers('auth');
 
 // 設定未選擇/已選擇 Icon
 // const Icon = L.icon({
@@ -660,6 +665,7 @@ export default {
       'sites',
       'ProjectMarkers',
     ]),
+    ...auth.mapGetters(['projectRoles']),
     reportOptions() {
       const tmp = JSON.parse(JSON.stringify(this.cameraLocations || []));
 
@@ -686,6 +692,15 @@ export default {
         subSite: this.currentSubSite && this.currentSubSite.label,
         camera: this.currentCamera && this.currentCamera.cameraLocation,
       };
+    },
+    showManageLink() {
+      const projectRoles = this.projectRoles.find(
+        projectRole => projectRole.projectId === this.currentProject.projectId,
+      );
+      if (!projectRoles) {
+        return false;
+      }
+      return isAllowManageProject(projectRoles.roles);
     },
   },
   methods: {
@@ -715,15 +730,19 @@ export default {
       this.getLocationRetrievedStatus(payload);
       this.getLocationCameraAbnormalStatus(payload);
 
-      this.renderMap();
+      // TODO: need to wait getLocationXXX response, setTimeout as temp solution, need to re-design data flow
+      setTimeout(() => {
+        this.renderMap();
+      }, 1000);
     },
     timeFormat(time) {
-      return moment(time * 1000).format('YYYY/MM/DD');
+      return moment(time * 1000).format('YYYY-MM-DD');
     },
     submitReport(val) {
       this.updateAbnormalCamera([
         {
           ...val,
+          // @todo to use projectId
           projectTitle: this.currentProject.projectTitle,
         },
       ]);
@@ -734,16 +753,13 @@ export default {
         if (!value.child === false && value.child.length) {
           this.currentCamera = null;
           this.currentSubSite = value.child[0];
-          if (!this.SiteMarkers.length) this.setSiteMarker(value);
         } else {
           this.currentCamera = null;
           this.currentSubSite = null;
         }
         this.mapMode = 'camera';
         // this.renderMap();
-      }
-
-      if (this.mapMode === 'camera') {
+      } else if (this.mapMode === 'camera') {
         if (!value.child) {
           // const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
           this.currentCamera = null;
@@ -755,6 +771,13 @@ export default {
           this.currentSubSite = value.child[0];
           // this.renderMap();
         }
+      }
+
+      if (value.label !== '全部樣區') {
+        this.setSiteMarker({
+          site: value.label,
+          subSite: value.child[0] ? value.child[0].label : 'NULL',
+        });
       }
     },
     setCurrent(value, index) {
@@ -796,7 +819,7 @@ export default {
             });
             this.locationCameraAbnormalStatus.forEach(status => {
               if (status.site === currentValue.site) {
-                status.monthly_num.forEach(value => {
+                status.month.forEach(value => {
                   cameraAbnormalStatus[value.month] += value.num;
                 });
               }

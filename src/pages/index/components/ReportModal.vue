@@ -64,7 +64,7 @@
                   <date-picker
                     v-model="form.startAt"
                     :placeholder="'18/9/20'"
-                    :format="'YY/M/DD'"
+                    :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
                   <div class="input-group-append">
@@ -76,7 +76,7 @@
                   <date-picker
                     v-model="form.endAt"
                     :placeholder="'18/9/20'"
-                    :format="'YY/M/DD'"
+                    :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
                   <div class="input-group-append">
@@ -212,8 +212,8 @@ export default {
         subSite: this.form.subSite,
         cameraLocation: this.form.camera,
         fullCameraLocationMd5: this.cameraMD5[this.form.camera],
-        abnormalStartDate: moment(this.form.startAt).format('YYYY/MM/DD'),
-        abnormalEndDate: moment(this.form.endAt).format('YYYY/MM/DD'),
+        abnormalStartDate: moment(this.form.startAt).format('YYYY-MM-DD'),
+        abnormalEndDate: moment(this.form.endAt).format('YYYY-MM-DD'),
         abnormalType: this.form.status,
         remarks: this.form.note,
       });

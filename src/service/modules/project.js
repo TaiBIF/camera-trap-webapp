@@ -5,7 +5,7 @@ const getProjects = async () => {
   const res = await fetchWrap({
     url: '/project/related-to-me',
     method: 'POST',
-    body: { user_id: localStorage.getItem('user_id') },
+    body: { userId: localStorage.getItem('userId') },
   });
 
   return res.ret.map(val => val.project_metadata);
@@ -19,7 +19,7 @@ const createProject = async payload => {
     method: 'POST',
     body: {
       projectTitle: form.name,
-      user_id: localStorage.getItem('user_id'),
+      userId: localStorage.getItem('userId'),
     },
   });
   await fetchWrap({
@@ -30,10 +30,10 @@ const createProject = async payload => {
         projectTitle: form.name,
         shortTitle: form.slot,
         funder: form.agency,
-        projectId: form.no,
-        principalInvestigator: form.owner,
-        projectStartDate: moment(form.start_at).format('YYYY-MM-DD'),
-        projectEndDate: moment(form.end_at).format('YYYY-MM-DD'),
+        adminProjectId: form.adminProjectId,
+        principalInvestigator: form.principalInvestigator,
+        projectStartDate: moment(form.startAt).format('YYYY-MM-DD'),
+        projectEndDate: moment(form.endAt).format('YYYY-MM-DD'),
         adminArea: form.area,
         abstract: form.description,
         remarks: form.comment,
@@ -42,7 +42,7 @@ const createProject = async payload => {
           data: licenseForm.forInfo,
           multimedia: licenseForm.forImg,
         },
-        dataPublicDate: moment(form.public_at).format('YYYY-MM-DD'),
+        dataPublicDate: moment(form.publicAt).format('YYYY-MM-DD'),
       },
     ],
   });
@@ -98,6 +98,43 @@ const getDataFields = async payload => {
   return res.ret[0];
 };
 
+const editProject = async payload => {
+  const {
+    _id,
+    projectTitle,
+    shortTitle,
+    funder,
+    adminProjectId,
+    principalInvestigator,
+    projectStartDate,
+    projectEndDate,
+    adminArea,
+    abstract,
+    remarks,
+  } = payload;
+  await fetchWrap({
+    url: '/project/bulk-update',
+    method: 'POST',
+    body: [
+      {
+        _id,
+        projectTitle,
+        $set: {
+          shortTitle,
+          funder,
+          adminProjectId,
+          principalInvestigator,
+          projectStartDate: moment(projectStartDate).format('YYYY-MM-DD'),
+          projectEndDate: moment(projectEndDate).format('YYYY-MM-DD'),
+          adminArea,
+          abstract,
+          remarks,
+        },
+      },
+    ],
+  });
+};
+
 export {
   getProjects,
   createProject,
@@ -106,4 +143,5 @@ export {
   getLocationRetrievedStatus,
   getLocationAbnormalStatus,
   getDataFields,
+  editProject,
 };

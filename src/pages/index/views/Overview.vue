@@ -88,7 +88,7 @@
               <div class="row description">
                 <div class="col-6">
                   <small class="text-gray label">資料起始年份</small>
-                  <span class="text-green">{{proj.projectStartDate.split('-')[0]}}</span>
+                  <span class="text-green">{{proj.adminProjectId.split('-')[0]}}</span>
                 </div>
                 <div class="col-6">
                   <small class="text-gray label">委託單位</small>

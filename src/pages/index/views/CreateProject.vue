@@ -99,16 +99,16 @@
                 <div class="col-4">
                   <input
                     type="text"
-                    id="project-no"
-                    name="project_no"
+                    id="project-id"
+                    name="adminProjectId"
                     v-validate="'required'"
-                    v-model="form.no"
+                    v-model="form.adminProjectId"
                     placeholder="請輸入計畫編號"
                     class="form-control"
-                    :class="{'is-invalid': errors.has('project_no')}"
+                    :class="{'is-invalid': errors.has('adminProjectId')}"
                   >
                   <span
-                    v-show="errors.has('project_no')"
+                    v-show="errors.has('adminProjectId')"
                     class="invalid-feedback"
                   >
                     計畫編號不能留空
@@ -123,16 +123,16 @@
                 <div class="col-4">
                   <input
                     type="text"
-                    id="project-owner"
-                    name="project_owner"
+                    id="principal-investigator"
+                    name="principalInvestigator"
                     v-validate="'required'"
-                    v-model="form.owner"
+                    v-model="form.principalInvestigator"
                     placeholder="請輸入計畫主持人"
                     class="form-control"
-                    :class="{'is-invalid': errors.has('project_owner')}"
+                    :class="{'is-invalid': errors.has('principalInvestigator')}"
                   >
                   <span
-                    v-show="errors.has('project_owner')"
+                    v-show="errors.has('principalInvestigator')"
                     class="invalid-feedback"
                   >
                     計畫主持人不能留空
@@ -147,8 +147,8 @@
                 <div class="col-4 input-group-inline">
                   <div class="input-group">
                     <date-picker
-                      :placeholder="'2018/09/20'"
-                      :format="'YYYY/MM/DD'"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                       v-model="form.startAt"
                     />
@@ -160,8 +160,8 @@
                   <div class="input-group">
                     <date-picker
                       :not-before="form.startAt"
-                      :placeholder="'2018/09/20'"
-                      :format="'YYYY/MM/DD'"
+                      :placeholder="'2018-09-20'"
+                      :format="'YYYY-MM-DD'"
                       v-model="form.endAt"
                       :first-day-of-week="1"
                     ></date-picker>
@@ -445,7 +445,7 @@
                     <date-picker
                       v-model="form.publicAt"
                       :placeholder="'18/9/20'"
-                      :format="'YY/M/DD'"
+                      :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     />
                     <div class="input-group-append">
@@ -487,6 +487,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import DatePicker from 'vue2-datepicker';
 import { commonMixin } from '../../../mixins/common';
+import { cityOptions } from '../../../util/constants';
 
 const project = createNamespacedHelpers('project');
 
@@ -497,42 +498,20 @@ export default {
   data() {
     return {
       step: 1,
-      options: [
-        '台北市',
-        '新北市',
-        '桃園市',
-        '台中市',
-        '台南市',
-        '高雄市',
-        '基隆市',
-        '新竹市',
-        '嘉義市',
-        '新竹縣',
-        '苗栗縣',
-        '彰化縣',
-        '雲林縣',
-        '嘉義縣',
-        '屏東縣',
-        '宜蘭縣',
-        '花蓮縣',
-        '台東縣',
-        '澎湖縣',
-        '金門縣',
-        '連江縣',
-      ],
+      options: cityOptions,
       form: {
         cover: '',
         name: '',
         slot: '',
         agency: '',
-        owner: '',
+        principalInvestigator: '',
+        adminProjectId: '',
         startAt: '',
         endAt: '',
         publicAt: '',
         area: '',
         description: '',
         comment: '',
-        no: '',
       },
       licenseForm: {
         forData: '',

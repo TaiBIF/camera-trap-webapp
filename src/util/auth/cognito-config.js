@@ -51,7 +51,7 @@ function initCognitoSDK() {
         .then(response => {
           console.log(`sign-in: ${JSON.stringify(response)}`);
 
-          localStorage.setItem('user_id', response.ret);
+          localStorage.setItem('userId', response.ret);
           localStorage.setItem(
             'awsIdToken',
             awsCognitoSession.getIdToken().getJwtToken(),

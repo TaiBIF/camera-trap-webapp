@@ -63,8 +63,8 @@ function initCognitoSDK() {
         ' ((' + allowedProviders.join('|') + ')_\\d+) ',
       );
 
-      let provider_user_id = providerRegexp.exec(err_);
-      if (provider_user_id) {
+      let providerUserId = providerRegexp.exec(err_);
+      if (providerUserId) {
         let provider = providerRegexp.exec(err_)[2];
         authData.IdentityProvider = provider;
       } else {
