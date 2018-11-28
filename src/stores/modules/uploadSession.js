@@ -12,9 +12,9 @@ export const getters = {
           project: v.projectTitle,
           fileName: v.file,
           type: 'jpg',
-          site: 'todo site',
-          subsite: 'todo subsite',
-          camera: 'todo camera',
+          site: v.site,
+          subsite: v.subSite,
+          camera: v.cameraLocation,
           status: v.status,
           msg: 'todo error message',
         };
