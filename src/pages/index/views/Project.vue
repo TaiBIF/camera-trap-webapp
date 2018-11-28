@@ -730,7 +730,10 @@ export default {
       this.getLocationRetrievedStatus(payload);
       this.getLocationCameraAbnormalStatus(payload);
 
-      this.renderMap();
+      // TODO: need to wait getLocationXXX response, setTimeout as temp solution, need to re-design data flow
+      setTimeout(() => {
+        this.renderMap();
+      }, 1000);
     },
     timeFormat(time) {
       return moment(time * 1000).format('YYYY-MM-DD');
