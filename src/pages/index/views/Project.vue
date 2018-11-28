@@ -730,7 +730,10 @@ export default {
       this.getLocationRetrievedStatus(payload);
       this.getLocationCameraAbnormalStatus(payload);
 
-      this.renderMap();
+      // TODO: need to wait getLocationXXX response, setTimeout as temp solution, need to re-design data flow
+      setTimeout(() => {
+        this.renderMap();
+      }, 1000);
     },
     timeFormat(time) {
       return moment(time * 1000).format('YYYY-MM-DD');
@@ -750,16 +753,13 @@ export default {
         if (!value.child === false && value.child.length) {
           this.currentCamera = null;
           this.currentSubSite = value.child[0];
-          if (!this.SiteMarkers.length) this.setSiteMarker(value);
         } else {
           this.currentCamera = null;
           this.currentSubSite = null;
         }
         this.mapMode = 'camera';
         // this.renderMap();
-      }
-
-      if (this.mapMode === 'camera') {
+      } else if (this.mapMode === 'camera') {
         if (!value.child) {
           // const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
           this.currentCamera = null;
@@ -771,6 +771,13 @@ export default {
           this.currentSubSite = value.child[0];
           // this.renderMap();
         }
+      }
+
+      if (value.label !== '全部樣區') {
+        this.setSiteMarker({
+          site: value.label,
+          subSite: value.child[0] ? value.child[0].label : 'NULL',
+        });
       }
     },
     setCurrent(value, index) {
@@ -812,7 +819,7 @@ export default {
             });
             this.locationCameraAbnormalStatus.forEach(status => {
               if (status.site === currentValue.site) {
-                status.monthly_num.forEach(value => {
+                status.month.forEach(value => {
                   cameraAbnormalStatus[value.month] += value.num;
                 });
               }

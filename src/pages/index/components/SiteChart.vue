@@ -5,14 +5,14 @@
   >
     <tbody v-if="type===0">
       <tr
-        v-for="(d, dIdx) in chart"
+        v-for="(d, dIdx) in chartData"
         :key="`trow-${dIdx}`"
         :class="{'is-active': d.id==current}"
         @click="setCurrent(d, dIdx)"
       >
         <th>{{d.name}}</th>
         <td
-          v-for="(data, rid) in d.retrievedStatus"
+          v-for="(data, rid) in d.retrievedData"
           :key="`retrievedStatus-${type}-${rid}`"
         >
           <span
@@ -20,8 +20,7 @@
             v-if="data !== 0"
             :class="{
             'is-complete': data>0,
-            'not-complete': d.cameraAbnormalStatus[rid] > 0,
-            'is-cancel': data==-1
+            'not-complete': data==-1
           }"
           ></span>
         </td>
@@ -29,22 +28,21 @@
     </tbody>
     <tbody v-if="type===1">
       <tr
-        v-for="(d, dIdx) in chart"
+        v-for="(d, dIdx) in chartData"
         :key="`trow-${dIdx}`"
         :class="{'is-active': d.id==current}"
         @click="setCurrent(d, dIdx)"
       >
         <th>{{d.name}}</th>
         <td
-          v-for="(data, rid) in d.identifiedStatus"
+          v-for="(data, rid) in d.identifiedData"
           :key="`identifiedStatus-${type}-${rid}`"
         >
           <span
             class="progress"
             v-if="data !== 0"
             :class="{
-            'is-complete': data === d.retrievedStatus[rid],
-            'not-complete': data < d.retrievedStatus[rid],
+            'is-complete': data>0,
             'is-cancel': data==-1
           }"
           ></span>
@@ -89,7 +87,7 @@
       </span>
       <span class="legend">
         <span class="progress float-left not-complete"></span>
-        <span class="text">當月資料已辨識，但資料未完整</span>
+        <span class="text">當月資料已回收，但未完成辨識</span>
       </span>
     </caption>
   </table>
@@ -109,12 +107,56 @@ export default {
     },
     chart: {
       type: Array,
-      default: null,
+      default: () => [],
     },
   },
   methods: {
     setCurrent(d, dIdx) {
       this.$emit('update', d, dIdx);
+    },
+  },
+  computed: {
+    chartData() {
+      return this.chart.map(data => {
+        const latestRetrievedMonth = data.retrievedStatus.reduce(
+          (max, num, index) => {
+            if (num > 0) {
+              return index;
+            }
+            return max;
+          },
+          0,
+        );
+
+        // https://github.com/TaiBIF/camera-trap-webapp/issues/16#issuecomment-442069580
+        const retrievedData = data.retrievedStatus.map((num, index) => {
+          if (num > 0) {
+            return 1;
+          } else if (index < latestRetrievedMonth) {
+            return -1;
+          }
+          return 0;
+        });
+
+        // https://github.com/TaiBIF/camera-trap-webapp/issues/16#issuecomment-441432809
+        const identifiedData = data.retrievedStatus.map(
+          (retrievedNum, index) => {
+            const identifiedNum = data.identifiedStatus[index];
+            if (identifiedNum === 0 && retrievedNum === 0) {
+              return 0;
+            } else if (identifiedNum === retrievedNum) {
+              return 1;
+            }
+            return -1;
+          },
+        );
+
+        return {
+          retrievedData,
+          identifiedData,
+          ...data,
+        };
+      });
     },
   },
 };
