@@ -2,7 +2,7 @@
   <div class="container">
     <ul class="breadcrumbs">
       <li><a href="index.html/">計畫總覽</a></li>
-      <li><a href="index.html#/project/1">{{currentProject.projectTitle}}</a></li>
+      <li><a :href="`index.html#/project/${currentProject.projectId}`">{{currentProject.projectTitle}}</a></li>
       <li><a>檔案上傳</a></li>
     </ul>
 
