@@ -811,21 +811,22 @@ export default {
             const identifiedStatus = Array(12).fill(0);
 
             this.locationRetrievedStatus.forEach(status => {
-              if (status.site === currentValue.site) {
+              if (status.cameraLocation === currentValue.cameraLocation) {
                 status.monthly_num.forEach(value => {
                   retrievedStatus[value.month] += value.num;
                 });
               }
             });
             this.locationCameraAbnormalStatus.forEach(status => {
-              if (status.site === currentValue.site) {
+              if (status.cameraLocation === currentValue.cameraLocation) {
+                // AbnormalStatus have different response format
                 status.month.forEach(value => {
-                  cameraAbnormalStatus[value.month] += value.num;
+                  cameraAbnormalStatus[value.month] += value;
                 });
               }
             });
             this.locationIdentifiedStatus.forEach(status => {
-              if (status.site === currentValue.site) {
+              if (status.cameraLocation === currentValue.cameraLocation) {
                 status.monthly_num.forEach(value => {
                   identifiedStatus[value.month] += value.num;
                 });
