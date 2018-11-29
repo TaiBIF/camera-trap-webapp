@@ -436,32 +436,6 @@ export default {
       const file = this.fileList[this.uploadIndex];
       const bar = this.progress[this.uploadIndex];
 
-      // setTimeout(() => {
-      //   // 從等待改變為上傳狀態
-      //   file.state = 1;
-      //   bar.setText(Math.round(bar.value() * 100) + ' %');
-      //   bar.animate(
-      //     1.0,
-      //     {
-      //       duration: 1000,
-      //       text: {
-      //         style: {
-      //           color: '#464646',
-      //         },
-      //       },
-      //     },
-      //     () => {
-      //       // 上傳完成
-      //       setTimeout(() => {
-      //         file.state = this.uploadIndex === 3 ? -1 : 2;
-      //       }, 1000);
-
-      //       this.uploadIndex++;
-      //       this.doUpload();
-      //     },
-      //   ); // Number from 0.0 to 1.0
-      // }, 1000);
-
       uploadS3({
         file: file.file,
         site: file.site,
@@ -471,7 +445,7 @@ export default {
         projectId: this.$route.params.projectId,
         projectTitle: this.currentProject.projectTitle,
         userId: localStorage.getItem('userId'),
-        onProgress: evt => bar.set(parseInt(evt.loaded / evt.total)),
+        onProgress: evt => bar.set(evt.loaded / evt.total),
       })
         .then(e => {
           console.log(e);
