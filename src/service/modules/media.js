@@ -7,6 +7,7 @@ const getSiteData = async payload => {
     body: Object.assign({}, payload, {
       // 給後端的寫死值
       projection: {
+        projectId: true,
         projectTitle: true,
         site: true,
         subSite: true,

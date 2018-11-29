@@ -52,7 +52,7 @@ const getSpeciesGroup = async payload => {
   const res = await fetchWrap({
     url: '/project/image-species-group',
     method: 'POST',
-    body: { projectTitle: payload },
+    body: { projectId: payload },
   });
 
   return res.ret.length > 0 ? res.ret[0] : null;
