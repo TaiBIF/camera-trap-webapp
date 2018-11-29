@@ -52,7 +52,7 @@
             </div>
             <div class="col-4 text-center pt-5 divider">
               <a
-                href="upload.html#/"
+                :href="`upload.html#/${currentProject.projectId}`"
                 class="btn btn-orange"
               >
                 <i class="fa fa-upload mr-2"></i>

@@ -39,11 +39,12 @@ export default file =>
           ACL: 'public-read',
         },
         Tagging: [
+          { Key: 'projectId', Value: '$projectId' },
           { Key: 'projectTitle', Value: '$project' },
           { Key: 'site', Value: '$site' },
           { Key: 'subSite', Value: '$subSite' },
           { Key: 'cameraLocation', Value: '$cameraLocation' },
-          { Key: 'user_id', Value: '$user_id' },
+          { Key: 'userId', Value: '$user_id' },
         ],
       })
         .upload()

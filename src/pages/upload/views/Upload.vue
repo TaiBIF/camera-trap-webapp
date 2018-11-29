@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <ul class="breadcrumbs">
-      <li><a href="index.html/">{{breadcrumb[0]}}</a></li>
-      <li><a href="index.html#/project/1">{{breadcrumb[1]}}</a></li>
-      <li><a>{{breadcrumb[2]}}</a></li>
+      <li><a href="index.html/">計畫總覽</a></li>
+      <li><a href="index.html#/project/1">{{currentProject.projectTitle}}</a></li>
+      <li><a>檔案上傳</a></li>
     </ul>
 
     <!-- 拖拉或選擇檔案 -->
@@ -232,28 +232,30 @@
               <div class="form-group">
                 <label class="required">樣區：</label>
                 <v-select
-                  :options="siteOpts"
+                  :options="siteOptions"
                   v-model="form.site"
-                  :on-change="updateSiteValue"
+                  :onChange="updateSiteValue"
                   :placeholder="multiSite ? '多個樣區位置' : '請選擇檔案所屬樣區'"
                 />
               </div>
               <div class="form-group">
                 <label class="required">子樣區：</label>
                 <v-select
-                  :options="subSiteOpts"
+                  :options="subSiteOptions"
                   v-model="form.subsite"
-                  :on-change="updateSubsiteValue"
+                  :onChange="updateSubsiteValue"
                   :placeholder="multiSite ? '多個子樣區位置' : '請選擇檔案所屬子樣區'"
+                  resetOnOptionsChange
                 />
               </div>
               <div class="form-group">
                 <label class="required">相機位置：</label>
                 <v-select
-                  :options="cameraOpts"
+                  :options="cameraOptions"
                   v-model="form.camera"
-                  :on-change="updateCameraValue"
+                  :onChange="updateCameraValue"
                   :placeholder="multiCamera ? '多個相機位置' : '請選擇檔案所屬相機位置'"
+                  resetOnOptionsChange
                 />
               </div>
             </form>
@@ -284,68 +286,24 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, createNamespacedHelpers } from 'vuex';
 import TrailModal from '../components/TrialModal';
 // import {awsMixins} from '../mixins/aws.js'
 import { commonMixin } from '../../../mixins/common.js';
 import ProgressBar from 'progressbar.js';
-import uploadS3 from '../../../util/uploadToS3.js';
+// import uploadS3 from '../../../util/uploadToS3.js';
 
-// const files = [
-//   {
-//     name: 'PT12A-151129-1051223',
-//     type: 'folder',
-//     size: '240 KB',
-//     site: '屏東處',
-//     subsite: '潮州站',
-//     camera: 'PT01A',
-//     state: 0,
-//   },
-//   {
-//     name: 'PT12A-151129-1051223.csv',
-//     type: 'csv',
-//     size: '240 KB',
-//     site: '屏東處',
-//     subsite: '潮州站',
-//     camera: 'PT02A',
-//     state: 0,
-//   },
-//   {
-//     name: 'PT12A-151129-1051223.jpg',
-//     type: 'jpg',
-//     size: '240 KB',
-//     site: '屏東處',
-//     subsite: '潮州站',
-//     camera: 'PT03A',
-//     state: 0,
-//   },
-//   {
-//     name: 'PT12A-151129-1051223.zip',
-//     type: 'zip',
-//     size: '240 KB',
-//     site: '',
-//     camera: '',
-//     state: 0,
-//   },
-// ];
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'Upload',
   mixins: [commonMixin],
   data() {
     return {
-      breadcrumb: ['計畫總覽', '林務局全島鼬獾監測', '檔案上傳'],
-      siteOpts: [{ value: '新竹處', label: '新竹處' }],
-      subSiteOpts: [{ value: '關山站', label: '關山站' }],
-      cameraOpts: [
-        { value: 'PT01A', label: 'PT01A' },
-        { value: 'PT02A', label: 'PT02A' },
-        { value: 'PT03A', label: 'PT03A' },
-      ],
       form: {
-        site: 0,
-        subsite: 0,
-        camera: 0,
+        site: '',
+        subsite: '',
+        camera: '',
       },
       // 紀錄選取的檔案
       isKeyDown: false,
@@ -374,6 +332,47 @@ export default {
   },
   computed: {
     ...mapGetters(['FileReady']),
+    ...project.mapGetters(['currentProject', 'cameraLocations']),
+    options() {
+      const tmp = JSON.parse(JSON.stringify(this.cameraLocations || []));
+
+      // this.cameraLocations 只有 site 跟 subsite 資訊，並沒有相機資訊
+      // 下面補上相機資訊以及相機 md5
+      tmp.map(v => {
+        v.children.map(c => {
+          c.cameraList = this.currentProject
+            ? this.currentProject.cameraLocations
+                .filter(val => val.subSite === c.id)
+                .reduce((obj, val) => {
+                  obj[val.cameraLocation] = val.fullCameraLocationMd5;
+                  return obj;
+                }, {})
+            : [];
+        });
+      });
+
+      return tmp;
+    },
+    siteOptions() {
+      return this.options.map(v => v.id);
+    },
+    subSiteOptions() {
+      return this.form.site
+        ? this.options
+            .find(v => v.id === this.form.site)
+            .children.map(v => v.id)
+        : [];
+    },
+    cameraOptions() {
+      const tmp =
+        this.form.site && this.form.subsite
+          ? this.options
+              .find(v => v.id === this.form.site)
+              .children.find(v => v.id === this.form.subsite)
+          : undefined;
+
+      return tmp ? Object.keys(tmp.cameraList) : [];
+    },
   },
   methods: {
     ...mapActions(['setFileReady']),
@@ -476,8 +475,11 @@ export default {
     updateSiteValue(item) {
       if (this.selecting) return;
 
+      this.form.site = item;
       this.selectedFile.forEach(sf => {
-        this.fileList[sf].site = item.value;
+        this.fileList[sf].site = item;
+        this.fileList[sf].subsite = undefined;
+        this.fileList[sf].camera = undefined;
       });
 
       this.detectValue();
@@ -485,8 +487,10 @@ export default {
     updateSubsiteValue(item) {
       if (this.selecting) return;
 
+      this.form.subsite = item;
       this.selectedFile.forEach(sf => {
-        this.fileList[sf].subsite = item.value;
+        this.fileList[sf].subsite = item;
+        this.fileList[sf].camera = undefined;
       });
 
       this.detectValue();
@@ -494,8 +498,9 @@ export default {
     updateCameraValue(item) {
       if (this.selecting) return;
 
+      this.form.camera = item;
       this.selectedFile.forEach(sf => {
-        this.fileList[sf].camera = item.value;
+        this.fileList[sf].camera = item;
       });
 
       this.detectValue();
@@ -646,15 +651,26 @@ export default {
     };
 
     this.$el.querySelector('#upload').onchange = e => {
-      // this.fileList = files;
-      console.log('b');
+      this.fileList = Array.from(e.target.files).map(file => ({
+        file,
+        name: file.name,
+        type: file.type,
+        size:
+          file.size / 1000 > 1000
+            ? `${(file.size / 1000 / 1000).toFixed(2)} MB`
+            : `${(file.size / 1000).toFixed(2)} KB`,
+        state: 0,
+        site: '',
+        subsite: '',
+        camera: '',
+      }));
 
-      Array.from(e.target.files).forEach(file => {
-        console.log(file);
-        uploadS3(file)
-          .then(e => console.log(e))
-          .catch(e => console.log(e));
-      });
+      // Array.from(e.target.files).forEach(file => {
+      //   console.log(file);
+      //   uploadS3(file)
+      //     .then(e => console.log(e))
+      //     .catch(e => console.log(e));
+      // });
     };
 
     document.body.onkeydown = e => {
