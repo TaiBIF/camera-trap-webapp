@@ -291,7 +291,7 @@ import TrailModal from '../components/TrialModal';
 // import {awsMixins} from '../mixins/aws.js'
 import { commonMixin } from '../../../mixins/common.js';
 import ProgressBar from 'progressbar.js';
-// import uploadS3 from '../../../util/uploadToS3.js';
+import uploadS3 from '../../../util/uploadToS3.js';
 
 const project = createNamespacedHelpers('project');
 
@@ -428,45 +428,70 @@ export default {
       }, 200);
     },
     doUpload() {
+      if (this.uploadIndex === this.fileList.length) {
+        this.uploadComplete = true;
+        return;
+      }
+
       const file = this.fileList[this.uploadIndex];
       const bar = this.progress[this.uploadIndex];
 
-      setTimeout(() => {
-        // 從等待改變為上傳狀態
-        file.state = 1;
-        bar.setText(Math.round(bar.value() * 100) + ' %');
-        bar.animate(
-          1.0,
-          {
-            duration: 1000,
-            text: {
-              style: {
-                color: '#464646',
-              },
-            },
-          },
-          () => {
-            // 上傳完成
-            if (this.uploadIndex <= this.fileList.length - 1) {
-              setTimeout(() => {
-                file.state = this.uploadIndex === 3 ? -1 : 2;
-              }, 1000);
+      // setTimeout(() => {
+      //   // 從等待改變為上傳狀態
+      //   file.state = 1;
+      //   bar.setText(Math.round(bar.value() * 100) + ' %');
+      //   bar.animate(
+      //     1.0,
+      //     {
+      //       duration: 1000,
+      //       text: {
+      //         style: {
+      //           color: '#464646',
+      //         },
+      //       },
+      //     },
+      //     () => {
+      //       // 上傳完成
+      //       setTimeout(() => {
+      //         file.state = this.uploadIndex === 3 ? -1 : 2;
+      //       }, 1000);
 
-              this.uploadIndex++;
-              this.doUpload();
-            } else {
-              this.uploadComplete = true;
-            }
-          },
-        ); // Number from 0.0 to 1.0
-      }, 1000);
+      //       this.uploadIndex++;
+      //       this.doUpload();
+      //     },
+      //   ); // Number from 0.0 to 1.0
+      // }, 1000);
+
+      uploadS3({
+        file: file.file,
+        site: file.site,
+        subSite: file.subsite,
+        cameraLocation: file.camera,
+        fullCameraLocationMd5: file.fullCameraLocationMd5,
+        projectId: this.$route.params.projectId,
+        projectTitle: this.currentProject.projectTitle,
+        userId: localStorage.getItem('userId'),
+        onProgress: evt => bar.set(parseInt(evt.loaded / evt.total)),
+      })
+        .then(e => {
+          console.log(e);
+          file.state = 2;
+          this.uploadIndex++;
+          this.doUpload();
+        })
+        .catch(e => {
+          console.log(e);
+          file.state = -1;
+          this.uploadIndex++;
+          this.doUpload();
+        });
     },
     detectValue() {
       // 偵測是否有空值
       let empty = false;
 
       this.fileList.forEach(f => {
-        if (f.site === '' || f.subsite === '' || f.camera === '') empty = true;
+        if (!f.site || !f.subsite || !f.camera) empty = true;
       });
 
       this.hasEmpty = empty;
@@ -501,6 +526,13 @@ export default {
       this.form.camera = item;
       this.selectedFile.forEach(sf => {
         this.fileList[sf].camera = item;
+        this.fileList[sf].fullCameraLocationMd5 = this.getFullCameraLocationMd5(
+          {
+            site: this.fileList[sf].site,
+            subsite: this.fileList[sf].subsite,
+            camera: this.fileList[sf].camera,
+          },
+        );
       });
 
       this.detectValue();
@@ -601,9 +633,6 @@ export default {
     closeModal(name) {
       this.modalClose(name);
     },
-    s3ErrorHandle(err, data) {
-      console.log(err, data);
-    },
     traverseDirectory(entry) {
       const reader = entry.createReader();
       return new Promise((resolve, reject) => {
@@ -633,6 +662,14 @@ export default {
         }
         readEntries();
       });
+    },
+    getFullCameraLocationMd5({ site, subsite, camera }) {
+      return this.currentProject.cameraLocations.find(
+        val =>
+          val.site === site &&
+          val.subSite === subsite &&
+          val.cameraLocation === camera,
+      ).fullCameraLocationMd5;
     },
   },
   beforeMount() {},

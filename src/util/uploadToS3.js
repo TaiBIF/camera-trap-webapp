@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk';
 
 import { idpDomain, identityPoolId } from './awsDefine';
+import { updateUploadStatus } from '../service/modules/uploadSession';
 
 function uuid_v4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -11,22 +12,53 @@ function uuid_v4() {
   );
 }
 
-export default file =>
+export default ({
+  file,
+  projectId,
+  projectTitle,
+  site,
+  subSite,
+  cameraLocation,
+  fullCameraLocationMd5,
+  userId,
+  onProgress,
+}) =>
   new Promise((resolve, reject) => {
     let Key = '';
+    const sessid = uuid_v4();
+
+    const genStatusBody = status => [
+      {
+        _id: sessid,
+        projectTitle: projectTitle,
+        $set: {
+          status: status,
+        },
+        $setOnInsert: {
+          fullCameraLocationMd5: fullCameraLocationMd5,
+          projectTitle: projectTitle,
+          site: site,
+          subSite: subSite,
+          cameraLocation: cameraLocation,
+          by: userId,
+          file: Key,
+        },
+        $upsert: true,
+      },
+    ];
 
     switch (file.type) {
       case 'text/csv':
-        Key = `upload/${uuid_v4()}/csv/${file.name}`;
+        Key = `upload/${sessid}/csv/${file.name}`;
         break;
       case 'application/zip':
-        Key = `upload/${uuid_v4()}/zip/${file.name}`;
+        Key = `upload/${sessid}/zip/${file.name}`;
         break;
       case 'image/jpeg':
-        Key = `upload/${uuid_v4()}/image/${file.name}`;
+        Key = `upload/${sessid}/image/${file.name}`;
         break;
       case 'video/mp4':
-        Key = `upload/${uuid_v4()}/video/${file.name}`;
+        Key = `upload/${sessid}/video/${file.name}`;
         break;
     }
 
@@ -39,12 +71,12 @@ export default file =>
           ACL: 'public-read',
         },
         Tagging: [
-          { Key: 'projectId', Value: '$projectId' },
-          { Key: 'projectTitle', Value: '$project' },
-          { Key: 'site', Value: '$site' },
-          { Key: 'subSite', Value: '$subSite' },
-          { Key: 'cameraLocation', Value: '$cameraLocation' },
-          { Key: 'userId', Value: '$user_id' },
+          { Key: 'projectId', Value: projectId },
+          { Key: 'projectTitle', Value: projectTitle },
+          { Key: 'site', Value: site },
+          { Key: 'subSite', Value: subSite },
+          { Key: 'cameraLocation', Value: cameraLocation },
+          { Key: 'userId', Value: userId },
         ],
       })
         .upload()
@@ -53,14 +85,18 @@ export default file =>
           console.log(
             'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
           );
+          onProgress(evt);
         })
         .send(function(err, data) {
           if (!err) {
+            updateUploadStatus(genStatusBody('SUCCESS'));
             resolve(data);
           } else {
+            updateUploadStatus(genStatusBody('FAILED'));
             reject(err);
           }
         });
+      updateUploadStatus(genStatusBody('WAITING'));
     } else {
       reject('不支援的檔案');
     }
