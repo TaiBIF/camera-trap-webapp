@@ -108,6 +108,7 @@ export const getters = {
             // locationIdentifiedStatus
             // locationCameraAbnormalStatus
             // locationRetrievedStatus
+            // TODO: show only save original data, use computed to calculate in component
             if (siteIdx === null) {
               const retrievedStatus = Array(12).fill(0);
               const cameraAbnormalStatus = Array(12).fill(0);
@@ -115,29 +116,24 @@ export const getters = {
 
               state.locationRetrievedStatus.forEach(status => {
                 if (status.site === currentValue.site) {
-                  (!status.month ? status.monthly_num : status.month).forEach(
-                    value => {
-                      retrievedStatus[value.month] += value.num;
-                    },
-                  );
+                  status.monthly_num.forEach(value => {
+                    retrievedStatus[value.month - 1] += value.num;
+                  });
                 }
               });
               state.locationCameraAbnormalStatus.forEach(status => {
                 if (status.site === currentValue.site) {
-                  (!status.month ? status.monthly_num : status.month).forEach(
-                    value => {
-                      cameraAbnormalStatus[value.month] += value.num;
-                    },
-                  );
+                  // AbnormalStatus have different response format, only record error month without error number
+                  status.month.forEach(month_num => {
+                    cameraAbnormalStatus[month_num - 1] = 1;
+                  });
                 }
               });
               state.locationIdentifiedStatus.forEach(status => {
                 if (status.site === currentValue.site) {
-                  (!status.month ? status.monthly_num : status.month).forEach(
-                    value => {
-                      identifiedStatus[value.month] += value.num;
-                    },
-                  );
+                  status.monthly_num.forEach(value => {
+                    identifiedStatus[value.month - 1] += value.num;
+                  });
                 }
               });
               accumulator.push({

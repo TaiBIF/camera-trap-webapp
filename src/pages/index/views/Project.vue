@@ -165,7 +165,7 @@
                         :fillColor="'#2A7F60'"
                         :fillOpacity="1"
                         :color="'rgba(42,127,96,.43)'"
-                        @click="setCurrent(mark, idx)"
+                        @click="setCurrent(mark)"
                       >
                         <l-tooltip
                           :content="mark.name"
@@ -628,12 +628,6 @@ export default {
         this.fetchImageStatus();
       }, 100);
     },
-    currentDuration(newValue) {
-      setTimeout(() => {
-        this.setCamera(newValue);
-        this.fetchImageStatus();
-      }, 100);
-    },
     ProjectMarkers() {
       setTimeout(() => {
         if (!this.mapInfo.marker.length && this.mapMode === 'project') {
@@ -772,15 +766,8 @@ export default {
           // this.renderMap();
         }
       }
-
-      if (value.label !== '全部樣區') {
-        this.setSiteMarker({
-          site: value.label,
-          subSite: value.child[0] ? value.child[0].label : 'NULL',
-        });
-      }
     },
-    setCurrent(value, index) {
+    setCurrent(value) {
       // 判斷顯示層級，帶入樣站或相機
       if (this.mapMode === 'camera') {
         this.currentCamera = value;
@@ -795,16 +782,18 @@ export default {
         this.currentSite = this.sites.find(item => {
           return item.value === value.site;
         });
-
-        this.setSiteMarker(value, index);
       }
     },
-    setSiteMarker(value) {
+    setSiteMarker() {
+      const currentSiteLabel = this.currentSite.label;
+      const currentSubSiteLabel = this.currentSubSite
+        ? this.currentSubSite.label
+        : 'NULL';
       this.SiteMarkers = this.currentProject.cameraLocations.reduce(
         (accumulator, currentValue) => {
           if (
-            currentValue.site === value.site &&
-            currentValue.subSite === value.subSite
+            currentValue.site === currentSiteLabel &&
+            currentValue.subSite === currentSubSiteLabel
           ) {
             const retrievedStatus = Array(12).fill(0);
             const cameraAbnormalStatus = Array(12).fill(0);
@@ -813,22 +802,22 @@ export default {
             this.locationRetrievedStatus.forEach(status => {
               if (status.cameraLocation === currentValue.cameraLocation) {
                 status.monthly_num.forEach(value => {
-                  retrievedStatus[value.month] += value.num;
+                  retrievedStatus[value.month - 1] += value.num;
                 });
               }
             });
             this.locationCameraAbnormalStatus.forEach(status => {
               if (status.cameraLocation === currentValue.cameraLocation) {
-                // AbnormalStatus have different response format
-                status.month.forEach(value => {
-                  cameraAbnormalStatus[value.month] += value;
+                // AbnormalStatus have different response format, only record error month without error number
+                status.month.forEach(month_num => {
+                  cameraAbnormalStatus[month_num - 1] = 1; // 0: with error, 1: without error
                 });
               }
             });
             this.locationIdentifiedStatus.forEach(status => {
               if (status.cameraLocation === currentValue.cameraLocation) {
                 status.monthly_num.forEach(value => {
-                  identifiedStatus[value.month] += value.num;
+                  identifiedStatus[value.month - 1] += value.num;
                 });
               }
             });
@@ -905,6 +894,7 @@ export default {
       }
       this.currentDuration += count;
       // get New Data
+      this.fetchImageStatus();
     },
     // 根據層級切換地圖顯示大小
     renderMap() {
@@ -916,6 +906,7 @@ export default {
       }
 
       if (this.mapMode === 'camera') {
+        this.setSiteMarker();
         this.mapInfo.zoom = 15;
         this.progressData = this.SiteMarkers;
         this.mapInfo.marker = this.SiteMarkers.map(val =>
