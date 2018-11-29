@@ -738,6 +738,7 @@ export default {
     fetchCameraLocked() {
       this.getCameraLocked({
         projectId: this.$route.params.id,
+        projectTitle: this.$route.params.projectTitle,
         site: this.$route.params.site_id,
         subSite: this.$route.params.subsite_id,
       });
