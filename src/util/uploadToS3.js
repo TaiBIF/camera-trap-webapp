@@ -30,12 +30,14 @@ export default ({
     const genStatusBody = status => [
       {
         _id: sessid,
-        projectTitle: projectTitle,
+        projectId: projectId,
         $set: {
           status: status,
         },
         $setOnInsert: {
+          upload_session_id: sessid,
           fullCameraLocationMd5: fullCameraLocationMd5,
+          projectId: projectId,
           projectTitle: projectTitle,
           site: site,
           subSite: subSite,
