@@ -44,6 +44,7 @@ export default ({
           cameraLocation: cameraLocation,
           by: userId,
           file: Key,
+          messages: [],
         },
         $upsert: true,
       },
@@ -65,14 +66,14 @@ export default ({
     }
 
     if (Key.length > 0) {
-      new AWS.S3({
+      new AWS.S3.ManagedUpload({
         params: {
           Bucket: 'camera-trap',
           Key,
           Body: file,
           ACL: 'public-read',
         },
-        Tagging: [
+        tags: [
           { Key: 'projectId', Value: projectId },
           { Key: 'projectTitle', Value: projectTitle },
           { Key: 'site', Value: site },
@@ -81,7 +82,6 @@ export default ({
           { Key: 'userId', Value: userId },
         ],
       })
-        .upload()
         .on('httpUploadProgress', function(evt) {
           console.log(
             'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
