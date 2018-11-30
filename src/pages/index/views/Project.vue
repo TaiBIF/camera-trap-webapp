@@ -284,7 +284,8 @@
                       <div>架設日期：{{ currentCamera.modified_at }}</div>
                       <div>經緯度：{{ `X(${currentCamera.original_x})${currentCamera.twd97tm2_x}` }}, {{ `Y(${currentCamera.original_y})${currentCamera.twd97tm2_y}` }}</div>
                       <div>海拔：{{ currentCamera.elevation }}m</div>
-                      <div>植披：{{ currentCamera.land_cover }}</div>
+                      <div>植披：{{ currentCamera.vegetation }}</div>
+                      <div>土地利用型態：{{ currentCamera.land_cover }}</div>
                     </div>
                     <div class="row chart-control">
                       <div class="col-12 text-center text-gray">
@@ -512,8 +513,8 @@ export default {
             return `
               <div>
                 <span class="red label float-right ${
-                  this.error === 0 ? 'd-none' : 'd-inline-block'
-                }">${this.error}筆異常</span>
+                  this.hasError ? 'd-inline-block' : 'd-none'
+                }">資料異常</span>
                 <h5 class="my-1">${this.y} <small>筆</small></h5>
               </div>
               <div class="text-gray">上傳時間：${this.updated_at}</div>
@@ -696,6 +697,18 @@ export default {
       }
       return isAllowManageProject(projectRoles.roles);
     },
+    currentCameraAdnormalMonth() {
+      if (!this.currentCamera || !this.currentCamera.cameraLocation) {
+        return [];
+      }
+      const adnormalStatus = this.locationCameraAbnormalStatus.find(
+        status => status.cameraLocation === this.currentCamera.cameraLocation,
+      );
+      if (!adnormalStatus || !adnormalStatus.month) {
+        return [];
+      }
+      return adnormalStatus.month;
+    },
   },
   methods: {
     ...project.mapMutations(['setCurrentProject', 'setSiteStatusTab']),
@@ -858,7 +871,7 @@ export default {
           array.push({
             name: i + 1 + '月',
             y: value,
-            error: 0,
+            hasError: this.currentCameraAdnormalMonth.includes(i + 1),
           });
           return array;
         }, []),
