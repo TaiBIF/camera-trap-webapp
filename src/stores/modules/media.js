@@ -103,7 +103,7 @@ export const mutations = {
 export const actions = {
   async getSiteData({ commit }, payload) {
     const dataFields = await getDataFields({
-      projectTitle: payload.query.projectTitle,
+      projectId: payload.query.projectId,
     });
     commit('updateDataFields', dataFields);
     const data = await getSiteData(payload);
