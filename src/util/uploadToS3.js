@@ -103,6 +103,40 @@ export default ({
     }
   });
 
+// https://github.com/TaiBIF/camera-trap-api/wiki/aws-folder-structure
+export const uploadCoverImage = ({ file, projectId }) => {
+  return new Promise((resolve, reject) => {
+    if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+      reject('不支援的檔案');
+    } else {
+      const params = {
+        Bucket: 'camera-trap',
+        Key: `cover_images/${projectId}`,
+        Body: file,
+        ACL: 'public-read',
+      };
+      console.log('params', params);
+      new AWS.S3({
+        params,
+      })
+        .upload()
+        .on('httpUploadProgress', function(evt) {
+          console.log(
+            'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
+          );
+          // onProgress(evt);
+        })
+        .send(function(err, data) {
+          if (!err) {
+            resolve(data);
+          } else {
+            reject(err);
+          }
+        });
+    }
+  });
+};
+
 const init = () => {
   AWS.config.update({ region: 'ap-northeast-1' });
 
