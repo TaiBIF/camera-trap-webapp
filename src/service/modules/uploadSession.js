@@ -9,4 +9,14 @@ const getUploadHistory = async () => {
   return res.ret || [];
 };
 
-export { getUploadHistory };
+const updateUploadStatus = async body => {
+  const res = await fetchWrap({
+    url: '/upload-session/bulk-update',
+    method: 'POST',
+    body,
+  });
+
+  return res;
+};
+
+export { getUploadHistory, updateUploadStatus };

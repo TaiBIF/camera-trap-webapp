@@ -2,16 +2,19 @@ import Cookies from 'js-cookie';
 
 import { CognitoAuth } from 'amazon-cognito-auth-js';
 import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
+import AWS from 'aws-sdk';
 
-const { AWSCognito, localStorage } = window;
+import {
+  clientId,
+  appWebDomain,
+  redirUri,
+  loginUri,
+  userPoolId,
+  idpDomain,
+  identityPoolId,
+} from '../awsDefine';
 
-const clientId = '1icuqes99so6oi86l3u8506pqd';
-const appWebDomain = 'camera-trap.auth.ap-northeast-1.amazoncognito.com';
-const redirUri = process.env.VUE_APP_BASE_URL;
-const loginUri = `${process.env.VUE_APP_BASE_URL}/login.html`;
-const userPoolId = 'ap-northeast-1_R2iDn5W3B';
-const idpDomain = `cognito-idp.ap-northeast-1.amazonaws.com/${userPoolId}`;
-const identityPoolId = 'ap-northeast-1:3d5edbfb-834c-4284-85f5-a4ec29d38ef0';
+const { localStorage } = window;
 
 function initCognitoSDK() {
   const authData = {
@@ -56,25 +59,23 @@ function initCognitoSDK() {
           window.location.replace('/');
         });
 
-      AWSCognito.config.update({ region: 'ap-northeast-1' });
+      AWS.config.update({ region: 'ap-northeast-1' });
 
       // 前端取得登入使用者的 credentials 法
       const logins = {};
       logins[idpDomain] = awsCognitoSession.getIdToken().getJwtToken();
 
-      AWSCognito.config.credentials = new AWSCognito.CognitoIdentityCredentials(
-        {
-          IdentityPoolId: identityPoolId,
-          Logins: logins,
-        },
-      );
+      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: identityPoolId,
+        Logins: logins,
+      });
 
-      AWSCognito.config.credentials.get(err => {
+      AWS.config.credentials.get(err => {
         if (err) return console.log('Error', err);
         // 成功透過 OrcID 登入 AWS Cognito，取得 credentials
         // e.g.
-        // var identity_id = AWSCognito.config.credentials.identityId;
-        // console.log("Cognito Identity Id", AWSCognito.config.credentials.identityId);
+        // var identity_id = AWS.config.credentials.identityId;
+        // console.log("Cognito Identity Id", AWS.config.credentials.identityId);
       });
 
       console.log('Sign in success');

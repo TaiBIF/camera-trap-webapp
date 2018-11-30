@@ -8,8 +8,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex';
+
 import TheHeader from '../../components/Header/TheHeader.vue';
+
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'App',
@@ -18,6 +21,7 @@ export default {
   },
   computed: {
     ...mapGetters(['PageLock']),
+    ...project.mapGetters(['currentProject']),
   },
   data() {
     return {};
@@ -28,6 +32,8 @@ export default {
   },
   methods: {
     ...mapActions(['setPageLock']),
+    ...project.mapMutations(['setCurrentProject']),
+    ...project.mapActions(['loadProject']),
     routeChange() {
       this.setPageLock(false);
     },
@@ -35,6 +41,10 @@ export default {
       if (this.PageLock) document.body.classList.add('page-lock');
       else document.body.classList.remove('page-lock');
     },
+  },
+  mounted() {
+    this.setCurrentProject(this.$route.params.projectId);
+    this.loadProject();
   },
 };
 </script>
