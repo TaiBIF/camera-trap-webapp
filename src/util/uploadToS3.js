@@ -83,7 +83,6 @@ export default ({
       })
         .upload()
         .on('httpUploadProgress', function(evt) {
-          console.log(evt);
           console.log(
             'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
           );
@@ -117,14 +116,6 @@ const init = () => {
 
   AWS.config.credentials.get(err => {
     if (err) return console.log('Error', err);
-    // 成功透過 OrcID 登入 AWS Cognito，取得 credentials
-    // e.g.
-    // var identity_id = AWS.config.credentials.identityId;
-    // localStorage.setItem(
-    //   'credentials_id',
-    //   AWS.config.credentials.identityId,
-    // );
-    console.log('init');
   });
 };
 
