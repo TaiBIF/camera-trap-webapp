@@ -109,17 +109,17 @@ export const uploadCoverImage = ({ file, projectId }) => {
     if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
       reject('不支援的檔案');
     } else {
+      const ext = file.type.replace(/.*\//, '');
       const params = {
         Bucket: 'camera-trap',
-        Key: `cover_images/${projectId}`,
+        Key: `cover_images/${projectId}.${ext}`,
         Body: file,
         ACL: 'public-read',
       };
       console.log('params', params);
-      new AWS.S3({
+      new AWS.S3.ManagedUpload({
         params,
       })
-        .upload()
         .on('httpUploadProgress', function(evt) {
           console.log(
             'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
