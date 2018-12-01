@@ -101,7 +101,6 @@ const getDataFields = async payload => {
 const editProject = async payload => {
   const {
     _id,
-    projectTitle,
     shortTitle,
     funder,
     adminProjectId,
@@ -111,6 +110,7 @@ const editProject = async payload => {
     adminArea,
     abstract,
     remarks,
+    coverImage,
   } = payload;
   await fetchWrap({
     url: '/project/bulk-update',
@@ -118,7 +118,7 @@ const editProject = async payload => {
     body: [
       {
         _id,
-        projectTitle,
+        projectId: _id,
         $set: {
           shortTitle,
           funder,
@@ -129,6 +129,7 @@ const editProject = async payload => {
           adminArea,
           abstract,
           remarks,
+          coverImage,
         },
       },
     ],

@@ -344,6 +344,12 @@ export default {
         value: e.target.value,
       });
     },
+    handleCoverImageChange(value) {
+      this.setCurrentProjectValue({
+        key: 'coverImage',
+        value,
+      });
+    },
     hanldeSave() {
       if (
         this.previewImg &&
@@ -354,12 +360,15 @@ export default {
           file: this.previewImg.file,
           projectId: this.currentProject._id,
         })
-          .then(res => {
-            console.log('res', res);
+          .then(({ key }) => {
+            // TODO: apply s3 src base on env
+            this.handleCoverImageChange(
+              `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`,
+            );
             this.updateProject(this.currentProject);
           })
           .catch(err => {
-            console.log('err', err);
+            console.log('uploadCoverImage err: ', err);
           });
       } else {
         this.updateProject(this.currentProject);
