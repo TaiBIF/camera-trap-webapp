@@ -8,6 +8,7 @@ import media from './modules/media';
 import cameraLocation from './modules/cameraLocation';
 import uploadSession from './modules/uploadSession';
 import annotationRevision from './modules/annotationRevision';
+import forestBoundary from './modules/forestBoundary';
 
 Vue.use(Vuex);
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     cameraLocation,
     uploadSession,
     annotationRevision,
+    forestBoundary,
   },
   state: {
     pageLock: false,

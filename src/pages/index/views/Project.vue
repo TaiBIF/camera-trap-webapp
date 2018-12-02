@@ -121,6 +121,7 @@
                     :zoom="mapInfo.zoom"
                     :center="mapInfo.center"
                     :options="mapInfo.options"
+                    @update:bounds="centerUpdated"
                   >
                     <l-control-zoom :position="'topleft'" />
                     <l-tile-layer
@@ -181,11 +182,11 @@
                     >
                       <!-- 林班地座標 -->
                       <l-polygon
-                        v-for="item in polygon"
+                        v-for="item in forestBoundary"
                         :key="item.id"
                         :lat-lngs="item.points"
                         :fillColor="'rgba(255,140,35,.15)'"
-                        :stroke="1"
+                        :stroke="true"
                         :fillOpacity="1"
                         :color="'#FFAF00'"
                       />
@@ -402,6 +403,7 @@ import { isAllowManageProject } from '../../../util/roles.js';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
+const forestBoundary = createNamespacedHelpers('forestBoundary');
 
 // 設定未選擇/已選擇 Icon
 // const Icon = L.icon({
@@ -459,18 +461,18 @@ export default {
       mapMode: 'project', // 目前顯示的圖表層級
       progressData: [], // 取得每月繳交資訊
       showWoods: false, // 是否顯示林班地
-      polygon: [
-        // 林班地資料示意
-        {
-          id: 'p1',
-          points: [
-            { lat: 24.604577, lng: 121.608599 },
-            { lat: 24.753846, lng: 121.175827 },
-            { lat: 24.34913, lng: 121.164845 },
-          ],
-          visible: true,
-        },
-      ],
+      // polygon: [
+      //   // 林班地資料示意
+      //   {
+      //     id: 'p1',
+      //     points: [
+      //       { lat: 24.604577, lng: 121.608599 },
+      //       { lat: 24.753846, lng: 121.175827 },
+      //       { lat: 24.34913, lng: 121.164845 },
+      //     ],
+      //     visible: true,
+      //   },
+      // ],
       mapInfo: {
         zoom: 11,
         options: {
@@ -601,6 +603,10 @@ export default {
         },
         series: null,
       },
+      getForestBoundaryParam: {
+        decimalLatitude: 0,
+        decimalLongitude: 0,
+      },
     };
   },
   components: {
@@ -644,6 +650,9 @@ export default {
       }, 100);
     },
     species: 'loadPieChart',
+    'mapInfo.center': function(newVal, oldVal) {
+      console.log('xxx', newVal, oldVal);
+    },
   },
   computed: {
     ...project.mapState([
@@ -661,6 +670,7 @@ export default {
       'ProjectMarkers',
     ]),
     ...auth.mapGetters(['projectRoles']),
+    ...forestBoundary.mapGetters(['forestBoundary']),
     reportOptions() {
       const tmp = JSON.parse(JSON.stringify(this.cameraLocations || []));
 
@@ -719,6 +729,7 @@ export default {
       'getLocationCameraAbnormalStatus',
       'updateAbnormalCamera',
     ]),
+    ...forestBoundary.mapActions(['loadForestBoundary']),
     fetchImageStatus() {
       this.mapInfo.marker = [];
       this.progressData = [];
@@ -934,10 +945,43 @@ export default {
         this.mapInfo.center = window._.clone(this.mapInfo.marker[0].marker);
       }
     },
+    // 取得林地範圍
+    shouldReloadForestBoundary() {
+      if (!this.mapInfo || !this.mapInfo.center) {
+        return false;
+      }
+      const { lat, lng } = this.mapInfo.center;
+      const { decimalLatitude, decimalLongitude } = this.getForestBoundaryParam;
+      // TODO: set change limit for reload forestBoundary
+      if (lat == decimalLatitude && lng === decimalLongitude) {
+        return false;
+      }
+      this.getForestBoundaryParam = {
+        decimalLatitude: lat,
+        decimalLongitude: lng,
+      };
+      return true;
+    },
+    loadForestBoundaryByMapCenter() {
+      if (this.shouldReloadForestBoundary()) {
+        const {
+          decimalLatitude,
+          decimalLongitude,
+        } = this.getForestBoundaryParam;
+        this.loadForestBoundary({
+          decimalLatitude,
+          decimalLongitude,
+        });
+      }
+    },
+    centerUpdated() {
+      this.loadForestBoundaryByMapCenter();
+    },
   },
   mounted() {
     this.setCurrentProject(this.$route.params.id);
     this.progressData = this.ProjectMarkers;
+    this.loadForestBoundaryByMapCenter();
   },
 };
 </script>
