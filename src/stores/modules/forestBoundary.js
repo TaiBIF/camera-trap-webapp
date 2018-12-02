@@ -9,7 +9,6 @@ export const mutations = {
   updateForestBoundary(state, payload) {
     state.forestBoundary = payload.map(obj => ({
       id: obj._id,
-      visible: true,
       points: idx(obj, _ => _.geometry.coordinates[0]).map(coordinate => ({
         lng: coordinate[0],
         lat: coordinate[1],
