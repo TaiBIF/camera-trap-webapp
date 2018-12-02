@@ -10,8 +10,7 @@ export const mutations = {
     state.forestBoundary = payload.map(obj => ({
       id: obj._id,
       visible: true,
-      // TODO: response format check: https://github.com/TaiBIF/camera-trap-api/issues/45
-      points: idx(obj, _ => _.geometry.coordinates[0][0]).map(coordinate => ({
+      points: idx(obj, _ => _.geometry.coordinates[0]).map(coordinate => ({
         lng: coordinate[0],
         lat: coordinate[1],
       })),
