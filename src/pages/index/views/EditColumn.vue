@@ -191,7 +191,7 @@
     />
     <delete-column-dialog
       :open="deleteColumnOpen"
-      :column="delColumn.data"
+      :column="deleteItem.data"
       @close="deleteColumnOpen=false"
       @submit="confirmDeleteColumn"
     />
@@ -204,6 +204,7 @@ import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import NewColumnModal from '../components/NewColumn';
 import DeleteColumnDialog from '../components/DeleteColumnDialog';
+import InvitationDialog from '../components/InvitationDialog';
 import EditNav from '../components/EditNav';
 
 const column = [
@@ -266,6 +267,7 @@ export default {
     EditNav,
     DeleteColumnDialog,
     CloseWindowDialog,
+    InvitationDialog,
   },
   data() {
     return {
@@ -277,6 +279,7 @@ export default {
         data: null,
       },
       deleteColumnOpen: false,
+      invitationOpen: false,
     };
   },
   methods: {
