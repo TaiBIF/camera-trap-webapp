@@ -7,3 +7,4 @@ export * from './modules/user';
 export * from './modules/notification';
 export * from './modules/uploadSession';
 export * from './modules/annotationRevision';
+export * from './modules/forestBoundary';
