@@ -650,9 +650,6 @@ export default {
       }, 100);
     },
     species: 'loadPieChart',
-    'mapInfo.center': function(newVal, oldVal) {
-      console.log('xxx', newVal, oldVal);
-    },
   },
   computed: {
     ...project.mapState([
@@ -946,6 +943,7 @@ export default {
       }
     },
     // 取得林地範圍
+    // 判斷是否重送 api
     shouldReloadForestBoundary() {
       if (!this.mapInfo || !this.mapInfo.center) {
         return false;
@@ -962,6 +960,7 @@ export default {
       };
       return true;
     },
+    // call api
     loadForestBoundaryByMapCenter() {
       if (this.shouldReloadForestBoundary()) {
         const {
@@ -974,6 +973,7 @@ export default {
         });
       }
     },
+    // 移動 map 時 call api
     centerUpdated() {
       this.loadForestBoundaryByMapCenter();
     },
