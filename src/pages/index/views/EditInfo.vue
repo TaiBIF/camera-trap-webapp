@@ -192,11 +192,6 @@
                   class="col-2"
                 >計畫封面：</label>
                 <div class="col-5">
-                  <input
-                    id="project-cover"
-                    type="hidden"
-                    v-model="project.cover"
-                  >
                   <label class="btn btn-default btn-upload">
                     <input
                       type="file"
@@ -212,7 +207,19 @@
                   </div>
                   <div
                     class="preview"
-                    v-if="previewImg!==null"
+                    v-if="isUploadTypeError"
+                  >
+                    請使用 jpg 或 png 檔
+                  </div>
+                  <div
+                    class="preview"
+                    v-else-if="isUploadSizeError"
+                  >
+                    檔案上限為 2 MB
+                  </div>
+                  <div
+                    class="preview"
+                    v-else-if="previewImg!==null"
                   >
                     <div class="image">
                       <img :src="previewImg.src">
@@ -262,6 +269,7 @@ import DatePicker from 'vue2-datepicker';
 import EditNav from '../components/EditNav';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import { cityOptions } from '../../../util/constants';
+import { uploadCoverImage } from '../../../util/uploadToS3.js';
 
 const project = createNamespacedHelpers('project');
 
@@ -276,9 +284,6 @@ export default {
   data() {
     return {
       closeWindowOpen: false,
-      project: {
-        cover: '',
-      },
       options: cityOptions,
     };
   },
@@ -339,12 +344,60 @@ export default {
         value: e.target.value,
       });
     },
+    handleCoverImageChange(value) {
+      this.setCurrentProjectValue({
+        key: 'coverImage',
+        value,
+      });
+    },
     hanldeSave() {
-      this.updateProject(this.currentProject);
+      if (
+        this.previewImg &&
+        !this.isUploadTypeError &&
+        !this.isUploadSizeError
+      ) {
+        uploadCoverImage({
+          file: this.previewImg.file,
+          projectId: this.currentProject._id,
+        })
+          .then(({ key }) => {
+            // TODO: apply s3 src base on env
+            this.handleCoverImageChange(
+              `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`,
+            );
+            this.updateProject(this.currentProject);
+          })
+          .catch(err => {
+            console.log('uploadCoverImage err: ', err);
+          });
+      } else {
+        this.updateProject(this.currentProject);
+      }
     },
   },
   computed: {
     ...project.mapGetters(['currentProject']),
+    isUploadTypeError() {
+      if (!this.previewImg) {
+        return false;
+      }
+      if (
+        this.previewImg.type === 'image/jpeg' ||
+        this.previewImg.type === 'image/png'
+      ) {
+        return false;
+      }
+      return true;
+    },
+    isUploadSizeError() {
+      if (!this.previewImg) {
+        return false;
+      }
+      if (this.previewImg.fileSizeMb < 2) {
+        return false;
+      }
+      return true;
+    },
   },
   mounted() {
     this.setCurrentProject(this.$route.params.id);
