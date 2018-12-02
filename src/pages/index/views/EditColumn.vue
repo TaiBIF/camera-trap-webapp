@@ -62,7 +62,10 @@
                   </transition-group>
                 </draggable>
               </div>
-              <div class="column-footer">
+              <div
+                class="column-footer"
+                v-if="showAddColumnsBtn"
+              >
                 <a
                   id="new-column"
                   class="btn btn-text text-left dropdown-toggle"
@@ -199,6 +202,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import draggable from 'vuedraggable';
 import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
@@ -206,7 +210,9 @@ import NewColumnModal from '../components/NewColumn';
 import DeleteColumnDialog from '../components/DeleteColumnDialog';
 import InvitationDialog from '../components/InvitationDialog';
 import EditNav from '../components/EditNav';
+import { isAllowAddColumns } from '../../../util/roles.js';
 
+const auth = createNamespacedHelpers('auth');
 const column = [
   {
     name: '樣區',
@@ -281,6 +287,21 @@ export default {
       deleteColumnOpen: false,
       invitationOpen: false,
     };
+  },
+  computed: {
+    ...auth.mapGetters(['projectRoles']),
+    currentProjectId() {
+      return this.$route.params.id;
+    },
+    showAddColumnsBtn() {
+      const projectRoles = this.projectRoles.find(
+        projectRole => projectRole.projectId === this.currentProjectId,
+      );
+      if (!projectRoles) {
+        return false;
+      }
+      return isAllowAddColumns(projectRoles.roles);
+    },
   },
   methods: {
     confirmDeleteColumn() {
