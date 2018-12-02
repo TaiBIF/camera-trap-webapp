@@ -33,3 +33,15 @@ export const isAllowManageProject = roles => {
       projectManagerRoles.includes(userRole),
   );
 };
+
+/**
+ * @param {array} roles
+ * @return {bool}
+ */
+export const isAllowAddColumns = roles => {
+  if (!roles || roles.length === 0) {
+    return false;
+  }
+
+  return roles.some(userRole => projectManagerRoles.includes(userRole));
+};
