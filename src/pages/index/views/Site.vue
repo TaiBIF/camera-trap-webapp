@@ -578,6 +578,14 @@ export default {
                   [`tokens.${value.index.token}.data.${
                     value.index.column[prop]
                   }.value`]: newVal,
+                  //special case: https://github.com/TaiBIF/camera-trap-webapp/issues/106
+                  ...(prop === 'species'
+                    ? {
+                        [`tokens.${
+                          value.index.token
+                        }.species_shortcut`]: newVal,
+                      }
+                    : undefined),
                 },
               });
             }
