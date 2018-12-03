@@ -1,4 +1,5 @@
 import fetchWrap from '../../util/fetch';
+import { uploadCoverImage } from '../../util/uploadToS3';
 import moment from 'moment';
 
 const getProjects = async () => {
@@ -13,7 +14,7 @@ const getProjects = async () => {
 
 const createProject = async payload => {
   console.log(payload);
-  const { form, licenseForm } = payload;
+  const { form, licenseForm, file } = payload;
   const { ret } = await fetchWrap({
     url: '/project/init',
     method: 'POST',
@@ -22,12 +23,21 @@ const createProject = async payload => {
       userId: localStorage.getItem('userId'),
     },
   });
+  const { projectId } = ret;
+  if (file) {
+    const { key } = await uploadCoverImage({
+      file,
+      projectId,
+    });
+    form.cover = `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`;
+  }
+
   await fetchWrap({
     url: '/project/bulk-insert',
     method: 'POST',
     body: [
       {
-        projectId: ret.projectId,
+        projectId,
         projectTitle: form.name,
         shortTitle: form.slot,
         funder: form.agency,
@@ -38,6 +48,7 @@ const createProject = async payload => {
         adminArea: form.area,
         abstract: form.description,
         remarks: form.comment,
+        coverImage: form.cover,
         license: {
           metadata: licenseForm.forData,
           data: licenseForm.forInfo,

@@ -257,6 +257,7 @@
                     <input
                       type="file"
                       id="upload"
+                      @change="previewPhoto($event)"
                     >
                     <span class="text">選擇檔案</span>
                   </label>
@@ -267,7 +268,19 @@
                   </div>
                   <div
                     class="preview"
-                    v-if="previewImg!==null"
+                    v-if="isUploadTypeError"
+                  >
+                    請使用 jpg 或 png 檔
+                  </div>
+                  <div
+                    class="preview"
+                    v-else-if="isUploadSizeError"
+                  >
+                    檔案上限為 2 MB
+                  </div>
+                  <div
+                    class="preview"
+                    v-else-if="previewImg!==null"
                   >
                     <div class="image">
                       <img :src="previewImg.src">
@@ -539,6 +552,7 @@ export default {
         forImg: 'CC0',
       },
       publicAtLimit: null,
+      previewImg: null,
     };
   },
   methods: {
@@ -548,10 +562,14 @@ export default {
         this.createProject({
           form: this.form,
           licenseForm: this.licenseForm,
+          file: this.previewImg.file || null,
         }).then(() => this.$router.push('/'));
       }
     },
     nextStep() {
+      if (this.isUploadTypeError || this.isUploadSizeError) {
+        return false;
+      }
       this.$validator.validateAll().then(result => {
         if (result) this.step += 1;
         else return false;
@@ -568,6 +586,27 @@ export default {
   computed: {
     isOverPublicLimit: function() {
       return this.form.publicAt > this.publicAtLimit;
+    },
+    isUploadTypeError() {
+      if (!this.previewImg) {
+        return false;
+      }
+      if (
+        this.previewImg.type === 'image/jpeg' ||
+        this.previewImg.type === 'image/png'
+      ) {
+        return false;
+      }
+      return true;
+    },
+    isUploadSizeError() {
+      if (!this.previewImg) {
+        return false;
+      }
+      if (this.previewImg.fileSizeMb < 2) {
+        return false;
+      }
+      return true;
     },
   },
 };
