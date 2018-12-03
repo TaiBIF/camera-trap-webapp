@@ -135,4 +135,25 @@ form.form
     margin-left: 15px
   > * 
     align-self: center
-  
+
+.input-group.is-invalid input
+  border: 1px solid #dc3545;
+
+.is-invalid ~ .invalid-feedback
+  display: block
+
+.warning
+  color: #dc3545
+  font-weight: 800
+
+.input-group-wrapper
+  display: flex
+  width: 100%
+
+.input-group-wrapper .input-group
+  flex: 1;
+  min-width: 0;
+
+.input-group-wrapper .input-text
+  padding: 0 10px;
+
