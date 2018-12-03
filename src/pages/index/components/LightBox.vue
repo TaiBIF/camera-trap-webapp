@@ -1,6 +1,7 @@
 <template>
   <div
     class="modal light-box fade"
+    v-if="open"
     :class="{'in': open}"
   >
     <div class="modal-dialog">
