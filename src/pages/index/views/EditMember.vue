@@ -51,7 +51,7 @@
             <table class="table mt-2">
               <thead>
                 <tr>
-                  <th>專案成員</th>
+                  <th>計畫成員</th>
                   <th>電子郵件</th>
                   <th>權限設置</th>
                   <th></th>

@@ -74,7 +74,7 @@
             <li
               @click="currentTab=1"
               :class="{'active': currentTab==1}"
-            ><a>已辨視物種</a></li>
+            ><a>已辨識物種</a></li>
           </ul>
         </div>
         <div class="panel-body">

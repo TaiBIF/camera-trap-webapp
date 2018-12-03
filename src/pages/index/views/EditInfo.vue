@@ -49,7 +49,7 @@
                 <div class="col-5 pl-0">
                   <span
                     class="btn btn-text px-0"
-                    v-tooltip.right="{ content: '專案簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別專案的文字' }"
+                    v-tooltip.right="{ content: '計畫簡稱為做日後系統顯示之用，您可以輸入任何有助你辨別計畫的文字' }"
                   >
                     <i class="icon-info"></i>
                   </span>
@@ -202,7 +202,7 @@
                   </label>
                   <div class="note">
                     <small class="text-gray">
-                      您可以為專案添加封面，理想尺寸是 373 x 180 像素 (.jpg, .png) ，檔案上限為 2 MB。
+                      您可以為計畫添加封面，理想尺寸是 373 x 180 像素 (.jpg, .png) ，檔案上限為 2 MB。
                     </small>
                   </div>
                   <div

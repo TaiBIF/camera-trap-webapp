@@ -58,7 +58,7 @@
                 <a
                   class="dropdown-item"
                   href="#"
-                >依專案名稱筆畫排序</a>
+                >依計畫名稱筆畫排序</a>
               </div>
             </div>
           </div>

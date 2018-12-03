@@ -67,7 +67,7 @@
               :class="isIndex ? 'active' : ''"
               role="button"
               href="/index.html#/"
-            >專案總覽
+            >計畫總覽
               <span
                 class="sr-only"
                 v-if="isIndex"
