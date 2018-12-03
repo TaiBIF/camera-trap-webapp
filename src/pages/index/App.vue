@@ -11,7 +11,7 @@
           <i class="fa fa-chevron-left"></i> 返回計畫總覽
         </router-link>
         <div class="aside-project">
-          <router-link to="/project/1">
+          <router-link :to="`/project/${currentProject._id}`">
             {{ currentProject.projectTitle }}
           </router-link>
         </div>
