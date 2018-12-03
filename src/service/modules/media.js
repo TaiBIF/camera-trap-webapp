@@ -22,6 +22,11 @@ const getSiteData = async payload => {
         low_quality_url: true,
         imageUrlPrefix: true,
       },
+      sort: [
+        ['cameraLocation', 1],
+        ['date_time_corrected_timestamp', 1],
+        ['uploaded_file_name', 1],
+      ],
     }),
   });
 
