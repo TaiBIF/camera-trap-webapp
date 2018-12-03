@@ -702,7 +702,7 @@ export default {
             val =>
               this.cameraLocked[val.fullCameraLocationMd5].locked === false,
           )
-        : this.siteData.data.length > 1 &&
+        : this.siteData.data.length >= 1 &&
             this.form.camera.every(
               val => this.cameraLocked[val].locked === false,
             );
