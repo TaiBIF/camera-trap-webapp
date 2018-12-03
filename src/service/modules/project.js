@@ -14,7 +14,7 @@ const getProjects = async () => {
 const createProject = async payload => {
   console.log(payload);
   const { form, licenseForm } = payload;
-  await fetchWrap({
+  const { ret } = await fetchWrap({
     url: '/project/init',
     method: 'POST',
     body: {
@@ -27,6 +27,7 @@ const createProject = async payload => {
     method: 'POST',
     body: [
       {
+        projectId: ret.projectId,
         projectTitle: form.name,
         shortTitle: form.slot,
         funder: form.agency,
