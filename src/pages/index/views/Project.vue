@@ -122,8 +122,8 @@
                     :center="mapInfo.center"
                     :options="mapInfo.options"
                     @update:bounds="centerUpdated"
+                    @update:zoom="zoomUpdated"
                   >
-                    <l-control-zoom :position="'topleft'" />
                     <l-tile-layer
                       :url="mapInfo.url"
                       :attribution="mapInfo.attribution"
@@ -388,7 +388,6 @@ import {
   LMap,
   LTileLayer,
   LMarker,
-  LControlZoom,
   LTooltip,
   LCircle,
   LLayerGroup,
@@ -476,7 +475,7 @@ export default {
       mapInfo: {
         zoom: 11,
         options: {
-          zoomControl: false,
+          zoomControl: true,
         },
         center: L.latLng(25.039202, 121.819413),
         url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
@@ -612,7 +611,6 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LControlZoom,
     LMarker,
     LPolygon,
     LCircle,
@@ -948,10 +946,21 @@ export default {
       if (!this.mapInfo || !this.mapInfo.center) {
         return false;
       }
+      if (this.mapInfo.zoom < 9) {
+        // console.log('zoom < 9');
+        return false;
+      }
       const { lat, lng } = this.mapInfo.center;
       const { decimalLatitude, decimalLongitude } = this.getForestBoundaryParam;
-      // TODO: set change limit for reload forestBoundary
-      if (lat == decimalLatitude && lng === decimalLongitude) {
+      if (
+        Math.abs(lat - decimalLatitude) < 0.05 ||
+        Math.abs(lng - decimalLongitude) < 0.05
+      ) {
+        // console.log(
+        //   'move range below 0.05',
+        //   lat - decimalLatitude,
+        //   lng - decimalLongitude,
+        // );
         return false;
       }
       this.getForestBoundaryParam = {
@@ -976,6 +985,9 @@ export default {
     // 移動 map 時 call api
     centerUpdated() {
       this.loadForestBoundaryByMapCenter();
+    },
+    zoomUpdated(e) {
+      this.mapInfo.zoom = e;
     },
   },
   mounted() {
