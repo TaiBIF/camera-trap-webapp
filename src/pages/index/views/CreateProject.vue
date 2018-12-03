@@ -144,45 +144,56 @@
                   for="project-name"
                   class="col-2 required"
                 >計畫時間：</label>
-                <div class="col-4 input-group-inline">
-                  <div class="input-group">
-                    <date-picker
-                      :placeholder="'2018-09-20'"
-                      :format="'YYYY-MM-DD'"
-                      :first-day-of-week="1"
+                <div class="col-4">
+                  <div
+                    class="input-group-wrapper"
+                    :class="{'is-invalid': errors.has('project_start') || errors.has('project_end')}"
+                  >
+                    <div
+                      class="input-group"
+                      :class="{'is-invalid': errors.has('project_start')}"
+                    >
+                      <date-picker
+                        :placeholder="'2018-09-20'"
+                        :format="'YYYY-MM-DD'"
+                        :first-day-of-week="1"
+                        v-model="form.startAt"
+                      />
+                      <div class="input-group-append">
+                        <i class="icon icon-calendar"></i>
+                      </div>
+                    </div>
+                    <div class="input-text">到</div>
+                    <div
+                      class="input-group"
+                      :class="{'is-invalid': errors.has('project_end')}"
+                    >
+                      <date-picker
+                        :not-before="form.startAt"
+                        :placeholder="'2018-09-20'"
+                        :format="'YYYY-MM-DD'"
+                        v-model="form.endAt"
+                        :first-day-of-week="1"
+                      ></date-picker>
+                      <div class="input-group-append">
+                        <i class="icon icon-calendar"></i>
+                      </div>
+                    </div>
+                    <input
+                      type="hidden"
+                      id="project_start"
+                      name="project_start"
+                      v-validate="'required'"
                       v-model="form.startAt"
-                    />
-                    <div class="input-group-append">
-                      <i class="icon icon-calendar"></i>
-                    </div>
-                  </div>
-                  <div class="input-text">到</div>
-                  <div class="input-group">
-                    <date-picker
-                      :not-before="form.startAt"
-                      :placeholder="'2018-09-20'"
-                      :format="'YYYY-MM-DD'"
+                    >
+                    <input
+                      type="hidden"
+                      id="project_end"
+                      name="project_end"
+                      v-validate="'required'"
                       v-model="form.endAt"
-                      :first-day-of-week="1"
-                    ></date-picker>
-                    <div class="input-group-append">
-                      <i class="icon icon-calendar"></i>
-                    </div>
+                    >
                   </div>
-                  <input
-                    type="hidden"
-                    id="project_start"
-                    name="project_start"
-                    v-validate="'required'"
-                    v-model="form.startAt"
-                  >
-                  <input
-                    type="hidden"
-                    id="project_end"
-                    name="project_end"
-                    v-validate="'required'"
-                    v-model="form.endAt"
-                  >
                   <span
                     v-show="errors.has('project_start') || errors.has('project_end')"
                     class="invalid-feedback"
@@ -441,7 +452,10 @@
                   class="pl-3 required"
                 >公開日期：</label>
                 <div class="d-inline-block pl-3">
-                  <div class="input-group">
+                  <div
+                    class="input-group"
+                    :class="{'is-invalid': !form.publicAt}"
+                  >
                     <date-picker
                       v-model="form.publicAt"
                       :placeholder="'18/9/20'"
@@ -452,10 +466,16 @@
                       <i class="icon icon-calendar"></i>
                     </div>
                   </div>
+                  <span
+                    v-show="!form.publicAt"
+                    class="invalid-feedback"
+                  >
+                    公開日期不能留空
+                  </span>
                 </div>
                 <div class="col-12 pt-2">
                   <small class="text-gray">
-                    計畫內的詮釋資料將會直接公開，鑑定資訊、影像資料的公開日期之上限為計畫起始時間的5年後。
+                    計畫內的詮釋資料將會直接公開，鑑定資訊、影像資料的<span :class="{'warning': isOverPublicLimit}">公開日期之上限為計畫起始時間的5年後。</span>
                   </small>
                 </div>
               </div>
@@ -514,25 +534,40 @@ export default {
         comment: '',
       },
       licenseForm: {
-        forData: '',
-        forInfo: '',
-        forImg: '',
+        forData: 'CC0',
+        forInfo: 'CC BY 4.0',
+        forImg: 'CC0',
       },
+      publicAtLimit: null,
     };
   },
   methods: {
     ...project.mapActions(['createProject']),
     doSubmit() {
-      this.createProject({
-        form: this.form,
-        licenseForm: this.licenseForm,
-      }).then(() => this.$router.push('/'));
+      if (!this.isOverPublicLimit && this.form.publicAt) {
+        this.createProject({
+          form: this.form,
+          licenseForm: this.licenseForm,
+        }).then(() => this.$router.push('/'));
+      }
     },
     nextStep() {
       this.$validator.validateAll().then(result => {
         if (result) this.step += 1;
         else return false;
       });
+    },
+  },
+  watch: {
+    'form.startAt': function(newVal) {
+      const startAt = new Date(newVal);
+      this.form.publicAt = new Date(startAt.setYear(startAt.getFullYear() + 2));
+      this.publicAtLimit = new Date(startAt.setYear(startAt.getFullYear() + 5));
+    },
+  },
+  computed: {
+    isOverPublicLimit: function() {
+      return this.form.publicAt > this.publicAtLimit;
     },
   },
 };
