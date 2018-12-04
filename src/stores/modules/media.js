@@ -51,11 +51,13 @@ const formatSiteData = state => {
       const ret = {
         fullSite: val.subSite ? `${val.site}-${val.subSite}` : `${val.site}`,
         cameraLocation: val.cameraLocation,
-        fileName: val.url.split('/').pop(),
+        // fileName: val.url.split('/').pop(),
+        fileName: val.uploaded_file_name,
         corrected_date_time: val.corrected_date_time,
         imageUrl: val.url,
         lowQualityImageUrl: val.lowQualityUrl,
         projectTitle: val.projectTitle,
+        projectId: val.projectId,
         fullCameraLocationMd5: val.fullCameraLocationMd5,
         _id: val._id,
         // 編輯封包需要使用，因為打散後就不知道原本資料的編號

@@ -21,6 +21,7 @@ const getSiteData = async payload => {
         url: true,
         low_quality_url: true,
         imageUrlPrefix: true,
+        uploaded_file_name: true,
       },
       sort: [
         ['cameraLocation', 1],

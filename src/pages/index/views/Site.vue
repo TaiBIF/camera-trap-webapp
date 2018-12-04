@@ -552,8 +552,8 @@ export default {
             const value = this.siteData.data[row];
 
             if (oldVal !== newVal) {
-              if (!value.index.column[prop]) {
-                //資料尚未存在需要更新 index
+              if (!value.index.column[prop] && value.index.column[prop] !== 0) {
+                //資料尚未存在需要更新 index，排除 index 為 0 的情況
                 const newColumnIndex = value.index.columnLength;
                 this.addSiteDataLength({
                   row,
