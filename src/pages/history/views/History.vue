@@ -82,6 +82,7 @@
             <a
               v-if="row.status=='SUCCESS'"
               class="link text-underline"
+              :href="`/index.html#/project/d8064aa7-9643-44fb-bed9-1f23a690f968/site/${row.site}/${row.subsite}?camera=0b6b5be7c160ff676477f3337cfd2f64`"
             >
               查看
             </a>
