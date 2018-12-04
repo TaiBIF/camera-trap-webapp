@@ -952,6 +952,11 @@ export default {
     this.setCurrentProject(this.$route.params.id);
     this.fetchCameraLocked();
 
+    // 從 query 判斷是否有 camera 資料做預設選取
+    this.form.camera = this.$route.query.camera
+      ? [this.$route.query.camera]
+      : [];
+
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();
