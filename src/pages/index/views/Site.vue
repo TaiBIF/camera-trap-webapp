@@ -901,7 +901,12 @@ export default {
         'continousRenderer',
         this.continousRenderer,
       );
-      this.sheet = new Handsontable(this.sheetContainer, this.sheetSetting);
+
+      if (this.isRender) {
+        this.sheet.updateSettings(this.sheetSetting);
+      } else {
+        this.sheet = new Handsontable(this.sheetContainer, this.sheetSetting);
+      }
 
       this.isRender = true;
     },
