@@ -6,7 +6,7 @@ const getProjects = async () => {
   const res = await fetchWrap({
     url: '/project/related-to-me',
     method: 'POST',
-    body: { userId: localStorage.getItem('userId') },
+    body: { userId: window.currentUser.userId },
   });
 
   return res.ret.map(val => ({
@@ -23,7 +23,7 @@ const createProject = async payload => {
     method: 'POST',
     body: {
       projectTitle: form.name,
-      userId: localStorage.getItem('userId'),
+      userId: window.currentUser.userId,
     },
   });
   const { projectId } = ret;

@@ -444,7 +444,7 @@ export default {
         fullCameraLocationMd5: file.fullCameraLocationMd5,
         projectId: this.$route.params.projectId,
         projectTitle: this.currentProject.projectTitle,
-        userId: localStorage.getItem('userId'),
+        userId: window.currentUser.userId,
         onProgress: evt => bar.set(evt.loaded / evt.total),
       })
         .then(e => {

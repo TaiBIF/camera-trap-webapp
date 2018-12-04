@@ -1,23 +1,18 @@
-import Cookies from 'js-cookie';
-
 import { CognitoAuth } from 'amazon-cognito-auth-js';
 import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
 import AWS from 'aws-sdk';
+import fetchWrap from '../../util/fetch';
 
-import {
-  clientId,
-  appWebDomain,
-  redirUri,
-  loginUri,
-  userPoolId,
-  idpDomain,
-  identityPoolId,
-} from '../awsDefine';
+import { clientId, appWebDomain, redirUri, userPoolId } from '../awsDefine';
 
-const { localStorage } = window;
+AWS.config.update({ region: 'ap-northeast-1' });
+
+// onload
+const auth = initCognitoSDK();
+window.auth = auth;
 
 function initCognitoSDK() {
-  const authData = {
+  const result = new CognitoAuth({
     ClientId: clientId, // Your client id here
     AppWebDomain: appWebDomain, // Exclude the "https://" part.
     TokenScopesArray: [
@@ -27,131 +22,88 @@ function initCognitoSDK() {
       'aws.cognito.signin.user.admin',
     ], // like ['openid','email','phone']...
     RedirectUriSignIn: redirUri,
-    RedirectUriSignOut: loginUri,
+    RedirectUriSignOut: redirUri,
     IdentityProvider: 'OrcID',
     UserPoolId: userPoolId,
     AdvancedSecurityDataCollectionFlag: 0,
-  };
-  const auth = new CognitoAuth(authData);
-  // You can also set state parameter
-  // 後端隨機產生 state
-  auth.setState(Cookies.get('AWSELB'));
-  auth.userhandler = {
+  });
+  result.setState('taibif');
+  result.userhandler = {
     onSuccess(awsCognitoSession) {
-      fetch(`${process.env.VUE_APP_API_URL}/ctp-user/sign-in`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({
-          idToken: awsCognitoSession.getIdToken().getJwtToken(),
-        }),
-      })
-        .then(res => res.json())
-        .then(response => {
-          console.log(`sign-in: ${JSON.stringify(response)}`);
-
-          localStorage.setItem('userId', response.ret);
-          localStorage.setItem(
-            'awsIdToken',
-            awsCognitoSession.getIdToken().getJwtToken(),
-          );
-          window.location.replace('/');
-        });
-
-      AWS.config.update({ region: 'ap-northeast-1' });
-
-      // 前端取得登入使用者的 credentials 法
-      const logins = {};
-      logins[idpDomain] = awsCognitoSession.getIdToken().getJwtToken();
-
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: identityPoolId,
-        Logins: logins,
-      });
-
-      AWS.config.credentials.get(err => {
-        if (err) return console.log('Error', err);
-        // 成功透過 OrcID 登入 AWS Cognito，取得 credentials
-        // e.g.
-        // var identity_id = AWS.config.credentials.identityId;
-        // console.log("Cognito Identity Id", AWS.config.credentials.identityId);
-      });
-
-      console.log('Sign in success');
+      const form = document.createElement('form');
+      const inputIdToken = document.createElement('input');
+      const inputRedirect = document.createElement('input');
+      form.method = 'POST';
+      form.action = `${process.env.VUE_APP_API_URL}/ctp-user/sign-in`;
+      inputIdToken.name = 'idToken';
+      inputIdToken.type = 'hidden';
+      inputIdToken.value = awsCognitoSession.getIdToken().getJwtToken();
+      form.appendChild(inputIdToken);
+      inputRedirect.name = 'redirect';
+      inputRedirect.type = 'hidden';
+      inputRedirect.value = location.origin;
+      form.appendChild(inputRedirect);
+      document.body.appendChild(form);
+      form.submit();
     },
-    onFailure(err) {
-      // put some error message test here
-      console.log(`Error!${err}`);
+    onFailure(error) {
+      console.error(error);
     },
   };
   // The default response_type is "token", uncomment the next line will make it be "code".
-  auth.useCodeGrantFlow();
-  return auth;
+  result.useCodeGrantFlow();
+  return result;
 }
 
-// ---------------------------
-
-// onload
-const auth = initCognitoSDK();
-
-const checkIsLogin = () => {
-  const session = auth.signInUserSession;
-  const dateNow = Date.now() / 1000;
-  if (!!session.idToken.jwtToken && session.idToken.payload.exp > dateNow) {
-    // signed-in
-    console.log('signed-in');
-    return true;
-  }
-  if (!!session.idToken.jwtToken && session.idToken.payload.exp <= dateNow) {
-    console.log('to sign in or refresh id token');
-    auth.getSession();
-  } else {
-    console.log('解讀 oauth returned error status');
-    const curUrl = window.location.href;
-    // special case
-    const xcurUrl = curUrl.replace('#', '');
-    console.log(curUrl);
-
-    const queryString = xcurUrl
-      .split('?')
-      .slice(1)
-      .join('?');
-
-    let urlParams;
-    (window.onpopstate = function() {
-      let match;
-      const pl = /\+/g;
-      // Regex for replacing addition symbol with a space
-
-      const search = /([^&=]+)=?([^&]*)/g;
-      const decode = function(s) {
-        return decodeURIComponent(s.replace(pl, ' '));
-      };
-      const query = queryString;
-
-      urlParams = {};
-      while ((match = search.exec(query)))
-        urlParams[decode(match[1])] = decode(match[2]);
-    })();
-
-    if (urlParams.code) {
-      auth.parseCognitoWebResponse(curUrl);
-      // window.location.replace('/');
-    } else if (!window.location.pathname.match(/^\/login.html/)) {
-      window.location.replace('/login.html');
+const authentication = () => {
+  /*
+  Authentication.
+  @returns {Promise<CtpUser|null>}
+   */
+  return new Promise((resolve, reject) => {
+    if (auth.isUserSignedIn()) {
+      fetchWrap({
+        method: 'GET',
+        url: '/ctp-user/me',
+      })
+        .then(result => {
+          if (result.error && result.error.statusCode === 403) {
+            return resolve(null);
+          }
+          resolve(result.ret);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else {
+      resolve(null);
     }
-  }
+  });
 };
-
-// checkIsLogin()
 
 // beforeEach
 const RouteGuards = (to, from, next) => {
-  // checkIsLogin()
-  if (checkIsLogin()) {
-    next();
-  }
+  authentication()
+    .then(user => {
+      if (user) {
+        // the user is login
+        window.currentUser = user;
+        return next();
+      }
+      if (to.name === 'overview' && location.search.indexOf('code=') >= 0) {
+        // oauth continue
+        auth.parseCognitoWebResponse(location.href);
+        return;
+      }
+      if (!location.pathname.match(/^\/login.html/)) {
+        // redirect to login.html
+        return window.location.replace('/login.html');
+      }
+      next();
+    })
+    .catch(error => {
+      next(error);
+    });
 };
 
 export { auth, RouteGuards };
