@@ -578,6 +578,14 @@ export default {
                   [`tokens.${value.index.token}.data.${
                     value.index.column[prop]
                   }.value`]: newVal,
+                  //special case: https://github.com/TaiBIF/camera-trap-webapp/issues/106
+                  ...(prop === 'species'
+                    ? {
+                        [`tokens.${
+                          value.index.token
+                        }.species_shortcut`]: newVal,
+                      }
+                    : undefined),
                 },
               });
             }
@@ -702,7 +710,7 @@ export default {
             val =>
               this.cameraLocked[val.fullCameraLocationMd5].locked === false,
           )
-        : this.siteData.data.length > 1 &&
+        : this.siteData.data.length >= 1 &&
             this.form.camera.every(
               val => this.cameraLocked[val].locked === false,
             );

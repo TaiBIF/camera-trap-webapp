@@ -9,7 +9,10 @@ const getProjects = async () => {
     body: { userId: localStorage.getItem('userId') },
   });
 
-  return res.ret.map(val => val.project_metadata);
+  return res.ret.map(val => ({
+    ...val.project_metadata,
+    members: val.members,
+  }));
 };
 
 const createProject = async payload => {

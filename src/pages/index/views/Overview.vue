@@ -80,7 +80,7 @@
             <div class="image">
               <img :src="proj.coverImage">
               <div class="badget">
-                <i class="fa fa-user"></i>{{proj.members || 'todo'}}
+                <i class="fa fa-user"></i>{{proj.members.length}}
               </div>
             </div>
             <div class="content">

@@ -37,7 +37,10 @@
         :to="link"
       >
         {{item.name}}
-        <div class="icon float-right">
+        <div
+          class="icon float-right"
+          v-if="locked"
+        >
           <i class="icon-lock-green"></i>
         </div>
         <div class="icon float-right">
@@ -66,6 +69,7 @@ import { mapGetters, mapActions, createNamespacedHelpers } from 'vuex';
 import TreeItem from '../components/TreeItem';
 
 const project = createNamespacedHelpers('project');
+const cameraLocation = createNamespacedHelpers('cameraLocation');
 
 export default {
   name: 'tree-item',
@@ -83,6 +87,7 @@ export default {
   computed: {
     ...mapGetters(['CurrentToggle']),
     ...project.mapState(['currentProjectId']),
+    ...cameraLocation.mapState(['cameraLocked']),
     link() {
       if (this.site) {
         return `/project/${this.currentProjectId}/site/${this.site}/${
@@ -91,6 +96,15 @@ export default {
       } else {
         return `/project/${this.currentProjectId}/site/${this.item.id}`;
       }
+    },
+    locked() {
+      return this.cameraLocked
+        .filter(
+          camera =>
+            camera.site === this.site && camera.subSite === this.item.name,
+        )
+        .map(v => v.locked)
+        .some(v => v === true);
     },
   },
   data() {

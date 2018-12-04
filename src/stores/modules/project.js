@@ -15,6 +15,7 @@ export const getters = {
   currentProject: state =>
     state.projects.find(val => val._id === state.currentProjectId) || {
       adminArea: [],
+      cameraLocations: [],
     },
   cameraLocations: (_, getters) => {
     if (!getters.currentProject || !getters.currentProject.cameraLocations) {
