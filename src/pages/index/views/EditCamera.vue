@@ -15,7 +15,7 @@
             <div class="sidebar">
               <ul>
                 <li
-                  v-for="(site, s_id) in sites"
+                  v-for="(site, s_id) in filterSites"
                   :key="`site-tree-${s_id}`"
                   :class="{'open': CurrentSite === s_id, 'active': CurrentSite === s_id && CurrentPoint === null, 'edit': s_id === currentEdit}"
                 >
@@ -36,7 +36,7 @@
                     >
                       <input
                         type="text"
-                        v-model="site.name"
+                        v-model="site.value"
                         @blur="currentEdit=null"
                         @keydown="updateSite($event)"
                       >
@@ -44,16 +44,14 @@
                     <div
                       class="text"
                       v-else
-                    >{{site.name}}</div>
+                    >{{site.value}}</div>
                   </div>
-
                   <site-menu
-                    :items="site.children"
+                    :items="site.child"
                     :index="s_id"
                     :defaultOpenLevel="1"
                     @update="updatePoint"
                   />
-
                 </li>
                 <li class="add">
                   <div
@@ -139,12 +137,15 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import SiteMenu from '../components/SiteMenu';
 import EditNav from '../components/EditNav';
 import Handsontable from 'handsontable';
+import 'handsontable/languages/zh-TW';
+
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'EditCamera',
@@ -159,7 +160,6 @@ export default {
       newSite: '',
       currentSite: 0,
       oldName: '',
-      sites: [],
       currentEdit: null,
       isRender: false,
       sheetContainer: null,
@@ -167,27 +167,32 @@ export default {
         data: [],
         columns: [
           {
-            data: 'name',
+            data: 'cameraLocation',
+            type: 'text',
+          },
+          // TODO: apply update time after API adjust
+          // {
+          //   data: 'updated_at',
+          //   type: 'date',
+          // },
+          {
+            data: 'original_x',
             type: 'text',
           },
           {
-            data: 'updated_at',
-            type: 'date',
-          },
-          {
-            data: 'lat',
+            data: 'original_y',
             type: 'text',
           },
           {
-            data: 'lng',
-            type: 'text',
-          },
-          {
-            data: 'altitude',
+            data: 'elevation',
             type: 'text',
           },
           {
             data: 'vegetation',
+            type: 'text',
+          },
+          {
+            data: 'land_cover',
             type: 'text',
           },
         ],
@@ -199,12 +204,13 @@ export default {
         language: 'zh-TW',
         colHeaders: [
           // 'URL',
-          '相機位置名稱',
-          '架設日期',
-          '* 經度 (X)',
-          '* 緯度 (Y)',
+          '*相機位置名稱',
+          // '架設日期',
+          '*經度 (X)',
+          '*緯度 (Y)',
           '海拔 (公尺)',
           '植被',
+          '土地覆蓋類型',
         ],
         contextMenu: {
           callback: (key, selection) => {
@@ -280,32 +286,43 @@ export default {
     };
   },
   watch: {
-    CurrentPoint: {
-      handler(val) {
-        this.settings.data = this.sites[this.CurrentSite].children[val].data;
-        this.renderSheet();
-      },
-      deep: true,
+    CurrentSite() {
+      this.setCurrentPoint(0);
     },
-    CurrentSite: {
-      handler() {
-        this.setCurrentPoint(0);
-      },
-      deep: true,
+    cameraData() {
+      this.renderSheet();
     },
   },
   computed: {
     ...mapGetters(['CurrentSite', 'CurrentPoint']),
+    ...project.mapGetters(['currentProject', 'sites']),
     currentProjectId() {
       return this.$route.params.id;
+    },
+    filterSites: function() {
+      return this.sites.filter(site => site.label !== '全部樣區');
+    },
+    cameraData: function() {
+      const currentSite = this.filterSites[this.CurrentSite];
+      if (currentSite && currentSite.child && currentSite.child.length > 0) {
+        const currentSubsiteLabel = currentSite.child[this.CurrentPoint].label;
+
+        return this.currentProject.cameraLocations.filter(
+          camera => camera.subSite === currentSubsiteLabel,
+        );
+      }
+      return this.currentProject.cameraLocations.filter(
+        camera => camera.site === currentSite.label,
+      );
     },
   },
   methods: {
     ...mapActions(['setCurrentSite', 'setCurrentPoint']),
+    ...project.mapActions(['loadSingleProject']),
     renderSheet() {
+      this.settings.data = this.cameraData;
       if (!this.isRender) {
         this.sheetContainer = this.$el.querySelector('#sheet');
-        this.settings.data = this.sites[this.CurrentSite].data;
         this.sheet = new Handsontable(this.sheetContainer, this.settings);
         this.isRender = true;
       } else {
@@ -387,6 +404,9 @@ export default {
     doSubmit() {
       this.$router.push('/');
     },
+  },
+  mounted() {
+    this.loadSingleProject(this.currentProjectId);
   },
 };
 </script>

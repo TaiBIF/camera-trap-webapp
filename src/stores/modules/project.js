@@ -3,6 +3,7 @@ import {
   getProjects,
   createProject,
   editProject,
+  getProject,
   getSpeciesGroup,
   getLocationIdentifiedStatus,
   getLocationRetrievedStatus,
@@ -199,6 +200,12 @@ export const actions = {
   async loadProject({ commit }) {
     const data = await getProjects();
     commit('updateProjects', data);
+  },
+  // 讀取計畫
+  async loadSingleProject({ commit }, projectId) {
+    const data = await getProject(projectId);
+    commit('updateProjects', [data]);
+    commit('setCurrentProject', projectId);
   },
   // 新增計畫
   async createProject({ dispatch }, payload) {
