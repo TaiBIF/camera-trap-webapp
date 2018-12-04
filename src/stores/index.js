@@ -27,7 +27,7 @@ export default new Vuex.Store({
     pageLock: false,
     fileReady: false,
     currentSite: 0,
-    currentPoint: null,
+    currentPoint: 0,
     currentToggle: null,
     image_info: {
       carrier_url: '',

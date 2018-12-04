@@ -17,7 +17,7 @@
       >
         <input
           type="text"
-          v-model="item.name"
+          v-model="item.value"
           @blur="edit=false"
           @keydown="updatePoint($event)"
         >
@@ -25,7 +25,7 @@
       <div
         class="text"
         v-else
-      >{{item.name}}</div>
+      >{{item.value}}</div>
     </div>
 
     <ul

@@ -151,6 +151,17 @@ const editProject = async payload => {
   });
 };
 
+const getProject = async payload => {
+  const res = await fetchWrap({
+    url: `/project/${payload}`,
+  });
+
+  return {
+    _id: payload,
+    ...res,
+  };
+};
+
 export {
   getProjects,
   createProject,
@@ -160,4 +171,5 @@ export {
   getLocationAbnormalStatus,
   getDataFields,
   editProject,
+  getProject,
 };
