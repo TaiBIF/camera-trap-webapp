@@ -80,7 +80,7 @@
                     >
                       <i
                         class="icon-lock align-middle"
-                        v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy} 正在編輯中`"
+                        v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy.name} 正在編輯中`"
                       ></i>
                     </span>
                     <span class="error-label">1</span>
@@ -611,6 +611,7 @@ export default {
   watch: {
     currentRow: 'recordUpdate',
     $route() {
+      this.changeMode('editMode', false);
       // 清空篩選條件
       this.form = Object.assign({}, formDefault);
       this.fetchCameraLocked();
@@ -708,11 +709,16 @@ export default {
       return this.form.camera.indexOf('all') !== -1
         ? this.cameraList.every(
             val =>
-              this.cameraLocked[val.fullCameraLocationMd5].locked === false,
+              this.cameraLocked[val.fullCameraLocationMd5].locked === false ||
+              this.cameraLocked[val.fullCameraLocationMd5].lockedBy.userId ===
+                window.currentUser.userId,
           )
         : this.siteData.data.length >= 1 &&
             this.form.camera.every(
-              val => this.cameraLocked[val].locked === false,
+              val =>
+                this.cameraLocked[val].locked === false ||
+                this.cameraLocked[val].lockedBy.userId ===
+                  window.currentUser.userId,
             );
     },
     sheetSetting() {

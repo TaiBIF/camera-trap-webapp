@@ -5,7 +5,7 @@ export const getters = {
     return state.cameraLocked.reduce((accumulator, currentValue) => {
       accumulator[currentValue.fullCameraLocationMd5] = {
         locked: currentValue.locked,
-        lockedBy: currentValue.locked_by.name,
+        lockedBy: currentValue.locked_by,
       };
       return accumulator;
     }, {});
