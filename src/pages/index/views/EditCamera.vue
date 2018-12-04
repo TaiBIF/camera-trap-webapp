@@ -17,12 +17,12 @@
                 <li
                   v-for="(site, s_id) in filterSites"
                   :key="`site-tree-${s_id}`"
-                  :class="{'open': CurrentSite === s_id, 'active': CurrentSite === s_id && CurrentPoint === null, 'edit': s_id === currentEdit}"
+                  :class="{'open': CurrentSite === s_id, 'active': CurrentSite === s_id && CurrentPoint === null, 'edit': s_id === currentEditSite}"
                 >
                   <div
                     class="site-item"
                     @click="setCurrentSite(s_id)"
-                    @dblclick="editSite(s_id)"
+                    @dblclick="enableEditSite(s_id)"
                   >
                     <div class="icon">
                       <i
@@ -32,13 +32,13 @@
                     </div>
                     <div
                       class="text"
-                      v-if="s_id==currentEdit"
+                      v-if="s_id==currentEditSite"
                     >
                       <input
                         type="text"
                         v-model="site.value"
-                        @blur="currentEdit=null"
-                        @keydown="updateSite($event)"
+                        @blur="editSite($event)"
+                        @keydown="editSite($event)"
                       >
                     </div>
                     <div
@@ -160,8 +160,7 @@ export default {
       newSite: '',
       currentSite: 0,
       oldName: '',
-      currentEdit: null,
-      isRender: false,
+      currentEditSite: null,
       sheetContainer: null,
       settings: {
         data: [],
@@ -287,7 +286,12 @@ export default {
   },
   watch: {
     CurrentSite() {
-      this.setCurrentPoint(0);
+      const currentSite = this.filterSites[this.CurrentSite];
+      if (currentSite && currentSite.child && currentSite.child.length > 0) {
+        this.setCurrentPoint(0);
+      } else {
+        this.setCurrentPoint(null);
+      }
     },
     cameraData() {
       this.renderSheet();
@@ -303,6 +307,9 @@ export default {
       return this.sites.filter(site => site.label !== '全部樣區');
     },
     cameraData: function() {
+      if (this.CurrentSite === null) {
+        return [];
+      }
       const currentSite = this.filterSites[this.CurrentSite];
       if (currentSite && currentSite.child && currentSite.child.length > 0) {
         const currentSubsiteLabel = currentSite.child[this.CurrentPoint].label;
@@ -321,10 +328,9 @@ export default {
     ...project.mapActions(['loadSingleProject']),
     renderSheet() {
       this.settings.data = this.cameraData;
-      if (!this.isRender) {
+      if (!this.sheetContainer) {
         this.sheetContainer = this.$el.querySelector('#sheet');
         this.sheet = new Handsontable(this.sheetContainer, this.settings);
-        this.isRender = true;
       } else {
         this.sheet.updateSettings(this.settings);
       }
@@ -357,28 +363,30 @@ export default {
 
       this.renderSheet();
     },
-    editSite(idx) {
-      this.oldName = this.sites[idx].name;
-
-      if (!this.currentEdit) {
-        this.currentEdit = idx;
-      } else {
-        this.currentEdit = null;
-      }
+    enableEditSite(idx) {
+      this.oldName = this.filterSites[idx].value;
+      this.currentEditSite = idx;
     },
-    updatePoint(i, obj) {
-      this.sites[i].children = obj;
-    },
-    updateSite(evt) {
+    editSite(evt) {
       if (evt.type === 'keydown') {
+        // ECS reset
         if (evt.keyCode === 27) {
-          this.sites[this.currentEdit].name = this.oldName;
-          this.currentEdit = null;
+          this.filterSites[this.currentEditSite].value = this.oldName;
+          this.currentEditSite = null;
         }
+        // Enter save change
         if (evt.keyCode === 13) {
-          this.currentEdit = null;
+          this.updateSite(evt.target.value);
         }
+      } else if (evt.type === 'blur' && this.currentEditSite) {
+        // blur save change
+        this.updateSite(evt.target.value);
       }
+    },
+    updateSite(value) {
+      // TODO: save change site to data, batch update when doSubmit
+      console.log('updateSite', value, this.currentEditSite);
+      this.currentEditSite = null;
     },
     addSite(evt) {
       if (
@@ -393,13 +401,11 @@ export default {
         });
 
         this.newSite = '';
-
-        if (!this.isRender) {
-          setTimeout(() => {
-            this.renderSheet();
-          }, 300);
-        }
+        this.renderSheet();
       }
+    },
+    updatePoint(i, obj) {
+      this.sites[i].children = obj;
     },
     doSubmit() {
       this.$router.push('/');
