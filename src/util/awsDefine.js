@@ -1,4 +1,4 @@
-const clientId = '1icuqes99so6oi86l3u8506pqd';
+const clientId = process.env.VUE_APP_AWS_COGNITO_APP_ID;
 const appWebDomain = 'camera-trap.auth.ap-northeast-1.amazoncognito.com';
 const redirUri = process.env.VUE_APP_BASE_URL;
 const loginUri = `${process.env.VUE_APP_BASE_URL}/login.html`;
