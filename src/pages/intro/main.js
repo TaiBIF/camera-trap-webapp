@@ -12,7 +12,7 @@ import LoadScript from 'vue-plugin-load-script';
 import vSelect from 'vue-select';
 import VTooltip from 'v-tooltip';
 
-import { RouteGuards } from '../../util/auth/cognito-config';
+import { authentication } from '../../util/auth/cognito-config';
 
 Vue.use(VueLodash, { name: 'lodash' }); // options is optional
 Vue.use(VueAxios, axios);
@@ -23,10 +23,10 @@ Vue.component('v-select', vSelect);
 
 Vue.config.productionTip = false;
 
-router.beforeEach(RouteGuards);
-
-new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount('#app');
+authentication().then(() => {
+  new Vue({
+    router,
+    store,
+    render: h => h(App),
+  }).$mount('#app');
+});

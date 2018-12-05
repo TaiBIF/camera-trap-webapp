@@ -78,32 +78,23 @@ const authentication = () => {
     } else {
       resolve(null);
     }
+  }).then(user => {
+    if (user) {
+      // the user is login
+      window.currentUser = user;
+      return user;
+    }
+    if (location.pathname === '/' && location.search.indexOf('code=') >= 0) {
+      // oauth continue
+      auth.parseCognitoWebResponse(location.href);
+      return new Promise();
+    }
+    if (!location.pathname.match(/^\/login.html/)) {
+      // redirect to login.html
+      window.location.replace('/login.html');
+      return new Promise();
+    }
   });
 };
 
-// beforeEach
-const RouteGuards = (to, from, next) => {
-  authentication()
-    .then(user => {
-      if (user) {
-        // the user is login
-        window.currentUser = user;
-        return next();
-      }
-      if (to.name === 'overview' && location.search.indexOf('code=') >= 0) {
-        // oauth continue
-        auth.parseCognitoWebResponse(location.href);
-        return;
-      }
-      if (!location.pathname.match(/^\/login.html/)) {
-        // redirect to login.html
-        return window.location.replace('/login.html');
-      }
-      next();
-    })
-    .catch(error => {
-      next(error);
-    });
-};
-
-export { auth, RouteGuards };
+export { auth, authentication };
