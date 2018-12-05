@@ -3,7 +3,14 @@ import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
 import AWS from 'aws-sdk';
 import fetchWrap from '../../util/fetch';
 
-import { clientId, appWebDomain, redirUri, userPoolId } from '../awsDefine';
+import {
+  clientId,
+  appWebDomain,
+  redirUri,
+  userPoolId,
+  idpDomain,
+  identityPoolId,
+} from '../awsDefine';
 
 AWS.config.update({ region: 'ap-northeast-1' });
 
@@ -61,6 +68,12 @@ const authentication = () => {
    */
   return new Promise((resolve, reject) => {
     if (auth.isUserSignedIn()) {
+      const logins = {};
+      logins[idpDomain] = auth.signInUserSession.idToken.jwtToken;
+      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: identityPoolId,
+        Logins: logins,
+      });
       fetchWrap({
         method: 'GET',
         url: '/ctp-user/me',
