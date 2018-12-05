@@ -9,7 +9,6 @@ AWS.config.update({ region: 'ap-northeast-1' });
 
 // onload
 const auth = initCognitoSDK();
-window.auth = auth;
 
 function initCognitoSDK() {
   const result = new CognitoAuth({
