@@ -285,6 +285,7 @@ export default {
         dropdownMenu: true,
         manualRowMove: true,
         manualColumnMove: true,
+        afterChange: this.editData,
       },
     };
   },
@@ -424,6 +425,9 @@ export default {
     },
     addPoint() {
       // TODO:
+    },
+    editData(data, type) {
+      console.log('---afterChange: ', data, type);
     },
     doSubmit() {
       if (
