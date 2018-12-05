@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 
-import { idpDomain, identityPoolId } from './awsDefine';
 import { updateUploadStatus } from '../service/modules/uploadSession';
 
 function uuid_v4() {
@@ -136,21 +135,3 @@ export const uploadCoverImage = ({ file, projectId }) => {
     }
   });
 };
-
-const init = () => {
-  AWS.config.update({ region: 'ap-northeast-1' });
-
-  const logins = {};
-  logins[idpDomain] = localStorage.getItem('awsIdToken');
-
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: identityPoolId,
-    Logins: logins,
-  });
-
-  AWS.config.credentials.get(err => {
-    if (err) return console.log('Error', err);
-  });
-};
-
-init();
