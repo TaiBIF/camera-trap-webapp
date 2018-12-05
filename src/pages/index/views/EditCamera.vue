@@ -47,10 +47,12 @@
                     >{{site.value}}</div>
                   </div>
                   <site-menu
+                    :site="site.label"
                     :items="site.child"
                     :index="s_id"
                     :defaultOpenLevel="1"
                     @update="updatePoint"
+                    @add="addPoint"
                   />
                 </li>
                 <li class="add">
@@ -162,6 +164,7 @@ export default {
       oldName: '',
       currentEditSite: null,
       renameSites: {},
+      renamePoints: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -385,7 +388,6 @@ export default {
       }
     },
     updateSite(value) {
-      // TODO: save change site to data, batch update when doSubmit
       const originalSite = this.filterSites[this.currentEditSite];
       this.renameSites = {
         ...this.renameSites,
@@ -409,27 +411,51 @@ export default {
         this.renderSheet();
       }
     },
-    updatePoint(i, obj) {
-      this.sites[i].children = obj;
+    updatePoint(obj) {
+      const { site, label, value } = obj;
+      const currentEditPoints = this.renamePoints[site] || {};
+      this.renamePoints = {
+        ...this.renamePoints,
+        [site]: {
+          ...currentEditPoints,
+          [label]: value,
+        },
+      };
+    },
+    addPoint() {
+      // TODO:
     },
     doSubmit() {
-      if (Object.keys(this.renameSites).length > 0) {
+      if (
+        Object.keys(this.renameSites).length > 0 ||
+        Object.keys(this.renamePoints).length > 0
+      ) {
         const updateDate = this.currentProject.cameraLocations
           .map((cameraLocation, index) => {
             const projectIdKey = `cameraLocations.${index}.projectId`;
             const projectTitleKey = `cameraLocations.${index}.projectTitle`;
             const siteKey = `cameraLocations.${index}.site`;
+            const subSiteKey = `cameraLocations.${index}.subSite`;
+            const newSite =
+              this.renameSites[cameraLocation.site] || cameraLocation.site;
+            const newSubSite =
+              (this.renamePoints[cameraLocation.site] &&
+                this.renamePoints[cameraLocation.site][
+                  cameraLocation.subSite
+                ]) ||
+              cameraLocation.subSite;
             return {
               _id: this.currentProjectId,
               projectId: this.currentProjectId,
               $set: {
                 [projectIdKey]: this.currentProjectId,
                 [projectTitleKey]: this.currentProject.projectTitle,
-                [siteKey]:
-                  this.renameSites[cameraLocation.site] ||
-                  cameraLocation.site.label,
+                [siteKey]: newSite,
+                [subSiteKey]: newSubSite,
               },
-              isChanged: !!this.renameSites[cameraLocation.site],
+              isChanged:
+                newSite !== cameraLocation.site ||
+                newSubSite !== cameraLocation.subSite,
             };
           })
           .filter(cameraLocation => cameraLocation.isChanged);

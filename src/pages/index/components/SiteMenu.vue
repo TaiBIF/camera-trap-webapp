@@ -6,6 +6,8 @@
       :item="item"
       :level="1"
       :idx="idx"
+      :site="site"
+      @update="renamePoint"
     />
 
     <li class="add">
@@ -34,6 +36,7 @@ export default {
   name: 'SiteMenu',
   components: { SiteItem },
   props: {
+    site: String,
     items: Array,
     index: Number,
     defaultOpenLevel: Number,
@@ -45,6 +48,9 @@ export default {
     };
   },
   methods: {
+    renamePoint(obj) {
+      this.$emit('update', obj);
+    },
     addPoint(evt) {
       if (
         (evt.type === 'click' ||
@@ -56,7 +62,7 @@ export default {
           data: [],
         });
 
-        this.$emit('update', this.index, this.points);
+        this.$emit('add', this.index, this.points);
 
         this.newPoint = '';
       }
