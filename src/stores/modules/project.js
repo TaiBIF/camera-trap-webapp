@@ -9,6 +9,7 @@ import {
   getLocationRetrievedStatus,
   getLocationAbnormalStatus,
   updateAbnormalCamera,
+  editCameraLocations,
 } from '../../service/api';
 
 export const getters = {
@@ -249,6 +250,10 @@ export const actions = {
   async updateProject({ dispatch }, payload) {
     await editProject(payload);
     dispatch('loadProject');
+  },
+  // 3.4 計畫管理
+  async updateCameraLocations(_, payload) {
+    await editCameraLocations(payload);
   },
 };
 

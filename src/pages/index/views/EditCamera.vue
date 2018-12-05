@@ -161,6 +161,7 @@ export default {
       currentSite: 0,
       oldName: '',
       currentEditSite: null,
+      renameSites: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -325,7 +326,7 @@ export default {
   },
   methods: {
     ...mapActions(['setCurrentSite', 'setCurrentPoint']),
-    ...project.mapActions(['loadSingleProject']),
+    ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
     renderSheet() {
       this.settings.data = this.cameraData;
       if (!this.sheetContainer) {
@@ -385,7 +386,11 @@ export default {
     },
     updateSite(value) {
       // TODO: save change site to data, batch update when doSubmit
-      console.log('updateSite', value, this.currentEditSite);
+      const originalSite = this.filterSites[this.currentEditSite];
+      this.renameSites = {
+        ...this.renameSites,
+        [originalSite.label]: value,
+      };
       this.currentEditSite = null;
     },
     addSite(evt) {
@@ -396,8 +401,8 @@ export default {
       ) {
         this.sites.push({
           name: this.newSite,
-          children: [],
-          data: [],
+          label: this.newSite,
+          child: [],
         });
 
         this.newSite = '';
@@ -408,7 +413,28 @@ export default {
       this.sites[i].children = obj;
     },
     doSubmit() {
-      this.$router.push('/');
+      if (Object.keys(this.renameSites).length > 0) {
+        const updateDate = this.currentProject.cameraLocations
+          .map((cameraLocation, index) => {
+            const projectIdKey = `cameraLocations.${index}.projectId`;
+            const projectTitleKey = `cameraLocations.${index}.projectTitle`;
+            const siteKey = `cameraLocations.${index}.site`;
+            return {
+              _id: this.currentProjectId,
+              projectId: this.currentProjectId,
+              $set: {
+                [projectIdKey]: this.currentProjectId,
+                [projectTitleKey]: this.currentProject.projectTitle,
+                [siteKey]:
+                  this.renameSites[cameraLocation.site] ||
+                  cameraLocation.site.label,
+              },
+              isChanged: !!this.renameSites[cameraLocation.site],
+            };
+          })
+          .filter(cameraLocation => cameraLocation.isChanged);
+        this.updateCameraLocations(updateDate);
+      }
     },
   },
   mounted() {
