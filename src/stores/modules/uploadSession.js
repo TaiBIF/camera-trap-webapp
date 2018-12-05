@@ -17,6 +17,8 @@ export const getters = {
           camera: v.cameraLocation,
           status: v.status,
           msg: 'todo error message',
+          fullCameraLocationMd5: v.fullCameraLocationMd5,
+          projectId: v.projectId,
         };
 
         if (dayDiff === 0) {
