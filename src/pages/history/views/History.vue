@@ -82,7 +82,7 @@
             <a
               v-if="row.status=='SUCCESS'"
               class="link text-underline"
-              :href="`/index.html#/project/${row.projectId}/site/${row.site}/${row.subsite}?camera=${row.fullCameraLocationMd5}`"
+              :href="`/index.html#/project/${row.projectId}/site/${row.site}/${row.subsite}?camera=${row.fullCameraLocationMd5}&upload_session_id=${row.uploadSessionId}&earliestDataDate=${row.earliestDataDate ? row.earliestDataDate : ''}&latestDataDate=${row.latestDataDate ? row.latestDataDate : ''}`"
             >
               查看
             </a>

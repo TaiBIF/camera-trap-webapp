@@ -43,12 +43,18 @@
           下載篩選結果
         </a>
         <h3 class="text-green mb-2">{{this.$route.params.site_id}} - {{this.$route.params.subsite_id}}</h3>
+        <h5>來自上傳紀錄：{{form.uploadSessionId}}</h5>
         <hr class="my-0">
         <form
           action=""
           class="form form-horizontal"
         >
           <div class="form-group mb-0">
+            <input
+              type="hidden"
+              :value="form.uploadSessionId"
+              id="upload-session-id"
+            >
             <label>相機位置</label>
             <div class="d-inline-block">
               <div class="checkbox checkbox-inline">
@@ -639,6 +645,7 @@ export default {
               newValue.camera.indexOf('all') !== -1
                 ? undefined
                 : { $in: newValue.camera },
+            related_upload_sessions: newValue.uploadSessionId,
           },
           limit: 100000,
           skip: 0,
@@ -961,6 +968,30 @@ export default {
     this.form.camera = this.$route.query.camera
       ? [this.$route.query.camera]
       : [];
+
+    this.form.uploadSessionId = this.$route.query.upload_session_id
+      ? this.$route.query.upload_session_id
+      : '';
+
+    const earlistDataDate = this.$route.query.earlistDataDate
+      ? this.$route.query.earlistDataDate
+      : '2017-01-01 00:00:00';
+
+    const latestDataDate = this.$route.query.latestDataDate
+      ? this.$route.query.latestDataDate
+      : '2018-12-31 23:59:59';
+
+    this.form.start_at = earlistDataDate.split(' ')[0];
+    this.form.start_time = {
+      HH: '00',
+      mm: '00',
+    };
+
+    this.form.end_at = latestDataDate.split(' ')[0];
+    this.form.end_time = {
+      HH: '23',
+      mm: '59',
+    };
 
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
