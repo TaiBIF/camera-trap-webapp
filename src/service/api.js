@@ -8,3 +8,4 @@ export * from './modules/notification';
 export * from './modules/uploadSession';
 export * from './modules/annotationRevision';
 export * from './modules/forestBoundary';
+export * from './modules/exampleFiles';

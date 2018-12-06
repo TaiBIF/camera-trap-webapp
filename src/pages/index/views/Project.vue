@@ -58,7 +58,10 @@
                 <i class="fa fa-upload mr-2"></i>
                 <span class="text">檔案上傳</span>
               </a>
-              <p class="text-gray">欄位格式請參考 <a class="link text-underline text-green">範本下載</a></p>
+              <p class="text-gray">欄位格式請參考 <a
+                  class="link text-underline text-green"
+                  @click="downloadExampleCsv"
+                >範本下載</a></p>
             </div>
           </div>
         </div>
@@ -403,6 +406,7 @@ import { isAllowManageProject } from '../../../util/roles.js';
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
 const forestBoundary = createNamespacedHelpers('forestBoundary');
+const exampleFiles = createNamespacedHelpers('exampleFiles');
 
 // 設定未選擇/已選擇 Icon
 // const Icon = L.icon({
@@ -725,6 +729,10 @@ export default {
       'updateAbnormalCamera',
     ]),
     ...forestBoundary.mapActions(['loadForestBoundary']),
+    ...exampleFiles.mapActions(['downloadProjectExampleCsv']),
+    downloadExampleCsv() {
+      this.downloadProjectExampleCsv(this.currentProject._id);
+    },
     fetchImageStatus() {
       this.mapInfo.marker = [];
       this.progressData = [];
