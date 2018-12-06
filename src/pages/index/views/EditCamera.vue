@@ -17,12 +17,12 @@
                 <li
                   v-for="(site, s_id) in filterSites"
                   :key="`site-tree-${s_id}`"
-                  :class="{'open': CurrentSite === s_id, 'active': CurrentSite === s_id && CurrentPoint === null, 'edit': s_id === currentEdit}"
+                  :class="{'open': CurrentSite === s_id, 'active': CurrentSite === s_id && CurrentPoint === null, 'edit': s_id === currentEditSite}"
                 >
                   <div
                     class="site-item"
                     @click="setCurrentSite(s_id)"
-                    @dblclick="editSite(s_id)"
+                    @dblclick="enableEditSite(s_id)"
                   >
                     <div class="icon">
                       <i
@@ -32,13 +32,13 @@
                     </div>
                     <div
                       class="text"
-                      v-if="s_id==currentEdit"
+                      v-if="s_id==currentEditSite"
                     >
                       <input
                         type="text"
                         v-model="site.value"
-                        @blur="currentEdit=null"
-                        @keydown="updateSite($event)"
+                        @blur="editSite($event)"
+                        @keydown="editSite($event)"
                       >
                     </div>
                     <div
@@ -47,10 +47,12 @@
                     >{{site.value}}</div>
                   </div>
                   <site-menu
+                    :site="site.label"
                     :items="site.child"
                     :index="s_id"
                     :defaultOpenLevel="1"
                     @update="updatePoint"
+                    @add="addPoint"
                   />
                 </li>
                 <li class="add">
@@ -160,8 +162,9 @@ export default {
       newSite: '',
       currentSite: 0,
       oldName: '',
-      currentEdit: null,
-      isRender: false,
+      currentEditSite: null,
+      renameSites: {},
+      renamePoints: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -282,12 +285,18 @@ export default {
         dropdownMenu: true,
         manualRowMove: true,
         manualColumnMove: true,
+        afterChange: this.editData,
       },
     };
   },
   watch: {
     CurrentSite() {
-      this.setCurrentPoint(0);
+      const currentSite = this.filterSites[this.CurrentSite];
+      if (currentSite && currentSite.child && currentSite.child.length > 0) {
+        this.setCurrentPoint(0);
+      } else {
+        this.setCurrentPoint(null);
+      }
     },
     cameraData() {
       this.renderSheet();
@@ -303,6 +312,9 @@ export default {
       return this.sites.filter(site => site.label !== '全部樣區');
     },
     cameraData: function() {
+      if (this.CurrentSite === null) {
+        return [];
+      }
       const currentSite = this.filterSites[this.CurrentSite];
       if (currentSite && currentSite.child && currentSite.child.length > 0) {
         const currentSubsiteLabel = currentSite.child[this.CurrentPoint].label;
@@ -318,13 +330,12 @@ export default {
   },
   methods: {
     ...mapActions(['setCurrentSite', 'setCurrentPoint']),
-    ...project.mapActions(['loadSingleProject']),
+    ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
     renderSheet() {
       this.settings.data = this.cameraData;
-      if (!this.isRender) {
+      if (!this.sheetContainer) {
         this.sheetContainer = this.$el.querySelector('#sheet');
         this.sheet = new Handsontable(this.sheetContainer, this.settings);
-        this.isRender = true;
       } else {
         this.sheet.updateSettings(this.settings);
       }
@@ -357,28 +368,33 @@ export default {
 
       this.renderSheet();
     },
-    editSite(idx) {
-      this.oldName = this.sites[idx].name;
-
-      if (!this.currentEdit) {
-        this.currentEdit = idx;
-      } else {
-        this.currentEdit = null;
-      }
+    enableEditSite(idx) {
+      this.oldName = this.filterSites[idx].value;
+      this.currentEditSite = idx;
     },
-    updatePoint(i, obj) {
-      this.sites[i].children = obj;
-    },
-    updateSite(evt) {
+    editSite(evt) {
       if (evt.type === 'keydown') {
+        // ECS reset
         if (evt.keyCode === 27) {
-          this.sites[this.currentEdit].name = this.oldName;
-          this.currentEdit = null;
+          this.filterSites[this.currentEditSite].value = this.oldName;
+          this.currentEditSite = null;
         }
+        // Enter save change
         if (evt.keyCode === 13) {
-          this.currentEdit = null;
+          this.updateSite(evt.target.value);
         }
+      } else if (evt.type === 'blur' && this.currentEditSite) {
+        // blur save change
+        this.updateSite(evt.target.value);
       }
+    },
+    updateSite(value) {
+      const originalSite = this.filterSites[this.currentEditSite];
+      this.renameSites = {
+        ...this.renameSites,
+        [originalSite.label]: value,
+      };
+      this.currentEditSite = null;
     },
     addSite(evt) {
       if (
@@ -388,21 +404,67 @@ export default {
       ) {
         this.sites.push({
           name: this.newSite,
-          children: [],
-          data: [],
+          label: this.newSite,
+          child: [],
         });
 
         this.newSite = '';
-
-        if (!this.isRender) {
-          setTimeout(() => {
-            this.renderSheet();
-          }, 300);
-        }
+        this.renderSheet();
       }
     },
+    updatePoint(obj) {
+      const { site, label, value } = obj;
+      const currentEditPoints = this.renamePoints[site] || {};
+      this.renamePoints = {
+        ...this.renamePoints,
+        [site]: {
+          ...currentEditPoints,
+          [label]: value,
+        },
+      };
+    },
+    addPoint() {
+      // TODO:
+    },
+    editData(data, type) {
+      console.log('---afterChange: ', data, type);
+    },
     doSubmit() {
-      this.$router.push('/');
+      if (
+        Object.keys(this.renameSites).length > 0 ||
+        Object.keys(this.renamePoints).length > 0
+      ) {
+        const updateDate = this.currentProject.cameraLocations
+          .map((cameraLocation, index) => {
+            const projectIdKey = `cameraLocations.${index}.projectId`;
+            const projectTitleKey = `cameraLocations.${index}.projectTitle`;
+            const siteKey = `cameraLocations.${index}.site`;
+            const subSiteKey = `cameraLocations.${index}.subSite`;
+            const newSite =
+              this.renameSites[cameraLocation.site] || cameraLocation.site;
+            const newSubSite =
+              (this.renamePoints[cameraLocation.site] &&
+                this.renamePoints[cameraLocation.site][
+                  cameraLocation.subSite
+                ]) ||
+              cameraLocation.subSite;
+            return {
+              _id: this.currentProjectId,
+              projectId: this.currentProjectId,
+              $set: {
+                [projectIdKey]: this.currentProjectId,
+                [projectTitleKey]: this.currentProject.projectTitle,
+                [siteKey]: newSite,
+                [subSiteKey]: newSubSite,
+              },
+              isChanged:
+                newSite !== cameraLocation.site ||
+                newSubSite !== cameraLocation.subSite,
+            };
+          })
+          .filter(cameraLocation => cameraLocation.isChanged);
+        this.updateCameraLocations(updateDate);
+      }
     },
   },
   mounted() {

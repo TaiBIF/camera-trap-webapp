@@ -6,7 +6,7 @@
     <div
       class="tree-menu-link"
       @click="setCurrent()"
-      @dblclick="edit=true"
+      @dblclick="enableEditMode()"
     >
       <div class="icon">
         <i class="fa fa-circle"></i>
@@ -18,8 +18,8 @@
         <input
           type="text"
           v-model="item.value"
-          @blur="edit=false"
-          @keydown="updatePoint($event)"
+          @blur="editPoint($event)"
+          @keydown="editPoint($event)"
         >
       </div>
       <div
@@ -52,6 +52,7 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'SiteItem',
   props: {
+    site: String,
     item: Object,
     idx: Number,
     level: Number,
@@ -66,6 +67,7 @@ export default {
   data() {
     return {
       edit: false,
+      oldName: null,
       isFolder:
         !this.item === false &&
         !this.item.children === false &&
@@ -74,16 +76,33 @@ export default {
   },
   methods: {
     ...mapActions(['setCurrentPoint']),
-    updatePoint(e) {
-      if (e.type === 'keydown') {
-        if (e.keyCode === 27) {
-          this.sites[this.currentEdit].name = this.oldName;
-          this.edit = false;
+    enableEditMode() {
+      this.oldName = this.item.value;
+      this.edit = true;
+    },
+    editPoint(evt) {
+      if (evt.type === 'keydown') {
+        // ECS reset
+        if (evt.keyCode === 27) {
+          this.item.value = this.oldName;
+          this.edit = null;
         }
-        if (e.keyCode === 13) {
-          this.edit = false;
+        // Enter save change
+        if (evt.keyCode === 13) {
+          this.updatePoint(evt.target.value);
         }
+      } else if (evt.type === 'blur' && this.edit) {
+        // blur save change
+        this.updatePoint(evt.target.value);
       }
+    },
+    updatePoint(value) {
+      this.edit = false;
+      this.$emit('update', {
+        site: this.site,
+        label: this.item.label,
+        value,
+      });
     },
     setCurrent() {
       this.setCurrentPoint(this.idx);
