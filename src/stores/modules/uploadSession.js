@@ -19,6 +19,9 @@ export const getters = {
           msg: 'todo error message',
           fullCameraLocationMd5: v.fullCameraLocationMd5,
           projectId: v.projectId,
+          uploadSessionId: v.upload_session_id,
+          earliestDataDate: v.earliestDataDate,
+          latestDataDate: v.latestDataDate,
         };
 
         if (dayDiff === 0) {
