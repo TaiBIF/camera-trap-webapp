@@ -56,6 +56,7 @@
 </template>
 
 <script>
+console.log('test');
 import { createNamespacedHelpers } from 'vuex';
 
 const auth = createNamespacedHelpers('auth');
