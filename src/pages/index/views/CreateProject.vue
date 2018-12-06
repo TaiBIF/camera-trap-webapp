@@ -562,7 +562,10 @@ export default {
         this.createProject({
           form: this.form,
           licenseForm: this.licenseForm,
-          file: this.previewImg.file || null,
+          file:
+            this.previewImg && this.previewImg.file
+              ? this.previewImg.file
+              : null,
         }).then(() => this.$router.push('/'));
       }
     },
