@@ -84,6 +84,17 @@
                 <h5 class="text-gray">您還沒新增任何樣區</h5>
               </div>
               <div
+                class="empty-result"
+                v-else-if="CurrentSite===null"
+              >
+                <img
+                  src="/assets/common/empty-site.png"
+                  width="174"
+                  srcset="/assets/common/empty-site@2x.png"
+                >
+                <h5 class="text-gray">請選擇樣區</h5>
+              </div>
+              <div
                 v-else
                 class="sheet-view"
               >
@@ -139,6 +150,7 @@
 </template>
 
 <script>
+import md5 from 'blueimp-md5';
 import { mapActions, mapGetters, createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
@@ -161,10 +173,11 @@ export default {
     return {
       newSite: '',
       currentSite: 0,
-      oldName: '',
+      originalSiteName: '',
       currentEditSite: null,
       renameSites: {},
       renamePoints: {},
+      editCameraLocations: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -369,14 +382,14 @@ export default {
       this.renderSheet();
     },
     enableEditSite(idx) {
-      this.oldName = this.filterSites[idx].value;
+      this.originalSiteName = this.filterSites[idx].value;
       this.currentEditSite = idx;
     },
     editSite(evt) {
       if (evt.type === 'keydown') {
         // ECS reset
         if (evt.keyCode === 27) {
-          this.filterSites[this.currentEditSite].value = this.oldName;
+          this.filterSites[this.currentEditSite].value = this.originalSiteName;
           this.currentEditSite = null;
         }
         // Enter save change
@@ -428,6 +441,23 @@ export default {
     },
     editData(data, type) {
       console.log('---afterChange: ', data, type);
+      const [row, key, originalValue, newValue] = data;
+      if (type === 'edit') {
+        const currentEditRow = this.editCameraLocations[row] || {};
+        const currentEditRowOri = currentEditRow.original || {};
+        // TODO: should get the cameraLocation key (md5?)
+        this.editCameraLocations = {
+          ...this.editCameraLocations,
+          [row]: {
+            ...currentEditRow,
+            [key]: newValue,
+            original: {
+              ...currentEditRowOri,
+              [key]: originalValue,
+            },
+          },
+        };
+      }
     },
     doSubmit() {
       if (
@@ -440,6 +470,7 @@ export default {
             const projectTitleKey = `cameraLocations.${index}.projectTitle`;
             const siteKey = `cameraLocations.${index}.site`;
             const subSiteKey = `cameraLocations.${index}.subSite`;
+            const fullCameraLocationMd5Key = `cameraLocations.${index}.fullCameraLocationMd5`;
             const newSite =
               this.renameSites[cameraLocation.site] || cameraLocation.site;
             const newSubSite =
@@ -456,6 +487,11 @@ export default {
                 [projectTitleKey]: this.currentProject.projectTitle,
                 [siteKey]: newSite,
                 [subSiteKey]: newSubSite,
+                [fullCameraLocationMd5Key]: md5(
+                  `${this.currentProjectId}/${newSite}/${newSubSite}/${
+                    cameraLocation.cameraLocation
+                  }`,
+                ),
               },
               isChanged:
                 newSite !== cameraLocation.site ||
