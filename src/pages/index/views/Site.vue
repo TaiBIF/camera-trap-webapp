@@ -633,7 +633,7 @@ export default {
           );
         };
 
-        const payload = {
+        let payload = {
           query: {
             projectId: this.$route.params.id,
             site: this.$route.params.site_id,
@@ -645,11 +645,14 @@ export default {
               newValue.camera.indexOf('all') !== -1
                 ? undefined
                 : { $in: newValue.camera },
-            related_upload_sessions: newValue.uploadSessionId,
           },
           limit: 100000,
           skip: 0,
         };
+
+        if (newValue.uploadSessionId) {
+          payload.query.related_upload_sessions = newValue.uploadSessionId;
+        }
 
         if (
           payload.query.date_time_corrected_timestamp['$gte'] !==
