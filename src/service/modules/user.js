@@ -9,4 +9,12 @@ const getUserInfo = async () => {
   return res.ret || {};
 };
 
-export { getUserInfo };
+const signOut = async () => {
+  const res = await fetchWrap({
+    url: '/ctp-user/sign-out',
+    method: 'POST',
+  });
+  return res.ret;
+};
+
+export { getUserInfo, signOut };

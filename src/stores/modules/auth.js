@@ -1,5 +1,5 @@
 import { auth } from '../../util/auth/cognito-config';
-import { getUserInfo } from '../../service/api';
+import { getUserInfo, signOut } from '../../service/api';
 
 export const getters = {
   isLogin: state => !!state.awsToken,
@@ -21,6 +21,7 @@ export const actions = {
     auth.getSession();
   },
   async doSignOut() {
+    await signOut();
     auth.signOut();
   },
   async loadProfile({ commit }) {
