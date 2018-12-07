@@ -95,7 +95,7 @@
                 <h5 class="text-gray">請選擇樣區</h5>
               </div>
               <div
-                v-else
+                v-show="CurrentSite!==null && sites.length"
                 class="sheet-view"
               >
                 <div class="control p-2">
@@ -158,6 +158,7 @@ import SiteMenu from '../components/SiteMenu';
 import EditNav from '../components/EditNav';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/zh-TW';
+import { twd97ToWgs84 } from '../../../util/transfer';
 
 const project = createNamespacedHelpers('project');
 
@@ -310,6 +311,7 @@ export default {
       } else {
         this.setCurrentPoint(null);
       }
+      this.editCameraLocations = {}; // reset edited camera locations
     },
     cameraData() {
       this.renderSheet();
@@ -346,40 +348,7 @@ export default {
     ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
     renderSheet() {
       this.settings.data = this.cameraData;
-      if (!this.sheetContainer) {
-        this.sheetContainer = this.$el.querySelector('#sheet');
-        this.sheet = new Handsontable(this.sheetContainer, this.settings);
-      } else {
-        this.sheet.updateSettings(this.settings);
-      }
-    },
-    addData() {
-      if (this.CurrentPoint === null) {
-        this.sites[this.CurrentSite].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-
-        this.settings.data = this.sites[this.CurrentSite].data;
-      } else {
-        this.sites[this.CurrentSite].children[this.CurrentPoint].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-        this.settings.data = this.sites[this.CurrentSite].children[
-          this.CurrentPoint
-        ].data;
-      }
-
-      this.renderSheet();
+      this.sheet.updateSettings(this.settings);
     },
     enableEditSite(idx) {
       this.originalSiteName = this.filterSites[idx].value;
@@ -415,14 +384,12 @@ export default {
           (evt.type === 'keydown' && evt.keyCode === 13)) &&
         this.newSite !== ''
       ) {
-        this.sites.push({
-          name: this.newSite,
+        this.filterSites.push({
+          value: this.newSite,
           label: this.newSite,
           child: [],
         });
-
         this.newSite = '';
-        this.renderSheet();
       }
     },
     updatePoint(obj) {
@@ -436,33 +403,90 @@ export default {
         },
       };
     },
-    addPoint() {
-      // TODO:
+    addPoint(index, point) {
+      this.filterSites[index].child.push({
+        value: point,
+        label: point,
+      });
     },
     editData(data, type) {
-      console.log('---afterChange: ', data, type);
-      const [row, key, originalValue, newValue] = data;
       if (type === 'edit') {
-        const currentEditRow = this.editCameraLocations[row] || {};
-        const currentEditRowOri = currentEditRow.original || {};
-        // TODO: should get the cameraLocation key (md5?)
-        this.editCameraLocations = {
-          ...this.editCameraLocations,
-          [row]: {
-            ...currentEditRow,
-            [key]: newValue,
-            original: {
-              ...currentEditRowOri,
-              [key]: originalValue,
-            },
-          },
-        };
+        const [row, key, originalValue, newValue] = data[0]; // eslint-disable-line
+        if (originalValue !== newValue) {
+          const currentCamera = this.settings.data[row];
+          if (!this.editCameraLocations[row]) {
+            this.editCameraLocations[row] = currentCamera.fullCameraLocationMd5;
+          }
+        }
       }
+    },
+    addData() {
+      if (this.CurrentPoint === null) {
+        this.sites[this.CurrentSite].data.push({
+          name: '',
+          updated_at: '',
+          lat: '',
+          lng: '',
+          altitude: '',
+          vegetation: '',
+        });
+
+        this.settings.data = this.sites[this.CurrentSite].data;
+      } else {
+        this.sites[this.CurrentSite].children[this.CurrentPoint].data.push({
+          name: '',
+          updated_at: '',
+          lat: '',
+          lng: '',
+          altitude: '',
+          vegetation: '',
+        });
+        this.settings.data = this.sites[this.CurrentSite].children[
+          this.CurrentPoint
+        ].data;
+      }
+
+      this.renderSheet();
+    },
+    isCameraEdited(camera) {
+      const editCameraMd5 = Object.values(this.editCameraLocations);
+      if (editCameraMd5.includes(camera.fullCameraLocationMd5)) {
+        return true;
+      }
+      return false;
+    },
+    getNewCameraData(camera, index) {
+      if (!this.isCameraEdited(camera)) {
+        return {};
+      }
+      const editData = this.settings.data.find(
+        data => data.fullCameraLocationMd5 === camera.fullCameraLocationMd5,
+      );
+      const wgs84 = twd97ToWgs84({
+        lng: editData.original_x,
+        lat: editData.original_y,
+      });
+      return {
+        [`cameraLocations.${index}.cameraLocation`]: editData.cameraLocation,
+        [`cameraLocations.${index}.elevation`]: editData.elevation,
+        [`cameraLocations.${index}.land_cover`]: editData.land_cover,
+        [`cameraLocations.${index}.original_x`]: editData.original_x,
+        [`cameraLocations.${index}.original_y`]: editData.original_y,
+        [`cameraLocations.${index}.vegetation`]: editData.vegetation,
+        [`cameraLocations.${index}.wgs84dec_x`]: wgs84[0],
+        [`cameraLocations.${index}.wgs84dec_y`]: wgs84[1],
+      };
+    },
+    resetEditRecord() {
+      this.renameSites = {};
+      this.renamePoints = {};
+      this.editCameraLocations = {};
     },
     doSubmit() {
       if (
         Object.keys(this.renameSites).length > 0 ||
-        Object.keys(this.renamePoints).length > 0
+        Object.keys(this.renamePoints).length > 0 ||
+        Object.keys(this.editCameraLocations).length > 0
       ) {
         const updateDate = this.currentProject.cameraLocations
           .map((cameraLocation, index) => {
@@ -479,32 +503,44 @@ export default {
                   cameraLocation.subSite
                 ]) ||
               cameraLocation.subSite;
+
+            const isCameraEdited = this.isCameraEdited(cameraLocation);
+            const newCameraData = this.getNewCameraData(cameraLocation, index);
+            const currentCameraLocation = isCameraEdited
+              ? newCameraData.cameraLocation
+              : cameraLocation.cameraLocation;
+
             return {
               _id: this.currentProjectId,
               projectId: this.currentProjectId,
               $set: {
+                ...newCameraData,
                 [projectIdKey]: this.currentProjectId,
                 [projectTitleKey]: this.currentProject.projectTitle,
                 [siteKey]: newSite,
                 [subSiteKey]: newSubSite,
                 [fullCameraLocationMd5Key]: md5(
-                  `${this.currentProjectId}/${newSite}/${newSubSite}/${
-                    cameraLocation.cameraLocation
-                  }`,
+                  `${
+                    this.currentProjectId
+                  }/${newSite}/${newSubSite}/${currentCameraLocation}`,
                 ),
               },
               isChanged:
                 newSite !== cameraLocation.site ||
-                newSubSite !== cameraLocation.subSite,
+                newSubSite !== cameraLocation.subSite ||
+                isCameraEdited,
             };
           })
           .filter(cameraLocation => cameraLocation.isChanged);
         this.updateCameraLocations(updateDate);
+        this.resetEditRecord();
       }
     },
   },
   mounted() {
     this.loadSingleProject(this.currentProjectId);
+    this.sheetContainer = this.$el.querySelector('#sheet');
+    this.sheet = new Handsontable(this.sheetContainer, this.settings);
   },
 };
 </script>

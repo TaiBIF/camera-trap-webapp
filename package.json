@@ -26,6 +26,7 @@
     "moment": "^2.22.2",
     "popper.js": "^1.14.4",
     "progressbar.js": "^1.0.1",
+    "proj4": "^2.5.0",
     "v-tooltip": "^2.0.0-rc.33",
     "vee-validate": "^2.1.2",
     "vue": "^2.5.17",
