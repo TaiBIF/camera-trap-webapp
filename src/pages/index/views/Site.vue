@@ -274,7 +274,7 @@
       >
         <div
           class="photo-container"
-          v-if="siteData.data[currentRow] && !siteData.data[currentRow].imageUrl==false && galleryShow"
+          v-if="displayImageComponent"
         >
           <div class="gallery-header">
             <a
@@ -287,7 +287,7 @@
           </div>
           <div
             class="gallery-body"
-            v-if="!siteData.data[currentRow].imageUrl || siteData.data[currentRow].imageUrl==''"
+            v-if="!hasImageOrVideo"
           >
             <div class="empty-result">
               <img
@@ -307,9 +307,14 @@
             v-else
           >
             <zoom-drag
+              v-if="siteData.data[currentRow].imageUrl"
               :row="siteData.data[currentRow]"
               :index="currentRow"
               :total="siteData.data.length"
+            />
+            <youtube-embed
+              v-else
+              :row="siteData.data[currentRow]"
             />
             <div class="control">
               <span
@@ -402,6 +407,7 @@ import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../components/ZoomDrag';
+import YoutubeEmbed from '../components/YoutubeEmbed';
 import IdleTimeoutDialog from '../components/IdleTimeoutDialog';
 import downloadCSV from '../../../util/downloadCsv.js';
 
@@ -675,6 +681,7 @@ export default {
     DatePicker,
     VueTimepicker,
     ZoomDrag,
+    YoutubeEmbed,
     IdleTimeoutDialog,
   },
   computed: {
@@ -683,6 +690,26 @@ export default {
     ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
     ...media.mapState(['siteData']),
+    // 判斷是否顯示影像區塊
+    displayImageComponent() {
+      const { siteData, currentRow, galleryShow } = this;
+      return (
+        siteData.data[currentRow] &&
+        galleryShow &&
+        (!siteData.data[currentRow].imageUrl == false ||
+          !siteData.data[currentRow].youtubeUrl == false)
+      );
+    },
+    // 檢查是否存在圖片連結
+    hasImageOrVideo() {
+      const { siteData, currentRow } = this;
+      return (
+        (siteData.data[currentRow].imageUrl &&
+          siteData.data[currentRow].imageUrl !== '') ||
+        (siteData.data[currentRow].youtubeUrl &&
+          siteData.data[currentRow].youtubeUrl !== '')
+      );
+    },
     cameraList() {
       return this.currentProject
         ? this.currentProject.cameraLocations.filter(
