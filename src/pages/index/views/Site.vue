@@ -973,15 +973,15 @@ export default {
       ? this.$route.query.upload_session_id
       : '';
 
-    const earlistDataDate = this.$route.query.earlistDataDate
-      ? this.$route.query.earlistDataDate
+    const earliestDataDate = this.$route.query.earliestDataDate
+      ? this.$route.query.earliestDataDate
       : '2017-01-01 00:00:00';
 
     const latestDataDate = this.$route.query.latestDataDate
       ? this.$route.query.latestDataDate
       : '2018-12-31 23:59:59';
 
-    this.form.start_at = earlistDataDate.split(' ')[0];
+    this.form.start_at = earliestDataDate.split(' ')[0];
     this.form.start_time = {
       HH: '00',
       mm: '00',
@@ -992,7 +992,7 @@ export default {
       HH: '23',
       mm: '59',
     };
-
+    ('');
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();
