@@ -150,6 +150,7 @@
 </template>
 
 <script>
+import md5 from 'blueimp-md5';
 import { mapActions, mapGetters, createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
@@ -460,6 +461,7 @@ export default {
             const projectTitleKey = `cameraLocations.${index}.projectTitle`;
             const siteKey = `cameraLocations.${index}.site`;
             const subSiteKey = `cameraLocations.${index}.subSite`;
+            const fullCameraLocationMd5Key = `cameraLocations.${index}.fullCameraLocationMd5`;
             const newSite =
               this.renameSites[cameraLocation.site] || cameraLocation.site;
             const newSubSite =
@@ -476,6 +478,11 @@ export default {
                 [projectTitleKey]: this.currentProject.projectTitle,
                 [siteKey]: newSite,
                 [subSiteKey]: newSubSite,
+                [fullCameraLocationMd5Key]: md5(
+                  `${this.currentProjectId}/${newSite}/${newSubSite}/${
+                    cameraLocation.cameraLocation
+                  }`,
+                ),
               },
               isChanged:
                 newSite !== cameraLocation.site ||
