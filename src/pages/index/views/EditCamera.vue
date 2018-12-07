@@ -95,7 +95,7 @@
                 <h5 class="text-gray">請選擇樣區</h5>
               </div>
               <div
-                v-else
+                v-show="CurrentSite!==null && sites.length"
                 class="sheet-view"
               >
                 <div class="control p-2">
@@ -179,6 +179,7 @@ export default {
       renamePoints: {},
       editCameraLocations: {},
       sheetContainer: null,
+      sheet: null,
       settings: {
         data: [],
         columns: [
@@ -346,12 +347,7 @@ export default {
     ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
     renderSheet() {
       this.settings.data = this.cameraData;
-      if (!this.sheetContainer) {
-        this.sheetContainer = this.$el.querySelector('#sheet');
-        this.sheet = new Handsontable(this.sheetContainer, this.settings);
-      } else {
-        this.sheet.updateSettings(this.settings);
-      }
+      this.sheet.updateSettings(this.settings);
     },
     addData() {
       if (this.CurrentPoint === null) {
@@ -441,8 +437,8 @@ export default {
     },
     editData(data, type) {
       console.log('---afterChange: ', data, type);
-      const [row, key, originalValue, newValue] = data;
       if (type === 'edit') {
+        const [row, key, originalValue, newValue] = data;
         const currentEditRow = this.editCameraLocations[row] || {};
         const currentEditRowOri = currentEditRow.original || {};
         // TODO: should get the cameraLocation key (md5?)
@@ -505,6 +501,8 @@ export default {
   },
   mounted() {
     this.loadSingleProject(this.currentProjectId);
+    this.sheetContainer = this.$el.querySelector('#sheet');
+    this.sheet = new Handsontable(this.sheetContainer, this.settings);
   },
 };
 </script>
