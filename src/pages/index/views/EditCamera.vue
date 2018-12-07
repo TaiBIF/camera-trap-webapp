@@ -84,6 +84,17 @@
                 <h5 class="text-gray">您還沒新增任何樣區</h5>
               </div>
               <div
+                class="empty-result"
+                v-else-if="CurrentSite===null"
+              >
+                <img
+                  src="/assets/common/empty-site.png"
+                  width="174"
+                  srcset="/assets/common/empty-site@2x.png"
+                >
+                <h5 class="text-gray">請選擇樣區</h5>
+              </div>
+              <div
                 v-else
                 class="sheet-view"
               >
@@ -161,10 +172,12 @@ export default {
     return {
       newSite: '',
       currentSite: 0,
-      oldName: '',
+      originalSiteName: '',
       currentEditSite: null,
       renameSites: {},
       renamePoints: {},
+      cameraLocations: [],
+      editCameraLocation: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -301,6 +314,9 @@ export default {
     cameraData() {
       this.renderSheet();
     },
+    currentProject() {
+      this.cameraLocations = this.currentProject.cameraLocations;
+    },
   },
   computed: {
     ...mapGetters(['CurrentSite', 'CurrentPoint']),
@@ -369,14 +385,14 @@ export default {
       this.renderSheet();
     },
     enableEditSite(idx) {
-      this.oldName = this.filterSites[idx].value;
+      this.originalSiteName = this.filterSites[idx].value;
       this.currentEditSite = idx;
     },
     editSite(evt) {
       if (evt.type === 'keydown') {
         // ECS reset
         if (evt.keyCode === 27) {
-          this.filterSites[this.currentEditSite].value = this.oldName;
+          this.filterSites[this.currentEditSite].value = this.originalSiteName;
           this.currentEditSite = null;
         }
         // Enter save change
@@ -427,7 +443,11 @@ export default {
       // TODO:
     },
     editData(data, type) {
+      // data: [row, key, originalValue, newValue]
       console.log('---afterChange: ', data, type);
+      if (type === 'edit') {
+        // TODO:
+      }
     },
     doSubmit() {
       if (
