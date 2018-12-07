@@ -33,6 +33,9 @@ const createProject = async payload => {
       projectId,
     });
     form.cover = `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`;
+  } else {
+    form.cover =
+      'https://s3-ap-northeast-1.amazonaws.com/camera-trap/cover_images/default_cover.png';
   }
 
   await fetchWrap({
