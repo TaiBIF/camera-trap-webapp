@@ -350,34 +350,6 @@ export default {
       this.settings.data = this.cameraData;
       this.sheet.updateSettings(this.settings);
     },
-    addData() {
-      if (this.CurrentPoint === null) {
-        this.sites[this.CurrentSite].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-
-        this.settings.data = this.sites[this.CurrentSite].data;
-      } else {
-        this.sites[this.CurrentSite].children[this.CurrentPoint].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-        this.settings.data = this.sites[this.CurrentSite].children[
-          this.CurrentPoint
-        ].data;
-      }
-
-      this.renderSheet();
-    },
     enableEditSite(idx) {
       this.originalSiteName = this.filterSites[idx].value;
       this.currentEditSite = idx;
@@ -407,20 +379,17 @@ export default {
       this.currentEditSite = null;
     },
     addSite(evt) {
-      // TODO:
       if (
         (evt.type === 'click' ||
           (evt.type === 'keydown' && evt.keyCode === 13)) &&
         this.newSite !== ''
       ) {
-        this.sites.push({
-          name: this.newSite,
+        this.filterSites.push({
+          value: this.newSite,
           label: this.newSite,
           child: [],
         });
-
         this.newSite = '';
-        this.renderSheet();
       }
     },
     updatePoint(obj) {
@@ -434,8 +403,11 @@ export default {
         },
       };
     },
-    addPoint() {
-      // TODO:
+    addPoint(index, point) {
+      this.filterSites[index].child.push({
+        value: point,
+        label: point,
+      });
     },
     editData(data, type) {
       if (type === 'edit') {
@@ -447,6 +419,34 @@ export default {
           }
         }
       }
+    },
+    addData() {
+      if (this.CurrentPoint === null) {
+        this.sites[this.CurrentSite].data.push({
+          name: '',
+          updated_at: '',
+          lat: '',
+          lng: '',
+          altitude: '',
+          vegetation: '',
+        });
+
+        this.settings.data = this.sites[this.CurrentSite].data;
+      } else {
+        this.sites[this.CurrentSite].children[this.CurrentPoint].data.push({
+          name: '',
+          updated_at: '',
+          lat: '',
+          lng: '',
+          altitude: '',
+          vegetation: '',
+        });
+        this.settings.data = this.sites[this.CurrentSite].children[
+          this.CurrentPoint
+        ].data;
+      }
+
+      this.renderSheet();
     },
     isCameraEdited(camera) {
       const editCameraMd5 = Object.values(this.editCameraLocations);
