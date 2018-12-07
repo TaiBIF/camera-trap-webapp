@@ -177,8 +177,7 @@ export default {
       currentEditSite: null,
       renameSites: {},
       renamePoints: {},
-      cameraLocations: [],
-      editCameraLocation: {},
+      editCameraLocations: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -315,9 +314,6 @@ export default {
     cameraData() {
       this.renderSheet();
     },
-    currentProject() {
-      this.cameraLocations = this.currentProject.cameraLocations;
-    },
   },
   computed: {
     ...mapGetters(['CurrentSite', 'CurrentPoint']),
@@ -444,10 +440,23 @@ export default {
       // TODO:
     },
     editData(data, type) {
-      // data: [row, key, originalValue, newValue]
       console.log('---afterChange: ', data, type);
+      const [row, key, originalValue, newValue] = data;
       if (type === 'edit') {
-        // TODO:
+        const currentEditRow = this.editCameraLocations[row] || {};
+        const currentEditRowOri = currentEditRow.original || {};
+        // TODO: should get the cameraLocation key (md5?)
+        this.editCameraLocations = {
+          ...this.editCameraLocations,
+          [row]: {
+            ...currentEditRow,
+            [key]: newValue,
+            original: {
+              ...currentEditRowOri,
+              [key]: originalValue,
+            },
+          },
+        };
       }
     },
     doSubmit() {
