@@ -1,18 +1,16 @@
 <template>
   <div class="container">
     <h1 class="text-green">
-      {{article.title}}
+      {{title}}
     </h1>
     <p class="text-gray">
-      {{article.description}}
+      {{description}}
     </p>
 
-    <article>
-      {{article.content}}
-    </article>
+    <article>{{body}}</article>
 
     <div class="text-right text-gray">
-      最後更新日期：{{article.updated_at}}
+      最後更新日期：{{updated_at}}
     </div>
   </div>
 </template>
@@ -22,12 +20,10 @@ export default {
   name: 'Article',
   data() {
     return {
-      article: {
-        title: 'Title',
-        description: 'Description',
-        content: 'Content',
-        updated_at: '2018/08/14',
-      },
+      title: 'Title',
+      description: 'Description',
+      body: 'privacyPolicy',
+      updated_at: '2018/08/14',
     };
   },
 };

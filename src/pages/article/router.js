@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Article from './views/Article';
+import Article from './views/Article.vue';
 import FAQ from './views/FAQ.vue';
 import Contact from './views/Contact.vue';
 
@@ -29,6 +29,7 @@ export default new Router({
       path: '/:slug',
       name: 'article',
       component: Article,
+      props: true,
     },
   ],
 });
