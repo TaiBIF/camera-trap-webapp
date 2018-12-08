@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <h1 class="text-green">
-      {{article.title}}
+      {{prose.title}}
     </h1>
     <p class="text-gray">
-      {{article.description}}
+      {{prose.description}}
     </p>
 
     <article>
-      {{article.content}}
+      {{prose.content}}
     </article>
 
     <div class="text-right text-gray">
-      最後更新日期：{{article.updated_at}}
+      最後更新日期：{{prose.updated_at}}
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   name: 'Article',
   data() {
     return {
-      article: {
+      prose: {
         title: 'Title',
         description: 'Description',
         content: 'Content',
