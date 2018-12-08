@@ -15,5 +15,9 @@ export const twd97ToWgs84 = ({ lat, lng }) => {
   const EPSG3826 = new proj4.Proj('EPSG:3826'); // TWD97
   const EPSG4326 = new proj4.Proj('EPSG:4326'); // WGS84
 
-  return proj4(EPSG3826, EPSG4326, [+lng, +lat]);
+  try {
+    return proj4(EPSG3826, EPSG4326, [+lng, +lat]);
+  } catch (e) {
+    return [0, 0];
+  }
 };
