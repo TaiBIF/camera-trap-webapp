@@ -43,7 +43,7 @@
             <div class="text-center">
               當您登入系統，即代表您同意我們的
               <a
-                href="/article.html#/private-policy"
+                href="/article.html#/privacy-policy"
                 class="text-green"
               >隱私權保護政策</a>
             </div>
