@@ -42,7 +42,7 @@
                 class="dropdown-item"
               >聯絡我們</a>
               <a
-                href="/article.html#/private-policy"
+                href="/article.html#/privacy-policy"
                 class="dropdown-item"
               >隱私權政策</a>
             </div>
@@ -118,7 +118,7 @@
                 class="dropdown-item"
               >聯絡我們</a>
               <a
-                href="/article.html#/private-policy"
+                href="/article.html#/privacy-policy"
                 class="dropdown-item"
               >隱私權政策</a>
             </div>
