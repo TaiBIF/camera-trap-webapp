@@ -133,10 +133,10 @@
           <div>
             <div
               class="error"
-              v-if="cameraInputDataError()"
+              v-if="cameraInputDataError"
             >
               <i class="fas fa-exclamation"></i>
-              {{cameraInputDataError()}}
+              {{cameraInputDataError}}
             </div>
           </div>
           <div class="btns">
@@ -148,7 +148,7 @@
               type="submit"
               @click.stop.prevent="doSubmit()"
               class="btn btn-orange"
-              :disabled="cameraInputDataError()"
+              :disabled="cameraInputDataError"
             >儲存設定</button>
           </div>
         </div>
@@ -313,6 +313,7 @@ export default {
         manualColumnMove: true,
         afterChange: this.editData,
       },
+      forceRecomputeCounter: 0, // a hack to force recompute when edit Hansontable: https://github.com/vuejs/vue/issues/214#issuecomment-400591973
     };
   },
   watch: {
@@ -353,6 +354,17 @@ export default {
       return this.currentProject.cameraLocations.filter(
         camera => camera.site === currentSite.label,
       );
+    },
+    cameraInputDataError: function() {
+      this.forceRecomputeCounter;
+      const nanElevation = this.settings.data.find(
+        camera => camera.elevation && isNaN(camera.elevation),
+      );
+      console.log('cameraInputDataError', nanElevation);
+      if (nanElevation) {
+        return '高度請輸入數字';
+      }
+      return null;
     },
   },
   methods: {
@@ -430,6 +442,7 @@ export default {
             this.editCameraLocations[row] = currentCamera.fullCameraLocationMd5;
           }
         }
+        this.forceRecomputeCounter++;
       }
     },
     addData() {
@@ -443,15 +456,6 @@ export default {
         isNew: true,
       });
       this.renderSheet();
-    },
-    cameraInputDataError() {
-      const nanElevation = this.settings.data.find(camera =>
-        isNaN(camera.elevation),
-      );
-      if (nanElevation) {
-        return '高度請輸入數字';
-      }
-      return null;
     },
     isCameraEdited(camera) {
       const editCameraMd5 = Object.values(this.editCameraLocations);
