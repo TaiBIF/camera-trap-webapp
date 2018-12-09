@@ -22,14 +22,13 @@
               <div class="column-body">
                 <draggable
                   :options="{ handle: '.drag-item' }"
-                  @end="sortColumn"
+                  v-model="defaultColumns"
                 >
                   <transition-group>
                     <div
-                      class="row column-item"
-                      v-for="(td, idx) in columns"
+                      class="row column-item disabled"
+                      v-for="(td) in defaultColumns"
                       :key="`tr-${td.key}`"
-                      :class="{ 'disabled': td.default }"
                     >
                       <div class="col-3">{{ td.label }}</div>
                       <div class="col-3">{{ td.type }}</div>
@@ -43,10 +42,32 @@
                         </div>
                         <span v-else>{{ td.description }}</span>
                       </div>
-                      <div
-                        class="text-right col-3"
-                        v-if="!td.default"
-                      >
+                    </div>
+                  </transition-group>
+                </draggable>
+                <draggable
+                  :options="{ handle: '.drag-item' }"
+                  v-model="columns"
+                >
+                  <transition-group>
+                    <div
+                      class="row column-item"
+                      v-for="(td, idx) in columns"
+                      :key="`tr-${td.key}`"
+                    >
+                      <div class="col-3">{{ td.label }}</div>
+                      <div class="col-3">{{ td.type }}</div>
+                      <div class="text-gray col-3">
+                        <div
+                          v-if="td.label === '物種'"
+                          class="link text-green underline"
+                          @click="speciesOpen=true"
+                        >
+                          <i class="fa fa-pencil-alt"></i> {{ td.description }}
+                        </div>
+                        <span v-else>{{ td.description }}</span>
+                      </div>
+                      <div class="text-right col-3">
                         <a
                           @click="deleteItem(idx)"
                           class="d-inline-block align-middle ml-2"
@@ -263,11 +284,20 @@ export default {
           default: true,
         },
       ],
+      columns: [],
       deleteColumnIndex: null,
       newColumnOpen: false,
       closeWindowOpen: false,
       invitationOpen: false,
     };
+  },
+  watch: {
+    projectColumnsField: function(newVal) {
+      if (this.columns.length === 0) {
+        // columns must use data for set as v-model in draggable
+        this.columns = newVal;
+      }
+    },
   },
   computed: {
     ...auth.mapGetters(['projectRoles']),
@@ -284,12 +314,13 @@ export default {
       }
       return isAllowAddColumns(projectRoles.roles);
     },
-    columns() {
-      return [...this.defaultColumns, ...this.projectColumnsField];
-    },
   },
   methods: {
-    ...project.mapActions(['loadSingleProject', 'loadColumnsField']),
+    ...project.mapActions([
+      'loadSingleProject',
+      'loadColumnsField',
+      'updateCameraLocations',
+    ]),
     deleteItem(i) {
       this.deleteColumnIndex = i;
     },
@@ -297,25 +328,17 @@ export default {
       this.columns.splice(this.deleteColumnIndex, 1);
       this.deleteColumnIndex = null;
     },
-    sortColumn({ newIndex, oldIndex }) {
-      if (newIndex >= this.defaultColumns.length) {
-        const column = this.columns.splice(oldIndex, 1);
-        this.columns.splice(newIndex, 0, column[0]);
-        console.log('--sortColumn', {
-          newIndex,
-          oldIndex,
-          column,
-        });
-        this.columns.forEach(column => console.log(column.label));
-      }
-    },
     doSubmit() {
       const dataFieldEnabled = this.columns
         .filter(field => !field.default)
         .map(field => field.key);
-      console.log('zzz', dataFieldEnabled);
-      // TODO: save new field
-      // this.$router.push('/');
+      this.updateCameraLocations([
+        {
+          _id: this.currentProjectId,
+          projectId: this.currentProjectId,
+          $set: { dataFieldEnabled },
+        },
+      ]);
     },
     submitColumn(form) {
       this.column.push({
