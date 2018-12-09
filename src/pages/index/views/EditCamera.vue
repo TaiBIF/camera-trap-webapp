@@ -95,8 +95,8 @@
                 <h5 class="text-gray">請選擇樣區</h5>
               </div>
               <div
-                v-show="CurrentSite!==null && sites.length"
                 class="sheet-view"
+                :class="{'show': CurrentSite!==null && sites.length}"
               >
                 <div class="control p-2">
                   <div class="row">
@@ -129,16 +129,28 @@
           </div>
         </div>
 
-        <div class="action">
-          <router-link
-            to="/project/1"
-            class="btn btn-default"
-          >返回</router-link>
-          <button
-            type="submit"
-            @click.stop.prevent="doSubmit()"
-            class="btn btn-orange"
-          >儲存設定</button>
+        <div class="flex-action">
+          <div>
+            <div
+              class="error"
+              v-if="cameraInputDataError"
+            >
+              <i class="fas fa-exclamation"></i>
+              {{cameraInputDataError}}
+            </div>
+          </div>
+          <div class="btns">
+            <router-link
+              to="/project/1"
+              class="btn btn-default"
+            >返回</router-link>
+            <button
+              type="submit"
+              @click.stop.prevent="doSubmit()"
+              class="btn btn-orange"
+              :disabled="cameraInputDataError"
+            >儲存設定</button>
+          </div>
         </div>
       </div>
     </div>
@@ -301,6 +313,7 @@ export default {
         manualColumnMove: true,
         afterChange: this.editData,
       },
+      forceRecomputeCounter: 0, // a hack to force recompute when edit Hansontable: https://github.com/vuejs/vue/issues/214#issuecomment-400591973
     };
   },
   watch: {
@@ -341,6 +354,16 @@ export default {
       return this.currentProject.cameraLocations.filter(
         camera => camera.site === currentSite.label,
       );
+    },
+    cameraInputDataError: function() {
+      this.forceRecomputeCounter;
+      const nanElevation = this.settings.data.find(
+        camera => camera.elevation && isNaN(camera.elevation),
+      );
+      if (nanElevation) {
+        return '高度請輸入數字';
+      }
+      return null;
     },
   },
   methods: {
@@ -418,6 +441,7 @@ export default {
             this.editCameraLocations[row] = currentCamera.fullCameraLocationMd5;
           }
         }
+        this.forceRecomputeCounter++;
       }
     },
     addData() {
