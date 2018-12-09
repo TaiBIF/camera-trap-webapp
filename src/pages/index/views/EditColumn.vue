@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
-        <edit-nav :projectId="currentProjectId"/>
+        <edit-nav :projectId="currentProjectId" />
       </div>
       <div class="col-10 pt-3">
         <!-- 編輯設定  -->
@@ -22,21 +22,20 @@
               <div class="column-body">
                 <draggable
                   :options="{ handle: '.drag-item' }"
-                  @start="drag=true"
-                  @end="drag=false"
+                  @end="sortColumn"
                 >
                   <transition-group>
                     <div
                       class="row column-item"
-                      v-for="(td, idx) in column"
-                      :key="`tr-${idx}`"
+                      v-for="(td, idx) in columns"
+                      :key="`tr-${td.key}`"
                       :class="{ 'disabled': td.default }"
                     >
-                      <div class="col-3">{{ td.name }}</div>
+                      <div class="col-3">{{ td.label }}</div>
                       <div class="col-3">{{ td.type }}</div>
                       <div class="text-gray col-3">
                         <div
-                          v-if="td.name === '物種'"
+                          v-if="td.label === '物種'"
                           class="link text-green underline"
                           @click="speciesOpen=true"
                         >
@@ -49,7 +48,7 @@
                         v-if="!td.default"
                       >
                         <a
-                          @click="removeItem(idx)"
+                          @click="deleteItem(idx)"
                           class="d-inline-block align-middle ml-2"
                         >
                           <i class="icon-remove-sm"></i>
@@ -80,10 +79,10 @@
                 >
                   <div
                     class="dropdown-item"
-                    v-for="(td, idx) in column"
+                    v-for="(td, idx) in columns"
                     :key="`item-${idx}`"
                   >
-                    <span v-if="!td.default">{{td.name}}</span>
+                    <span v-if="!td.default">{{td.label}}</span>
                   </div>
                   <hr>
                   <div
@@ -161,7 +160,6 @@
             </div>
           </div>
         </div>
-
         <div class="action">
           <router-link
             to="/project/1"
@@ -171,7 +169,7 @@
           </router-link>
           <button
             type="submit"
-            @click.stop.prevent="nextStep()"
+            @click.stop.prevent="doSubmit()"
             class="btn btn-orange"
           >
             儲存設定
@@ -193,9 +191,9 @@
       @close="invitationOpen=false"
     />
     <delete-column-dialog
-      :open="deleteColumnOpen"
-      :column="deleteItem.data"
-      @close="deleteColumnOpen=false"
+      :open="deleteColumnIndex!==null"
+      :column="columns[deleteColumnIndex] && columns[deleteColumnIndex].label"
+      @close="deleteColumnIndex=null"
       @submit="confirmDeleteColumn"
     />
   </div>
@@ -212,57 +210,8 @@ import InvitationDialog from '../components/InvitationDialog';
 import EditNav from '../components/EditNav';
 import { isAllowAddColumns } from '../../../util/roles.js';
 
+const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
-const column = [
-  {
-    name: '樣區',
-    type: '下拉選單',
-    description: '樣區-子樣區',
-    default: true,
-  },
-  {
-    name: '相機位置',
-    type: '下拉選單',
-    description: '相機位置名稱',
-    default: true,
-  },
-  {
-    name: '檔名',
-    type: '輸入框',
-    description: '01234.jpg',
-    default: true,
-  },
-  {
-    name: '時間',
-    type: '日期時間',
-    description: 'YYYY-MM-DD hh:mm',
-    default: true,
-  },
-  {
-    name: '物種',
-    type: '下拉選單',
-    description: '編輯常見物種排序',
-    default: true,
-  },
-  {
-    name: '性別',
-    type: '下拉選單',
-    description: '公、母',
-    default: false,
-  },
-  {
-    name: '年齡',
-    type: '下拉選單',
-    description: '成體、亞成體、幼體',
-    default: false,
-  },
-  {
-    name: '備註',
-    type: '下拉選單',
-    description: '輸入框',
-    default: false,
-  },
-];
 
 export default {
   name: 'EditColumn',
@@ -277,19 +226,52 @@ export default {
   },
   data() {
     return {
-      column,
+      defaultColumns: [
+        {
+          key: 'site',
+          label: '樣區',
+          type: '下拉選單',
+          description: '樣區-子樣區',
+          default: true,
+        },
+        {
+          key: 'location',
+          label: '相機位置',
+          type: '下拉選單',
+          description: '相機位置名稱',
+          default: true,
+        },
+        {
+          key: 'file',
+          label: '檔名',
+          type: '輸入框',
+          description: '01234.jpg',
+          default: true,
+        },
+        {
+          key: 'time',
+          label: '時間',
+          type: '日期時間',
+          description: 'YYYY-MM-DD hh:mm',
+          default: true,
+        },
+        {
+          key: 'species',
+          label: '物種',
+          type: '下拉選單',
+          description: '編輯常見物種排序',
+          default: true,
+        },
+      ],
+      deleteColumnIndex: null,
       newColumnOpen: false,
       closeWindowOpen: false,
-      deleteItem: {
-        index: 0,
-        data: null,
-      },
-      deleteColumnOpen: false,
       invitationOpen: false,
     };
   },
   computed: {
     ...auth.mapGetters(['projectRoles']),
+    ...project.mapGetters(['projectColumnsField']),
     currentProjectId() {
       return this.$route.params.id;
     },
@@ -302,21 +284,38 @@ export default {
       }
       return isAllowAddColumns(projectRoles.roles);
     },
+    columns() {
+      return [...this.defaultColumns, ...this.projectColumnsField];
+    },
   },
   methods: {
-    confirmDeleteColumn() {
-      this.column.splice(this.deleteItem.index, 1);
-      this.deleteColumnOpen = false;
+    ...project.mapActions(['loadSingleProject', 'loadColumnsField']),
+    deleteItem(i) {
+      this.deleteColumnIndex = i;
     },
-    removeItem(i) {
-      this.deleteItem = {
-        index: i,
-        data: this.column[i],
-      };
-      this.deleteColumnOpen = true;
+    confirmDeleteColumn() {
+      this.columns.splice(this.deleteColumnIndex, 1);
+      this.deleteColumnIndex = null;
+    },
+    sortColumn({ newIndex, oldIndex }) {
+      if (newIndex >= this.defaultColumns.length) {
+        const column = this.columns.splice(oldIndex, 1);
+        this.columns.splice(newIndex, 0, column[0]);
+        console.log('--sortColumn', {
+          newIndex,
+          oldIndex,
+          column,
+        });
+        this.columns.forEach(column => console.log(column.label));
+      }
     },
     doSubmit() {
-      this.$router.push('/');
+      const dataFieldEnabled = this.columns
+        .filter(field => !field.default)
+        .map(field => field.key);
+      console.log('zzz', dataFieldEnabled);
+      // TODO: save new field
+      // this.$router.push('/');
     },
     submitColumn(form) {
       this.column.push({
@@ -325,6 +324,10 @@ export default {
       });
       this.newColumnOpen = false;
     },
+  },
+  mounted() {
+    this.loadSingleProject(this.currentProjectId);
+    this.loadColumnsField();
   },
 };
 </script>
