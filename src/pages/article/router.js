@@ -29,6 +29,7 @@ export default new Router({
       path: '/:slug',
       name: 'prose',
       component: Prose,
+      props: true,
     },
   ],
 });
