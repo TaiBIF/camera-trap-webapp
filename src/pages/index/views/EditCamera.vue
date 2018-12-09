@@ -95,8 +95,8 @@
                 <h5 class="text-gray">請選擇樣區</h5>
               </div>
               <div
-                v-show="CurrentSite!==null && sites.length"
                 class="sheet-view"
+                :class="{'show': CurrentSite!==null && sites.length}"
               >
                 <div class="control p-2">
                   <div class="row">
