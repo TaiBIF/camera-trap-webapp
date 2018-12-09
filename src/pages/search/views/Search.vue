@@ -44,12 +44,11 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >計畫名稱：</label>
                       <v-select
                         :options="projectOptions"
-                        v-model="data.projectId"
+                        v-model="data.project"
                         :placeholder="'請選擇計畫名稱'"
                       />
                     </div>
@@ -57,11 +56,10 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >樣區：</label>
                       <v-select
-                        :options="[{label: '屏東處', value:'屏東處'}]"
+                        :options="projectSiteOptions[did]"
                         v-model="data.site"
                         :placeholder="'請選擇樣區'"
                       />
@@ -70,12 +68,11 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >子樣區：</label>
                       <v-select
-                        :options="[{label: '旗山站', value:'旗山站'}]"
-                        v-model="data.subsite"
+                        :options="projectSibSiteOptions[did]"
+                        v-model="data.subSite"
                         :placeholder="'請選擇子樣區'"
                       />
                     </div>
@@ -83,11 +80,10 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >相機位置：</label>
                       <v-select
-                        :options="[{label: 'PT10A', value:'PT10A'}]"
+                        :options="projectCameraOptions[did]"
                         v-model="data.camera"
                         :placeholder="'請選擇相機位置'"
                       />
@@ -539,9 +535,9 @@ export default {
       form: {
         data: [
           {
-            projectId: '',
+            project: '',
             site: '',
-            subsite: '',
+            subSite: '',
             camera: '',
           },
         ],
@@ -578,9 +574,112 @@ export default {
       });
       return result;
     },
+    projectSiteOptions: function() {
+      const result = [];
+      this.form.data.forEach(data => {
+        result.push(this.getProjectSiteOptions(data.project.value));
+      });
+      return result;
+    },
+    projectSibSiteOptions: function() {
+      return this.form.data.map(data => {
+        return this.getProjectSubSiteOptions(
+          data.project.value,
+          data.site.value,
+        );
+      });
+    },
+    projectCameraOptions: function() {
+      return this.form.data.map(data => {
+        return this.getProjectCameraOptions(
+          data.project.value,
+          data.site.value,
+          data.subSite.value,
+        );
+      });
+    },
   },
   methods: {
     ...project.mapActions(['loadProject']),
+    getProjectSiteOptions(projectId) {
+      /*
+      Get sites of the project.
+      @param projectId {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          const sites = new Set();
+          project.cameraLocations.forEach(cameraLocation => {
+            sites.add(cameraLocation.site);
+          });
+          return Array.from(sites).map(site => {
+            return {
+              label: site,
+              value: site,
+            };
+          });
+        }
+      }
+      return [];
+    },
+    getProjectSubSiteOptions(projectId, site) {
+      /*
+      Get sub-sites of the project.
+      @param projectId {string}
+      @param site {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          const subSites = new Set();
+          project.cameraLocations.forEach(cameraLocation => {
+            if (cameraLocation.site === site) {
+              subSites.add(cameraLocation.subSite);
+            }
+          });
+          return Array.from(subSites).map(subSite => {
+            return {
+              label: subSite,
+              value: subSite,
+            };
+          });
+        }
+      }
+      return [];
+    },
+    getProjectCameraOptions(projectId, site, subSite) {
+      /*
+      Get camera locations of the project.
+      @param projectId {string}
+      @param site {string}
+      @param subSite {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          const locations = new Set();
+          project.cameraLocations.forEach(cameraLocation => {
+            if (
+              cameraLocation.site === site &&
+              cameraLocation.subSite === subSite
+            ) {
+              locations.add(cameraLocation.cameraLocation);
+            }
+          });
+          return Array.from(locations).map(location => {
+            return {
+              label: location,
+              value: location,
+            };
+          });
+        }
+      }
+      return [];
+    },
     submitSearch() {
       this.$router.push('/search');
     },
