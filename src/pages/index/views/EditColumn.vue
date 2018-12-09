@@ -247,6 +247,11 @@ export default {
   },
   data() {
     return {
+      columnTypeMapping: {
+        text: '輸入欄',
+        select: '下拉選單',
+        datePicker: '日期選擇',
+      },
       defaultColumns: [
         {
           key: 'site',
@@ -295,7 +300,10 @@ export default {
     projectColumnsField: function(newVal) {
       if (this.columns.length === 0) {
         // columns must use data for set as v-model in draggable
-        this.columns = newVal;
+        this.columns = newVal.map(obj => ({
+          ...obj,
+          type: this.columnTypeMapping[obj.widget_type],
+        }));
       }
     },
   },
