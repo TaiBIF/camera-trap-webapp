@@ -48,8 +48,8 @@
                         class="required"
                       >計畫名稱：</label>
                       <v-select
-                        :options="[{label: '林務局全島鼬獾監測', value:'1'}]"
-                        v-model="data.project"
+                        :options="projectOptions"
+                        v-model="data.projectId"
                         :placeholder="'請選擇計畫名稱'"
                       />
                     </div>
@@ -521,9 +521,12 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import DatePicker from 'vue2-datepicker';
 import VueTimepicker from 'vue2-timepicker';
 import { commonMixin } from '../../../mixins/common.js';
+
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'Search',
@@ -536,7 +539,7 @@ export default {
       form: {
         data: [
           {
-            project: '',
+            projectId: '',
             site: '',
             subsite: '',
             camera: '',
@@ -563,7 +566,21 @@ export default {
       },
     };
   },
+  computed: {
+    ...project.mapGetters(['Projects']),
+    projectOptions: function() {
+      const result = [];
+      this.Projects.forEach(project => {
+        result.push({
+          label: project.projectTitle,
+          value: project._id,
+        });
+      });
+      return result;
+    },
+  },
   methods: {
+    ...project.mapActions(['loadProject']),
     submitSearch() {
       this.$router.push('/search');
     },
@@ -581,6 +598,9 @@ export default {
         camera: '',
       });
     },
+  },
+  beforeMount() {
+    this.loadProject();
   },
 };
 </script>
