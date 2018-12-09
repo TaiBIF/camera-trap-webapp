@@ -360,7 +360,6 @@ export default {
       const nanElevation = this.settings.data.find(
         camera => camera.elevation && isNaN(camera.elevation),
       );
-      console.log('cameraInputDataError', nanElevation);
       if (nanElevation) {
         return '高度請輸入數字';
       }
