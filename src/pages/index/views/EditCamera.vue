@@ -129,16 +129,28 @@
           </div>
         </div>
 
-        <div class="action">
-          <router-link
-            to="/project/1"
-            class="btn btn-default"
-          >返回</router-link>
-          <button
-            type="submit"
-            @click.stop.prevent="doSubmit()"
-            class="btn btn-orange"
-          >儲存設定</button>
+        <div class="flex-action">
+          <div>
+            <div
+              class="error"
+              v-if="cameraInputDataError()"
+            >
+              <i class="fas fa-exclamation"></i>
+              {{cameraInputDataError()}}
+            </div>
+          </div>
+          <div class="btns">
+            <router-link
+              to="/project/1"
+              class="btn btn-default"
+            >返回</router-link>
+            <button
+              type="submit"
+              @click.stop.prevent="doSubmit()"
+              class="btn btn-orange"
+              :disabled="cameraInputDataError()"
+            >儲存設定</button>
+          </div>
         </div>
       </div>
     </div>
@@ -431,6 +443,15 @@ export default {
         isNew: true,
       });
       this.renderSheet();
+    },
+    cameraInputDataError() {
+      const nanElevation = this.settings.data.find(camera =>
+        isNaN(camera.elevation),
+      );
+      if (nanElevation) {
+        return '高度請輸入數字';
+      }
+      return null;
     },
     isCameraEdited(camera) {
       const editCameraMd5 = Object.values(this.editCameraLocations);
