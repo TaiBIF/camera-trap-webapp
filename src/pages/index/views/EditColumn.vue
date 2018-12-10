@@ -212,8 +212,9 @@
     />
     <new-column-modal
       :open="newColumnOpen"
+      :options="columnTypeOptions"
       @close='newColumnOpen=false'
-      @submit="submitColumn"
+      @submit="createNewColumn"
     />
     <delete-column-dialog
       :open="deleteColumnIndex!==null"
@@ -367,6 +368,9 @@ export default {
         field => !currentFieldEnabled.includes(field.key),
       );
     },
+    columnTypeOptions() {
+      return Object.values(this.columnTypeMapping);
+    },
     downloadCsvSrc() {
       return `${process.env.VUE_APP_API_URL}/project/${
         this.currentProjectId
@@ -404,6 +408,33 @@ export default {
         type: this.columnTypeMapping[this.unUseColumnsField[idx].widget_type],
       });
     },
+    createNewColumn(form) {
+      const {
+        label,
+        widget_date_format,
+        type,
+        description,
+        widget_select_options,
+      } = form;
+      const widget_type = Object.keys(this.columnTypeMapping).find(
+        key => this.columnTypeMapping[key] === type,
+      );
+      const obj = {
+        projectId: this.currentProjectId,
+        label,
+        description,
+        widget_date_format,
+        widget_type,
+        fieldStatus: 'pending',
+        widget_select_options: widget_select_options.map(label => ({
+          key: '',
+          label,
+        })),
+      };
+      // TODO: submit API
+      console.log('xxx createNewColumn', obj);
+      this.newColumnOpen = false;
+    },
     doSubmit() {
       // save columns
       const dataFieldEnabled = this.columns
@@ -431,13 +462,6 @@ export default {
           $set: { dailyTestTime },
         },
       ]);
-    },
-    submitColumn(form) {
-      this.column.push({
-        default: false,
-        ...form,
-      });
-      this.newColumnOpen = false;
     },
   },
   mounted() {

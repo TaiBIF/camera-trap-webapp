@@ -27,7 +27,7 @@
               <div class="col-8">
                 <input
                   type="text"
-                  v-model="form.name"
+                  v-model="form.label"
                   class="form-control"
                   placeholder="請填寫欄位名稱"
                 >
@@ -42,25 +42,45 @@
                 <v-select
                   v-model="form.type"
                   @input="changeType"
-                  :options="['輸入框', '日期時間', '下拉選單']"
+                  :options="options"
                 />
               </div>
             </div>
             <div class="form-group row">
               <label
                 for=""
-                class="col-3 px-0 text-right"
+                class="col-3 px-0 text-right required"
               >輸入格式：</label>
               <div
                 class="col-8 input-group-inline"
                 v-if="form.type === '輸入框'"
               >
                 <input
+                  v-if="form.type !== '下拉選單'"
                   type="text"
-                  v-model="form.description"
+                  v-model="form.widget_date_format"
                   class="form-control"
                   placeholder="請填寫輸入格式"
                 >
+                <v-select
+                  v-else
+                  v-model="form.widget_select_options"
+                  :options="[]"
+                  multiple
+                ></v-select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label
+                for=""
+                class="col-3 px-0 text-right"
+              >備註：</label>
+              <div class="col-9 input-group-inline">
+                <textarea
+                  v-model="form.description"
+                  class="form-control"
+                  placeholder="請輸入備註內容"
+                ></textarea>
               </div>
               <div
                 class="col-8 input-group-inline"
@@ -158,14 +178,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    options: {
+      type: Array,
+      default: null,
+    },
   },
   data() {
     return {
       error: false,
-      formType: '輸入框',
       form: {
-        name: '',
-        type: '輸入框',
+        label: '',
+        type: '輸入欄',
+        widget_date_format: '',
+        widget_select_options: [],
         description: '',
         note: '',
       },
