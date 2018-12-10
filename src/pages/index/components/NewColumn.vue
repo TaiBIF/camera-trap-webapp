@@ -165,6 +165,7 @@
           <button
             @click="submit()"
             class="btn btn-orange"
+            :disabled="isSelectOptionsMissing"
           >送出申請</button>
         </div>
       </div>
@@ -197,6 +198,14 @@ export default {
         note: '',
       },
     };
+  },
+  computed: {
+    isSelectOptionsMissing() {
+      return (
+        this.form.type === '下拉選單' &&
+        this.form.widget_select_options.length === 0
+      );
+    },
   },
   methods: {
     updateDespValue() {
