@@ -580,24 +580,26 @@ export default {
     projectSiteOptions: function() {
       const result = [];
       this.form.data.forEach(data => {
-        result.push(this.getProjectSiteOptions(data.project.value));
+        result.push(
+          this.getProjectSiteOptions(data.project && data.project.value),
+        );
       });
       return result;
     },
     projectSibSiteOptions: function() {
       return this.form.data.map(data => {
         return this.getProjectSubSiteOptions(
-          data.project.value,
-          data.site.value,
+          data.project && data.project.value,
+          data.site && data.site.value,
         );
       });
     },
     projectCameraOptions: function() {
       return this.form.data.map(data => {
         return this.getProjectCameraOptions(
-          data.project.value,
-          data.site.value,
-          data.subSite.value,
+          data.project && data.project.value,
+          data.site && data.site.value,
+          data.subSite && data.subSite.value,
         );
       });
     },
