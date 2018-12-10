@@ -100,10 +100,11 @@
                 >
                   <div
                     class="dropdown-item"
-                    v-for="(td, idx) in columns"
+                    v-for="(td, idx) in unUseColumnsField"
                     :key="`item-${idx}`"
+                    @click="addColumns(idx)"
                   >
-                    <span v-if="!td.default">{{td.label}}</span>
+                    <span>{{td.label}}</span>
                   </div>
                   <hr>
                   <div
@@ -334,14 +335,11 @@ export default {
     };
   },
   watch: {
-    projectColumnsField: function(newVal) {
-      if (this.columns.length === 0) {
-        // columns must use data for set as v-model in draggable
-        this.columns = newVal.map(obj => ({
-          ...obj,
-          type: this.columnTypeMapping[obj.widget_type],
-        }));
-      }
+    projectDataFieldEnabled: function() {
+      this.initAdditionalColumns();
+    },
+    allColumnsField: function() {
+      this.initAdditionalColumns();
     },
     projectDailyTestTime: function(newVal) {
       if (newVal[0]) {
@@ -354,7 +352,11 @@ export default {
   },
   computed: {
     ...auth.mapGetters(['projectRoles']),
-    ...project.mapGetters(['projectColumnsField', 'projectDailyTestTime']),
+    ...project.mapGetters([
+      'projectDailyTestTime',
+      'allColumnsField',
+      'projectDataFieldEnabled',
+    ]),
     currentProjectId() {
       return this.$route.params.id;
     },
@@ -366,6 +368,12 @@ export default {
         return false;
       }
       return isAllowAddColumns(projectRoles.roles);
+    },
+    unUseColumnsField() {
+      const currentFieldEnabled = this.columns.map(obj => obj.key);
+      return this.allColumnsField.filter(
+        field => !currentFieldEnabled.includes(field.key),
+      );
     },
     downloadCsvSrc() {
       return `${process.env.VUE_APP_API_URL}/project/${
@@ -379,12 +387,30 @@ export default {
       'loadColumnsField',
       'updateCameraLocations',
     ]),
+    initAdditionalColumns() {
+      if (this.columns.length === 0) {
+        // columns must use data not computed for 2-way binding in draggable
+        this.columns = this.projectDataFieldEnabled
+          .map(key => this.allColumnsField.find(obj => obj.key === key) || {})
+          .filter(obj => obj.key)
+          .map(obj => ({
+            ...obj,
+            type: this.columnTypeMapping[obj.widget_type],
+          }));
+      }
+    },
     deleteItem(i) {
       this.deleteColumnIndex = i;
     },
     confirmDeleteColumn() {
       this.columns.splice(this.deleteColumnIndex, 1);
       this.deleteColumnIndex = null;
+    },
+    addColumns(idx) {
+      this.columns.push({
+        ...this.unUseColumnsField[idx],
+        type: this.columnTypeMapping[this.unUseColumnsField[idx].widget_type],
+      });
     },
     doSubmit() {
       // save columns

@@ -159,14 +159,14 @@ export const getters = {
           [],
         );
   },
-  projectColumnsField: (state, getters) => {
-    const projectColumns = getters.currentProject.dataFieldEnabled || [];
-    return projectColumns
-      .map(key => state.columnsField.find(obj => obj.key === key) || {})
-      .filter(obj => obj.key);
+  allColumnsField: state => {
+    return state.columnsField;
   },
   projectDailyTestTime: (state, getters) => {
     return getters.currentProject.dailyTestTime || [];
+  },
+  projectDataFieldEnabled: (state, getters) => {
+    return getters.currentProject.dataFieldEnabled || [];
   },
 };
 
