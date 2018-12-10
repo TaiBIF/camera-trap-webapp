@@ -641,26 +641,38 @@ export default {
   },
   methods: {
     ...project.mapActions(['loadProject']),
+    getProject(projectId) {
+      /*
+      Get the project from this.Projects.
+      @param projectId {string}
+      @returns {Project|null}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          return project;
+        }
+      }
+      return null;
+    },
     getProjectSiteOptions(projectId) {
       /*
       Get sites of the project.
       @param projectId {string}
       @returns {Array<{label: 'string', value: 'string'}}>}
        */
-      for (let index = 0; index < this.Projects.length; index += 1) {
-        const project = this.Projects[index];
-        if (project._id === projectId) {
-          const sites = new Set();
-          project.cameraLocations.forEach(cameraLocation => {
-            sites.add(cameraLocation.site);
-          });
-          return Array.from(sites).map(site => {
-            return {
-              label: site,
-              value: site,
-            };
-          });
-        }
+      const project = this.getProject(projectId);
+      if (project) {
+        const sites = new Set();
+        project.cameraLocations.forEach(cameraLocation => {
+          sites.add(cameraLocation.site);
+        });
+        return Array.from(sites).map(site => {
+          return {
+            label: site,
+            value: site,
+          };
+        });
       }
       return [];
     },
