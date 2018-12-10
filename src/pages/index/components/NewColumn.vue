@@ -63,11 +63,13 @@
                   placeholder="請填寫輸入格式"
                 >
                 <v-select
+                  class="full-width-select"
                   v-else
                   v-model="form.widget_select_options"
                   :options="[]"
                   multiple
-                ></v-select>
+                  taggable
+                />
               </div>
             </div>
             <div class="form-group row">
