@@ -568,14 +568,12 @@ export default {
   computed: {
     ...project.mapGetters(['Projects']),
     projectOptions: function() {
-      const result = [];
-      this.Projects.forEach(project => {
-        result.push({
+      return this.Projects.map(project => {
+        return {
           label: project.projectTitle,
           value: project._id,
-        });
+        };
       });
-      return result;
     },
     projectSiteOptions: function() {
       const result = [];
