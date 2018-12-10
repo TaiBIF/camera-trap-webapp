@@ -568,6 +568,10 @@ export default {
   computed: {
     ...project.mapGetters(['Projects']),
     projectOptions: function() {
+      /*
+      All projects.
+      @returns {Array<{label: 'string', value: 'string'}>}
+      */
       return this.Projects.map(project => {
         return {
           label: project.projectTitle,
@@ -576,6 +580,11 @@ export default {
       });
     },
     projectSiteOptions: function() {
+      /*
+      All sites of projects.
+      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
+      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
+      */
       const result = [];
       this.form.data.forEach(data => {
         result.push(
@@ -585,6 +594,11 @@ export default {
       return result;
     },
     projectSibSiteOptions: function() {
+      /*
+      All sub-sites of projects.
+      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
+      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
+      */
       return this.form.data.map(data => {
         return this.getProjectSubSiteOptions(
           data.project && data.project.value,
@@ -593,6 +607,11 @@ export default {
       });
     },
     projectCameraOptions: function() {
+      /*
+      All camera locations of projects.
+      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
+      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
+      */
       return this.form.data.map(data => {
         return this.getProjectCameraOptions(
           data.project && data.project.value,
@@ -602,6 +621,10 @@ export default {
       });
     },
     projectSpecOptions: function() {
+      /*
+      All species of all projects.
+      @returns {Array<{label: 'string', value: 'string'}>}
+      */
       const species = new Set();
       this.Projects.forEach(project => {
         (project.speciesList || []).forEach(spec => {
