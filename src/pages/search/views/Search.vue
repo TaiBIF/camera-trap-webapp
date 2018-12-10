@@ -196,46 +196,20 @@
               v-if="advSecOpen"
             >
               <div class="row">
-                <div class="col-2">
-                  <div class="form-group">
-                    <label>性別：</label>
+                <div
+                  v-for="dataField in dataFields"
+                  :key="dataField.key"
+                  :class="{'col-2': dataField.type==='select', 'col-4': dataField.type==='text'}">
+                  <div v-if="dataField.type==='select'" class="form-group">
+                    <label>{{ dataField.label }}：</label>
                     <v-select
-                      :options="[
-                      {label:'公', value: 'male'},
-                      {label:'母', value: 'female'}
-                    ]"
-                      :placeholder="'請選擇性別'"
+                      :options="dataField.options"
+                      :placeholder="`請選擇${dataField.label}`"
                     />
                   </div>
-                </div>
-                <div class="col-2">
-                  <div class="form-group">
-                    <label>年齡：</label>
-                    <v-select
-                      :options="[
-                      {label:'幼仔', value: '1'},
-                      {label:'成熟', value: '2'}
-                    ]"
-                      :placeholder="'請選擇年齡'"
-                    />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <label>角況：</label>
-                    <v-select
-                      :options="[
-                      {label:'幼仔', value: '1'},
-                      {label:'成熟', value: '2'}
-                    ]"
-                      :placeholder="'請選擇角況'"
-                    />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
+                  <div v-if="dataField.type==='text'" class="form-group">
                     <label>
-                      <span class="text">備註：</span>
+                      <span class="text">{{ dataField.label }}：</span>
                       <span class="icon">
                         <i class="icon-info mt-1"></i>
                       </span>
@@ -243,7 +217,7 @@
                     <input
                       type="text"
                       class="form-control"
-                      placeholder="請選擇被註內容"
+                      :placeholder="`請選擇${dataField.label}`"
                     >
                   </div>
                 </div>
@@ -525,6 +499,7 @@ import DatePicker from 'vue2-datepicker';
 import VueTimepicker from 'vue2-timepicker';
 import { commonMixin } from '../../../mixins/common.js';
 
+const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
 const project = createNamespacedHelpers('project');
 
 export default {
@@ -567,6 +542,7 @@ export default {
   },
   computed: {
     ...project.mapGetters(['Projects']),
+    ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
     projectOptions: function() {
       /*
       All projects.
@@ -638,9 +614,39 @@ export default {
         };
       });
     },
+    dataFields: function() {
+      /*
+      All data fields of projects.
+      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
+       */
+      const dataFieldKeys = new Set();
+      this.form.data.forEach(data => {
+        const project = this.getProject(data.project && data.project.value);
+        if (project) {
+          (project.dataFieldEnabled || []).forEach(key => {
+            dataFieldKeys.add(key);
+          });
+        }
+      });
+      return Array.from(dataFieldKeys).map(key => {
+        const dataField = this.findDataField(key);
+        return {
+          key: key,
+          label: dataField.label,
+          type: dataField.widget_type,
+          options: (dataField.widget_select_options || []).map(option => {
+            return {
+              label: option,
+              value: option,
+            };
+          }),
+        };
+      });
+    },
   },
   methods: {
     ...project.mapActions(['loadProject']),
+    ...dataFieldAvailable.mapActions(['loadDataFieldAvailable']),
     getProject(projectId) {
       /*
       Get the project from this.Projects.
@@ -756,6 +762,19 @@ export default {
         _this.form.data[dataIndex].camera = '';
       };
     },
+    findDataField(key) {
+      /*
+      Find the data field from dataFieldAvailable.
+      @param key {string}
+      @returns {DataFieldAvailable|null}
+       */
+      for (let index = 0; index < this.dataFieldAvailable.length; index += 1) {
+        if (this.dataFieldAvailable[index].key === key) {
+          return this.dataFieldAvailable[index];
+        }
+      }
+      return null;
+    },
     submitSearch() {
       this.$router.push('/search');
     },
@@ -776,6 +795,7 @@ export default {
   },
   beforeMount() {
     this.loadProject();
+    this.loadDataFieldAvailable();
   },
 };
 </script>
