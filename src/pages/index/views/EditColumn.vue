@@ -129,7 +129,8 @@
               您可以透過下載來預覽範本：
               <a
                 class="btn btn-default"
-                @click.stop.prevent="downloadCsv()"
+                target="blank"
+                :href="downloadCsvSrc"
               >
                 <i class="fa fa-download"></i>
                 下載範本
@@ -366,6 +367,11 @@ export default {
       }
       return isAllowAddColumns(projectRoles.roles);
     },
+    downloadCsvSrc() {
+      return `${process.env.VUE_APP_API_URL}/project/${
+        this.currentProjectId
+      }/example-multimedia-annotations.csv`;
+    },
   },
   methods: {
     ...project.mapActions([
@@ -414,10 +420,6 @@ export default {
         ...form,
       });
       this.newColumnOpen = false;
-    },
-    downloadCsv() {
-      // TODO: call API for download csv
-      console.log('downloadCsv');
     },
   },
   mounted() {
