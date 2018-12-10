@@ -248,7 +248,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" style="display: none;">
                 <div class="col-3">
                   <div class="form-group">
                     <label>海拔：</label>
