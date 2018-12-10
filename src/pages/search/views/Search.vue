@@ -117,7 +117,7 @@
                 <div class="form-group">
                   <label>物種：</label>
                   <v-select
-                    :options="[{label:'山羌', value:'山羌'},{label:'鼬獾', value:'鼬獾'},{label:'台灣獼猴', value:'台灣獼猴'},{label:'山羊', value:'山羊'},{label:'赤腹松鼠', value:'赤腹松鼠'},{label:'白鼻心', value:'白鼻心'}]"
+                    :options="projectSpecOptions"
                     multiple
                   />
                 </div>
@@ -599,6 +599,20 @@ export default {
           data.site && data.site.value,
           data.subSite && data.subSite.value,
         );
+      });
+    },
+    projectSpecOptions: function() {
+      const species = new Set();
+      this.Projects.forEach(project => {
+        (project.speciesList || []).forEach(spec => {
+          species.add(spec);
+        });
+      });
+      return Array.from(species).map(spec => {
+        return {
+          label: spec,
+          value: spec,
+        };
       });
     },
   },
