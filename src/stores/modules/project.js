@@ -165,6 +165,9 @@ export const getters = {
       .map(key => state.columnsField.find(obj => obj.key === key) || {})
       .filter(obj => obj.key);
   },
+  projectDailyTestTime: (state, getters) => {
+    return getters.currentProject.dailyTestTime || [];
+  },
 };
 
 export const mutations = {

@@ -127,7 +127,10 @@
             </p>
             <p>
               您可以透過下載來預覽範本：
-              <a class="btn btn-default">
+              <a
+                class="btn btn-default"
+                @click.stop.prevent="downloadCsv()"
+              >
                 <i class="fa fa-download"></i>
                 下載範本
               </a>
@@ -151,8 +154,8 @@
                 <div class="radio radio-inline">
                   <input
                     type="radio"
-                    name="camera_time"
                     id="camera-time-1"
+                    v-model="dailyTestTime.status"
                     value="0"
                   >
                   <label for="camera-time-1">無設定</label>
@@ -160,19 +163,22 @@
                 <div class="radio radio-inline">
                   <input
                     type="radio"
-                    name="camera_time"
                     id="camera-time-2"
+                    v-model="dailyTestTime.status"
                     value="1"
                   >
                   <label for="camera-time-2">
                     已設定，時間為每日
                     <div class="select d-inline-block">
                       <select
-                        name=""
-                        id=""
                         class="form-control"
+                        v-model="dailyTestTime.time"
                       >
-                        <option value="">12:00</option>
+                        <option
+                          v-for="option in timeOptions"
+                          :key="option.value"
+                          :value="option.value"
+                        >{{option.label}}</option>
                       </select>
                     </div>
                   </label>
@@ -252,6 +258,32 @@ export default {
         select: '下拉選單',
         datePicker: '日期選擇',
       },
+      timeOptions: [
+        { label: '00:00', value: '00:00:00' },
+        { label: '01:00', value: '01:00:00' },
+        { label: '02:00', value: '02:00:00' },
+        { label: '03:00', value: '03:00:00' },
+        { label: '04:00', value: '04:00:00' },
+        { label: '05:00', value: '05:00:00' },
+        { label: '06:00', value: '06:00:00' },
+        { label: '07:00', value: '07:00:00' },
+        { label: '08:00', value: '08:00:00' },
+        { label: '09:00', value: '09:00:00' },
+        { label: '10:00', value: '10:00:00' },
+        { label: '11:00', value: '11:00:00' },
+        { label: '12:00', value: '12:00:00' },
+        { label: '13:00', value: '13:00:00' },
+        { label: '14:00', value: '14:00:00' },
+        { label: '15:00', value: '15:00:00' },
+        { label: '16:00', value: '16:00:00' },
+        { label: '17:00', value: '17:00:00' },
+        { label: '18:00', value: '18:00:00' },
+        { label: '19:00', value: '19:00:00' },
+        { label: '20:00', value: '20:00:00' },
+        { label: '21:00', value: '21:00:00' },
+        { label: '22:00', value: '22:00:00' },
+        { label: '23:00', value: '23:00:00' },
+      ],
       defaultColumns: [
         {
           key: 'site',
@@ -291,6 +323,10 @@ export default {
       ],
       columns: [],
       deleteColumnIndex: null,
+      dailyTestTime: {
+        status: 0,
+      },
+
       newColumnOpen: false,
       closeWindowOpen: false,
       invitationOpen: false,
@@ -306,10 +342,18 @@ export default {
         }));
       }
     },
+    projectDailyTestTime: function(newVal) {
+      if (newVal[0]) {
+        this.dailyTestTime = {
+          ...newVal[0],
+          status: 1,
+        };
+      }
+    },
   },
   computed: {
     ...auth.mapGetters(['projectRoles']),
-    ...project.mapGetters(['projectColumnsField']),
+    ...project.mapGetters(['projectColumnsField', 'projectDailyTestTime']),
     currentProjectId() {
       return this.$route.params.id;
     },
@@ -337,14 +381,30 @@ export default {
       this.deleteColumnIndex = null;
     },
     doSubmit() {
+      // save columns
       const dataFieldEnabled = this.columns
         .filter(field => !field.default)
         .map(field => field.key);
+
+      // save dailyTimer
+      const dailyTestTime = [];
+      if (this.dailyTestTime.status && this.dailyTestTime.status !== '0') {
+        dailyTestTime.push({
+          since: this.dailyTestTime.since || Date.now() / 1000,
+          time: this.dailyTestTime.time,
+        });
+      }
+
       this.updateCameraLocations([
         {
           _id: this.currentProjectId,
           projectId: this.currentProjectId,
           $set: { dataFieldEnabled },
+        },
+        {
+          _id: this.currentProjectId,
+          projectId: this.currentProjectId,
+          $set: { dailyTestTime },
         },
       ]);
     },
@@ -354,6 +414,10 @@ export default {
         ...form,
       });
       this.newColumnOpen = false;
+    },
+    downloadCsv() {
+      // TODO: call API for download csv
+      console.log('downloadCsv');
     },
   },
   mounted() {
