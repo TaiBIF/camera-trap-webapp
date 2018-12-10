@@ -215,10 +215,6 @@
       @close='newColumnOpen=false'
       @submit="submitColumn"
     />
-    <invitation-dialog
-      :open="invitationOpen"
-      @close="invitationOpen=false"
-    />
     <delete-column-dialog
       :open="deleteColumnIndex!==null"
       :column="columns[deleteColumnIndex] && columns[deleteColumnIndex].label"
@@ -235,7 +231,6 @@ import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import NewColumnModal from '../components/NewColumn';
 import DeleteColumnDialog from '../components/DeleteColumnDialog';
-import InvitationDialog from '../components/InvitationDialog';
 import EditNav from '../components/EditNav';
 import { isAllowAddColumns } from '../../../util/roles.js';
 
@@ -251,7 +246,6 @@ export default {
     EditNav,
     DeleteColumnDialog,
     CloseWindowDialog,
-    InvitationDialog,
   },
   data() {
     return {
@@ -325,13 +319,11 @@ export default {
       ],
       columns: [],
       deleteColumnIndex: null,
+      newColumnOpen: false,
       dailyTestTime: {
         status: 0,
       },
-
-      newColumnOpen: false,
       closeWindowOpen: false,
-      invitationOpen: false,
     };
   },
   watch: {
