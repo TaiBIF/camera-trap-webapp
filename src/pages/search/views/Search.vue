@@ -48,6 +48,7 @@
                       >計畫名稱：</label>
                       <v-select
                         :options="projectOptions"
+                        :on-change="generateOnProjectSelectorChangeHandler(did)"
                         v-model="data.project"
                         :placeholder="'請選擇計畫名稱'"
                       />
@@ -60,6 +61,7 @@
                       >樣區：</label>
                       <v-select
                         :options="projectSiteOptions[did]"
+                        :on-change="generateOnProjectSiteSelectorChangeHandler(did)"
                         v-model="data.site"
                         :placeholder="'請選擇樣區'"
                       />
@@ -72,6 +74,7 @@
                       >子樣區：</label>
                       <v-select
                         :options="projectSibSiteOptions[did]"
+                        :on-change="generateOnProjectSubSiteSelectorChangeHandler(did)"
                         v-model="data.subSite"
                         :placeholder="'請選擇子樣區'"
                       />
@@ -679,6 +682,30 @@ export default {
         }
       }
       return [];
+    },
+    generateOnProjectSelectorChangeHandler(dataIndex) {
+      const _this = this;
+      return function(value) {
+        this.$emit('input', value);
+        _this.form.data[dataIndex].site = '';
+        _this.form.data[dataIndex].subSite = '';
+        _this.form.data[dataIndex].camera = '';
+      };
+    },
+    generateOnProjectSiteSelectorChangeHandler(dataIndex) {
+      const _this = this;
+      return function(value) {
+        this.$emit('input', value);
+        _this.form.data[dataIndex].subSite = '';
+        _this.form.data[dataIndex].camera = '';
+      };
+    },
+    generateOnProjectSubSiteSelectorChangeHandler(dataIndex) {
+      const _this = this;
+      return function(value) {
+        this.$emit('input', value);
+        _this.form.data[dataIndex].camera = '';
+      };
     },
     submitSearch() {
       this.$router.push('/search');
