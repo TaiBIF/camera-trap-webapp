@@ -242,7 +242,7 @@ import DeleteColumnDialog from '../components/DeleteColumnDialog';
 import DialogUI from '../components/DialogUI';
 import EditNav from '../components/EditNav';
 import { isAllowAddColumns } from '../../../util/roles.js';
-import { applyNewColumnsField } from '../../../service/api.js';
+import { applyNewColumnField } from '../../../service/modules/project.js';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
@@ -447,7 +447,7 @@ export default {
             }))
           : null,
       };
-      applyNewColumnsField({ projectId, payload }).then(() => {
+      applyNewColumnField({ projectId, payload }).then(() => {
         this.newColumnOpen = false;
         this.showApplyNewColumnSuccessModal = true;
       });

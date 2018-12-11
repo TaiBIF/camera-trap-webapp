@@ -180,7 +180,7 @@ const getColumnsField = async () => {
   });
 };
 
-const applyNewColumnsField = async ({ projectId, payload }) => {
+const applyNewColumnField = async ({ projectId, payload }) => {
   return await fetchWrap({
     url: `/project/${projectId}/data-field/add`,
     method: 'POST',
@@ -200,5 +200,5 @@ export {
   getProject,
   editCameraLocations,
   getColumnsField,
-  applyNewColumnsField,
+  applyNewColumnField,
 };
