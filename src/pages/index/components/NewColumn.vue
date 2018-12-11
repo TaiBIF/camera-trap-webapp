@@ -41,7 +41,7 @@
               <div class="col-8">
                 <v-select
                   v-model="form.type"
-                  @input="changeType"
+                  @input="switchType"
                   :options="options"
                 />
               </div>
@@ -51,20 +51,24 @@
                 for=""
                 class="col-3 px-0 text-right required"
               >輸入格式：</label>
-              <div
-                class="col-8 input-group-inline"
-                v-if="form.type === '輸入框'"
-              >
+              <div class="col-8 input-group-inline">
                 <input
-                  v-if="form.type !== '下拉選單'"
+                  v-if="form.type === '輸入欄'"
                   type="text"
                   v-model="form.widget_date_format"
                   class="form-control"
                   placeholder="請填寫輸入格式"
                 >
+                <input
+                  v-if="form.type === '日期選擇'"
+                  type="datetime"
+                  v-model="form.widget_date_format"
+                  class="form-control"
+                  placeholder="請填寫輸入格式"
+                >
                 <v-select
+                  v-if="form.type === '下拉選單'"
                   class="full-width-select"
-                  v-else
                   v-model="form.widget_select_options"
                   :options="[]"
                   multiple
@@ -72,46 +76,9 @@
                   ref="select"
                 />
               </div>
-            </div>
-            <div class="form-group row">
-              <label
-                for=""
-                class="col-3 px-0 text-right"
-              >備註：</label>
-              <div class="col-9 input-group-inline">
-                <textarea
-                  v-model="form.description"
-                  class="form-control"
-                  placeholder="請輸入備註內容"
-                ></textarea>
-              </div>
-              <div
-                class="col-8 input-group-inline"
-                v-if="form.type === '日期時間'"
-              >
-                <input
-                  type="datetime"
-                  v-model="form.description"
-                  class="form-control"
-                  disabled
-                  placeholder="請填寫輸入格式"
-                >
-              </div>
-              <div
-                class="col-8 input-group-inline"
-                v-if="form.type === '下拉選單'"
-              >
-                <v-select
-                  style="width: 100%;"
-                  name="description"
-                  v-model="form.description"
-                  taggable
-                  multiple
-                />
-              </div>
               <div class="col-1 pl-0">
                 <span
-                  v-if="form.type === '輸入框' || form.type === '日期時間'"
+                  v-if="form.type === '輸入欄' || form.type === '日期選擇'"
                   class="btn btn-text px-0"
                   v-tooltip.right="{ content: '您可以規範此欄位的內容格式，以供後續使用者參考' }"
                 >
@@ -133,7 +100,7 @@
               >備註：</label>
               <div class="col-8 input-group-inline">
                 <textarea
-                  v-model="form.note"
+                  v-model="form.description"
                   cols="30"
                   rows="3"
                   class="form-control"
@@ -193,10 +160,9 @@ export default {
       form: {
         label: '',
         type: '輸入欄',
-        widget_date_format: '',
+        widget_date_format: null,
         widget_select_options: [],
         description: '',
-        note: '',
       },
       selectOptionsLength: 0,
     };
@@ -219,25 +185,19 @@ export default {
     },
   },
   methods: {
-    updateDespValue() {
-      // console.log(select);
-      // debugger;
-    },
-    changeType() {
+    switchType() {
+      this.form.widget_date_format = null;
+      this.widget_select_options = [];
+
       switch (this.form.type) {
-        case '日期時間':
-          this.form.description = 'YY/MM/DD hh:mm';
-          break;
-        case '下拉選單':
-          this.form.description = [];
+        case '日期選擇':
+          this.form.widget_date_format = 'YY/MM/DD hh:mm';
           break;
         default:
-          this.form.description = '';
           break;
       }
     },
     submit() {
-      // submit form
       this.error = false;
       if (this.form.type === '下拉選單' && !this.form.description.length) {
         this.error = true;
