@@ -18,6 +18,7 @@
           >
           </p>
           <a
+            v-if="!hideCancelBtn"
             @click="$emit('close')"
             class="btn btn-default"
           >
@@ -40,6 +41,10 @@ export default {
   name: 'DialogUi',
   props: {
     open: {
+      type: Boolean,
+      default: false,
+    },
+    hideCancelBtn: {
       type: Boolean,
       default: false,
     },
