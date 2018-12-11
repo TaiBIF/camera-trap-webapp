@@ -27,7 +27,7 @@
               <div class="col-8">
                 <input
                   type="text"
-                  v-model="form.name"
+                  v-model="form.label"
                   class="form-control"
                   placeholder="請填寫欄位名稱"
                 >
@@ -41,54 +41,44 @@
               <div class="col-8">
                 <v-select
                   v-model="form.type"
-                  @input="changeType"
-                  :options="['輸入框', '日期時間', '下拉選單']"
+                  @input="switchType"
+                  :options="options"
                 />
               </div>
             </div>
             <div class="form-group row">
               <label
                 for=""
-                class="col-3 px-0 text-right"
+                class="col-3 px-0 text-right required"
               >輸入格式：</label>
-              <div
-                class="col-8 input-group-inline"
-                v-if="form.type === '輸入框'"
-              >
+              <div class="col-8 input-group-inline">
                 <input
+                  v-if="form.type === '輸入欄'"
                   type="text"
-                  v-model="form.description"
+                  v-model="form.widget_date_format"
                   class="form-control"
                   placeholder="請填寫輸入格式"
                 >
-              </div>
-              <div
-                class="col-8 input-group-inline"
-                v-if="form.type === '日期時間'"
-              >
                 <input
+                  v-if="form.type === '日期選擇'"
                   type="datetime"
-                  v-model="form.description"
+                  v-model="form.widget_date_format"
                   class="form-control"
-                  disabled
                   placeholder="請填寫輸入格式"
                 >
-              </div>
-              <div
-                class="col-8 input-group-inline"
-                v-if="form.type === '下拉選單'"
-              >
                 <v-select
-                  style="width: 100%;"
-                  name="description"
-                  v-model="form.description"
-                  taggable
+                  v-if="form.type === '下拉選單'"
+                  class="full-width-select"
+                  v-model="form.widget_select_options"
+                  :options="[]"
                   multiple
+                  taggable
+                  ref="select"
                 />
               </div>
               <div class="col-1 pl-0">
                 <span
-                  v-if="form.type === '輸入框' || form.type === '日期時間'"
+                  v-if="form.type === '輸入欄' || form.type === '日期選擇'"
                   class="btn btn-text px-0"
                   v-tooltip.right="{ content: '您可以規範此欄位的內容格式，以供後續使用者參考' }"
                 >
@@ -110,7 +100,7 @@
               >備註：</label>
               <div class="col-8 input-group-inline">
                 <textarea
-                  v-model="form.note"
+                  v-model="form.description"
                   cols="30"
                   rows="3"
                   class="form-control"
@@ -143,6 +133,7 @@
           <button
             @click="submit()"
             class="btn btn-orange"
+            :disabled="isSelectOptionsMissing"
           >送出申請</button>
         </div>
       </div>
@@ -158,39 +149,55 @@ export default {
       type: Boolean,
       default: false,
     },
+    options: {
+      type: Array,
+      default: null,
+    },
   },
   data() {
     return {
       error: false,
-      formType: '輸入框',
       form: {
-        name: '',
-        type: '輸入框',
+        label: '',
+        type: '輸入欄',
+        widget_date_format: null,
+        widget_select_options: [],
         description: '',
-        note: '',
       },
+      selectOptionsLength: 0,
     };
   },
-  methods: {
-    updateDespValue() {
-      // console.log(select);
-      // debugger;
+  computed: {
+    isSelectOptionsMissing() {
+      return (
+        this.form.type === '下拉選單' &&
+        this.form.widget_select_options.length === 0
+      );
     },
-    changeType() {
+  },
+  watch: {
+    // re-focus to select after click enter
+    'form.widget_select_options': function(newValue) {
+      if (newValue.length > this.selectOptionsLength) {
+        this.selectOptionsLength = newValue.length;
+        this.$refs.select.$el.querySelector('input').focus();
+      }
+    },
+  },
+  methods: {
+    switchType() {
+      this.form.widget_date_format = null;
+      this.widget_select_options = [];
+
       switch (this.form.type) {
-        case '日期時間':
-          this.form.description = 'YY/MM/DD hh:mm';
-          break;
-        case '下拉選單':
-          this.form.description = [];
+        case '日期選擇':
+          this.form.widget_date_format = 'YY/MM/DD hh:mm';
           break;
         default:
-          this.form.description = '';
           break;
       }
     },
     submit() {
-      // submit form
       this.error = false;
       if (this.form.type === '下拉選單' && !this.form.description.length) {
         this.error = true;

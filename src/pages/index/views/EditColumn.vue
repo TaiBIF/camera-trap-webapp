@@ -100,10 +100,11 @@
                 >
                   <div
                     class="dropdown-item"
-                    v-for="(td, idx) in columns"
+                    v-for="(td, idx) in unUseColumnsField"
                     :key="`item-${idx}`"
+                    @click="addColumns(idx)"
                   >
-                    <span v-if="!td.default">{{td.label}}</span>
+                    <span>{{td.label}}</span>
                   </div>
                   <hr>
                   <div
@@ -127,7 +128,11 @@
             </p>
             <p>
               您可以透過下載來預覽範本：
-              <a class="btn btn-default">
+              <a
+                class="btn btn-default"
+                target="blank"
+                :href="downloadCsvSrc"
+              >
                 <i class="fa fa-download"></i>
                 下載範本
               </a>
@@ -151,8 +156,8 @@
                 <div class="radio radio-inline">
                   <input
                     type="radio"
-                    name="camera_time"
                     id="camera-time-1"
+                    v-model="dailyTestTime.status"
                     value="0"
                   >
                   <label for="camera-time-1">無設定</label>
@@ -160,19 +165,22 @@
                 <div class="radio radio-inline">
                   <input
                     type="radio"
-                    name="camera_time"
                     id="camera-time-2"
+                    v-model="dailyTestTime.status"
                     value="1"
                   >
                   <label for="camera-time-2">
                     已設定，時間為每日
                     <div class="select d-inline-block">
                       <select
-                        name=""
-                        id=""
                         class="form-control"
+                        v-model="dailyTestTime.time"
                       >
-                        <option value="">12:00</option>
+                        <option
+                          v-for="option in timeOptions"
+                          :key="option.value"
+                          :value="option.value"
+                        >{{option.label}}</option>
                       </select>
                     </div>
                   </label>
@@ -204,12 +212,9 @@
     />
     <new-column-modal
       :open="newColumnOpen"
+      :options="columnTypeOptions"
       @close='newColumnOpen=false'
-      @submit="submitColumn"
-    />
-    <invitation-dialog
-      :open="invitationOpen"
-      @close="invitationOpen=false"
+      @submit="createNewColumn"
     />
     <delete-column-dialog
       :open="deleteColumnIndex!==null"
@@ -227,7 +232,6 @@ import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import NewColumnModal from '../components/NewColumn';
 import DeleteColumnDialog from '../components/DeleteColumnDialog';
-import InvitationDialog from '../components/InvitationDialog';
 import EditNav from '../components/EditNav';
 import { isAllowAddColumns } from '../../../util/roles.js';
 
@@ -243,7 +247,6 @@ export default {
     EditNav,
     DeleteColumnDialog,
     CloseWindowDialog,
-    InvitationDialog,
   },
   data() {
     return {
@@ -252,6 +255,32 @@ export default {
         select: '下拉選單',
         datePicker: '日期選擇',
       },
+      timeOptions: [
+        { label: '00:00', value: '00:00:00' },
+        { label: '01:00', value: '01:00:00' },
+        { label: '02:00', value: '02:00:00' },
+        { label: '03:00', value: '03:00:00' },
+        { label: '04:00', value: '04:00:00' },
+        { label: '05:00', value: '05:00:00' },
+        { label: '06:00', value: '06:00:00' },
+        { label: '07:00', value: '07:00:00' },
+        { label: '08:00', value: '08:00:00' },
+        { label: '09:00', value: '09:00:00' },
+        { label: '10:00', value: '10:00:00' },
+        { label: '11:00', value: '11:00:00' },
+        { label: '12:00', value: '12:00:00' },
+        { label: '13:00', value: '13:00:00' },
+        { label: '14:00', value: '14:00:00' },
+        { label: '15:00', value: '15:00:00' },
+        { label: '16:00', value: '16:00:00' },
+        { label: '17:00', value: '17:00:00' },
+        { label: '18:00', value: '18:00:00' },
+        { label: '19:00', value: '19:00:00' },
+        { label: '20:00', value: '20:00:00' },
+        { label: '21:00', value: '21:00:00' },
+        { label: '22:00', value: '22:00:00' },
+        { label: '23:00', value: '23:00:00' },
+      ],
       defaultColumns: [
         {
           key: 'site',
@@ -292,24 +321,35 @@ export default {
       columns: [],
       deleteColumnIndex: null,
       newColumnOpen: false,
+      dailyTestTime: {
+        status: 0,
+      },
       closeWindowOpen: false,
-      invitationOpen: false,
     };
   },
   watch: {
-    projectColumnsField: function(newVal) {
-      if (this.columns.length === 0) {
-        // columns must use data for set as v-model in draggable
-        this.columns = newVal.map(obj => ({
-          ...obj,
-          type: this.columnTypeMapping[obj.widget_type],
-        }));
+    projectDataFieldEnabled: function() {
+      this.initAdditionalColumns();
+    },
+    allColumnsField: function() {
+      this.initAdditionalColumns();
+    },
+    projectDailyTestTime: function(newVal) {
+      if (newVal[0]) {
+        this.dailyTestTime = {
+          ...newVal[0],
+          status: 1,
+        };
       }
     },
   },
   computed: {
     ...auth.mapGetters(['projectRoles']),
-    ...project.mapGetters(['projectColumnsField']),
+    ...project.mapGetters([
+      'projectDailyTestTime',
+      'allColumnsField',
+      'projectDataFieldEnabled',
+    ]),
     currentProjectId() {
       return this.$route.params.id;
     },
@@ -322,6 +362,20 @@ export default {
       }
       return isAllowAddColumns(projectRoles.roles);
     },
+    unUseColumnsField() {
+      const currentFieldEnabled = this.columns.map(obj => obj.key);
+      return this.allColumnsField.filter(
+        field => !currentFieldEnabled.includes(field.key),
+      );
+    },
+    columnTypeOptions() {
+      return Object.values(this.columnTypeMapping);
+    },
+    downloadCsvSrc() {
+      return `${process.env.VUE_APP_API_URL}/project/${
+        this.currentProjectId
+      }/example-multimedia-annotations.csv`;
+    },
   },
   methods: {
     ...project.mapActions([
@@ -329,6 +383,18 @@ export default {
       'loadColumnsField',
       'updateCameraLocations',
     ]),
+    initAdditionalColumns() {
+      if (this.columns.length === 0) {
+        // columns must use data not computed for 2-way binding in draggable
+        this.columns = this.projectDataFieldEnabled
+          .map(key => this.allColumnsField.find(obj => obj.key === key) || {})
+          .filter(obj => obj.key)
+          .map(obj => ({
+            ...obj,
+            type: this.columnTypeMapping[obj.widget_type],
+          }));
+      }
+    },
     deleteItem(i) {
       this.deleteColumnIndex = i;
     },
@@ -336,24 +402,66 @@ export default {
       this.columns.splice(this.deleteColumnIndex, 1);
       this.deleteColumnIndex = null;
     },
+    addColumns(idx) {
+      this.columns.push({
+        ...this.unUseColumnsField[idx],
+        type: this.columnTypeMapping[this.unUseColumnsField[idx].widget_type],
+      });
+    },
+    createNewColumn(form) {
+      const {
+        label,
+        widget_date_format,
+        type,
+        description,
+        widget_select_options,
+      } = form;
+      const widget_type = Object.keys(this.columnTypeMapping).find(
+        key => this.columnTypeMapping[key] === type,
+      );
+      const obj = {
+        projectId: this.currentProjectId,
+        label,
+        description,
+        widget_date_format,
+        widget_type,
+        fieldStatus: 'pending',
+        widget_select_options: widget_select_options.map(label => ({
+          key: '',
+          label,
+        })),
+      };
+      // TODO: submit API
+      console.log('xxx createNewColumn', obj);
+      this.newColumnOpen = false;
+    },
     doSubmit() {
+      // save columns
       const dataFieldEnabled = this.columns
         .filter(field => !field.default)
         .map(field => field.key);
+
+      // save dailyTimer
+      const dailyTestTime = [];
+      if (this.dailyTestTime.status && this.dailyTestTime.status !== '0') {
+        dailyTestTime.push({
+          since: this.dailyTestTime.since || Date.now() / 1000,
+          time: this.dailyTestTime.time,
+        });
+      }
+
       this.updateCameraLocations([
         {
           _id: this.currentProjectId,
           projectId: this.currentProjectId,
           $set: { dataFieldEnabled },
         },
+        {
+          _id: this.currentProjectId,
+          projectId: this.currentProjectId,
+          $set: { dailyTestTime },
+        },
       ]);
-    },
-    submitColumn(form) {
-      this.column.push({
-        default: false,
-        ...form,
-      });
-      this.newColumnOpen = false;
     },
   },
   mounted() {
