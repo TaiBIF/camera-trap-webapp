@@ -69,6 +69,7 @@
                   :options="[]"
                   multiple
                   taggable
+                  ref="select"
                 />
               </div>
             </div>
@@ -197,6 +198,7 @@ export default {
         description: '',
         note: '',
       },
+      selectOptionsLength: 0,
     };
   },
   computed: {
@@ -205,6 +207,15 @@ export default {
         this.form.type === '下拉選單' &&
         this.form.widget_select_options.length === 0
       );
+    },
+  },
+  watch: {
+    // re-focus to select after click enter
+    'form.widget_select_options': function(newValue) {
+      if (newValue.length > this.selectOptionsLength) {
+        this.selectOptionsLength = newValue.length;
+        this.$refs.select.$el.querySelector('input').focus();
+      }
     },
   },
   methods: {
