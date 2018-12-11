@@ -24,7 +24,7 @@
                 for=""
                 class="col-3 px-0 text-right required"
               >欄位名稱：</label>
-              <div class="col-9">
+              <div class="col-8">
                 <input
                   type="text"
                   v-model="form.name"
@@ -38,10 +38,11 @@
                 for=""
                 class="col-3 px-0 text-right required"
               >欄位形式：</label>
-              <div class="col-9">
+              <div class="col-8">
                 <v-select
                   v-model="form.type"
-                  :options="['輸入框']"
+                  @input="changeType"
+                  :options="['輸入框', '日期時間', '下拉選單']"
                 />
               </div>
             </div>
@@ -50,7 +51,10 @@
                 for=""
                 class="col-3 px-0 text-right"
               >輸入格式：</label>
-              <div class="col-4 input-group-inline">
+              <div
+                class="col-8 input-group-inline"
+                v-if="form.type === '輸入框'"
+              >
                 <input
                   type="text"
                   v-model="form.description"
@@ -58,10 +62,80 @@
                   placeholder="請填寫輸入格式"
                 >
               </div>
+              <div
+                class="col-8 input-group-inline"
+                v-if="form.type === '日期時間'"
+              >
+                <input
+                  type="datetime"
+                  v-model="form.description"
+                  class="form-control"
+                  disabled
+                  placeholder="請填寫輸入格式"
+                >
+              </div>
+              <div
+                class="col-8 input-group-inline"
+                v-if="form.type === '下拉選單'"
+              >
+                <v-select
+                  style="width: 100%;"
+                  name="description"
+                  v-model="form.description"
+                  taggable
+                  multiple
+                />
+              </div>
+              <div class="col-1 pl-0">
+                <span
+                  v-if="form.type === '輸入框' || form.type === '日期時間'"
+                  class="btn btn-text px-0"
+                  v-tooltip.right="{ content: '您可以規範此欄位的內容格式，以供後續使用者參考' }"
+                >
+                  <i class="icon-info"></i>
+                </span>
+                <span
+                  v-if="form.type === '下拉選單'"
+                  class="btn btn-text px-0"
+                  v-tooltip.right="{ content: '請鍵入下拉選單選項，選項內容鍵入完畢後請按下enter鍵，繼續輸入下個選項' }"
+                >
+                  <i class="icon-info"></i>
+                </span>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label
+                for=""
+                class="col-3 px-0 text-right"
+              >備註：</label>
+              <div class="col-8 input-group-inline">
+                <textarea
+                  v-model="form.note"
+                  cols="30"
+                  rows="3"
+                  class="form-control"
+                  placeholder="請輸入備註內容"
+                ></textarea>
+              </div>
+              <div class="col-1 pl-0">
+                <span
+                  class="btn btn-text px-0"
+                  v-tooltip.right="{ content: '您可以簡易的向管理員說明此次新增的需求，或任何需要補充說明的內容，作為管理員審核參考' }"
+                >
+                  <i class="icon-info"></i>
+                </span>
+              </div>
             </div>
           </form>
         </div>
         <div class="modal-footer text-right">
+          <div
+            class="error-message inline float-left"
+            v-if="error"
+          >
+            <span class="alert-box"></span>
+            <span class="text">您尚未建立選單項目</span>
+          </div>
           <a
             @click="$emit('close')"
             class="btn btn-default"
@@ -87,17 +161,42 @@ export default {
   },
   data() {
     return {
+      error: false,
+      formType: '輸入框',
       form: {
         name: '',
-        type: '',
+        type: '輸入框',
         description: '',
+        note: '',
       },
     };
   },
   methods: {
+    updateDespValue() {
+      // console.log(select);
+      // debugger;
+    },
+    changeType() {
+      switch (this.form.type) {
+        case '日期時間':
+          this.form.description = 'YY/MM/DD hh:mm';
+          break;
+        case '下拉選單':
+          this.form.description = [];
+          break;
+        default:
+          this.form.description = '';
+          break;
+      }
+    },
     submit() {
       // submit form
-      this.$emit('submit', this.form);
+      this.error = false;
+      if (this.form.type === '下拉選單' && !this.form.description.length) {
+        this.error = true;
+      } else {
+        this.$emit('submit', this.form);
+      }
     },
   },
 };
