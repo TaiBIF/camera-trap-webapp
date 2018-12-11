@@ -1,904 +1,1052 @@
-.page-intro 
-  .btn.btn-lg
-    font-weight: 400
-    width: 100%
-    max-width: 360px
-    font-size: 24px
-    height: 60px
-    line-height: 60px
+.page-intro
+    .btn.btn-lg
+        font-weight: 400
+        width: 100%
+        max-width: 360px
+        font-size: 24px
+        height: 60px
+        line-height: 60px
 
-  section
-    min-height: 680px
-    padding: 60px 0
-    
-    h2.text-green 
-      font-size: 30px
-      margin-top: 0
-      big 
-        font-size: 60px
-        color: #7C9C2D
-    
-    p.desp
-      color: #8B8B8B
-      font-size: 16px
-      line-height: 26px
-
-    .img-items
-      margin-top: 70px
-      .item
-        display: inline-block
-        margin-left: 40px
-        text-align: center
-        .image
-          line-height: 0
-          img 
-            width: 120px
-        .content
-          margin-top: 20px
-          color: #405C36
-
-    &.banner
-      position: relative
-      height: 590px
-      background: url(/assets/intro/banner@2x.png) 
-      background-size: cover
-      padding: 0
-      .caption
-        position: absolute
-        bottom: 85px
-        color: #FFF 
-        h1.header
-          font-size: 72px
-          color: #FFF 
-          margin: 0
-        p 
-          margin-top: 10px
-          margin-bottom: 40px
-          font-size: 30px
-
-    &.important
-      min-height: 600px
-      h1.text-green 
-        font-size: 40px
-      .service-items
-        margin-top: 40px
-        div[class*="col-"]
-          margin-bottom: 20px
-
-      .image
-        text-align: center
-        img 
-          width: 222px
-          margin: 0 auto
-        + .content
-          text-align: center
-          h2 
-            margin-top: 20px
-            margin-bottom: 0
-          .description
-            font-size: 24px
-            margin: 0
-            color: $gray
-            font-weight: 400
-
-    &.easy,
-    &.effect,
-    &.professional
-      padding-top: 140px
-    &.easy
-      background: url(/assets/intro/bg-easy@2x.png) right center no-repeat
-      background-size: auto 100%
-    &.effect
-      background: url(/assets/intro/bg-effect@2x.png) left center no-repeat
-      background-size: auto 100%
-    &.professional
-      background: url(/assets/intro/bg-professional@2x.png) right center no-repeat
-      background-size: auto 100%
-    &.demo
-      background: url(/assets/intro/bg-demo@2x.png) center bottom no-repeat
-      background-size: 100% auto
-
-      img
-        max-width: 100%
-
-      h1.text-green
-        text-align: center
-        font-size: 76px
-        line-height: 0.7
-        small 
-          font-size: 24px
-          color: $light-green
-
-  footer 
-    padding: 40px 0
-    color: #FFF
-    background: #2E432B
-
-    .logo
-      height: 33px
-    
-    span.gov-item
-      margin-left: 15px
-      display: inline-block
-      vertical-align: middle
-      margin-bottom: 15px
-        
-      img.gov-logo
-        vertical-align: middle
-        height: 27px
-        margin-right: 5px
-      span.text
-        vertical-align: middle
-        text-align: left
-        display: inline-block
-        font-size: 14px
-        font-weight: 300
-        small 
-          display: block
-          font-size: 11px
-
-    hr
-      margin-top: 40px
-      border: 0
-      border-top: 1px solid #979797
-
-    .sitemap
-      display: flex 
-      flex-direction: row
-      .item 
-        flex: 1
-        label 
-          height: 40px
-          line-height: 40px
-        ul
-          margin: 0
-          padding: 0
-          list-style: none 
-          li > a 
-            color: #FFF
-            font-weight: 300
-            line-height: 30px
-            height: 30px
-            > .icon
-              margin-right: 10px
-            > * 
-              vertical-align: middle
-
-  @media screen and (max-width: 768px)
-    font-size: 14px
-    footer
-      .sitemap
-        flex-direction: column
-          
     section
-      .btn.btn-lg
-        font-size: 20px
-        line-height: 48px
-        height: 48px
-      .img-items
-        margin-top: 30px
-        .item
-          margin-left: 20px
-      &.banner
-        .caption
-          text-align: center
-      &.easy
-        padding-top: 200px
-        background-position: right top
-        background-size: auto 300px
-      &.effect
-        padding-top: 200px
-        background-position: left top
-        background-size: auto 300px
-      &.professional
-        padding-top: 0
-        padding-bottom: 250px
-        background-position: right bottom
-        background-size: auto 300px
-      &.important
-        min-height: 600px
-        h1.text-green 
-          font-size: 32px
-            
-        .image
-          text-align: center
-          img 
-            width: 222px
-            margin: 0 auto
-          + .content
-            h2 
-              font-size: 20px
-            .description
-              font-size: 14px
+        min-height: 680px
+        padding: 60px 0
+
+        h2.text-green
+            font-size: 30px
+            margin-top: 0
+
+            big
+                font-size: 60px
+                color: #7C9C2D
+
+        p.desp
+            color: #8B8B8B
+            font-size: 16px
+            line-height: 26px
+
+        .img-items
+            margin-top: 70px
+
+            .item
+                display: inline-block
+                margin-left: 40px
+                text-align: center
+
+                .image
+                    line-height: 0
+
+                    img
+                        width: 120px
+
+                .content
+                    margin-top: 20px
+                    color: #405C36
+
+        &.banner
+            position: relative
+            height: 590px
+            background: url(/assets/intro/banner@2x.png)
+            background-size: cover
+            padding: 0
+
+            .caption
+                position: absolute
+                bottom: 85px
+                color: #FFF
+
+                h1.header
+                    font-size: 72px
+                    color: #FFF
+                    margin: 0
+
+                p
+                    margin-top: 10px
+                    margin-bottom: 40px
+                    font-size: 30px
+
+        &.important
+            min-height: 600px
+
+            h1.text-green
+                font-size: 40px
+
+            .service-items
+                margin-top: 40px
+
+                div[class*="col-"]
+                    margin-bottom: 20px
+
+            .image
+                text-align: center
+
+                img
+                    width: 222px
+                    margin: 0 auto
+
+                + .content
+                    text-align: center
+
+                    h2
+                        margin-top: 20px
+                        margin-bottom: 0
+
+                    .description
+                        font-size: 24px
+                        margin: 0
+                        color: $gray
+                        font-weight: 400
+
+        &.easy,
+        &.effect,
+        &.professional
+            padding-top: 140px
+
+        &.easy
+            background: url(/assets/intro/bg-easy@2x.png) right center no-repeat
+            background-size: auto 100%
+
+        &.effect
+            background: url(/assets/intro/bg-effect@2x.png) left center no-repeat
+            background-size: auto 100%
+
+        &.professional
+            background: url(/assets/intro/bg-professional@2x.png) right center no-repeat
+            background-size: auto 100%
+
+        &.demo
+            background: url(/assets/intro/bg-demo@2x.png) center bottom no-repeat
+            background-size: 100% auto
+
+            img
+                max-width: 100%
+
+            h1.text-green
+                text-align: center
+                font-size: 76px
+                line-height: 0.7
+
+                small
+                    font-size: 24px
+                    color: $light-green
+
+    footer
+        padding: 40px 0
+        color: #FFF
+        background: #2E432B
+
+        .logo
+            height: 33px
+
+        span.gov-item
+            margin-left: 15px
+            display: inline-block
+            vertical-align: middle
+            margin-bottom: 15px
+
+            img.gov-logo
+                vertical-align: middle
+                height: 27px
+                margin-right: 5px
+
+            span.text
+                vertical-align: middle
+                text-align: left
+                display: inline-block
+                font-size: 14px
+                font-weight: 300
+
+                small
+                    display: block
+                    font-size: 11px
+
+        hr
+            margin-top: 40px
+            border: 0
+            border-top: 1px solid #979797
+
+        .sitemap
+            display: flex
+            flex-direction: row
+
+            .item
+                flex: 1
+
+                label
+                    height: 40px
+                    line-height: 40px
+
+                ul
+                    margin: 0
+                    padding: 0
+                    list-style: none
+
+                    li > a
+                        color: #FFF
+                        font-weight: 300
+                        line-height: 30px
+                        height: 30px
+
+                        > .icon
+                            margin-right: 10px
+
+                        > *
+                            vertical-align: middle
+
+    @media screen and (max-width: 768px)
+        font-size: 14px
+
+        footer
+            .sitemap
+                flex-direction: column
+
+        section
+            .btn.btn-lg
+                font-size: 20px
+                line-height: 48px
+                height: 48px
+
+            .img-items
+                margin-top: 30px
+
+                .item
+                    margin-left: 20px
+
+            &.banner
+                .caption
+                    text-align: center
+
+            &.easy
+                padding-top: 200px
+                background-position: right top
+                background-size: auto 300px
+
+            &.effect
+                padding-top: 200px
+                background-position: left top
+                background-size: auto 300px
+
+            &.professional
+                padding-top: 0
+                padding-bottom: 250px
+                background-position: right bottom
+                background-size: auto 300px
+
+            &.important
+                min-height: 600px
+
+                h1.text-green
+                    font-size: 32px
+
+                .image
+                    text-align: center
+
+                    img
+                        width: 222px
+                        margin: 0 auto
+
+                    + .content
+                        h2
+                            font-size: 20px
+
+                        .description
+                            font-size: 14px
 
 .page-project
-  width: 100%
+    width: 100%
 
-  #map
-    height: 400px
-    
-  > .container
-    padding-top: 20px
+    #map
+        height: 400px
 
-  display: flex
-  flex-wrap: wrap
-  flex-direction: row
-  
+    > .container
+        padding-top: 20px
 
-  &.page-project-edit
-    padding-top: 0px
-
-    .list
-      .item:not(.active)
-        .icon
-          &:before
-            content: ""
-            display: inline-block
-            width: 8px
-            height: 8px
-            background: $gray
-            +border-radius(8px)
-          > i.fa 
-            display: none
-  
-  .invite-block
-    background: #F8F8F8
-    padding: 20px
-    form.form-horizontal label
-      line-height: 38px
-
-  .empty-result
-    text-align: center
-    padding-top: 90px
-    padding-bottom: 90px
-    h5
-      margin-top: 10px
-
-  .panel-body.camera-editor
     display: flex
-    background: #F8F8F8
+    flex-wrap: wrap
     flex-direction: row
-    padding: 0
-    
-    .sidebar
-      width: 253px
-      background: #FFF
-      box-shadow: 0 2px 3px 0 rgba(170,191,181,.4)
 
-      ul 
-        list-style: none
-        margin: 0
+    &.page-project-edit
+        padding-top: 0px
+
+        .list
+            .item:not(.active)
+                .icon
+                    &:before
+                        content: ""
+                        display: inline-block
+                        width: 8px
+                        height: 8px
+                        background: $gray
+
+                        +border-radius(8px)
+
+                    > i.fa
+                        display: none
+
+    .invite-block
+        background: #F8F8F8
+        padding: 20px
+
+        form.form-horizontal label
+            line-height: 38px
+
+    .empty-result
+        text-align: center
+        padding-top: 90px
+        padding-bottom: 90px
+
+        h5
+            margin-top: 10px
+
+    .panel-body.camera-editor
+        display: flex
+        background: #F8F8F8
+        flex-direction: row
         padding: 0
-        li 
-          display: block 
-          -webkit-user-select: none
-          -khtml-user-select: none
-          -moz-user-select: none
-          -o-user-select: none
-          -ms-user-select: none
-          user-select: none
 
-          > ul.tree-menu
-            display: none
+        .sidebar
+            width: 253px
+            background: #FFF
+            box-shadow: 0 2px 3px 0 rgba(170, 191, 181, 0.4)
 
-          &.open 
-            > ul.tree-menu
-              display: block
-          &.active 
-            > .tree-menu-link,
-            > .site-item
-              background: #E9F2DE
-              color: $green
-              box-shadow: inset 0px -1px 0 0 #E1E3E5
+            ul
+                list-style: none
+                margin: 0
+                padding: 0
 
-          &.add
+                li
+                    display: block
+                    -webkit-user-select: none
+                    -khtml-user-select: none
+                    -moz-user-select: none
+                    -o-user-select: none
+                    -ms-user-select: none
+                    user-select: none
+
+                    > ul.tree-menu
+                        display: none
+
+                    &.open
+                        > ul.tree-menu
+                            display: block
+
+                    &.active
+                        > .tree-menu-link,
+                        > .site-item
+                            background: #E9F2DE
+                            color: $green
+                            box-shadow: inset 0px -1px 0 0 #E1E3E5
+
+                    &.add
+                        display: flex
+                        color: $gray
+                        padding: 0 20px
+
+                    &.edit
+                        .site-item
+                            padding-top: 0 !important
+                            padding-bottom: 0 !important
+                            padding-right: 0
+
+                    > .site-item
+                        cursor: pointer
+                        display: flex
+                        flex-direction: row
+                        padding: 13px 20px
+                        background: #F4F4F4
+                        opacity: 0.8
+                        box-shadow: inset 0 -1px 0 0 #E1E3E5
+
+                        &:hover,
+                        &:focus
+                            opacity: 1
+
+                    > .site-item + ul.tree-menu
+                        > li.tree-menu-item.edit .tree-menu-link
+                            padding-top: 0
+                            padding-bottom: 0
+
+                        > li.tree-menu-item .tree-menu-link
+                            display: flex
+                            padding: 13px 20px
+                            padding-left: 40px
+
+                            .text
+                                flex: 1
+
+                            > .icon
+                                width: 20px
+                                height: 20px
+                                text-align: center
+                                line-height: 24px
+                                margin-right: 5px
+                                font-size: 10px
+                                align-self: center
+
+                                .has-error
+                                    display: inline-block
+                                    width: 16px
+                                    height: 16px
+                                    border-radius: 20px
+                                    background: $red
+
+                        > li.add
+                            display: flex
+                            padding: 0 20px
+                            padding-left: 40px
+
+                    .icon
+                        margin-right: 5px
+                        align-self: center
+
+                    .text
+                        flex: 1
+
+                        input
+                            border: 0
+                            font-size: 16px
+                            outline: 0
+                            padding: 13px 0
+                            background: transparent
+
+                            &:focus
+                                outline: 0
+
+        .sheet-view
             display: flex
+            height: 100%
+            background: #FFF
+            flex-direction: column
+            visibility: hidden
+
+            &.show
+                visibility: visible
+
+            .sheet-container
+                flex: 1
+
+        .maintain
+            flex: 1
+            min-height: 446px
+
+    .column-editor
+        border: 1px solid #F0F1F3
+
+        .column-header
+            background: #E1E3E5
+            color: $black
+            text-align: left
+
+            > div
+                padding: 8px 20px
+
+                &:first-child
+                    padding-left: 40px
+
+        .column-footer .btn
+            padding: 12px 40px
+            height: auto
+            color: $green
+
+        .column-body
+            padding: 0 15px
+
+            .column-item
+                border-bottom: 1px solid #F0F1F3
+
+                > div
+                    padding: 18px 20px
+
+                    &:first-child
+                        padding-left: 40px
+
+    .chart-control
+        position: relative
+        margin-top: 20px
+        margin-bottom: 10px
+
+        .btn.btn-default
+            position: absolute
+            top: -5px
+            right: 15px
+
+    aside
+        display: block
+        width: 248px
+        background: #F9FBFA
+        overflow: auto
+        height: calc(100vh - 64px)
+
+        .aside-header
             color: $gray
+            height: 60px
+            line-height: 60px
             padding: 0 20px
 
-          &.edit 
-            .site-item
-              padding-top: 0 !important
-              padding-bottom: 0 !important
-              padding-right: 0
-          > .site-item
-            cursor: pointer
-            display: flex 
-            flex-direction: row
-            padding: 13px 20px
-            background: #F4F4F4
-            opacity: .8
-            box-shadow: inset 0 -1px 0 0 #E1E3E5
-            &:hover,
-            &:focus
-              opacity: 1
-          
-          > .site-item + ul.tree-menu 
-            > li.tree-menu-item.edit .tree-menu-link
-              padding-top: 0
-              padding-bottom: 0
+        .aside-project
+            padding: 10px 20px
+            color: $green
+            background-color: $bg-green
+            margin-bottom: 10px
 
-            > li.tree-menu-item .tree-menu-link
-              display: flex
-              padding: 13px 20px
-              padding-left: 40px
-              .text
-                flex: 1
-              > .icon
-                width: 20px
-                height: 20px
-                text-align: center
-                line-height: 24px
-                margin-right: 5px
-                font-size: 10px
-                align-self: center
-                .has-error
-                  display: inline-block
-                  width: 16px
-                  height: 16px
-                  border-radius: 20px
-                  background: $red
-            > li.add
-              display: flex
-              padding: 0 20px
-              padding-left: 40px
+            > a
+                display: block
 
-          .icon
-            margin-right: 5px
-            align-self: center
+    .camera-chart
+        position: absolute
+        width: calc(100% - 15px)
+        height: 100%
+        display: block
+        top: 0
+        left: 0
+        padding: 20px 30px
+        background: #FFF
+        border: 1px solid $border-gray
+        z-index: 9
 
-          .text
-            flex: 1
-            input
-              border: 0
-              font-size: 16px
-              outline: 0
-              padding: 13px 0
-              background: transparent
-              &:focus
-                outline: 0
+        +border-radius(4px)
 
-    .sheet-view
-      display: flex 
-      height: 100%
-      background: #FFF
-      flex-direction: column
-      visibility: hidden
-      &.show
-        visibility: visible
-      .sheet-container
-        flex: 1
+        .close
+            position: absolute
+            right: 20px
+            top: 15px
+            color: $gray
+
     .maintain
-      flex: 1
-      min-height: 446px
+        flex: 1
+        padding: 20px
+        box-shadow: (-1px) 0 0 0 #9B9B9B
 
-  .column-editor
-    border: 1px solid #F0F1F3
-    .column-header
-      background: #E1E3E5
-      color: $black
-      text-align: left
-      > div
-        padding: 8px 20px
-        &:first-child
-          padding-left: 40px
+    .speices-item
+        margin-bottom: 20px
 
-    .column-footer .btn
-      padding: 12px 40px
-      height: auto
-      color: $green
-    .column-body
-      padding: 0 15px
-      .column-item 
-        border-bottom: 1px solid #F0F1F3
-        > div
-          padding: 18px 20px
-          &:first-child
-            padding-left: 40px
+        .circle
+            float: left
+            display: block
+            margin-top: 4px
+            width: 14px
+            height: 14px
 
-  .chart-control
-    position: relative
-    margin-top: 20px
-    margin-bottom: 10px
-    .btn.btn-default
-      position: absolute
-      top: -5px
-      right: 15px
+            +border-radius(7px)
 
-  aside 
-    display: block
-    width: 248px
-    background: #F9FBFA
-    overflow: auto
-    height: calc(100vh - 64px)
+            margin-right: 5px
 
-    .aside-header
-      color: $gray
-      height: 60px
-      line-height: 60px
-      padding: 0 20px
+            + .text
+                display: block
+                margin-left: 24px
 
-    .aside-project
-      padding: 10px 20px
-      color: $green
-      background-color: $bg-green
-      margin-bottom: 10px
-      
-      > a 
-        display: block
-
-  .camera-chart 
-    position: absolute
-    width: calc(100% - 15px)
-    height: 100%
-    display: block
-    top: 0
-    left: 0
-    padding: 20px 30px
-    background: #FFF
-    border: 1px solid $border-gray
-    z-index: 9
-    +border-radius(4px)
-    .close
-      position: absolute
-      right: 20px
-      top: 15px
-      color: $gray
-    
-  .maintain 
-    flex: 1
-    padding: 20px
-    box-shadow: -1px 0 0 0 #9B9B9B
-
-  .speices-item
-    margin-bottom: 20px
-    .circle
-      float: left
-      display: block
-      margin-top: 4px
-      width: 14px
-      height: 14px
-      +border-radius(7px)
-      margin-right: 5px
-      + .text
-        display: block
-        margin-left: 24px
-        .sub-item
-          margin-top: 20px
+                .sub-item
+                    margin-top: 20px
 
 .page-sheet
-  padding: 0
-  display: flex 
-  flex-direction: column
-  width: calc(100vw - 248px)
-  
-  form.form.filter-form
-    font-size: 13px
-    padding-bottom: 0px
-    
-    > .row > div[class*="col-"]
-      &:not(:last-child):before
-        content: ""
-        position: absolute
-        width: 1px 
-        height: 90%
-        display: block
-        right: 0
-        background: $border-gray
+    padding: 0
+    display: flex
+    flex-direction: column
+    width: calc(100vw - 248px)
 
-      .row 
-        margin: 0 -5px
-      .row > div[class*='col-']
-        padding-left: 5px
-        padding-right: 5px
-
-    .form-group
-      font-size: 13px
-      margin-bottom: 10px
-      label:not(.btn)
-        line-height: 30px
-    .v-select .open-indicator
-      margin-top: 5px
-    .v-select .selected-tag
-      line-height: 1
-      padding: 0 10px
-      height: 24px
-
-    .v-select .vs__selected-options > input[type=search], 
-    .v-select .vs__selected-options > input[type=search]:focus,
-    .dropdown.v-select.single.searchable .dropdown-toggle .form-control,
-    .mx-datepicker .mx-input-wrapper .mx-input,
-    .time-picker input.display-time,
-    .time-picker .clear-btn
-      height: 30px
-      line-height: 30px
-      vertical-align: top
-    .time-picker .clear-btn
-      margin: 0
-
-    .input-group .input-group-append
-      width: 30px
-      height: 30px
-      line-height: 30px
-
-  .search-filters
-    div[class*="col-"]:not(:last-child):before
-      content: ""
-      position: absolute
-      width: 1px 
-      height: 90%
-      display: block
-      right: 0
-      background: $border-gray
-
-    .item 
-      font-size: 13px
-      margin-bottom: 10px
-
-      label
-        float: left
-        text-align: right
-        color: $gray
-        width: 70px
-      .content 
-        display: block
-        margin-left: 70px
-
-      &.short-label > label 
-        width: 50px
-        + .content
-          margin-left: 50px
-      &.long-label > label 
-        width: 100px
-        + .content
-          margin-left: 100px
-
-  .edit-container
-    padding: 10px 20px
-    color: $gray
-    background: $black
-    font-size: 13px
-    span 
-      vertical-align: middle
-    .btn
-      vertical-align: middle
-    .btn.btn-circle
-      width: 32px
-      height: 32px
-      line-height: 32px
-      text-align: center
-      margin-top: -2px
-      padding: 5px 0 0 1px
-      border: 0
-      vertical-align: middle
-      background: rgba(255,255,255,.3)
-      +border-radius(16px)
-    span.divider
-      display: inline-block 
-      width: 1px
-      height: 30px
-      background: #D3D6D9
-      opacity: .5
-      margin: 0 10px
-
-  .search-container
-    background: #FFF
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,.3)
-    z-index: 120
-    
-    .btn-orange 
-      min-width: 120px
-    .search-content
-      background: #FFF
-      padding: 20px 20px 10px
-    
-  .sheet-container
-    flex: 1
-    display: flex 
-    flex-wrap: wrap
-    
-    .btn-group.btn-grayscale
-      .btn.btn-sm
-        vertical-align: middle
-        border-color: $gray
-        line-height: 20px
-        > *
-          vertical-align: middle
-        .icon
-          margin-right: 4px
-        .text
-          padding-right: 5px
-          border-right: 1px solid transparentize($gray, .8)
-      &.active > .btn.btn-sm
-        border-color: $green
-        color: $green
-      .btn:first-child
-        border-right: 0
-        +border-radius(4px 0 0 4px)
-      .dropdown-toggle.dropdown-toggle-split
-        border-left: 0
-        +border-radius(0 4px 4px 0)
-        &:after
-          display: none
-
-    .gallery-body
-      -webkit-touch-callout: none
-      -webkit-user-select: none
-      -khtml-user-select: none
-      -moz-user-select: none
-      -ms-user-select: none
-      user-select: none
-      .img-container
-        position: relative
-        padding-bottom: 75%
-        display: block
-        overflow: hidden
-        
-        > img 
-          left: -100%
-          right: -100%
-          top: -100%
-          bottom: -100%
-          margin: auto
-          max-width: none !important
-          position: absolute
-          cursor: all-scroll
-          transform-origin: 50%
-          transition: width .3s ease
-          -webkit-touch-callout: none
-          -webkit-user-select: none
-          -khtml-user-select: none
-          -moz-user-select: none
-          -ms-user-select: none
-          user-select: none
-        .control-buttons
-          position: absolute
-          width: 24px
-          right: 10px
-          top: 10px
-          .btn-group
-            display: block
-            margin-bottom: 10px
-            line-height: 0
-            .btn
-              padding: 0
-              width: 24px
-              height: 24px
-              line-height: 0
-              padding: 1px
-              margin: 0
-              &:first-child
-                +border-radius(4px 4px 0 0)
-              &:last-child
-                +border-radius(0 0 4px 4px)
-              &:last-child:first-child
-                +border-radius(4px)
-
-    .version-header,
-    .gallery-header
-      font-size: 13px
-      font-weight: 500
-      line-height: 40px
-      background: #F0F1F3
-      padding: 0 10px
-      border-bottom: 1px solid #DBDBDB
-    
-    .sheet-footer
-      height: 40px
-      line-height: 40px
-      font-size: 13px
-      padding: 0 20px
-      .select
-        display: inline-block
-        vertical-align: middle
-        margin: 0 5px
-        width: 64px
-        height: 24px
+    form.form.filter-form
         font-size: 13px
-        overflow: hidden
-        border: 1px solid #E1E3E5
-        background: #FFF right 10px center url(/assets/common/caret@2x.png) no-repeat
-        background-size: 14px
-        +border-radius(2px)
-        select.form-control
-          border: 0
-          font-size: 13px
-          width: 80px
-          height: 24px
-          background: transparent
-      .pager
-        margin: 8px 20px 0 0
-        .input-group-prepend,
-        .input-group-append
-          button 
-            background: #FFF
-            border: 1px solid #E1E3E5
-        input.form-control
-          font-size: 13px
-          width: 40px
-          height: 24px
-          color: $black
-          text-align: center
-          outline: 0
-          &:focus 
-            outline: 0
-            border-color: #6B6A6B
+        padding-bottom: 0px
 
-    .sheet-header
-      position: relative
-      padding: 0 10px
-      [class*='col-']
-        line-height: 38px
-        > *
-          display: inline-block
-          vertical-align: middle
-        .btn-icon
-          vertical-align: middle
-          padding: 2px
-          width: 24px
-          height: 24px
-          line-height: 0
-          border: 1px solid $gray
-          &.active
-            border: 1px solid $green
-            box-shadow: 0 0 2px 0 transparentize($green, .51)
-      .divider
-        vertical-align: middle
-        display: inline-block
-        width: 1px 
-        height: 24px
-        margin: 0 10px
-        background: #FEFDFD
-        border-right: 1px solid #E1E3E5
-    .sheet
-      flex: 1
-      display: flex
-      overflow-x: hidden
-      box-sizing: border-box
-      flex-direction: column
-      #spreadsheet
-        flex: 1
-    .sidebar
-      position: relative
-      width: 200px
-      max-height: 100%
-      display: flex
-      flex-direction: column
-      overflow-x: hidden
-      overflow-y: auto
+        > .row > div[class*="col-"]
+            &:not(:last-child):before
+                content: ""
+                position: absolute
+                width: 1px
+                height: 90%
+                display: block
+                right: 0
+                background: $border-gray
 
-      > div:first-child
-        flex: 1
+            .row
+                margin: 0 -5px
 
-      .drag-bar 
-        position: absolute
-        width: 10px
-        height: 100%
-        left: 0
-        top: 0
-        height: 100%
-        cursor: ew-resize
-      .version-body
-        width: 100%
-        overflow-x: auto
-        margin: 0
-        table.table tr td 
-          white-space: nowrap
-      .gallery-body
-        padding: 10px
-      .photo-container
-        .img
-          min-width: 100%
-          line-height: 0
-          display: block
-        .control 
-          display: block
-          color: #FFF
-          background: $black
-          font-size: 13px
-          padding: 5px 10px
-          text-align: center
-          > *
+            .row > div[class*='col-']
+                padding-left: 5px
+                padding-right: 5px
+
+        .form-group
+            font-size: 13px
+            margin-bottom: 10px
+
+            label:not(.btn)
+                line-height: 30px
+
+        .v-select .open-indicator
+            margin-top: 5px
+
+        .v-select .selected-tag
+            line-height: 1
+            padding: 0 10px
+            height: 24px
+
+        .v-select .vs__selected-options > input[type=search],
+        .v-select .vs__selected-options > input[type=search]:focus,
+        .dropdown.v-select.single.searchable .dropdown-toggle .form-control,
+        .mx-datepicker .mx-input-wrapper .mx-input,
+        .time-picker input.display-time,
+        .time-picker .clear-btn
+            height: 30px
+            line-height: 30px
+            vertical-align: top
+
+        .time-picker .clear-btn
+            margin: 0
+
+        .input-group .input-group-append
+            width: 30px
+            height: 30px
+            line-height: 30px
+
+    .search-filters
+        div[class*="col-"]:not(:last-child):before
+            content: ""
+            position: absolute
+            width: 1px
+            height: 90%
+            display: block
+            right: 0
+            background: $border-gray
+
+        .item
+            font-size: 13px
+            margin-bottom: 10px
+
+            label
+                float: left
+                text-align: right
+                color: $gray
+                width: 70px
+
+            .content
+                display: block
+                margin-left: 70px
+
+            &.short-label > label
+                width: 50px
+
+                + .content
+                    margin-left: 50px
+
+            &.long-label > label
+                width: 100px
+
+                + .content
+                    margin-left: 100px
+
+    .edit-container
+        padding: 10px 20px
+        color: $gray
+        background: $black
+        font-size: 13px
+
+        span
+            vertical-align: middle
+
+        .btn
+            vertical-align: middle
+
+        .btn.btn-circle
+            width: 32px
+            height: 32px
+            line-height: 32px
             text-align: center
-          .prev, .next
-            margin: 0 5px
-            color: $gray
-          .text
-            font-weight: 600
+            margin-top: -2px
+            padding: 5px 0 0 1px
+            border: 0
+            vertical-align: middle
+            background: rgba(255, 255, 255, 0.3)
+
+            +border-radius(16px)
+
+        span.divider
+            display: inline-block
+            width: 1px
+            height: 30px
+            background: #D3D6D9
+            opacity: 0.5
+            margin: 0 10px
+
+    .search-container
+        background: #FFF
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3)
+        z-index: 120
+
+        .btn-orange
+            min-width: 120px
+
+        .search-content
+            background: #FFF
+            padding: 20px 20px 10px
+
+    .sheet-container
+        flex: 1
+        display: flex
+        flex-wrap: wrap
+
+        .btn-group.btn-grayscale
+            .btn.btn-sm
+                vertical-align: middle
+                border-color: $gray
+                line-height: 20px
+
+                > *
+                    vertical-align: middle
+
+                .icon
+                    margin-right: 4px
+
+                .text
+                    padding-right: 5px
+                    border-right: 1px solid transparentize($gray, 0.8)
+
+            &.active > .btn.btn-sm
+                border-color: $green
+                color: $green
+
+            .btn:first-child
+                border-right: 0
+
+                +border-radius(4px 0 0 4px)
+
+            .dropdown-toggle.dropdown-toggle-split
+                border-left: 0
+
+                +border-radius(0 4px 4px 0)
+
+                &:after
+                    display: none
+
+        .gallery-body
+            -webkit-touch-callout: none
+            -webkit-user-select: none
+            -khtml-user-select: none
+            -moz-user-select: none
+            -ms-user-select: none
+            user-select: none
+
+            .img-container
+                position: relative
+                padding-bottom: 75%
+                display: block
+                overflow: hidden
+
+                > img
+                    left: -100%
+                    right: -100%
+                    top: -100%
+                    bottom: -100%
+                    margin: auto
+                    max-width: none !important
+                    position: absolute
+                    cursor: all-scroll
+                    transform-origin: 50%
+                    transition: width 0.3s ease
+                    -webkit-touch-callout: none
+                    -webkit-user-select: none
+                    -khtml-user-select: none
+                    -moz-user-select: none
+                    -ms-user-select: none
+                    user-select: none
+
+                .control-buttons
+                    position: absolute
+                    width: 24px
+                    right: 10px
+                    top: 10px
+
+                    .btn-group
+                        display: block
+                        margin-bottom: 10px
+                        line-height: 0
+
+                        .btn
+                            padding: 0
+                            width: 24px
+                            height: 24px
+                            line-height: 0
+                            padding: 1px
+                            margin: 0
+
+                            &:first-child
+                                +border-radius(4px 4px 0 0)
+
+                            &:last-child
+                                +border-radius(0 0 4px 4px)
+
+                            &:last-child:first-child
+                                +border-radius(4px)
+
+        .version-header,
+        .gallery-header
+            font-size: 13px
+            font-weight: 500
+            line-height: 40px
+            background: #F0F1F3
+            padding: 0 10px
+            border-bottom: 1px solid #DBDBDB
+
+        .sheet-footer
+            height: 40px
+            line-height: 40px
+            font-size: 13px
+            padding: 0 20px
+
+            .select
+                display: inline-block
+                vertical-align: middle
+                margin: 0 5px
+                width: 64px
+                height: 24px
+                font-size: 13px
+                overflow: hidden
+                border: 1px solid #E1E3E5
+                background: #FFF right 10px center url(/assets/common/caret@2x.png) no-repeat
+                background-size: 14px
+
+                +border-radius(2px)
+
+                select.form-control
+                    border: 0
+                    font-size: 13px
+                    width: 80px
+                    height: 24px
+                    background: transparent
+
+            .pager
+                margin: 8px 20px 0 0
+
+                .input-group-prepend,
+                .input-group-append
+                    button
+                        background: #FFF
+                        border: 1px solid #E1E3E5
+
+                input.form-control
+                    font-size: 13px
+                    width: 40px
+                    height: 24px
+                    color: $black
+                    text-align: center
+                    outline: 0
+
+                    &:focus
+                        outline: 0
+                        border-color: #6B6A6B
+
+        .sheet-header
+            position: relative
+            padding: 0 10px
+
+            [class*='col-']
+                line-height: 38px
+
+                > *
+                    display: inline-block
+                    vertical-align: middle
+
+                .btn-icon
+                    vertical-align: middle
+                    padding: 2px
+                    width: 24px
+                    height: 24px
+                    line-height: 0
+                    border: 1px solid $gray
+
+                    &.active
+                        border: 1px solid $green
+                        box-shadow: 0 0 2px 0 transparentize($green, 0.51)
+
+            .divider
+                vertical-align: middle
+                display: inline-block
+                width: 1px
+                height: 24px
+                margin: 0 10px
+                background: #FEFDFD
+                border-right: 1px solid #E1E3E5
+
+        .sheet
+            flex: 1
+            display: flex
+            overflow-x: hidden
+            box-sizing: border-box
+            flex-direction: column
+
+            #spreadsheet
+                flex: 1
+
+        .sidebar
+            position: relative
+            width: 200px
+            max-height: 100%
+            display: flex
+            flex-direction: column
+            overflow-x: hidden
+            overflow-y: auto
+
+            > div:first-child
+                flex: 1
+
+            .drag-bar
+                position: absolute
+                width: 10px
+                height: 100%
+                left: 0
+                top: 0
+                height: 100%
+                cursor: ew-resize
+
+            .version-body
+                width: 100%
+                overflow-x: auto
+                margin: 0
+
+                table.table tr td
+                    white-space: nowrap
+
+            .gallery-body
+                padding: 10px
+
+            .photo-container
+                .img
+                    min-width: 100%
+                    line-height: 0
+                    display: block
+
+                .control
+                    display: block
+                    color: #FFF
+                    background: $black
+                    font-size: 13px
+                    padding: 5px 10px
+                    text-align: center
+
+                    > *
+                        text-align: center
+
+                    .prev, .next
+                        margin: 0 5px
+                        color: $gray
+
+                    .text
+                        font-weight: 600
 
 .page-search
-  .page-sheet
-    width: 100%
-  .green-block
-    padding: 10px 20px
-    border: 1px solid transparentize(#8AC731, .68)
-    background: #E9F2DE
-  .gray-block
-    padding: 20px
-    margin-bottom: 20px
-    background: #F3F2F2
-    display: flex
-    flex-direction: row
-    align-content: cetner
-    align-items: cetner
-    .form-content
-      flex: 1
-    .form-action
-      width: 44px
-      padding-left: 20px
-      align-self: center
+    .page-sheet
+        width: 100%
+
+    .green-block
+        padding: 10px 20px
+        border: 1px solid transparentize(#8AC731, 0.68)
+        background: #E9F2DE
+
+    .gray-block
+        padding: 20px
+        margin-bottom: 20px
+        background: #F3F2F2
+        display: flex
+        flex-direction: row
+        align-content: cetner
+        align-items: cetner
+
+        .form-content
+            flex: 1
+
+        .form-action
+            width: 44px
+            padding-left: 20px
+            align-self: center
 
 .page-upload
-  > .container
-    padding-top: 20px
-    padding-bottom: 20px
+    > .container
+        padding-top: 20px
+        padding-bottom: 20px
 
-  .upload-container
-    margin-top: 20px
-  .upload-area
-    height: 440px
-    padding-top: 105px
-    margin-top: 10px
-    background: #FFF 
-    border: 2px dashed #9B9B9B
-    +border-radius(4px)
-  .upload-list-container
-    margin-top: 10px
-    background: #FFF 
-    +border-radius(4px)
-    box-shadow: 0 2px 4px 0 transparentize(#002E14, .88)
+    .upload-container
+        margin-top: 20px
 
+    .upload-area
+        height: 440px
+        padding-top: 105px
+        margin-top: 10px
+        background: #FFF
+        border: 2px dashed #9B9B9B
+
+        +border-radius(4px)
+
+    .upload-list-container
+        margin-top: 10px
+        background: #FFF
+
+        +border-radius(4px)
+
+        box-shadow: 0 2px 4px 0 transparentize(#002E14, 0.88)
 
 .page-login
-  background-position: center
-  background-size: 110% !important
-  a.text-green
-    text-decoration: none
-    border-bottom: 1px solid $green
+    background-position: center
+    background-size: 110% !important
 
-  
+    a.text-green
+        text-decoration: none
+        border-bottom: 1px solid $green
+
+    .modal-header
+        padding: 20px !important
+        padding-bottom: 0 !important
+        background: none !important
+        border: 0
+
+    .modal-body
+        padding: 20px 40px
+
+        +border-radius(0 0 4px 4px)
+
 .page-article
-  ul.contact-list
-    margin: 0
-    padding: 0
-    list-style: none
-    li 
-      margin-bottom: 10px
-      a 
-        color: $gray
-        cursor: pointer
-        height: 30px
-        line-height: 30px
-        padding: 0 10px
+    ul.contact-list
+        margin: 0
+        padding: 0
+        list-style: none
 
-        &:before 
-          content: ""
-          display: inline-block
-          vertical-align: middle
-          width: 8px
-          height: 8px
-          margin-right: 10px
-          +border-radius(8px)
-          background: $gray
+        li
+            margin-bottom: 10px
 
-        &:hover,
-        &:focus
-          color: $black
+            a
+                color: $gray
+                cursor: pointer
+                height: 30px
+                line-height: 30px
+                padding: 0 10px
 
-      &.active > a 
-        color: $green
-        &:before 
-          background: $green
+                &:before
+                    content: ""
+                    display: inline-block
+                    vertical-align: middle
+                    width: 8px
+                    height: 8px
+                    margin-right: 10px
 
-  article
-    padding: 20px
-    margin: 20px 0
-    background: #FFF
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,.35)
-    
+                    +border-radius(8px)
+
+                    background: $gray
+
+                &:hover,
+                &:focus
+                    color: $black
+
+            &.active > a
+                color: $green
+
+                &:before
+                    background: $green
+
+    article
+        padding: 20px
+        margin: 20px 0
+        background: #FFF
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35)
 
 .page-setting
-  .gray-block
-    padding: 10px 20px
-    line-height: 1.5
-    background: #F3F2F2
+    .gray-block
+        padding: 10px 20px
+        line-height: 1.5
+        background: #F3F2F2

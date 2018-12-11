@@ -5,7 +5,6 @@
   >
     <div class="row m-0">
       <div class="col-6 offset-3">
-
         <div class="panel mt-5 panel-basic">
           <div class="panel-header">
             <a
@@ -49,7 +48,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </main>

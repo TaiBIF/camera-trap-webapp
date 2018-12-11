@@ -50,7 +50,7 @@
           <div class="divider"></div>
           <div class="nav-item ml-3">
             <a
-              href="login.html"
+              @click="loginModalOpen = true"
               class="btn btn-orange"
             >登入</a>
           </div>
@@ -209,11 +209,16 @@
         </div>
       </div>
     </nav>
+    <login-modal
+      :open="loginModalOpen"
+      @close="loginModalOpen = false"
+    />
   </header>
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import LoginModal from './Login';
 
 const auth = createNamespacedHelpers('auth');
 const message = createNamespacedHelpers('message');
@@ -239,8 +244,10 @@ export default {
       default: false,
     },
   },
+  components: { LoginModal },
   data() {
     return {
+      loginModalOpen: false,
       pathname: this.$route.name,
     };
   },
