@@ -191,10 +191,7 @@
               </div>
             </div>
 
-            <div
-              id="adv-block"
-              v-if="advSecOpen"
-            >
+            <div id="adv-block" v-if="advSecOpen">
               <div class="row">
                 <div
                   v-for="dataField in dataFields"
@@ -265,14 +262,12 @@
                       <div class="input-group">
                         <vue-timepicker
                           v-model="form.cameraStart"
-                          format=""
                         />
                       </div>
                       <div class="text px-2">到</div>
                       <div class="input-group">
                         <vue-timepicker
                           v-model="form.cameraEnd"
-                          format=""
                         />
                       </div>
                     </div>
@@ -776,7 +771,28 @@ export default {
       return null;
     },
     submitSearch() {
-      this.$router.push('/search');
+      const form = {
+        data: this.form.data.map(data => {
+          return {
+            projectId: data.project ? data.project.value : null,
+            site: data.site ? data.site.value : null,
+            subSite: data.subSite ? data.subSite.value : null,
+            camera: data.camera ? data.camera.value : null,
+          };
+        }),
+        startAt: this.form.startAt,
+        endAt: this.form.endAt,
+        startTime: this.form.startTime,
+        endTime: this.form.endTime,
+        cameraStart: this.form.cameraStart,
+        cameraEnd: this.form.cameraEnd,
+      };
+      this.$router.push({
+        path: '/search',
+        query: {
+          form: JSON.stringify(form),
+        },
+      });
     },
     submitCalculate() {
       this.$router.push('/calculate');
