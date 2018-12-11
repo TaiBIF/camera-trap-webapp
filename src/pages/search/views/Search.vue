@@ -44,11 +44,11 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >計畫名稱：</label>
                       <v-select
-                        :options="[{label: '林務局全島鼬獾監測', value:'1'}]"
+                        :options="projectOptions"
+                        :on-change="generateOnProjectSelectorChangeHandler(did)"
                         v-model="data.project"
                         :placeholder="'請選擇計畫名稱'"
                       />
@@ -57,11 +57,11 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >樣區：</label>
                       <v-select
-                        :options="[{label: '屏東處', value:'屏東處'}]"
+                        :options="projectSiteOptions[did]"
+                        :on-change="generateOnProjectSiteSelectorChangeHandler(did)"
                         v-model="data.site"
                         :placeholder="'請選擇樣區'"
                       />
@@ -70,12 +70,12 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >子樣區：</label>
                       <v-select
-                        :options="[{label: '旗山站', value:'旗山站'}]"
-                        v-model="data.subsite"
+                        :options="projectSibSiteOptions[did]"
+                        :on-change="generateOnProjectSubSiteSelectorChangeHandler(did)"
+                        v-model="data.subSite"
                         :placeholder="'請選擇子樣區'"
                       />
                     </div>
@@ -83,11 +83,10 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label
-                        for=""
                         class="required"
                       >相機位置：</label>
                       <v-select
-                        :options="[{label: 'PT10A', value:'PT10A'}]"
+                        :options="projectCameraOptions[did]"
                         v-model="data.camera"
                         :placeholder="'請選擇相機位置'"
                       />
@@ -118,7 +117,7 @@
                 <div class="form-group">
                   <label>物種：</label>
                   <v-select
-                    :options="[{label:'山羌', value:'山羌'},{label:'鼬獾', value:'鼬獾'},{label:'台灣獼猴', value:'台灣獼猴'},{label:'山羊', value:'山羊'},{label:'赤腹松鼠', value:'赤腹松鼠'},{label:'白鼻心', value:'白鼻心'}]"
+                    :options="projectSpecOptions"
                     multiple
                   />
                 </div>
@@ -197,46 +196,20 @@
               v-if="advSecOpen"
             >
               <div class="row">
-                <div class="col-2">
-                  <div class="form-group">
-                    <label>性別：</label>
+                <div
+                  v-for="dataField in dataFields"
+                  :key="dataField.key"
+                  :class="{'col-2': dataField.type==='select', 'col-4': dataField.type==='text'}">
+                  <div v-if="dataField.type==='select'" class="form-group">
+                    <label>{{ dataField.label }}：</label>
                     <v-select
-                      :options="[
-                      {label:'公', value: 'male'},
-                      {label:'母', value: 'female'}
-                    ]"
-                      :placeholder="'請選擇性別'"
+                      :options="dataField.options"
+                      :placeholder="`請選擇${dataField.label}`"
                     />
                   </div>
-                </div>
-                <div class="col-2">
-                  <div class="form-group">
-                    <label>年齡：</label>
-                    <v-select
-                      :options="[
-                      {label:'幼仔', value: '1'},
-                      {label:'成熟', value: '2'}
-                    ]"
-                      :placeholder="'請選擇年齡'"
-                    />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <label>角況：</label>
-                    <v-select
-                      :options="[
-                      {label:'幼仔', value: '1'},
-                      {label:'成熟', value: '2'}
-                    ]"
-                      :placeholder="'請選擇角況'"
-                    />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
+                  <div v-if="dataField.type==='text'" class="form-group">
                     <label>
-                      <span class="text">備註：</span>
+                      <span class="text">{{ dataField.label }}：</span>
                       <span class="icon">
                         <i class="icon-info mt-1"></i>
                       </span>
@@ -244,12 +217,12 @@
                     <input
                       type="text"
                       class="form-control"
-                      placeholder="請選擇被註內容"
+                      :placeholder="`請選擇${dataField.label}`"
                     >
                   </div>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" style="display: none;">
                 <div class="col-3">
                   <div class="form-group">
                     <label>海拔：</label>
@@ -521,9 +494,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import DatePicker from 'vue2-datepicker';
 import VueTimepicker from 'vue2-timepicker';
 import { commonMixin } from '../../../mixins/common.js';
+
+const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'Search',
@@ -538,7 +515,7 @@ export default {
           {
             project: '',
             site: '',
-            subsite: '',
+            subSite: '',
             camera: '',
           },
         ],
@@ -563,7 +540,241 @@ export default {
       },
     };
   },
+  computed: {
+    ...project.mapGetters(['Projects']),
+    ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+    projectOptions: function() {
+      /*
+      All projects.
+      @returns {Array<{label: 'string', value: 'string'}>}
+      */
+      return this.Projects.map(project => {
+        return {
+          label: project.projectTitle,
+          value: project._id,
+        };
+      });
+    },
+    projectSiteOptions: function() {
+      /*
+      All sites of projects.
+      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
+      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
+      */
+      const result = [];
+      this.form.data.forEach(data => {
+        result.push(
+          this.getProjectSiteOptions(data.project && data.project.value),
+        );
+      });
+      return result;
+    },
+    projectSibSiteOptions: function() {
+      /*
+      All sub-sites of projects.
+      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
+      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
+      */
+      return this.form.data.map(data => {
+        return this.getProjectSubSiteOptions(
+          data.project && data.project.value,
+          data.site && data.site.value,
+        );
+      });
+    },
+    projectCameraOptions: function() {
+      /*
+      All camera locations of projects.
+      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
+      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
+      */
+      return this.form.data.map(data => {
+        return this.getProjectCameraOptions(
+          data.project && data.project.value,
+          data.site && data.site.value,
+          data.subSite && data.subSite.value,
+        );
+      });
+    },
+    projectSpecOptions: function() {
+      /*
+      All species of all projects.
+      @returns {Array<{label: 'string', value: 'string'}>}
+      */
+      const species = new Set();
+      this.Projects.forEach(project => {
+        (project.speciesList || []).forEach(spec => {
+          species.add(spec);
+        });
+      });
+      return Array.from(species).map(spec => {
+        return {
+          label: spec,
+          value: spec,
+        };
+      });
+    },
+    dataFields: function() {
+      /*
+      All data fields of projects.
+      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
+       */
+      const dataFieldKeys = new Set();
+      this.form.data.forEach(data => {
+        const project = this.getProject(data.project && data.project.value);
+        if (project) {
+          (project.dataFieldEnabled || []).forEach(key => {
+            dataFieldKeys.add(key);
+          });
+        }
+      });
+      return Array.from(dataFieldKeys).map(key => {
+        const dataField = this.findDataField(key);
+        return {
+          key: key,
+          label: dataField.label,
+          type: dataField.widget_type,
+          options: (dataField.widget_select_options || []).map(option => {
+            return {
+              label: option,
+              value: option,
+            };
+          }),
+        };
+      });
+    },
+  },
   methods: {
+    ...project.mapActions(['loadProject']),
+    ...dataFieldAvailable.mapActions(['loadDataFieldAvailable']),
+    getProject(projectId) {
+      /*
+      Get the project from this.Projects.
+      @param projectId {string}
+      @returns {Project|null}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          return project;
+        }
+      }
+      return null;
+    },
+    getProjectSiteOptions(projectId) {
+      /*
+      Get sites of the project.
+      @param projectId {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      const project = this.getProject(projectId);
+      if (project) {
+        const sites = new Set();
+        project.cameraLocations.forEach(cameraLocation => {
+          sites.add(cameraLocation.site);
+        });
+        return Array.from(sites).map(site => {
+          return {
+            label: site,
+            value: site,
+          };
+        });
+      }
+      return [];
+    },
+    getProjectSubSiteOptions(projectId, site) {
+      /*
+      Get sub-sites of the project.
+      @param projectId {string}
+      @param site {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          const subSites = new Set();
+          project.cameraLocations.forEach(cameraLocation => {
+            if (cameraLocation.site === site) {
+              subSites.add(cameraLocation.subSite);
+            }
+          });
+          return Array.from(subSites).map(subSite => {
+            return {
+              label: subSite,
+              value: subSite,
+            };
+          });
+        }
+      }
+      return [];
+    },
+    getProjectCameraOptions(projectId, site, subSite) {
+      /*
+      Get camera locations of the project.
+      @param projectId {string}
+      @param site {string}
+      @param subSite {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          const locations = new Set();
+          project.cameraLocations.forEach(cameraLocation => {
+            if (
+              cameraLocation.site === site &&
+              cameraLocation.subSite === subSite
+            ) {
+              locations.add(cameraLocation.cameraLocation);
+            }
+          });
+          return Array.from(locations).map(location => {
+            return {
+              label: location,
+              value: location,
+            };
+          });
+        }
+      }
+      return [];
+    },
+    generateOnProjectSelectorChangeHandler(dataIndex) {
+      const _this = this;
+      return function(value) {
+        this.$emit('input', value);
+        _this.form.data[dataIndex].site = '';
+        _this.form.data[dataIndex].subSite = '';
+        _this.form.data[dataIndex].camera = '';
+      };
+    },
+    generateOnProjectSiteSelectorChangeHandler(dataIndex) {
+      const _this = this;
+      return function(value) {
+        this.$emit('input', value);
+        _this.form.data[dataIndex].subSite = '';
+        _this.form.data[dataIndex].camera = '';
+      };
+    },
+    generateOnProjectSubSiteSelectorChangeHandler(dataIndex) {
+      const _this = this;
+      return function(value) {
+        this.$emit('input', value);
+        _this.form.data[dataIndex].camera = '';
+      };
+    },
+    findDataField(key) {
+      /*
+      Find the data field from dataFieldAvailable.
+      @param key {string}
+      @returns {DataFieldAvailable|null}
+       */
+      for (let index = 0; index < this.dataFieldAvailable.length; index += 1) {
+        if (this.dataFieldAvailable[index].key === key) {
+          return this.dataFieldAvailable[index];
+        }
+      }
+      return null;
+    },
     submitSearch() {
       this.$router.push('/search');
     },
@@ -581,6 +792,10 @@ export default {
         camera: '',
       });
     },
+  },
+  beforeMount() {
+    this.loadProject();
+    this.loadDataFieldAvailable();
   },
 };
 </script>

@@ -57,13 +57,7 @@ export default {
           (evt.type === 'keydown' && evt.keyCode === 13)) &&
         this.newPoint !== ''
       ) {
-        this.points.push({
-          name: this.newPoint,
-          data: [],
-        });
-
-        this.$emit('add', this.index, this.points);
-
+        this.$emit('add', this.index, this.newPoint);
         this.newPoint = '';
       }
     },

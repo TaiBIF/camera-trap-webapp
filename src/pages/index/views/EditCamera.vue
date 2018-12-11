@@ -84,8 +84,19 @@
                 <h5 class="text-gray">您還沒新增任何樣區</h5>
               </div>
               <div
-                v-else
+                class="empty-result"
+                v-else-if="CurrentSite===null"
+              >
+                <img
+                  src="/assets/common/empty-site.png"
+                  width="174"
+                  srcset="/assets/common/empty-site@2x.png"
+                >
+                <h5 class="text-gray">請選擇樣區</h5>
+              </div>
+              <div
                 class="sheet-view"
+                :class="{'show': CurrentSite!==null && sites.length}"
               >
                 <div class="control p-2">
                   <div class="row">
@@ -118,16 +129,28 @@
           </div>
         </div>
 
-        <div class="action">
-          <router-link
-            to="/project/1"
-            class="btn btn-default"
-          >返回</router-link>
-          <button
-            type="submit"
-            @click.stop.prevent="doSubmit()"
-            class="btn btn-orange"
-          >儲存設定</button>
+        <div class="flex-action">
+          <div>
+            <div
+              class="error"
+              v-if="cameraInputDataError"
+            >
+              <i class="fas fa-exclamation"></i>
+              {{cameraInputDataError}}
+            </div>
+          </div>
+          <div class="btns">
+            <router-link
+              to="/project/1"
+              class="btn btn-default"
+            >返回</router-link>
+            <button
+              type="submit"
+              @click.stop.prevent="doSubmit()"
+              class="btn btn-orange"
+              :disabled="cameraInputDataError"
+            >儲存設定</button>
+          </div>
         </div>
       </div>
     </div>
@@ -139,6 +162,7 @@
 </template>
 
 <script>
+import md5 from 'blueimp-md5';
 import { mapActions, mapGetters, createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
@@ -146,6 +170,7 @@ import SiteMenu from '../components/SiteMenu';
 import EditNav from '../components/EditNav';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/zh-TW';
+import { twd97ToWgs84 } from '../../../util/transfer';
 
 const project = createNamespacedHelpers('project');
 
@@ -161,10 +186,11 @@ export default {
     return {
       newSite: '',
       currentSite: 0,
-      oldName: '',
+      originalSiteName: '',
       currentEditSite: null,
       renameSites: {},
       renamePoints: {},
+      editCameraLocations: {},
       sheetContainer: null,
       settings: {
         data: [],
@@ -287,6 +313,7 @@ export default {
         manualColumnMove: true,
         afterChange: this.editData,
       },
+      forceRecomputeCounter: 0, // a hack to force recompute when edit Hansontable: https://github.com/vuejs/vue/issues/214#issuecomment-400591973
     };
   },
   watch: {
@@ -297,6 +324,7 @@ export default {
       } else {
         this.setCurrentPoint(null);
       }
+      this.editCameraLocations = {}; // reset edited camera locations
     },
     cameraData() {
       this.renderSheet();
@@ -327,56 +355,33 @@ export default {
         camera => camera.site === currentSite.label,
       );
     },
+    cameraInputDataError: function() {
+      this.forceRecomputeCounter;
+      const nanElevation = this.settings.data.find(
+        camera => camera.elevation && isNaN(camera.elevation),
+      );
+      if (nanElevation) {
+        return '高度請輸入數字';
+      }
+      return null;
+    },
   },
   methods: {
     ...mapActions(['setCurrentSite', 'setCurrentPoint']),
     ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
     renderSheet() {
       this.settings.data = this.cameraData;
-      if (!this.sheetContainer) {
-        this.sheetContainer = this.$el.querySelector('#sheet');
-        this.sheet = new Handsontable(this.sheetContainer, this.settings);
-      } else {
-        this.sheet.updateSettings(this.settings);
-      }
-    },
-    addData() {
-      if (this.CurrentPoint === null) {
-        this.sites[this.CurrentSite].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-
-        this.settings.data = this.sites[this.CurrentSite].data;
-      } else {
-        this.sites[this.CurrentSite].children[this.CurrentPoint].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-        this.settings.data = this.sites[this.CurrentSite].children[
-          this.CurrentPoint
-        ].data;
-      }
-
-      this.renderSheet();
+      this.sheet.updateSettings(this.settings);
     },
     enableEditSite(idx) {
-      this.oldName = this.filterSites[idx].value;
+      this.originalSiteName = this.filterSites[idx].value;
       this.currentEditSite = idx;
     },
     editSite(evt) {
       if (evt.type === 'keydown') {
         // ECS reset
         if (evt.keyCode === 27) {
-          this.filterSites[this.currentEditSite].value = this.oldName;
+          this.filterSites[this.currentEditSite].value = this.originalSiteName;
           this.currentEditSite = null;
         }
         // Enter save change
@@ -402,14 +407,12 @@ export default {
           (evt.type === 'keydown' && evt.keyCode === 13)) &&
         this.newSite !== ''
       ) {
-        this.sites.push({
-          name: this.newSite,
+        this.filterSites.push({
+          value: this.newSite,
           label: this.newSite,
           child: [],
         });
-
         this.newSite = '';
-        this.renderSheet();
       }
     },
     updatePoint(obj) {
@@ -423,23 +426,85 @@ export default {
         },
       };
     },
-    addPoint() {
-      // TODO:
+    addPoint(index, point) {
+      this.filterSites[index].child.push({
+        value: point,
+        label: point,
+      });
     },
     editData(data, type) {
-      console.log('---afterChange: ', data, type);
+      if (type === 'edit') {
+        const [row, key, originalValue, newValue] = data[0]; // eslint-disable-line
+        if (originalValue !== newValue) {
+          const currentCamera = this.settings.data[row];
+          if (!this.editCameraLocations[row]) {
+            this.editCameraLocations[row] = currentCamera.fullCameraLocationMd5;
+          }
+        }
+        this.forceRecomputeCounter++;
+      }
+    },
+    addData() {
+      this.settings.data.push({
+        cameraLocation: '',
+        original_x: '',
+        original_y: '',
+        elevation: '',
+        vegetation: '',
+        land_cover: '',
+        isNew: true,
+      });
+      this.renderSheet();
+    },
+    isCameraEdited(camera) {
+      const editCameraMd5 = Object.values(this.editCameraLocations);
+      if (editCameraMd5.includes(camera.fullCameraLocationMd5)) {
+        return true;
+      }
+      return false;
+    },
+    getNewCameraData(camera, index) {
+      if (!this.isCameraEdited(camera)) {
+        return {};
+      }
+      const editData = this.settings.data.find(
+        data => data.fullCameraLocationMd5 === camera.fullCameraLocationMd5,
+      );
+      const wgs84 = twd97ToWgs84({
+        lng: editData.original_x,
+        lat: editData.original_y,
+      });
+      return {
+        [`cameraLocations.${index}.cameraLocation`]: editData.cameraLocation,
+        [`cameraLocations.${index}.elevation`]: editData.elevation,
+        [`cameraLocations.${index}.land_cover`]: editData.land_cover,
+        [`cameraLocations.${index}.original_x`]: editData.original_x,
+        [`cameraLocations.${index}.original_y`]: editData.original_y,
+        [`cameraLocations.${index}.vegetation`]: editData.vegetation,
+        [`cameraLocations.${index}.wgs84dec_x`]: wgs84[0],
+        [`cameraLocations.${index}.wgs84dec_y`]: wgs84[1],
+      };
+    },
+    resetEditRecord() {
+      this.renameSites = {};
+      this.renamePoints = {};
+      this.editCameraLocations = {};
     },
     doSubmit() {
       if (
         Object.keys(this.renameSites).length > 0 ||
-        Object.keys(this.renamePoints).length > 0
+        Object.keys(this.renamePoints).length > 0 ||
+        Object.keys(this.editCameraLocations).length > 0
       ) {
+        const projectId = this.currentProjectId;
+        const projectTitle = this.currentProject.projectTitle;
         const updateDate = this.currentProject.cameraLocations
           .map((cameraLocation, index) => {
             const projectIdKey = `cameraLocations.${index}.projectId`;
             const projectTitleKey = `cameraLocations.${index}.projectTitle`;
             const siteKey = `cameraLocations.${index}.site`;
             const subSiteKey = `cameraLocations.${index}.subSite`;
+            const fullCameraLocationMd5Key = `cameraLocations.${index}.fullCameraLocationMd5`;
             const newSite =
               this.renameSites[cameraLocation.site] || cameraLocation.site;
             const newSubSite =
@@ -448,27 +513,94 @@ export default {
                   cameraLocation.subSite
                 ]) ||
               cameraLocation.subSite;
+
+            const isCameraEdited = this.isCameraEdited(cameraLocation);
+            const newCameraData = this.getNewCameraData(cameraLocation, index);
+            const currentCameraLocation = isCameraEdited
+              ? newCameraData.cameraLocation
+              : cameraLocation.cameraLocation;
+
             return {
-              _id: this.currentProjectId,
-              projectId: this.currentProjectId,
+              _id: projectId,
+              projectId,
               $set: {
-                [projectIdKey]: this.currentProjectId,
-                [projectTitleKey]: this.currentProject.projectTitle,
+                ...newCameraData,
+                [projectIdKey]: projectId,
+                [projectTitleKey]: projectTitle,
                 [siteKey]: newSite,
                 [subSiteKey]: newSubSite,
+                [fullCameraLocationMd5Key]: md5(
+                  `${projectId}/${newSite}/${newSubSite}/${currentCameraLocation}`,
+                ),
               },
               isChanged:
                 newSite !== cameraLocation.site ||
-                newSubSite !== cameraLocation.subSite,
+                newSubSite !== cameraLocation.subSite ||
+                isCameraEdited,
             };
           })
           .filter(cameraLocation => cameraLocation.isChanged);
-        this.updateCameraLocations(updateDate);
+
+        const site = this.filterSites[this.CurrentSite].label;
+        const subSite =
+          this.CurrentPoint !== null
+            ? this.filterSites[this.CurrentSite].child[this.CurrentPoint].label
+            : 'NULL';
+        const addData = this.settings.data
+          .filter(
+            camera => camera.isNew && camera.original_x && camera.original_y, // original_x & original_y are required
+          )
+          .map(camera => {
+            const {
+              cameraLocation,
+              original_x,
+              original_y,
+              elevation,
+              vegetation,
+              land_cover,
+            } = camera;
+            const [wgs84dec_x, wgs84dec_y] = twd97ToWgs84({
+              lng: original_x,
+              lat: original_y,
+            });
+            const elevationData =
+              isNaN(elevation) || elevation === ''
+                ? {}
+                : { elevation: +elevation }; // only accept number
+
+            return {
+              _id: projectId,
+              projectId,
+              $push: {
+                cameraLocations: {
+                  projectId,
+                  projectTitle,
+                  site,
+                  subSite,
+                  cameraLocation,
+                  fullCameraLocationMd5: md5(
+                    `${projectId}/${site}/${subSite}/${cameraLocation}`,
+                  ),
+                  original_x,
+                  original_y,
+                  wgs84dec_x,
+                  wgs84dec_y,
+                  vegetation,
+                  land_cover,
+                  ...elevationData,
+                },
+              },
+            };
+          });
+        this.updateCameraLocations([...updateDate, ...addData]);
+        this.resetEditRecord();
       }
     },
   },
   mounted() {
     this.loadSingleProject(this.currentProjectId);
+    this.sheetContainer = this.$el.querySelector('#sheet');
+    this.sheet = new Handsontable(this.sheetContainer, this.settings);
   },
 };
 </script>

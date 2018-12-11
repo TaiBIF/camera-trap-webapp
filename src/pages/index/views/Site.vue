@@ -239,28 +239,39 @@
               name=""
               id=""
               class="form-control"
+              v-model="pageSize"
             >
-              <option value="500">500</option>
-              <option value="1000">1000</option>
-              <option value="1500">1500</option>
+              <option value=10>10</option>
+              <option value=20>20</option>
+              <option value=30>30</option>
+              <option value=500>500</option>
+              <option value=1000>1000</option>
+              <option value=1500>1500</option>
             </select>
           </span>
           <span class="text-gray">筆資料，您正在檢視：</span>
-          <span>第 2001 - 3501 筆</span>
+          <span>{{`第 ${currentDataRange.begin+1} - ${currentDataRange.end} 筆`}}</span>
           <div class="float-right">
             <div class="input-group pager">
               <div class="input-group-prepend">
-                <button>
+                <button
+                  @click="currentPage--"
+                  :disabled="currentPage === 1"
+                >
                   <i class="fa fa-caret-left"></i>
                 </button>
               </div>
               <input
+                disabled
                 type="text"
                 class="form-control"
-                value="1/10"
+                :value="`${currentPage}/${totalPage}`"
               >
               <div class="input-group-append">
-                <button>
+                <button
+                  @click="currentPage++"
+                  :disabled="currentPage+1 > totalPage"
+                >
                   <i class="fa fa-caret-right"></i>
                 </button>
               </div>
@@ -274,7 +285,7 @@
       >
         <div
           class="photo-container"
-          v-if="siteData.data[currentRow] && !siteData.data[currentRow].imageUrl==false && galleryShow"
+          v-if="displayImageComponent"
         >
           <div class="gallery-header">
             <a
@@ -287,7 +298,7 @@
           </div>
           <div
             class="gallery-body"
-            v-if="!siteData.data[currentRow].imageUrl || siteData.data[currentRow].imageUrl==''"
+            v-if="!hasImageOrVideo"
           >
             <div class="empty-result">
               <img
@@ -307,9 +318,14 @@
             v-else
           >
             <zoom-drag
+              v-if="siteData.data[currentRow].imageUrl"
               :row="siteData.data[currentRow]"
               :index="currentRow"
               :total="siteData.data.length"
+            />
+            <youtube-embed
+              v-else
+              :row="siteData.data[currentRow]"
             />
             <div class="control">
               <span
@@ -402,6 +418,7 @@ import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../components/ZoomDrag';
+import YoutubeEmbed from '../components/YoutubeEmbed';
 import IdleTimeoutDialog from '../components/IdleTimeoutDialog';
 import downloadCSV from '../../../util/downloadCsv.js';
 
@@ -429,6 +446,8 @@ export default {
   name: 'Site',
   data() {
     return {
+      pageSize: 10, //一頁顯示的筆數
+      currentPage: 1, //目前在第幾頁
       today: moment(),
       idleTimeout: null,
       idleTimeoutOpen: false,
@@ -554,9 +573,9 @@ export default {
         afterChange: changes => {
           if (!changes) return;
           const payload = changes.reduce((arr, change) => {
-            const [row, prop, oldVal, newVal] = change;
+            let [row, prop, oldVal, newVal] = change;
+            row = row + this.currentDataRange.begin; //需計算真正資料的 row
             const value = this.siteData.data[row];
-
             if (oldVal !== newVal) {
               if (!value.index.column[prop] && value.index.column[prop] !== 0) {
                 //資料尚未存在需要更新 index，排除 index 為 0 的情況
@@ -633,7 +652,7 @@ export default {
           );
         };
 
-        const payload = {
+        let payload = {
           query: {
             projectId: this.$route.params.id,
             site: this.$route.params.site_id,
@@ -645,11 +664,14 @@ export default {
               newValue.camera.indexOf('all') !== -1
                 ? undefined
                 : { $in: newValue.camera },
-            related_upload_sessions: newValue.uploadSessionId,
           },
           limit: 100000,
           skip: 0,
         };
+
+        if (newValue.uploadSessionId) {
+          payload.query.related_upload_sessions = newValue.uploadSessionId;
+        }
 
         if (
           payload.query.date_time_corrected_timestamp['$gte'] !==
@@ -663,15 +685,26 @@ export default {
     },
     siteData: {
       handler: function() {
+        if (!this.editMode) {
+          this.currentPage = 1; // 當資料更新則要切換到第一頁，不過編輯模式不能切換因為不會是被修改查詢條件觸發
+        }
         this.getSheetData();
       },
       deep: true,
+    },
+    currentPage() {
+      this.updateSheetData(); // 換頁更新 sheet 顯示的資料範圍
+    },
+    pageSize() {
+      this.currentPage = 1; //切換顯示的筆數回到第一頁
+      this.updateSheetData();
     },
   },
   components: {
     DatePicker,
     VueTimepicker,
     ZoomDrag,
+    YoutubeEmbed,
     IdleTimeoutDialog,
   },
   computed: {
@@ -680,6 +713,38 @@ export default {
     ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
     ...media.mapState(['siteData']),
+    //計算目前筆數範圍
+    currentDataRange() {
+      const { currentPage, pageSize, siteData } = this;
+      return {
+        begin: (currentPage - 1) * pageSize,
+        end: Math.min(currentPage * pageSize, siteData.data.length),
+      };
+    },
+    //計算最多總頁數
+    totalPage() {
+      return Math.ceil(this.siteData.data.length / this.pageSize);
+    },
+    // 判斷是否顯示影像區塊
+    displayImageComponent() {
+      const { siteData, currentRow, galleryShow } = this;
+      return (
+        siteData.data[currentRow] &&
+        galleryShow &&
+        (!siteData.data[currentRow].imageUrl == false ||
+          !siteData.data[currentRow].youtubeUrl == false)
+      );
+    },
+    // 檢查是否存在圖片連結
+    hasImageOrVideo() {
+      const { siteData, currentRow } = this;
+      return (
+        (siteData.data[currentRow].imageUrl &&
+          siteData.data[currentRow].imageUrl !== '') ||
+        (siteData.data[currentRow].youtubeUrl &&
+          siteData.data[currentRow].youtubeUrl !== '')
+      );
+    },
     cameraList() {
       return this.currentProject
         ? this.currentProject.cameraLocations.filter(
@@ -738,6 +803,10 @@ export default {
         ...this.settings,
         ...this.siteData,
         ...{ columns },
+        data: this.siteData.data.slice(
+          this.currentDataRange.begin,
+          this.currentDataRange.end,
+        ),
       };
     },
   },
@@ -747,6 +816,16 @@ export default {
     ...media.mapActions(['getSiteData', 'updateAnnotation']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
     ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
+    // 切頁時更新 sheet 顯示資料
+    updateSheetData() {
+      this.row_data = this.siteData.data.slice(
+        this.currentDataRange.begin,
+        this.currentDataRange.end,
+      );
+      if (this.isRender) {
+        this.sheet.updateSettings(this.sheetSetting);
+      }
+    },
     restoreRev(idx) {
       this.restoreRevision({
         url_md5: this.revision[idx].url_md5,
@@ -973,15 +1052,15 @@ export default {
       ? this.$route.query.upload_session_id
       : '';
 
-    const earlistDataDate = this.$route.query.earlistDataDate
-      ? this.$route.query.earlistDataDate
+    const earliestDataDate = this.$route.query.earliestDataDate
+      ? this.$route.query.earliestDataDate
       : '2017-01-01 00:00:00';
 
     const latestDataDate = this.$route.query.latestDataDate
       ? this.$route.query.latestDataDate
       : '2018-12-31 23:59:59';
 
-    this.form.start_at = earlistDataDate.split(' ')[0];
+    this.form.start_at = earliestDataDate.split(' ')[0];
     this.form.start_time = {
       HH: '00',
       mm: '00',
@@ -992,7 +1071,7 @@ export default {
       HH: '23',
       mm: '59',
     };
-
+    ('');
     // 綁定 sheet element、設定高度、取得資料
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();

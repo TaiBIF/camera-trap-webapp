@@ -22,6 +22,7 @@ const getSiteData = async payload => {
         low_quality_url: true,
         imageUrlPrefix: true,
         uploaded_file_name: true,
+        type: true,
       },
       sort: [
         ['cameraLocation', 1],
@@ -33,8 +34,6 @@ const getSiteData = async payload => {
 
   return res.results.map(val => ({
     ...val,
-    url: `${val.imageUrlPrefix}${val.url}`,
-    lowQualityUrl: `${val.imageUrlPrefix}${val.low_quality_url}`,
   }));
 };
 

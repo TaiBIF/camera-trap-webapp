@@ -33,6 +33,9 @@ const createProject = async payload => {
       projectId,
     });
     form.cover = `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`;
+  } else {
+    form.cover =
+      'https://s3-ap-northeast-1.amazonaws.com/camera-trap/cover_images/default_cover.png';
   }
 
   await fetchWrap({
@@ -170,6 +173,13 @@ const editCameraLocations = async payload => {
   });
 };
 
+const getColumnsField = async () => {
+  return await fetchWrap({
+    url: '/data-field-available',
+    method: 'GET',
+  });
+};
+
 export {
   getProjects,
   createProject,
@@ -181,4 +191,5 @@ export {
   editProject,
   getProject,
   editCameraLocations,
+  getColumnsField,
 };

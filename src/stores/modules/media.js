@@ -51,11 +51,16 @@ const formatSiteData = state => {
       const ret = {
         fullSite: val.subSite ? `${val.site}-${val.subSite}` : `${val.site}`,
         cameraLocation: val.cameraLocation,
-        // fileName: val.url.split('/').pop(),
         fileName: val.uploaded_file_name,
         corrected_date_time: val.corrected_date_time,
-        imageUrl: val.url,
-        lowQualityImageUrl: val.lowQualityUrl,
+        ...(val.type === 'MovingImage'
+          ? {
+              youtubeUrl: val.url,
+            }
+          : {
+              imageUrl: `${val.imageUrlPrefix}${val.url}`,
+              lowQualityImageUrl: `${val.imageUrlPrefix}${val.low_quality_url}`,
+            }),
         projectTitle: val.projectTitle,
         projectId: val.projectId,
         fullCameraLocationMd5: val.fullCameraLocationMd5,

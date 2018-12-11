@@ -10,6 +10,7 @@ import {
   getLocationAbnormalStatus,
   updateAbnormalCamera,
   editCameraLocations,
+  getColumnsField,
 } from '../../service/api';
 
 export const getters = {
@@ -18,6 +19,7 @@ export const getters = {
     state.projects.find(val => val._id === state.currentProjectId) || {
       adminArea: [],
       cameraLocations: [],
+      dataFieldEnabled: [],
     },
   cameraLocations: (_, getters) => {
     if (!getters.currentProject || !getters.currentProject.cameraLocations) {
@@ -157,6 +159,12 @@ export const getters = {
           [],
         );
   },
+  projectColumnsField: (state, getters) => {
+    const projectColumns = getters.currentProject.dataFieldEnabled || [];
+    return projectColumns
+      .map(key => state.columnsField.find(obj => obj.key === key) || {})
+      .filter(obj => obj.key);
+  },
 };
 
 export const mutations = {
@@ -193,6 +201,9 @@ export const mutations = {
       }
       return val;
     });
+  },
+  setColumnsField(state, payload) {
+    state.columnsField = payload;
   },
 };
 
@@ -251,6 +262,11 @@ export const actions = {
     await editProject(payload);
     dispatch('loadProject');
   },
+  // 3.2 計畫管理
+  async loadColumnsField({ commit }) {
+    const data = await getColumnsField();
+    commit('setColumnsField', data);
+  },
   // 3.4 計畫管理
   async updateCameraLocations(_, payload) {
     await editCameraLocations(payload);
@@ -270,6 +286,7 @@ export default {
     locationIdentifiedStatus: [],
     locationRetrievedStatus: [],
     locationCameraAbnormalStatus: [],
+    columnsField: [],
     // 畫面用
     siteStatusTab: 0,
   },

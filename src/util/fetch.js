@@ -9,7 +9,9 @@ const fetchWrap = async ({ url, method, body }) => {
     },
     body: JSON.stringify(body),
   });
-  const data = await res.json();
+  const contentType = res.headers.get('content-type');
+  const data =
+    contentType.indexOf('application/json') !== -1 ? await res.json() : res;
   return data;
 };
 
