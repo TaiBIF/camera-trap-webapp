@@ -242,6 +242,7 @@ import DeleteColumnDialog from '../components/DeleteColumnDialog';
 import DialogUI from '../components/DialogUI';
 import EditNav from '../components/EditNav';
 import { isAllowAddColumns } from '../../../util/roles.js';
+import { applyNewColumnsField } from '../../../service/api.js';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
@@ -419,20 +420,23 @@ export default {
       });
     },
     createNewColumn(form) {
+      const projectId = this.currentProjectId;
       const {
         label,
-        widget_date_format,
         type,
-        description,
+        widget_date_format,
         widget_select_options,
+        widgetStringFormat,
+        description,
       } = form;
       const widget_type = Object.keys(this.columnTypeMapping).find(
         key => this.columnTypeMapping[key] === type,
       );
-      const obj = {
-        projectId: this.currentProjectId,
+      const payload = {
+        projectId,
         label,
         description,
+        widgetStringFormat,
         widget_date_format,
         widget_type,
         fieldStatus: 'pending',
@@ -443,10 +447,10 @@ export default {
             }))
           : null,
       };
-      // TODO: submit API
-      console.log('xxx createNewColumn', obj);
-      this.newColumnOpen = false;
-      this.showApplyNewColumnSuccessModal = true;
+      applyNewColumnsField({ projectId, payload }).then(() => {
+        this.newColumnOpen = false;
+        this.showApplyNewColumnSuccessModal = true;
+      });
     },
     doSubmit() {
       // save columns
