@@ -203,21 +203,21 @@
             </div>
           </div>
           <div class="col-4">
-            <div class="item long-label">
+            <div class="item long-label" style="display: none;">
               <label>海拔：</label>
               <div class="content">
                 {{form.elevation}}
                 <!-- 1,001~1,500 公尺 -->
               </div>
             </div>
-            <div class="item long-label">
+            <div class="item long-label" style="display: none;">
               <label>植披：</label>
               <div class="content">
                 {{form.vegetation}}
                 <!-- 闊葉林 -->
               </div>
             </div>
-            <div class="item long-label">
+            <div class="item long-label" style="display: none;">
               <label>土地覆蓋類型：</label>
               <div class="content">
                 {{form.land_cover}}
