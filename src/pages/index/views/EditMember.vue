@@ -23,11 +23,15 @@
                     <input
                       type="text"
                       class="form-control"
+                      v-model="newMember.orcId"
                       placeholder="請輸入成員 ORCID"
                     />
                   </div>
                   <div class="col-4">
-                    <v-select :options="roles" />
+                    <v-select
+                      :options="roles"
+                      v-model="newMember.role"
+                    />
                     <router-link
                       to="/member/description"
                       class="d-block link text-green underline mt-1"
@@ -37,8 +41,9 @@
                   </div>
                   <div class="col-2">
                     <button
-                      @click.prevent="invitationOpen=true"
+                      @click.prevent="submitInvitation()"
                       class="btn btn-orange"
+                      :disabled="!newMember.orcId"
                     >邀請</button>
                   </div>
                 </div>
@@ -123,6 +128,7 @@ import CloseWindowDialog from '../components/CloseWindowDialog';
 import InvitationDialog from '../components/InvitationDialog';
 import RemoveMemberDialog from '../components/RemoveMemberDialog';
 import EditNav from '../components/EditNav';
+import { addProjectMember } from '../../../service/modules/members.js';
 
 const members = createNamespacedHelpers('members');
 
@@ -143,6 +149,10 @@ export default {
         { value: 'ResearchAssistant', label: '研究助理' },
         { value: 'CaseOfficer', label: '林管處承辦人' },
       ],
+      newMember: {
+        orcId: '',
+        role: { value: 'ProjectManager', label: '計畫管理員' },
+      },
       members: [],
       currentMember: null,
       invitationOpen: false,
@@ -167,6 +177,27 @@ export default {
   },
   methods: {
     ...members.mapActions(['loadProjectMembers']),
+    submitInvitation() {
+      addProjectMember({
+        projectId: this.currentProjectId,
+        orcId: this.newMember.orcId,
+        roles: [
+          {
+            _id: this.currentProjectId,
+            role: this.newMember.role.value,
+          },
+        ],
+      }).then(({ ret }) => {
+        const newMemer = {
+          name: ret.name,
+          orcId: ret._id,
+          role:
+            this.roles.find(r => r.value === this.newMember.role.value) || {},
+        };
+        this.members.push(newMemer);
+        this.invitationOpen = true;
+      });
+    },
     confirmRemove() {
       this.members.splice(this.currentMember, 1);
       this.removeMemberOpen = false;
