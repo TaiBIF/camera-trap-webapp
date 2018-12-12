@@ -621,7 +621,7 @@ export default {
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
-          this.currentRow = r;
+          this.currentRow = this.pageSize * (this.currentPage - 1) + r;
           this.getRevision({
             _id: this.siteData.data[r]._id,
           });
