@@ -59,16 +59,16 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(mem, i) in members"
-                  :class="{'disabled': mem.role==0}"
+                  v-for="(member, i) in members"
+                  :class="{'disabled': member.role==='ProjectManager'}"
                   :key="`member-${i}`"
                 >
-                  <td>{{mem.name}}</td>
-                  <td class="text-gray">{{mem.email}}</td>
+                  <td>{{member.name}}</td>
+                  <td class="text-gray">{{member.email}}</td>
                   <td>
                     <v-select
                       :options="roles"
-                      v-model="roles[mem.role]"
+                      v-model="member.role"
                     />
                   </td>
                   <td class="text-right">
@@ -81,7 +81,6 @@
             </table>
           </div>
         </div>
-
         <div class="action">
           <router-link
             to="/project/1"
@@ -100,27 +99,14 @@
       </div>
     </div>
 
-    <new-column-modal
-      :open="newColumnOpen"
-      @close='newColumnOpen=false'
-      @submit="submitColumn"
-    />
-
-    <species-order-panel
-      :open="speciesOpen"
-      @close='speciesOpen=false'
-    />
-
     <close-window-dialog
       :open="closeWindowOpen"
       @close="closeWindowOpen=false"
     />
-
     <invitation-dialog
       :open="invitationOpen"
       @close="invitationOpen=false"
     />
-
     <remove-member-dialog
       :open="removeMemberOpen"
       @close="removeMemberOpen=false"
@@ -131,71 +117,48 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
-import NewColumnModal from '../components/NewColumn';
-import SpeciesOrderPanel from '../components/SpeciesOrder';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import InvitationDialog from '../components/InvitationDialog';
 import RemoveMemberDialog from '../components/RemoveMemberDialog';
 import EditNav from '../components/EditNav';
+
+const members = createNamespacedHelpers('members');
 
 export default {
   name: 'EditMember',
   mixins: [commonMixin],
   components: {
     EditNav,
-    NewColumnModal,
-    SpeciesOrderPanel,
     CloseWindowDialog,
     InvitationDialog,
     RemoveMemberDialog,
   },
   data() {
     return {
-      currentItem: 3,
-      step: 1,
-      newColumnOpen: false,
-      speciesOpen: false,
-      closeWindowOpen: false,
-      deleteItem: {
-        index: 0,
-        data: null,
-      },
-      removeMemberOpen: false,
-      invitationOpen: false,
-      roles: ['計畫管理員', '承辦人員', '巡山員'],
-      sites: [],
+      roles: [
+        { value: 'ProjectManager', label: '計畫管理員' },
+        { value: 'Researcher', label: '研究人員' },
+        { value: 'ResearchAssistant', label: '研究助理' },
+        { value: 'CaseOfficer', label: '林管處承辦人' },
+      ],
       members: [
         {
           name: 'James Olson',
           email: 'madelyn_ziemann@hilpert.ca',
-          role: 0,
+          role: { value: 'ProjectManager', label: '計畫管理員' },
         },
         {
           name: 'Calvin Barnes',
           email: 'cade_haag@gmail.com',
-          role: 1,
+          role: { value: 'Researcher', label: '研究人員' },
         },
       ],
-      form: {
-        cover: '',
-        name: '',
-        slot: '',
-        agency: '',
-        owner: '',
-        startAt: '',
-        endAt: '',
-        publicAt: '',
-        area: '',
-        description: '',
-        comment: '',
-      },
-      licenseForm: {
-        forData: '',
-        forInfo: '',
-        forImg: '',
-      },
       currentMember: null,
+      invitationOpen: false,
+      removeMemberOpen: false,
+      closeWindowOpen: false,
     };
   },
   computed: {
@@ -204,6 +167,7 @@ export default {
     },
   },
   methods: {
+    ...members.mapActions(['loadProjectMembers']),
     confirmRemove() {
       this.members.splice(this.currentMember, 1);
       this.removeMemberOpen = false;
@@ -226,6 +190,9 @@ export default {
 
       this.newColumnOpen = false;
     },
+  },
+  mounted() {
+    this.loadProjectMembers(this.currentProjectId);
   },
 };
 </script>
