@@ -227,8 +227,9 @@
             <div class="item long-label">
               <label>拍攝時段：</label>
               <div class="content">
-                {{form.time}}
-                <!-- 18:00 ~ 05:00 -->
+                {{ `${form.cameraStart.HH}:${form.cameraStart.mm}` }}
+                ~
+                {{ `${form.cameraEnd.HH}:${form.cameraEnd.mm}` }}
               </div>
             </div>
           </div>
