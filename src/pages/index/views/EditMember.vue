@@ -22,16 +22,16 @@
                   <div class="col-4">
                     <input
                       type="text"
-                      class="form-control is-invalid"
-                      placeholder="請輸入成員ROCID名稱或電子郵件"
+                      class="form-control"
+                      v-model="newMember.orcId"
+                      placeholder="請輸入成員 ORCID"
                     />
-                    <div class="invalid-feedback">
-                      <span class="alert-box">!</span>
-                      <span class="text">電子郵件輸入不正確</span>
-                    </div>
                   </div>
                   <div class="col-4">
-                    <v-select :options="roles" />
+                    <v-select
+                      :options="roles"
+                      v-model="newMember.role"
+                    />
                     <router-link
                       to="/member/description"
                       class="d-block link text-green underline mt-1"
@@ -41,8 +41,9 @@
                   </div>
                   <div class="col-2">
                     <button
-                      @click.prevent="invitationOpen=true"
+                      @click.prevent="submitInvitation()"
                       class="btn btn-orange"
+                      :disabled="!newMember.orcId"
                     >邀請</button>
                   </div>
                 </div>
@@ -52,27 +53,31 @@
               <thead>
                 <tr>
                   <th>計畫成員</th>
-                  <th>電子郵件</th>
+                  <th>Orc ID</th>
                   <th>權限設置</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 <tr
-                  v-for="(mem, i) in members"
-                  :class="{'disabled': mem.role==0}"
+                  v-for="(member, i) in members"
+                  :class="{'disabled': member.role.value==='ProjectManager'}"
                   :key="`member-${i}`"
                 >
-                  <td>{{mem.name}}</td>
-                  <td class="text-gray">{{mem.email}}</td>
+                  <td>{{member.name}}</td>
+                  <td class="text-gray">{{member.orcId}}</td>
                   <td>
                     <v-select
                       :options="roles"
-                      v-model="roles[mem.role]"
+                      v-model="member.role"
+                      disabled
                     />
                   </td>
                   <td class="text-right">
-                    <a @click="removeMember(i)">
+                    <a
+                      @click="removeMember(i)"
+                      v-if="member.role.value!=='ProjectManager'"
+                    >
                       <i class="icon icon-remove-sm"></i>
                     </a>
                   </td>
@@ -81,7 +86,6 @@
             </table>
           </div>
         </div>
-
         <div class="action">
           <router-link
             to="/project/1"
@@ -100,27 +104,14 @@
       </div>
     </div>
 
-    <new-column-modal
-      :open="newColumnOpen"
-      @close='newColumnOpen=false'
-      @submit="submitColumn"
-    />
-
-    <species-order-panel
-      :open="speciesOpen"
-      @close='speciesOpen=false'
-    />
-
     <close-window-dialog
       :open="closeWindowOpen"
       @close="closeWindowOpen=false"
     />
-
     <invitation-dialog
       :open="invitationOpen"
       @close="invitationOpen=false"
     />
-
     <remove-member-dialog
       :open="removeMemberOpen"
       @close="removeMemberOpen=false"
@@ -131,79 +122,82 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
-import NewColumnModal from '../components/NewColumn';
-import SpeciesOrderPanel from '../components/SpeciesOrder';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import InvitationDialog from '../components/InvitationDialog';
 import RemoveMemberDialog from '../components/RemoveMemberDialog';
 import EditNav from '../components/EditNav';
+import { addProjectMember } from '../../../service/modules/members.js';
+
+const members = createNamespacedHelpers('members');
 
 export default {
   name: 'EditMember',
   mixins: [commonMixin],
   components: {
     EditNav,
-    NewColumnModal,
-    SpeciesOrderPanel,
     CloseWindowDialog,
     InvitationDialog,
     RemoveMemberDialog,
   },
   data() {
     return {
-      currentItem: 3,
-      step: 1,
-      newColumnOpen: false,
-      speciesOpen: false,
-      closeWindowOpen: false,
-      deleteItem: {
-        index: 0,
-        data: null,
-      },
-      removeMemberOpen: false,
-      invitationOpen: false,
-      roles: ['計畫管理員', '承辦人員', '巡山員'],
-      sites: [],
-      members: [
-        {
-          name: 'James Olson',
-          email: 'madelyn_ziemann@hilpert.ca',
-          role: 0,
-        },
-        {
-          name: 'Calvin Barnes',
-          email: 'cade_haag@gmail.com',
-          role: 1,
-        },
+      roles: [
+        { value: 'ProjectManager', label: '計畫管理員' },
+        { value: 'Researcher', label: '研究人員' },
+        { value: 'ResearchAssistant', label: '研究助理' },
+        { value: 'CaseOfficer', label: '林管處承辦人' },
       ],
-      form: {
-        cover: '',
-        name: '',
-        slot: '',
-        agency: '',
-        owner: '',
-        startAt: '',
-        endAt: '',
-        publicAt: '',
-        area: '',
-        description: '',
-        comment: '',
+      newMember: {
+        orcId: '',
+        role: { value: 'ProjectManager', label: '計畫管理員' },
       },
-      licenseForm: {
-        forData: '',
-        forInfo: '',
-        forImg: '',
-      },
+      members: [],
       currentMember: null,
+      invitationOpen: false,
+      removeMemberOpen: false,
+      closeWindowOpen: false,
     };
   },
+  watch: {
+    projectMembers: function(newValue) {
+      this.members = newValue.map(({ name, _id, role }) => ({
+        name,
+        orcId: _id,
+        role: this.roles.find(r => r.value === role[0].role) || {},
+      }));
+    },
+  },
   computed: {
+    ...members.mapGetters(['projectMembers']),
     currentProjectId() {
       return this.$route.params.id;
     },
   },
   methods: {
+    ...members.mapActions(['loadProjectMembers']),
+    submitInvitation() {
+      addProjectMember({
+        projectId: this.currentProjectId,
+        orcId: this.newMember.orcId,
+        roles: [
+          {
+            _id: this.currentProjectId,
+            role: this.newMember.role.value,
+          },
+        ],
+      }).then(({ ret }) => {
+        const newMemer = {
+          name: ret.name,
+          orcId: ret._id,
+          role:
+            this.roles.find(r => r.value === this.newMember.role.value) || {},
+        };
+        this.members.push(newMemer);
+        this.invitationOpen = true;
+      });
+    },
     confirmRemove() {
       this.members.splice(this.currentMember, 1);
       this.removeMemberOpen = false;
@@ -226,6 +220,9 @@ export default {
 
       this.newColumnOpen = false;
     },
+  },
+  mounted() {
+    this.loadProjectMembers(this.currentProjectId);
   },
 };
 </script>

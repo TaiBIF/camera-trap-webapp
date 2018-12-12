@@ -11,6 +11,7 @@ import uploadSession from './modules/uploadSession';
 import annotationRevision from './modules/annotationRevision';
 import forestBoundary from './modules/forestBoundary';
 import exampleFiles from './modules/exampleFiles';
+import members from './modules/members';
 
 Vue.use(Vuex);
 
@@ -26,6 +27,7 @@ export default new Vuex.Store({
     annotationRevision,
     forestBoundary,
     exampleFiles,
+    members,
   },
   state: {
     pageLock: false,
