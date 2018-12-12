@@ -189,32 +189,16 @@
             </div>
           </div>
           <div class="col-4">
-            <div class="item short-label">
-              <label>性別：</label>
-              <div class="content">
-                {{form.sex}}
+            <div v-for="dataField in dataFields"
+                 :key="dataField.key"
+                 class="item short-label">
+              <label>{{ dataField.label }}：</label>
+              <div v-if="dataField.type==='select'" class="content">
+                {{ form.customFields[dataField.key] && form.customFields[dataField.key].value }}
                 <!-- 公 -->
               </div>
-            </div>
-            <div class="item short-label">
-              <label>年齡：</label>
-              <div class="content">
-                {{form.age}}
-                <!-- 成體、亞成體 -->
-              </div>
-            </div>
-            <div class="item short-label">
-              <label>角況：</label>
-              <div class="content">
-                {{form.horn}}
-                <!-- 茸角一尖、茸角二尖、茸角三尖、茸角四尖 -->
-              </div>
-            </div>
-            <div class="item short-label">
-              <label>備註：</label>
-              <div class="content">
-                {{form.note}}
-                <!-- 覓食行為 -->
+              <div v-if="dataField.type==='text'" class="content">
+                {{ form.customFields[dataField.key] }}
               </div>
             </div>
           </div>
@@ -443,6 +427,7 @@ import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../../index/components/ZoomDrag';
+import store from '../../../stores';
 
 const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
 const project = createNamespacedHelpers('project');
@@ -470,6 +455,7 @@ export default {
           },
         ],
         species: [],
+        customFields: {},
         startAt: '',
         endAt: '',
         startTime: {
@@ -695,10 +681,34 @@ export default {
   computed: {
     ...project.mapGetters(['Projects']),
     ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+    dataFields: function() {
+      /*
+      All data fields of projects.
+      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
+       */
+      const dataFieldKeys = new Set();
+      this.Projects.forEach(project => {
+        (project.dataFieldEnabled || []).forEach(key => {
+          dataFieldKeys.add(key);
+        });
+      });
+      return Array.from(dataFieldKeys).map(key => {
+        const dataField = this.findDataField(key);
+        return {
+          key: key,
+          label: dataField.label,
+          type: dataField.widget_type,
+          options: (dataField.widget_select_options || []).map(option => {
+            return {
+              label: option,
+              value: option,
+            };
+          }),
+        };
+      });
+    },
   },
   methods: {
-    ...project.mapActions(['loadProject']),
-    ...dataFieldAvailable.mapActions(['loadDataFieldAvailable']),
     getProject(projectId) {
       /*
       Get the project from this.Projects.
@@ -709,6 +719,19 @@ export default {
         const project = this.Projects[index];
         if (project._id === projectId) {
           return project;
+        }
+      }
+      return null;
+    },
+    findDataField(key) {
+      /*
+      Find the data field from dataFieldAvailable.
+      @param key {string}
+      @returns {DataFieldAvailable|null}
+       */
+      for (let index = 0; index < this.dataFieldAvailable.length; index += 1) {
+        if (this.dataFieldAvailable[index].key === key) {
+          return this.dataFieldAvailable[index];
         }
       }
       return null;
@@ -894,89 +917,114 @@ export default {
       if (this.isRender) this.sheet.updateSettings(this.settings);
     },
   },
-  beforeMount() {
-    this.loadProject();
-    this.loadDataFieldAvailable();
+  beforeRouteEnter(to, from, next) {
+    Promise.all([
+      store.dispatch('project/loadProject'),
+      store.dispatch('dataFieldAvailable/loadDataFieldAvailable'),
+    ])
+      .then(() => {
+        next();
+      })
+      .catch(error => {
+        next(error);
+      });
   },
   mounted() {
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();
     this.getSheetData();
 
-    const form = JSON.parse(this.$router.history.current.query.form);
-    this.form = {
-      data: form.data.map(data => {
-        const project = this.getProject(data.projectId);
-        return {
-          project: project
-            ? {
-                label: project.projectTitle,
-                value: project.projectTitle,
-              }
-            : '',
-          site: data.site
-            ? {
-                label: data.site,
-                value: data.site,
-              }
-            : '',
-          subSite: data.subSite
-            ? {
-                label: data.subSite,
-                value: data.subSite,
-              }
-            : '',
-          camera: data.camera
-            ? {
-                label: data.camera,
-                value: data.camera,
-              }
-            : '',
-        };
-      }),
-      species: form.species.map(spec => {
-        return {
-          label: spec,
-          value: spec,
-        };
-      }),
-      startAt: form.startAt ? new Date(form.startAt) : '',
-      endAt: form.endAt ? new Date(form.endAt) : '',
-      startTime: (() => {
-        if (!form.startAt) {
+    const parseQuery = form => {
+      return {
+        data: form.data.map(data => {
+          const project = this.getProject(data.projectId);
           return {
-            HH: '10',
-            mm: '05',
+            project: project
+              ? {
+                  label: project.projectTitle,
+                  value: project.projectTitle,
+                }
+              : '',
+            site: data.site
+              ? {
+                  label: data.site,
+                  value: data.site,
+                }
+              : '',
+            subSite: data.subSite
+              ? {
+                  label: data.subSite,
+                  value: data.subSite,
+                }
+              : '',
+            camera: data.camera
+              ? {
+                  label: data.camera,
+                  value: data.camera,
+                }
+              : '',
           };
-        }
-        const time = new Date(form.startAt);
-        return {
-          HH: leftPad(time.getHours(), 2, '0'),
-          mm: leftPad(time.getMinutes(), 2, '0'),
-        };
-      })(),
-      endTime: (() => {
-        if (!form.endAt) {
+        }),
+        species: form.species.map(spec => {
           return {
-            HH: '10',
-            mm: '05',
+            label: spec,
+            value: spec,
           };
-        }
-        const time = new Date(form.endAt);
-        return {
-          HH: leftPad(time.getHours(), 2, '0'),
-          mm: leftPad(time.getMinutes(), 2, '0'),
-        };
-      })(),
-      cameraStart: {
-        HH: '10',
-        mm: '05',
-      },
-      cameraEnd: {
-        HH: '10',
-        mm: '05',
-      },
+        }),
+        startAt: form.startAt ? new Date(form.startAt) : '',
+        endAt: form.endAt ? new Date(form.endAt) : '',
+        startTime: (() => {
+          if (!form.startAt) {
+            return {
+              HH: '10',
+              mm: '05',
+            };
+          }
+          const time = new Date(form.startAt);
+          return {
+            HH: leftPad(time.getHours(), 2, '0'),
+            mm: leftPad(time.getMinutes(), 2, '0'),
+          };
+        })(),
+        endTime: (() => {
+          if (!form.endAt) {
+            return {
+              HH: '10',
+              mm: '05',
+            };
+          }
+          const time = new Date(form.endAt);
+          return {
+            HH: leftPad(time.getHours(), 2, '0'),
+            mm: leftPad(time.getMinutes(), 2, '0'),
+          };
+        })(),
+        customFields: (() => {
+          const result = {};
+          for (const customFieldKey in form.customFields) {
+            const dataField = this.findDataField(customFieldKey);
+            if (dataField.widget_type === 'select') {
+              result[customFieldKey] = {
+                label: form.customFields[customFieldKey],
+                value: form.customFields[customFieldKey],
+              };
+            } else {
+              result[customFieldKey] = form.customFields[customFieldKey];
+            }
+          }
+          return result;
+        })(),
+        cameraStart: {
+          HH: '10',
+          mm: '05',
+        },
+        cameraEnd: {
+          HH: '10',
+          mm: '05',
+        },
+      };
     };
+    this.form = parseQuery(JSON.parse(this.$router.history.current.query.form));
     window.onresize = () => {
       this.settingSheetHeight();
     };
