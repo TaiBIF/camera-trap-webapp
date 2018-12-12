@@ -95,8 +95,8 @@
                 <h5 class="text-gray">請選擇樣區</h5>
               </div>
               <div
-                v-show="CurrentSite!==null && sites.length"
                 class="sheet-view"
+                :class="{'show': CurrentSite!==null && sites.length}"
               >
                 <div class="control p-2">
                   <div class="row">
@@ -129,16 +129,28 @@
           </div>
         </div>
 
-        <div class="action">
-          <router-link
-            to="/project/1"
-            class="btn btn-default"
-          >返回</router-link>
-          <button
-            type="submit"
-            @click.stop.prevent="doSubmit()"
-            class="btn btn-orange"
-          >儲存設定</button>
+        <div class="flex-action">
+          <div>
+            <div
+              class="error"
+              v-if="cameraInputDataError"
+            >
+              <i class="fas fa-exclamation"></i>
+              {{cameraInputDataError}}
+            </div>
+          </div>
+          <div class="btns">
+            <router-link
+              to="/project/1"
+              class="btn btn-default"
+            >返回</router-link>
+            <button
+              type="submit"
+              @click.stop.prevent="doSubmit()"
+              class="btn btn-orange"
+              :disabled="cameraInputDataError"
+            >儲存設定</button>
+          </div>
         </div>
       </div>
     </div>
@@ -301,6 +313,7 @@ export default {
         manualColumnMove: true,
         afterChange: this.editData,
       },
+      forceRecomputeCounter: 0, // a hack to force recompute when edit Hansontable: https://github.com/vuejs/vue/issues/214#issuecomment-400591973
     };
   },
   watch: {
@@ -341,6 +354,16 @@ export default {
       return this.currentProject.cameraLocations.filter(
         camera => camera.site === currentSite.label,
       );
+    },
+    cameraInputDataError: function() {
+      this.forceRecomputeCounter;
+      const nanElevation = this.settings.data.find(
+        camera => camera.elevation && isNaN(camera.elevation),
+      );
+      if (nanElevation) {
+        return '高度請輸入數字';
+      }
+      return null;
     },
   },
   methods: {
@@ -418,34 +441,19 @@ export default {
             this.editCameraLocations[row] = currentCamera.fullCameraLocationMd5;
           }
         }
+        this.forceRecomputeCounter++;
       }
     },
     addData() {
-      if (this.CurrentPoint === null) {
-        this.sites[this.CurrentSite].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-
-        this.settings.data = this.sites[this.CurrentSite].data;
-      } else {
-        this.sites[this.CurrentSite].children[this.CurrentPoint].data.push({
-          name: '',
-          updated_at: '',
-          lat: '',
-          lng: '',
-          altitude: '',
-          vegetation: '',
-        });
-        this.settings.data = this.sites[this.CurrentSite].children[
-          this.CurrentPoint
-        ].data;
-      }
-
+      this.settings.data.push({
+        cameraLocation: '',
+        original_x: '',
+        original_y: '',
+        elevation: '',
+        vegetation: '',
+        land_cover: '',
+        isNew: true,
+      });
       this.renderSheet();
     },
     isCameraEdited(camera) {
@@ -488,6 +496,8 @@ export default {
         Object.keys(this.renamePoints).length > 0 ||
         Object.keys(this.editCameraLocations).length > 0
       ) {
+        const projectId = this.currentProjectId;
+        const projectTitle = this.currentProject.projectTitle;
         const updateDate = this.currentProject.cameraLocations
           .map((cameraLocation, index) => {
             const projectIdKey = `cameraLocations.${index}.projectId`;
@@ -511,18 +521,16 @@ export default {
               : cameraLocation.cameraLocation;
 
             return {
-              _id: this.currentProjectId,
-              projectId: this.currentProjectId,
+              _id: projectId,
+              projectId,
               $set: {
                 ...newCameraData,
-                [projectIdKey]: this.currentProjectId,
-                [projectTitleKey]: this.currentProject.projectTitle,
+                [projectIdKey]: projectId,
+                [projectTitleKey]: projectTitle,
                 [siteKey]: newSite,
                 [subSiteKey]: newSubSite,
                 [fullCameraLocationMd5Key]: md5(
-                  `${
-                    this.currentProjectId
-                  }/${newSite}/${newSubSite}/${currentCameraLocation}`,
+                  `${projectId}/${newSite}/${newSubSite}/${currentCameraLocation}`,
                 ),
               },
               isChanged:
@@ -532,7 +540,59 @@ export default {
             };
           })
           .filter(cameraLocation => cameraLocation.isChanged);
-        this.updateCameraLocations(updateDate);
+
+        const site = this.filterSites[this.CurrentSite].label;
+        const subSite =
+          this.CurrentPoint !== null
+            ? this.filterSites[this.CurrentSite].child[this.CurrentPoint].label
+            : 'NULL';
+        const addData = this.settings.data
+          .filter(
+            camera => camera.isNew && camera.original_x && camera.original_y, // original_x & original_y are required
+          )
+          .map(camera => {
+            const {
+              cameraLocation,
+              original_x,
+              original_y,
+              elevation,
+              vegetation,
+              land_cover,
+            } = camera;
+            const [wgs84dec_x, wgs84dec_y] = twd97ToWgs84({
+              lng: original_x,
+              lat: original_y,
+            });
+            const elevationData =
+              isNaN(elevation) || elevation === ''
+                ? {}
+                : { elevation: +elevation }; // only accept number
+
+            return {
+              _id: projectId,
+              projectId,
+              $push: {
+                cameraLocations: {
+                  projectId,
+                  projectTitle,
+                  site,
+                  subSite,
+                  cameraLocation,
+                  fullCameraLocationMd5: md5(
+                    `${projectId}/${site}/${subSite}/${cameraLocation}`,
+                  ),
+                  original_x,
+                  original_y,
+                  wgs84dec_x,
+                  wgs84dec_y,
+                  vegetation,
+                  land_cover,
+                  ...elevationData,
+                },
+              },
+            };
+          });
+        this.updateCameraLocations([...updateDate, ...addData]);
         this.resetEditRecord();
       }
     },

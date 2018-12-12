@@ -58,7 +58,15 @@ orbs:
         executor: default
         steps:
           - checkout_install
-          - run: npm run build
+          - run:
+              name: Build
+              command: |
+                SCRIPT=buildDev
+                if [ $CIRCLE_BRANCH = prod ]
+                then
+                    SCRIPT=build
+                fi
+                npm run $SCRIPT
           - save_cache:
               key: dist#{{ .Revision }}
               paths:
