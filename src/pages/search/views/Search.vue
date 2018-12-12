@@ -776,10 +776,10 @@ export default {
       const form = {
         data: this.form.data.map(data => {
           return {
-            projectId: data.project ? data.project.value : null,
-            site: data.site ? data.site.value : null,
-            subSite: data.subSite ? data.subSite.value : null,
-            camera: data.camera ? data.camera.value : null,
+            projectId: data.project ? data.project.value : '',
+            site: data.site ? data.site.value : '',
+            subSite: data.subSite ? data.subSite.value : '',
+            camera: data.camera ? data.camera.value : '',
           };
         }),
         startAt: this.form.startAt,
