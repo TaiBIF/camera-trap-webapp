@@ -201,6 +201,7 @@
                   <div v-if="dataField.type==='select'" class="form-group">
                     <label>{{ dataField.label }}：</label>
                     <v-select
+                      v-model="form.customFields[dataField.key]"
                       :options="dataField.options"
                       :placeholder="`請選擇${dataField.label}`"
                     />
@@ -215,6 +216,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      v-model="form.customFields[dataField.key]"
                       :placeholder="`請選擇${dataField.label}`"
                     >
                   </div>
@@ -516,6 +518,7 @@ export default {
           },
         ],
         species: [],
+        customFields: {},
         startAt: '',
         endAt: '',
         startTime: {
@@ -799,6 +802,18 @@ export default {
           time.setHours(+this.form.endTime.HH);
           time.setMinutes(+this.form.endTime.mm);
           return time;
+        })(),
+        customFields: (() => {
+          const result = {};
+          for (const customFieldKey in this.form.customFields) {
+            const customField = this.form.customFields[customFieldKey];
+            if (customField && typeof customField === 'object') {
+              result[customFieldKey] = customField.value;
+            } else {
+              result[customFieldKey] = customField;
+            }
+          }
+          return result;
         })(),
         cameraStart: this.form.cameraStart,
         cameraEnd: this.form.cameraEnd,
