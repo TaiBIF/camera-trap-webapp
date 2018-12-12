@@ -54,7 +54,6 @@ app.controller('annImgController', [
 
     $scope.image_url = null;
 
-    $scope.hasSolidImageList = false;
     $scope.current_image_idx = 0;
 
     $scope.try_to_focus_me = null;
@@ -88,7 +87,7 @@ app.controller('annImgController', [
     };
 
     var _getImageList = function() {
-      if (!$scope.hasSolidImageList && !!query.image_id) {
+      if (query.image_id) {
         simpleQueryService
           .simpleQuery(
             `https://api-dev.camera-trap.tw/media/annotation/${query.image_id}`,
@@ -476,15 +475,15 @@ app.controller('annImgController', [
       $scope.saveAnnotation();
 
       /*
-    var dataToSave = _pruneAnn($scope.ann);
-    simpleQueryService.simpleQuery("mongo_save.php", dataToSave, true) // using post
-      .then(function (ret) {
-        console.log('Content saved');
-        console.log(ret);
-        $scope.edit_token_form.$setPristine();
-        $scope.setEditToken(edit_token_id, null, true);
-      });
-    //*/
+      var dataToSave = _pruneAnn($scope.ann);
+      simpleQueryService.simpleQuery("mongo_save.php", dataToSave, true) // using post
+        .then(function (ret) {
+          console.log('Content saved');
+          console.log(ret);
+          $scope.edit_token_form.$setPristine();
+          $scope.setEditToken(edit_token_id, null, true);
+        });
+      //*/
     };
 
     function deleteNullOnNumberType(obj) {
@@ -1378,29 +1377,6 @@ app.controller('annImgController', [
       return Math.uuid().toLowerCase();
     };
 
-    $scope.simpleSearch = function(data, merge) {
-      if (!data) {
-        var data = { contains: $scope.toSearch };
-      } else if (!data.contains) {
-        data.contains = '';
-      }
-
-      var merge = merge;
-      if (!merge) {
-        var merge = false;
-      }
-
-      simpleQueryService
-        .simpleQuery('mongo_simple_query.php', data, (post = true))
-        .then(function(ret) {
-          if (ret.result.length > 0) {
-            $scope.hasSolidImageList = true;
-            $scope.image_list = ret.result;
-            _selectImage(0);
-          }
-        });
-    };
-
     $scope.searchPattern = '';
 
     $scope.graphSessionImageList = function() {
@@ -1525,6 +1501,7 @@ app.controller('annImgController', [
 app.factory('simpleQueryService', [
   '$http',
   function($http) {
+    $http.defaults.withCredentials = true;
     var simpleQuery = function(url, reqData, post) {
       if (!post) {
         return $http.get(url, reqData).then(
