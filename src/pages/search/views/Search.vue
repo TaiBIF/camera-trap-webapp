@@ -118,6 +118,7 @@
                   <label>物種：</label>
                   <v-select
                     :options="projectSpecOptions"
+                    v-model="form.species"
                     multiple
                   />
                 </div>
@@ -514,6 +515,7 @@ export default {
             camera: '',
           },
         ],
+        species: [],
         startAt: '',
         endAt: '',
         startTime: {
@@ -784,6 +786,9 @@ export default {
         endAt: this.form.endAt,
         startTime: this.form.startTime,
         endTime: this.form.endTime,
+        species: this.form.species.map(spec => {
+          return spec.value;
+        }),
         cameraStart: this.form.cameraStart,
         cameraEnd: this.form.cameraEnd,
       };
