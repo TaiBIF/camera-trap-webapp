@@ -22,13 +22,9 @@
                   <div class="col-4">
                     <input
                       type="text"
-                      class="form-control is-invalid"
-                      placeholder="請輸入成員ROCID名稱或電子郵件"
+                      class="form-control"
+                      placeholder="請輸入成員 ORCID"
                     />
-                    <div class="invalid-feedback">
-                      <span class="alert-box">!</span>
-                      <span class="text">電子郵件輸入不正確</span>
-                    </div>
                   </div>
                   <div class="col-4">
                     <v-select :options="roles" />
@@ -52,7 +48,7 @@
               <thead>
                 <tr>
                   <th>計畫成員</th>
-                  <th>電子郵件</th>
+                  <th>Orc ID</th>
                   <th>權限設置</th>
                   <th></th>
                 </tr>
@@ -60,19 +56,23 @@
               <tbody>
                 <tr
                   v-for="(member, i) in members"
-                  :class="{'disabled': member.role==='ProjectManager'}"
+                  :class="{'disabled': member.role.value==='ProjectManager'}"
                   :key="`member-${i}`"
                 >
                   <td>{{member.name}}</td>
-                  <td class="text-gray">{{member.email}}</td>
+                  <td class="text-gray">{{member.orcId}}</td>
                   <td>
                     <v-select
                       :options="roles"
                       v-model="member.role"
+                      disabled
                     />
                   </td>
                   <td class="text-right">
-                    <a @click="removeMember(i)">
+                    <a
+                      @click="removeMember(i)"
+                      v-if="member.role.value!=='ProjectManager'"
+                    >
                       <i class="icon icon-remove-sm"></i>
                     </a>
                   </td>
@@ -143,25 +143,24 @@ export default {
         { value: 'ResearchAssistant', label: '研究助理' },
         { value: 'CaseOfficer', label: '林管處承辦人' },
       ],
-      members: [
-        {
-          name: 'James Olson',
-          email: 'madelyn_ziemann@hilpert.ca',
-          role: { value: 'ProjectManager', label: '計畫管理員' },
-        },
-        {
-          name: 'Calvin Barnes',
-          email: 'cade_haag@gmail.com',
-          role: { value: 'Researcher', label: '研究人員' },
-        },
-      ],
+      members: [],
       currentMember: null,
       invitationOpen: false,
       removeMemberOpen: false,
       closeWindowOpen: false,
     };
   },
+  watch: {
+    projectMembers: function(newValue) {
+      this.members = newValue.map(({ name, _id, role }) => ({
+        name,
+        orcId: _id,
+        role: this.roles.find(r => r.value === role[0].role) || {},
+      }));
+    },
+  },
   computed: {
+    ...members.mapGetters(['projectMembers']),
     currentProjectId() {
       return this.$route.params.id;
     },

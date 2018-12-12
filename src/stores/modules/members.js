@@ -1,29 +1,26 @@
 import { getProjectMembers } from '../../service/api';
 
 export const getters = {
-  members: state => state.members,
+  projectMembers: state => state.projectMembers,
 };
 
 export const mutations = {
-  updateMembers(state, { projectId, result }) {
-    state.members[projectId] = result;
+  updateMembers(state, result) {
+    state.projectMembers = result;
   },
 };
 
 export const actions = {
   async loadProjectMembers({ commit }, projectId) {
     const result = await getProjectMembers(projectId);
-    commit('updateMembers', {
-      projectId,
-      result,
-    });
+    commit('updateMembers', result);
   },
 };
 
 export default {
   namespaced: true,
   state: {
-    members: {},
+    projectMembers: [],
   },
   getters,
   mutations,
