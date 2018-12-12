@@ -782,13 +782,27 @@ export default {
             camera: data.camera ? data.camera.value : '',
           };
         }),
-        startAt: this.form.startAt,
-        endAt: this.form.endAt,
-        startTime: this.form.startTime,
-        endTime: this.form.endTime,
         species: this.form.species.map(spec => {
           return spec.value;
         }),
+        startAt: (() => {
+          if (!this.form.startAt) {
+            return this.form.startAt;
+          }
+          const time = new Date(this.form.startAt);
+          time.setHours(+this.form.startTime.HH);
+          time.setMinutes(+this.form.startTime.mm);
+          return time;
+        })(),
+        endAt: (() => {
+          if (!this.form.endAt) {
+            return this.form.endAt;
+          }
+          const time = new Date(this.form.endAt);
+          time.setHours(+this.form.endTime.HH);
+          time.setMinutes(+this.form.endTime.mm);
+          return time;
+        })(),
         cameraStart: this.form.cameraStart,
         cameraEnd: this.form.cameraEnd,
       };
