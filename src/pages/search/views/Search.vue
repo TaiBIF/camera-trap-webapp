@@ -617,13 +617,10 @@ export default {
       @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
        */
       const dataFieldKeys = new Set();
-      this.form.data.forEach(data => {
-        const project = this.getProject(data.project && data.project.value);
-        if (project) {
-          (project.dataFieldEnabled || []).forEach(key => {
-            dataFieldKeys.add(key);
-          });
-        }
+      this.Projects.forEach(project => {
+        (project.dataFieldEnabled || []).forEach(key => {
+          dataFieldKeys.add(key);
+        });
       });
       return Array.from(dataFieldKeys).map(key => {
         const dataField = this.findDataField(key);
