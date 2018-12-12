@@ -348,7 +348,8 @@
             </div>
             <div class="text-right my-2">
               <router-link
-                :to="`/project/${$route.params.id}/site/${$route.params.subsite_id}/photo/1`"
+                v-if="siteData.data[currentRow].type === 'StillImage'"
+                :to="`/project/${$route.params.id}/site/${$route.params.site_id}/${$route.params.subsite_id}/photo/tag?image_id=${siteData.data[currentRow]._id}`"
                 class="btn btn-sm btn-default"
               >
                 進階標註

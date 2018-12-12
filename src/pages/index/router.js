@@ -65,7 +65,7 @@ export default new Router({
       component: () => import('./views/Site.vue'),
     },
     {
-      path: '/project/:id/site/:site_id/photo/:photo_id',
+      path: '/project/:id/site/:site_id/:subsite_id/photo/tag',
       name: 'photoTag',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
