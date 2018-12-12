@@ -1,6 +1,29 @@
 const path = require('path');
+const MarkdownIt = require('markdown-it');
+const md = new MarkdownIt();
 
 module.exports = {
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.md$/,
+          loader: 'ware-loader',
+          enforce: 'pre',
+          options: {
+            raw: true,
+            middleware: function(source) {
+              return `<template><div>${md.render(source)}</div></template>`;
+            },
+          },
+        },
+        {
+          test: /\.md$/,
+          use: 'vue-loader',
+        },
+      ],
+    },
+  },
   pages: {
     index: {
       entry: 'src/pages/index/main.js',

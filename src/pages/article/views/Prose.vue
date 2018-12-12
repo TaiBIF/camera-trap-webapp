@@ -15,7 +15,7 @@
       </p>
 
       <article>
-        {{ prose.content }}
+        <privacy-policy></privacy-policy>
       </article>
 
       <div class="text-right text-gray">
@@ -26,9 +26,13 @@
 </template>
 
 <script>
+import PrivacyPolicy from '../../../prose/privacy-policy.md';
 export default {
   name: 'prose',
   props: ['slug'],
+  components: {
+    'privacy-policy': PrivacyPolicy,
+  },
   data() {
     return {
       loading: false,
@@ -44,25 +48,14 @@ export default {
   },
   methods: {
     renderContent: function() {
-      // const fs = require('fs');
-      // const markdownIt = require('markdown-it');
-
       let self = this;
       self.loading = true;
       self.error = self.prose = null;
-      fetch('/public/prose/privacy-policy.md')
-        .then(res => {
-          return res.text();
-        })
-        .then(data => {
-          self.loading = false;
-          self.prose.content = data;
-          self.prose.title = 'title';
-          self.prose.description = self.slug;
-        })
-        .catch(err => {
-          self.error = err.toString();
-        });
+      self.loading = false;
+      self.prose = {
+        title: 'title',
+        description: self.slug,
+      };
     },
   },
 };
