@@ -222,6 +222,13 @@
       @close="deleteColumnIndex=null"
       @submit="confirmDeleteColumn"
     />
+    <dialog-u-i
+      :open="showApplyNewColumnSuccessModal"
+      title="新增欄位申請"
+      content="新增欄位申請已送出，待所有計畫都知道將有此欄位新增且對於欄位意義一致，系統管理員將會通知您新增欄位已生效。"
+      hideCancelBtn
+      @submit="showApplyNewColumnSuccessModal=false"
+    />
   </div>
 </template>
 
@@ -232,8 +239,10 @@ import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import NewColumnModal from '../components/NewColumn';
 import DeleteColumnDialog from '../components/DeleteColumnDialog';
+import DialogUI from '../components/DialogUI';
 import EditNav from '../components/EditNav';
 import { isAllowAddColumns } from '../../../util/roles.js';
+import { applyNewColumnField } from '../../../service/modules/project.js';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
@@ -247,6 +256,7 @@ export default {
     EditNav,
     DeleteColumnDialog,
     CloseWindowDialog,
+    DialogUI,
   },
   data() {
     return {
@@ -324,6 +334,7 @@ export default {
       dailyTestTime: {
         status: 0,
       },
+      showApplyNewColumnSuccessModal: false,
       closeWindowOpen: false,
     };
   },
@@ -409,31 +420,37 @@ export default {
       });
     },
     createNewColumn(form) {
+      const projectId = this.currentProjectId;
       const {
         label,
-        widget_date_format,
         type,
-        description,
+        widget_date_format,
         widget_select_options,
+        widgetStringFormat,
+        description,
       } = form;
       const widget_type = Object.keys(this.columnTypeMapping).find(
         key => this.columnTypeMapping[key] === type,
       );
-      const obj = {
-        projectId: this.currentProjectId,
+      const payload = {
+        projectId,
         label,
         description,
+        widgetStringFormat,
         widget_date_format,
         widget_type,
         fieldStatus: 'pending',
-        widget_select_options: widget_select_options.map(label => ({
-          key: '',
-          label,
-        })),
+        widget_select_options: widget_select_options
+          ? widget_select_options.map(label => ({
+              key: '',
+              label,
+            }))
+          : null,
       };
-      // TODO: submit API
-      console.log('xxx createNewColumn', obj);
-      this.newColumnOpen = false;
+      applyNewColumnField({ projectId, payload }).then(() => {
+        this.newColumnOpen = false;
+        this.showApplyNewColumnSuccessModal = true;
+      });
     },
     doSubmit() {
       // save columns

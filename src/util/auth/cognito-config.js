@@ -101,9 +101,9 @@ const authentication = () => {
       auth.parseCognitoWebResponse(location.href);
       return new Promise();
     }
-    if (!location.pathname.match(/^\/login.html/)) {
+    if (!location.pathname.match(/^\/intro.html/)) {
       // redirect to login.html
-      window.location.replace('/login.html');
+      window.location.replace('/intro.html');
       return new Promise();
     }
   });
