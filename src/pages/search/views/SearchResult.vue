@@ -169,22 +169,22 @@
             <div class="item">
               <label>資料來源：</label>
               <div class="content">
-                {{form.funder}}：<br />{{form.site}}-{{form.subSite}}-{{form.camera.toString()}}
-                <!-- 林務局全島鼬獾監測 ：<br/>屏東處-旗山站-PT06A、PT07A  |  台東處-全部子樣區-全部相機位置  -->
+                <span v-for="(data, index) in form.data" :key="index">
+                  {{ data.project && data.project.label }}：<br/>
+                  {{ data.site && data.site.label }}{{ data.subSite && `-${data.subSite.label}` }}{{ data.camera && `-${data.camera.label}` }}
+                </span>
               </div>
             </div>
             <div class="item">
               <label>物種：</label>
               <div class="content">
-                {{form.species}}
-                <!-- 山羌、獼猴、鼬獾、白鼻心、食蟹獴、山羊 -->
+                {{ (form.species.map(spec => spec.label)).join('、') }}
               </div>
             </div>
             <div class="item">
               <label>資料時間：</label>
               <div class="content">
-                {{form.modified}}
-                <!-- 2015/01/01 ~ 2018/09/08 -->
+                {{ form.startAt | moment('YYYY/MM/DD') }} ~ {{ form.endAt | moment('YYYY/MM/DD') }}
               </div>
             </div>
           </div>
@@ -435,6 +435,8 @@
 </template>
 
 <script>
+import leftPad from 'left-pad';
+import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
 import DatePicker from 'vue2-datepicker';
 import VueTimepicker from 'vue2-timepicker';
@@ -442,7 +444,8 @@ import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../../index/components/ZoomDrag';
 
-// debugger
+const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'SearchResult',
@@ -458,31 +461,33 @@ export default {
       isContinuous: false,
       continuousTime: 1,
       form: {
-        name: '',
-        site: '',
-        subSIte: '',
-        camera: [],
-        start_at: '',
-        end_at: '',
-        start_time: {
-          HH: '10',
-          mm: '05',
-        },
-        end_time: {
-          HH: '10',
-          mm: '05',
-        },
-        funder: '',
+        data: [
+          {
+            project: '',
+            site: '',
+            subSite: '',
+            camera: '',
+          },
+        ],
         species: [],
-        modified: '',
-        sex: '',
-        age: '',
-        horn: '',
-        note: '',
-        elevation: '',
-        vegetation: '',
-        land_cover: '',
-        time: '',
+        startAt: '',
+        endAt: '',
+        startTime: {
+          HH: '10',
+          mm: '05',
+        },
+        endTime: {
+          HH: '10',
+          mm: '05',
+        },
+        cameraStart: {
+          HH: '10',
+          mm: '05',
+        },
+        cameraEnd: {
+          HH: '10',
+          mm: '05',
+        },
       },
       selection: null,
       currentRow: 0,
@@ -687,7 +692,27 @@ export default {
     VueTimepicker,
     ZoomDrag,
   },
+  computed: {
+    ...project.mapGetters(['Projects']),
+    ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+  },
   methods: {
+    ...project.mapActions(['loadProject']),
+    ...dataFieldAvailable.mapActions(['loadDataFieldAvailable']),
+    getProject(projectId) {
+      /*
+      Get the project from this.Projects.
+      @param projectId {string}
+      @returns {Project|null}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          return project;
+        }
+      }
+      return null;
+    },
     recordUpdate() {},
     dragStart() {
       this.isDrag = true;
@@ -869,11 +894,89 @@ export default {
       if (this.isRender) this.sheet.updateSettings(this.settings);
     },
   },
+  beforeMount() {
+    this.loadProject();
+    this.loadDataFieldAvailable();
+  },
   mounted() {
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();
     this.getSheetData();
 
+    const form = JSON.parse(this.$router.history.current.query.form);
+    this.form = {
+      data: form.data.map(data => {
+        const project = this.getProject(data.projectId);
+        return {
+          project: project
+            ? {
+                label: project.projectTitle,
+                value: project.projectTitle,
+              }
+            : '',
+          site: data.site
+            ? {
+                label: data.site,
+                value: data.site,
+              }
+            : '',
+          subSite: data.subSite
+            ? {
+                label: data.subSite,
+                value: data.subSite,
+              }
+            : '',
+          camera: data.camera
+            ? {
+                label: data.camera,
+                value: data.camera,
+              }
+            : '',
+        };
+      }),
+      species: form.species.map(spec => {
+        return {
+          label: spec,
+          value: spec,
+        };
+      }),
+      startAt: form.startAt ? new Date(form.startAt) : '',
+      endAt: form.endAt ? new Date(form.endAt) : '',
+      startTime: (() => {
+        if (!form.startAt) {
+          return {
+            HH: '10',
+            mm: '05',
+          };
+        }
+        const time = new Date(form.startAt);
+        return {
+          HH: leftPad(time.getHours(), 2, '0'),
+          mm: leftPad(time.getMinutes(), 2, '0'),
+        };
+      })(),
+      endTime: (() => {
+        if (!form.endAt) {
+          return {
+            HH: '10',
+            mm: '05',
+          };
+        }
+        const time = new Date(form.endAt);
+        return {
+          HH: leftPad(time.getHours(), 2, '0'),
+          mm: leftPad(time.getMinutes(), 2, '0'),
+        };
+      })(),
+      cameraStart: {
+        HH: '10',
+        mm: '05',
+      },
+      cameraEnd: {
+        HH: '10',
+        mm: '05',
+      },
+    };
     window.onresize = () => {
       this.settingSheetHeight();
     };
