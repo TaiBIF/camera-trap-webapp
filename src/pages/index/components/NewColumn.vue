@@ -71,6 +71,7 @@
                   v-if="form.type === '下拉選單'"
                   id="format"
                   class="full-width-select hide-autocomplete"
+                  :class="isSelectOptionsMissing ? 'is-invalid' : ''"
                   v-model="form.widget_select_options"
                   :options="[]"
                   multiple
