@@ -20,3 +20,12 @@ export const addProjectMember = async ({ projectId, orcId, roles }) => {
 
   return res;
 };
+
+export const removeProjectMember = async ({ projectId, orcId }) => {
+  const res = await fetchWrap({
+    url: `/project/${projectId}/user/remove/${orcId}`,
+    method: 'POST',
+  });
+
+  return res;
+};
