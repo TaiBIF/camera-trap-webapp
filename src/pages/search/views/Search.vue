@@ -118,6 +118,7 @@
                   <label>物種：</label>
                   <v-select
                     :options="projectSpecOptions"
+                    v-model="form.species"
                     multiple
                   />
                 </div>
@@ -200,6 +201,7 @@
                   <div v-if="dataField.type==='select'" class="form-group">
                     <label>{{ dataField.label }}：</label>
                     <v-select
+                      v-model="form.customFields[dataField.key]"
                       :options="dataField.options"
                       :placeholder="`請選擇${dataField.label}`"
                     />
@@ -214,6 +216,7 @@
                     <input
                       type="text"
                       class="form-control"
+                      v-model="form.customFields[dataField.key]"
                       :placeholder="`請選擇${dataField.label}`"
                     >
                   </div>
@@ -514,6 +517,8 @@ export default {
             camera: '',
           },
         ],
+        species: [],
+        customFields: {},
         startAt: '',
         endAt: '',
         startTime: {
@@ -612,20 +617,21 @@ export default {
     dataFields: function() {
       /*
       All data fields of projects.
-      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
+      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>}}|null>}
        */
       const dataFieldKeys = new Set();
-      this.form.data.forEach(data => {
-        const project = this.getProject(data.project && data.project.value);
-        if (project) {
-          (project.dataFieldEnabled || []).forEach(key => {
-            dataFieldKeys.add(key);
-          });
-        }
+      this.Projects.forEach(project => {
+        (project.dataFieldEnabled || []).forEach(key => {
+          dataFieldKeys.add(key);
+        });
       });
-      return Array.from(dataFieldKeys).map(key => {
+      const result = [];
+      Array.from(dataFieldKeys).map(key => {
         const dataField = this.findDataField(key);
-        return {
+        if (!dataField) {
+          return;
+        }
+        result.push({
           key: key,
           label: dataField.label,
           type: dataField.widget_type,
@@ -635,8 +641,9 @@ export default {
               value: option,
             };
           }),
-        };
+        });
       });
+      return result;
     },
   },
   methods: {
@@ -774,16 +781,45 @@ export default {
       const form = {
         data: this.form.data.map(data => {
           return {
-            projectId: data.project ? data.project.value : null,
-            site: data.site ? data.site.value : null,
-            subSite: data.subSite ? data.subSite.value : null,
-            camera: data.camera ? data.camera.value : null,
+            projectId: data.project ? data.project.value : '',
+            site: data.site ? data.site.value : '',
+            subSite: data.subSite ? data.subSite.value : '',
+            camera: data.camera ? data.camera.value : '',
           };
         }),
-        startAt: this.form.startAt,
-        endAt: this.form.endAt,
-        startTime: this.form.startTime,
-        endTime: this.form.endTime,
+        species: this.form.species.map(spec => {
+          return spec.value;
+        }),
+        startAt: (() => {
+          if (!this.form.startAt) {
+            return this.form.startAt;
+          }
+          const time = new Date(this.form.startAt);
+          time.setHours(+this.form.startTime.HH);
+          time.setMinutes(+this.form.startTime.mm);
+          return time;
+        })(),
+        endAt: (() => {
+          if (!this.form.endAt) {
+            return this.form.endAt;
+          }
+          const time = new Date(this.form.endAt);
+          time.setHours(+this.form.endTime.HH);
+          time.setMinutes(+this.form.endTime.mm);
+          return time;
+        })(),
+        customFields: (() => {
+          const result = {};
+          for (const customFieldKey in this.form.customFields) {
+            const customField = this.form.customFields[customFieldKey];
+            if (customField && typeof customField === 'object') {
+              result[customFieldKey] = customField.value;
+            } else {
+              result[customFieldKey] = customField;
+            }
+          }
+          return result;
+        })(),
         cameraStart: this.form.cameraStart,
         cameraEnd: this.form.cameraEnd,
       };
