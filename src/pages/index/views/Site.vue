@@ -749,7 +749,9 @@ export default {
     cameraList() {
       return this.currentProject
         ? this.currentProject.cameraLocations.filter(
-            val => val.subSite === this.$route.params.subsite_id,
+            val =>
+              val.subSite === this.$route.params.subsite_id &&
+              val.site === this.$route.params.site_id,
           )
         : [];
     },
