@@ -82,9 +82,9 @@
             <div class="item long-label">
               <label>拍攝時段：</label>
               <div class="content">
-                {{ `${form.cameraStart.HH}:${form.cameraStart.mm}` }}
+                {{ form.cameraStart.HH }}:{{ form.cameraStart.mm }}
                 ~
-                {{ `${form.cameraEnd.HH}:${form.cameraEnd.mm}` }}
+                {{ form.cameraEnd.HH }}:{{ form.cameraEnd.mm }}
               </div>
             </div>
           </div>
@@ -855,14 +855,18 @@ export default {
           }
           return result;
         })(),
-        cameraStart: {
-          HH: '10',
-          mm: '05',
-        },
-        cameraEnd: {
-          HH: '10',
-          mm: '05',
-        },
+        cameraStart: form.cameraStart
+          ? form.cameraStart
+          : {
+              HH: '10',
+              mm: '05',
+            },
+        cameraEnd: form.cameraEnd
+          ? form.cameraEnd
+          : {
+              HH: '10',
+              mm: '05',
+            },
       };
     };
     this.form = parseQuery(JSON.parse(this.$router.history.current.query.form));
