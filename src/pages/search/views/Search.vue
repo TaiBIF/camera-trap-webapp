@@ -617,7 +617,7 @@ export default {
     dataFields: function() {
       /*
       All data fields of projects.
-      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
+      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>}}|null>}
        */
       const dataFieldKeys = new Set();
       this.Projects.forEach(project => {
@@ -625,9 +625,13 @@ export default {
           dataFieldKeys.add(key);
         });
       });
-      return Array.from(dataFieldKeys).map(key => {
+      const result = [];
+      Array.from(dataFieldKeys).map(key => {
         const dataField = this.findDataField(key);
-        return {
+        if (!dataField) {
+          return;
+        }
+        result.push({
           key: key,
           label: dataField.label,
           type: dataField.widget_type,
@@ -637,8 +641,9 @@ export default {
               value: option,
             };
           }),
-        };
+        });
       });
+      return result;
     },
   },
   methods: {
