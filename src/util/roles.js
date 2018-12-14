@@ -19,29 +19,27 @@ const projectManagerRoles = [
 ];
 
 /**
- * @param {array} roles
+ * @param {string} role
  * @return {bool}
  */
-export const isAllowManageProject = roles => {
-  if (!roles || roles.length === 0) {
+export const isAllowManageProject = role => {
+  if (!role) {
     return false;
   }
 
-  return roles.some(
-    userRole =>
-      systemManagerRoles.includes(userRole) ||
-      projectManagerRoles.includes(userRole),
+  return (
+    systemManagerRoles.includes(role) || projectManagerRoles.includes(role)
   );
 };
 
 /**
- * @param {array} roles
+ * @param {string} role
  * @return {bool}
  */
-export const isAllowAddColumns = roles => {
-  if (!roles || roles.length === 0) {
+export const isAllowAddColumns = role => {
+  if (!role) {
     return false;
   }
 
-  return roles.some(userRole => projectManagerRoles.includes(userRole));
+  return projectManagerRoles.includes(role);
 };
