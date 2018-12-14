@@ -810,6 +810,7 @@ export default {
       return this.form.camera.indexOf('all') !== -1
         ? this.cameraList.every(
             val =>
+              !this.cameraLocked[val.fullCameraLocationMd5] ||
               this.cameraLocked[val.fullCameraLocationMd5].locked === false ||
               this.cameraLocked[val.fullCameraLocationMd5].lockedBy.userId ===
                 window.currentUser.userId,
@@ -817,6 +818,7 @@ export default {
         : this.siteData.data.length >= 1 &&
             this.form.camera.every(
               val =>
+                !this.cameraLocked[val] ||
                 this.cameraLocked[val].locked === false ||
                 this.cameraLocked[val].lockedBy.userId ===
                   window.currentUser.userId,
