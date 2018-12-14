@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Overview from './views/Overview';
+import store from '../../stores';
+import { isAllowManageProject } from '../../util/roles';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'hash',
   base: process.env.BASE_URL,
   routes: [
@@ -21,21 +23,33 @@ export default new Router({
     {
       path: '/info/:id/edit',
       name: 'editInfo',
+      meta: {
+        managerOnly: true,
+      },
       component: () => import('./views/EditInfo.vue'),
     },
     {
       path: '/column/:id/edit',
       name: 'editColumn',
+      meta: {
+        managerOnly: true,
+      },
       component: () => import('./views/EditColumn.vue'),
     },
     {
       path: '/camera/:id/edit',
       name: 'editCamera',
+      meta: {
+        managerOnly: true,
+      },
       component: () => import('./views/EditCamera.vue'),
     },
     {
       path: '/member/:id/edit',
       name: 'editMember',
+      meta: {
+        managerOnly: true,
+      },
       component: () => import('./views/EditMember.vue'),
     },
     {
@@ -46,6 +60,9 @@ export default new Router({
     {
       path: '/license/:id/edit',
       name: 'editLicense',
+      meta: {
+        managerOnly: true,
+      },
       component: () => import('./views/EditLicense.vue'),
     },
     {
@@ -74,3 +91,25 @@ export default new Router({
     },
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.managerOnly)) {
+    const currentProjectId = store.state.project.currentProjectId;
+    const projectRoles = store.state.auth.profile.project_roles || [];
+    const currentRole = projectRoles.find(
+      role => role.projectId === currentProjectId,
+    );
+    if (!currentRole || !isAllowManageProject(currentRole.role)) {
+      console.log('* un-authorize redirect to overview page', currentRole);
+      router.replace({
+        name: 'overview',
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;

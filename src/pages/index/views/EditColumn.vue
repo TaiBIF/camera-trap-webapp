@@ -365,13 +365,13 @@ export default {
       return this.$route.params.id;
     },
     showAddColumnsBtn() {
-      const projectRoles = this.projectRoles.find(
+      const projectRole = this.projectRoles.find(
         projectRole => projectRole.projectId === this.currentProjectId,
       );
-      if (!projectRoles) {
+      if (!projectRole) {
         return false;
       }
-      return isAllowAddColumns(projectRoles.roles);
+      return isAllowAddColumns(projectRole.role);
     },
     unUseColumnsField() {
       const currentFieldEnabled = this.columns.map(obj => obj.key);
