@@ -1,5 +1,5 @@
-$(window).load(function() {
-  $('#target_image').load(function() {
+$(window).on('load', function(e) {
+  $('#target_image').on('load', function(_e) {
     if (this.naturalHeight !== 0 && this.complete) {
       draw('#target_image');
     }
