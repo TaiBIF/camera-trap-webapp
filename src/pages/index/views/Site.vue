@@ -68,29 +68,44 @@
               </div>
               <div class="mb-2">
                 <div
-                  class="checkbox checkbox-inline"
+                  class="d-inline-block"
                   :key="camera.fullCameraLocationMd5"
-                  v-for="camera in cameraList"
+                  v-for="(camera, c_id) in cameraList"
                 >
-                  <input
-                    type="checkbox"
-                    v-model="form.camera"
-                    :id="camera.fullCameraLocationMd5"
-                    :value="camera.fullCameraLocationMd5"
+                  <div
+                    class="checkbox checkbox-inline"
+                    v-if="c_id < 12"
                   >
-                  <label :for="camera.fullCameraLocationMd5">
-                    <span class="text">{{camera.cameraLocation}}</span>
-                    <span
-                      class="icon"
-                      v-if="cameraLocked[camera.fullCameraLocationMd5] && cameraLocked[camera.fullCameraLocationMd5].locked"
+                    <input
+                      type="checkbox"
+                      v-model="form.camera"
+                      :id="camera.fullCameraLocationMd5"
+                      :value="camera.fullCameraLocationMd5"
                     >
-                      <i
-                        class="icon-lock align-middle"
-                        v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy.name} 正在編輯中`"
-                      ></i>
-                    </span>
-                    <span class="error-label">1</span>
-                  </label>
+                    <label :for="camera.fullCameraLocationMd5">
+                      <span class="text">{{camera.cameraLocation}}</span>
+                      <span
+                        class="icon"
+                        v-if="cameraLocked[camera.fullCameraLocationMd5] && cameraLocked[camera.fullCameraLocationMd5].locked"
+                      >
+                        <i
+                          class="icon-lock align-middle"
+                          v-tooltip.top="`${cameraLocked[camera.fullCameraLocationMd5].lockedBy.name} 正在編輯中`"
+                        ></i>
+                      </span>
+                      <span class="error-label">1</span>
+                    </label>
+                  </div>
+                </div>
+                <div
+                  class="d-inline-block"
+                  v-if="cameraList.length >= 12"
+                >
+                  <a
+                    class="link text-gray"
+                    role="button"
+                    @click="CameraModalOpen = true"
+                  >查看更多</a>
                 </div>
               </div>
             </div>
@@ -408,6 +423,14 @@
       :open="idleTimeoutOpen"
       @close="idleTimeoutOpen=false; editMode = false"
     />
+    <camera-modal
+      :cameras="cameraList"
+      :selected="form.camera"
+      :open="CameraModalOpen"
+      :cameraLocked="cameraLocked"
+      @submit="setSelectedCamera"
+      @close="CameraModalOpen=false"
+    />
   </div>
 </template>
 
@@ -419,6 +442,7 @@ import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../components/ZoomDrag';
+import CameraModal from '../components/CameraModal';
 import YoutubeEmbed from '../components/YoutubeEmbed';
 import IdleTimeoutDialog from '../components/IdleTimeoutDialog';
 import downloadCSV from '../../../util/downloadCsv.js';
@@ -451,6 +475,7 @@ export default {
       currentPage: 1, //目前在第幾頁
       today: moment(),
       idleTimeout: null,
+      CameraModalOpen: false,
       idleTimeoutOpen: false,
       hasColumnError: false,
       editMode: false,
@@ -707,6 +732,7 @@ export default {
     ZoomDrag,
     YoutubeEmbed,
     IdleTimeoutDialog,
+    CameraModal,
   },
   computed: {
     ...annotationRevision.mapState(['revision']),
@@ -819,6 +845,11 @@ export default {
     ...media.mapActions(['getSiteData', 'updateAnnotation']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
     ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
+    setSelectedCamera(camera) {
+      console.log(camera);
+      this.form.camera = camera;
+      this.CameraModalOpen = false;
+    },
     // 切頁時更新 sheet 顯示資料
     updateSheetData() {
       this.row_data = this.siteData.data.slice(
