@@ -10,6 +10,7 @@ import VueAxios from 'vue-axios';
 import VueLodash from 'vue-lodash';
 import LoadScript from 'vue-plugin-load-script';
 import vSelect from 'vue-select';
+import VueMoment from 'vue-moment';
 import VTooltip from 'v-tooltip';
 
 import { authentication } from '../../util/auth/cognito-config';
@@ -18,6 +19,7 @@ Vue.use(VueLodash, { name: 'lodash' }); // options is optional
 Vue.use(VueAxios, axios);
 Vue.use(LoadScript);
 Vue.use(VTooltip);
+Vue.use(VueMoment);
 
 Vue.component('v-select', vSelect);
 

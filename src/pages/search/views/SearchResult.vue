@@ -10,10 +10,6 @@
             <span class="icon"><i class="icon-download-green"></i></span>
             <span class="text">下載篩選結果</span>
           </a>
-          <button
-            class="btn btn-orange btn-sm ml-2"
-            v-if="editMode"
-          >計算</button>
         </div>
         <router-link to="/"><small class="text-gray">
             <i class="fa fa-chevron-left"></i> 返回資料篩選及計算
@@ -21,219 +17,62 @@
         <h3 class="text-green mb-2 mt-2">資料篩選結果</h3>
       </div>
 
-      <form
-        action=""
-        class="form filter-form"
-        v-if="editMode"
-      >
-        <div class="col-12">
-          <h6 class="text-gray mt-3">資料來源</h6>
-        </div>
-        <div class="row mx-0">
-          <div class="col-3">
-            <div class="form-group">
-              <label for="">計畫名稱：</label>
-              <v-select
-                v-model="form.name"
-                :placeholder="'請選擇計畫名稱'"
-              ></v-select>
-            </div>
-            <div class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label for="">樣區：</label>
-                  <v-select
-                    v-model="form.site"
-                    :placeholder="'請選擇樣區'"
-                  ></v-select>
-                </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label for="">子樣區：</label>
-                  <v-select
-                    v-model="form.subSite"
-                    :placeholder="'請選擇子樣區'"
-                  ></v-select>
-                </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label for="">相機位置：</label>
-                  <v-select
-                    v-model="form.camera"
-                    :placeholder="'請選擇相機位置'"
-                  ></v-select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label>物種：</label>
-                  <v-select
-                    :options="[{label:'山羌', value:'山羌'},{label:'鼬獾', value:'鼬獾'},{label:'台灣獼猴', value:'台灣獼猴'},{label:'山羊', value:'山羊'},{label:'赤腹松鼠', value:'赤腹松鼠'},{label:'白鼻心', value:'白鼻心'}]"
-                    multiple
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-5">
-                <div class="form-group">
-                  <label>資料起始時間：</label>
-                  <div class="input-group-inline">
-                    <div class="input-group">
-                      <date-picker
-                        v-model="form.start_at"
-                        :placeholder="'2018-09-20'"
-                        :format="'YYYY-MM-DD'"
-                        :first-day-of-week="1"
-                      ></date-picker>
-                      <div class="input-group-append">
-                        <i class="icon icon-calendar"></i>
-                      </div>
-                    </div>
-                    <div class="input-group ml-2">
-                      <vue-timepicker
-                        v-model="form.start_time"
-                        format=""
-                      ></vue-timepicker>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <span class="align-self-center px-2">
-                到
-              </span>
-              <div class="col-5">
-                <div class="form-group">
-                  <label>資料結束時間：</label>
-                  <div class="input-group-inline">
-                    <div class="input-group">
-                      <date-picker
-                        v-model="form.end_at"
-                        :placeholder="'2018-09-20'"
-                        :format="'YYYY-MM-DD'"
-                        :first-day-of-week="1"
-                      ></date-picker>
-                      <div class="input-group-append">
-                        <i class="icon icon-calendar"></i>
-                      </div>
-                    </div>
-                    <div class="input-group ml-2">
-                      <vue-timepicker
-                        v-model="form.end_time"
-                        format=""
-                      ></vue-timepicker>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="row">
-              <div class="col-5">
-                <div class="form-group">
-                  <label>起始日期：</label>
-                  <div class="input-group-inline">
-                    <div class="input-group">
-                      <date-picker
-                        v-model="form.start_at"
-                        :placeholder="'2018-09-20'"
-                        :format="'YYYY-MM-DD'"
-                        :first-day-of-week="1"
-                      ></date-picker>
-                      <div class="input-group-append">
-                        <i class="icon icon-calendar"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
 
-      <div
-        v-else
-        class="search-content"
-      >
-
+      <div class="search-content">
         <div class="row search-filters">
           <div class="col-4">
             <div class="item">
               <label>資料來源：</label>
               <div class="content">
-                {{form.funder}}：<br />{{form.site}}-{{form.subSite}}-{{form.camera.toString()}}
-                <!-- 林務局全島鼬獾監測 ：<br/>屏東處-旗山站-PT06A、PT07A  |  台東處-全部子樣區-全部相機位置  -->
+                <span v-for="(data, index) in form.data" :key="index">
+                  {{ data.project && data.project.label }}：<br/>
+                  {{ data.site && data.site.label }}{{ data.subSite && `-${data.subSite.label}` }}{{ data.camera && `-${data.camera.label}` }}
+                </span>
               </div>
             </div>
             <div class="item">
               <label>物種：</label>
               <div class="content">
-                {{form.species}}
-                <!-- 山羌、獼猴、鼬獾、白鼻心、食蟹獴、山羊 -->
+                {{ (form.species.map(spec => spec.label)).join('、') }}
               </div>
             </div>
             <div class="item">
               <label>資料時間：</label>
               <div class="content">
-                {{form.modified}}
-                <!-- 2015/01/01 ~ 2018/09/08 -->
+                {{ form.startAt | moment('YYYY/MM/DD') }} ~ {{ form.endAt | moment('YYYY/MM/DD') }}
               </div>
             </div>
           </div>
           <div class="col-4">
-            <div class="item short-label">
-              <label>性別：</label>
-              <div class="content">
-                {{form.sex}}
+            <div v-for="dataField in dataFields"
+                 :key="dataField.key"
+                 class="item short-label">
+              <label>{{ dataField.label }}：</label>
+              <div v-if="dataField.type==='select'" class="content">
+                {{ form.customFields[dataField.key] && form.customFields[dataField.key].value }}
                 <!-- 公 -->
               </div>
-            </div>
-            <div class="item short-label">
-              <label>年齡：</label>
-              <div class="content">
-                {{form.age}}
-                <!-- 成體、亞成體 -->
-              </div>
-            </div>
-            <div class="item short-label">
-              <label>角況：</label>
-              <div class="content">
-                {{form.horn}}
-                <!-- 茸角一尖、茸角二尖、茸角三尖、茸角四尖 -->
-              </div>
-            </div>
-            <div class="item short-label">
-              <label>備註：</label>
-              <div class="content">
-                {{form.note}}
-                <!-- 覓食行為 -->
+              <div v-if="dataField.type==='text'" class="content">
+                {{ form.customFields[dataField.key] }}
               </div>
             </div>
           </div>
           <div class="col-4">
-            <div class="item long-label">
+            <div class="item long-label" style="display: none;">
               <label>海拔：</label>
               <div class="content">
                 {{form.elevation}}
                 <!-- 1,001~1,500 公尺 -->
               </div>
             </div>
-            <div class="item long-label">
+            <div class="item long-label" style="display: none;">
               <label>植披：</label>
               <div class="content">
                 {{form.vegetation}}
                 <!-- 闊葉林 -->
               </div>
             </div>
-            <div class="item long-label">
+            <div class="item long-label" style="display: none;">
               <label>土地覆蓋類型：</label>
               <div class="content">
                 {{form.land_cover}}
@@ -243,18 +82,11 @@
             <div class="item long-label">
               <label>拍攝時段：</label>
               <div class="content">
-                {{form.time}}
-                <!-- 18:00 ~ 05:00 -->
+                {{ form.cameraStart.HH }}:{{ form.cameraStart.mm }}
+                ~
+                {{ form.cameraEnd.HH }}:{{ form.cameraEnd.mm }}
               </div>
             </div>
-          </div>
-          <div class="col-12">
-            <button
-              @click.stop.prevent="changeMode('editMode', true)"
-              class="btn btn-sm btn-block btn-green"
-            >
-              <i class="fa fa-pencil-alt"></i> 進入編輯模式
-            </button>
           </div>
         </div>
       </div>
@@ -266,10 +98,7 @@
             <div class="col-8">
               <small class="text-gray">共 132,136 筆資料</small>
               <div class="divider"></div>
-              <div
-                class="dropdown"
-                :class="{'d-none': !editMode}"
-              >
+              <div class="dropdown d-none">
                 <div
                   class="btn-group btn-grayscale"
                   :class="{'active': isContinuous}"
@@ -435,14 +264,16 @@
 </template>
 
 <script>
+import leftPad from 'left-pad';
+import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
-import DatePicker from 'vue2-datepicker';
-import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../../index/components/ZoomDrag';
+import store from '../../../stores';
 
-// debugger
+const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'SearchResult',
@@ -458,31 +289,34 @@ export default {
       isContinuous: false,
       continuousTime: 1,
       form: {
-        name: '',
-        site: '',
-        subSIte: '',
-        camera: [],
-        start_at: '',
-        end_at: '',
-        start_time: {
-          HH: '10',
-          mm: '05',
-        },
-        end_time: {
-          HH: '10',
-          mm: '05',
-        },
-        funder: '',
+        data: [
+          {
+            project: '',
+            site: '',
+            subSite: '',
+            camera: '',
+          },
+        ],
         species: [],
-        modified: '',
-        sex: '',
-        age: '',
-        horn: '',
-        note: '',
-        elevation: '',
-        vegetation: '',
-        land_cover: '',
-        time: '',
+        customFields: {},
+        startAt: '',
+        endAt: '',
+        startTime: {
+          HH: '10',
+          mm: '05',
+        },
+        endTime: {
+          HH: '10',
+          mm: '05',
+        },
+        cameraStart: {
+          HH: '10',
+          mm: '05',
+        },
+        cameraEnd: {
+          HH: '10',
+          mm: '05',
+        },
       },
       selection: null,
       currentRow: 0,
@@ -683,11 +517,66 @@ export default {
     currentRow: 'recordUpdate',
   },
   components: {
-    DatePicker,
-    VueTimepicker,
     ZoomDrag,
   },
+  computed: {
+    ...project.mapGetters(['Projects']),
+    ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+    dataFields: function() {
+      /*
+      All data fields of projects.
+      @returns {Array<{label: 'string', type: 'string', options: {Array<{label: 'string', value: 'string'}>|null}}>}
+       */
+      const dataFieldKeys = new Set();
+      this.Projects.forEach(project => {
+        (project.dataFieldEnabled || []).forEach(key => {
+          dataFieldKeys.add(key);
+        });
+      });
+      return Array.from(dataFieldKeys).map(key => {
+        const dataField = this.findDataField(key);
+        return {
+          key: key,
+          label: dataField.label,
+          type: dataField.widget_type,
+          options: (dataField.widget_select_options || []).map(option => {
+            return {
+              label: option,
+              value: option,
+            };
+          }),
+        };
+      });
+    },
+  },
   methods: {
+    getProject(projectId) {
+      /*
+      Get the project from this.Projects.
+      @param projectId {string}
+      @returns {Project|null}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          return project;
+        }
+      }
+      return null;
+    },
+    findDataField(key) {
+      /*
+      Find the data field from dataFieldAvailable.
+      @param key {string}
+      @returns {DataFieldAvailable|null}
+       */
+      for (let index = 0; index < this.dataFieldAvailable.length; index += 1) {
+        if (this.dataFieldAvailable[index].key === key) {
+          return this.dataFieldAvailable[index];
+        }
+      }
+      return null;
+    },
     recordUpdate() {},
     dragStart() {
       this.isDrag = true;
@@ -869,11 +758,118 @@ export default {
       if (this.isRender) this.sheet.updateSettings(this.settings);
     },
   },
+  beforeRouteEnter(to, from, next) {
+    Promise.all([
+      store.dispatch('project/loadProject'),
+      store.dispatch('dataFieldAvailable/loadDataFieldAvailable'),
+    ])
+      .then(() => {
+        next();
+      })
+      .catch(error => {
+        next(error);
+      });
+  },
   mounted() {
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();
     this.getSheetData();
 
+    const parseQuery = form => {
+      return {
+        data: form.data.map(data => {
+          const project = this.getProject(data.projectId);
+          return {
+            project: project
+              ? {
+                  label: project.projectTitle,
+                  value: project._id,
+                }
+              : '',
+            site: data.site
+              ? {
+                  label: data.site,
+                  value: data.site,
+                }
+              : '',
+            subSite: data.subSite
+              ? {
+                  label: data.subSite,
+                  value: data.subSite,
+                }
+              : '',
+            camera: data.camera
+              ? {
+                  label: data.camera,
+                  value: data.camera,
+                }
+              : '',
+          };
+        }),
+        species: form.species.map(spec => {
+          return {
+            label: spec,
+            value: spec,
+          };
+        }),
+        startAt: form.startAt ? new Date(form.startAt) : '',
+        endAt: form.endAt ? new Date(form.endAt) : '',
+        startTime: (() => {
+          if (!form.startAt) {
+            return {
+              HH: '10',
+              mm: '05',
+            };
+          }
+          const time = new Date(form.startAt);
+          return {
+            HH: leftPad(time.getHours(), 2, '0'),
+            mm: leftPad(time.getMinutes(), 2, '0'),
+          };
+        })(),
+        endTime: (() => {
+          if (!form.endAt) {
+            return {
+              HH: '10',
+              mm: '05',
+            };
+          }
+          const time = new Date(form.endAt);
+          return {
+            HH: leftPad(time.getHours(), 2, '0'),
+            mm: leftPad(time.getMinutes(), 2, '0'),
+          };
+        })(),
+        customFields: (() => {
+          const result = {};
+          for (const customFieldKey in form.customFields) {
+            const dataField = this.findDataField(customFieldKey);
+            if (dataField.widget_type === 'select') {
+              result[customFieldKey] = {
+                label: form.customFields[customFieldKey],
+                value: form.customFields[customFieldKey],
+              };
+            } else {
+              result[customFieldKey] = form.customFields[customFieldKey];
+            }
+          }
+          return result;
+        })(),
+        cameraStart: form.cameraStart
+          ? form.cameraStart
+          : {
+              HH: '10',
+              mm: '05',
+            },
+        cameraEnd: form.cameraEnd
+          ? form.cameraEnd
+          : {
+              HH: '10',
+              mm: '05',
+            },
+      };
+    };
+    this.form = parseQuery(JSON.parse(this.$router.history.current.query.form));
     window.onresize = () => {
       this.settingSheetHeight();
     };

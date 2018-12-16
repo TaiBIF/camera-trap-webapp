@@ -1,130 +1,159 @@
 .modal
-  position: fixed
-  width: 100%
-  height: 100%
-  left: 0
-  top: 0
-  display: block
-  overflow-y: auto
-  background: rgba(70,70,70,.7)
-  transition: opacity .3s .1s ease
-  z-index: 1129
-  &.fade
-    display: none
-    opacity: 0
-
-  &.in,
-  &.is-open
-    display: block
-    opacity: 1
-    .modal-dialog
-      -webkit-transform: translate(0,0)
-      transform: translate(0,0)
-
-  &.trial-modal > .modal-dialog
-    max-width: 467px !important
-    
-    .modal-body
-      +border-radius(4px)
-      .action
-        padding: 20px
-
-  .modal-dialog 
-    position: absolute
-    top: 0
+    position: fixed
+    width: 100%
+    height: 100%
     left: 0
-    right: 0
-    bottom: 0
-    width: auto
-    margin: 50px auto
-    max-width: 660px !important
-    pointer-events: none
-    transition: -webkit-transform .3s ease-out
-    transition: transform .3s ease-out
-    transition: transform .3s ease-out,-webkit-transform .3s ease-out
-    -webkit-transform: translate(0,-25%)
-    transform: translate(0,-25%)
+    top: 0
+    display: block
+    overflow-y: auto
+    background: rgba(70, 70, 70, 0.7)
+    transition: opacity 0.3s 0.1s ease
+    z-index: 1129
 
-    &.dialog-ui
-      max-width: 467px !important
-      .modal-content 
-        text-align: center
-        .close
-          position: absolute
-          right: 20px
-          top: 20px
-        .btn
-          margin-left: 10px
-          margin-right: 10px
-        h1
-          margin-bottom: 10px
-        p 
-          margin-bottom: 20px
-  .modal-content 
-    position: absolute
-    width: 100%
-    margin-bottom: 50px
-    pointer-events: auto
-    background: #FFF
-    display: flex
-    flex-direction: column
-    width: 100%
-    border: 0
-    +border-radius(4px)
-    +box-shadow(none)
-    .modal-header
-      color: #FFF
-      display: inline-block
-      background-color: #2A7F60
-      padding-top: 10px
-      padding-bottom: 10px
-      background: linear-gradient(to right, #2A7F60 50%, #8AC731)
-      +border-radius(4px 4px 0 0)
-      .modal-title
-        flex: 1
-        text-align: center
-        margin-top: 0
-        font-size: 20px
-    
-    .modal-body
-      padding: 20px 40px
-      background: #FFF
-      flex: 1
+    &.camera-list-modal
+      .checkbox > label
+        display: block
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
 
-      img 
-        max-width: 100%
+    &.fade
+        display: none
+        opacity: 0
 
-    .modal-footer
-      display: block
-      background: #F3F2F2
-      +border-radius(0 0 4px 4px)
-      .btn-default
-        border-color: $green
-      .btn
-        margin: 0 10px
-        &:last-child
-          margin-right: 0
+    &.in,
+    &.is-open
+        display: block
+        opacity: 1
 
-  &.light-box
-    .close
-      position: absolute
-      right: 0
-      top: -30px
+        .modal-dialog
+            -webkit-transform: translate(0, 0)
+            transform: translate(0, 0)
+
+    &.trial-modal > .modal-dialog
+        max-width: 467px !important
+
+        .modal-body
+            +border-radius(4px)
+
+            .action
+                padding: 20px
 
     .modal-dialog
-      max-width: 750px !important
-    img 
-      position: relative
-      width: 100% !important
-      height: auto !important
-    
-    .caption
-      background: $black
-      color: #FFF
-      text-align: center
-      height: 50px
-      padding: 10px 20px 
-      font-size: 24px
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+        width: auto
+        margin: 50px auto
+        max-width: 660px !important
+        pointer-events: none
+        transition: -webkit-transform 0.3s ease-out
+        transition: transform 0.3s ease-out
+        transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out
+        -webkit-transform: translate(0, -25%)
+        transform: translate(0, -25%)
 
-      small 
-        font-size: 16px
+        &.modal-lg
+            width: 100%
+            max-width: 800px !important
+
+        &.dialog-ui
+            max-width: 467px !important
+
+            .modal-content
+                text-align: center
+
+                .close
+                    position: absolute
+                    right: 20px
+                    top: 20px
+
+                .btn
+                    margin-left: 10px
+                    margin-right: 10px
+
+                h1
+                    margin-bottom: 10px
+
+                p
+                    margin-bottom: 20px
+
+    .modal-content
+        position: absolute
+        width: 100%
+        margin-bottom: 50px
+        pointer-events: auto
+        background: #FFF
+        display: flex
+        flex-direction: column
+        width: 100%
+        border: 0
+
+        +border-radius(4px)
+        +box-shadow(none)
+
+        .modal-header
+            color: #FFF
+            display: inline-block
+            background-color: #2A7F60
+            padding-top: 10px
+            padding-bottom: 10px
+            background: linear-gradient(to right, #2A7F60 50%, #8AC731)
+
+            +border-radius(4px 4px 0 0)
+
+            .modal-title
+                flex: 1
+                text-align: center
+                margin-top: 0
+                font-size: 20px
+
+        .modal-body
+            padding: 20px 40px
+            background: #FFF
+            flex: 1
+
+            img
+                max-width: 100%
+
+        .modal-footer
+            display: block
+            background: #F3F2F2
+
+            +border-radius(0 0 4px 4px)
+
+            .btn-default
+                border-color: $green
+
+            .btn
+                margin: 0 10px
+
+                &:last-child
+                    margin-right: 0
+
+    &.light-box
+        .close
+            position: absolute
+            right: 0
+            top: -30px
+
+        .modal-dialog
+            max-width: 750px !important
+
+        img
+            position: relative
+            width: 100% !important
+            height: auto !important
+
+        .caption
+            background: $black
+            color: #FFF
+            text-align: center
+            height: 50px
+            padding: 10px 20px
+            font-size: 24px
+
+            small
+                font-size: 16px

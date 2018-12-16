@@ -53,6 +53,7 @@ const formatSiteData = state => {
         cameraLocation: val.cameraLocation,
         fileName: val.uploaded_file_name,
         corrected_date_time: val.corrected_date_time,
+        type: val.type,
         ...(val.type === 'MovingImage'
           ? {
               youtubeUrl: val.url,

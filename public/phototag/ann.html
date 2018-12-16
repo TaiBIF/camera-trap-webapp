@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html ng-app="annImg" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <script src="./js/Math.uuid.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="../vendor/jquery-latest.js"></script>
+  <script src="./js/angular.min.js"></script>
+  <script src="./js/annImgController.js"></script>
+  <script src="./js/ann.js"></script>
+  <script src="./js/custom_filters.js"></script>
+  <link rel="stylesheet" href="./css/style.css" type="text/css">
+  <link rel="stylesheet" href="../vendor/jquery-ui.css">
+  <script src="../vendor/jquery-ui.js"></script>
+
+  <script src="./js/angular-animate.min.js"></script>
+  <script src="./js/angular-aria.min.js"></script>
+  <script src="./js/angular-messages.min.js"></script>
+
+  <link rel="stylesheet" href="./css/angular-material.min.css">
+  <script src="./js/angular-material.min.js"></script>
+
+  <link rel="stylesheet" href="./js/angular-ui-tree/dist/angular-ui-tree.css">
+  <link rel="stylesheet" href="./js/angular-ui-tree/dist/test.css">
+  <script src="./js/angular-ui-tree/dist/angular-ui-tree.js"></script>
+
+</head>
+
+<body ng-controller="annImgController" ng-mouseup='focusTokenBasic()'>
+  <div class='css_table' style='width:100%' ng-mousedown='imgmd($event)' ng-mouseup='imgmu($event)' ng-mousemove='imgmm($event)'>
+    <div class='css_tr'>
+      <div class='css_td' style='width:520px;'>
+        <div style='position:relative; margin-right: 10px; width:auto; height:auto;'>
+          <div ng-show='!tokenCreating' ng-repeat='token in ann.tokens' ng-style='boxStyle[token.token_id]' class='{{token.token_id}} bbox'
+            ng-mouseover='highlightTree(token.token_id, $event)' ng-click='setEditToken(token.token_id, $event)'></div>
+          <div class='outer left' ng-show='tokenCreating||!!edit_token' style='z-index:98;'></div>
+          <div class='outer top' ng-show='tokenCreating||!!edit_token' style='z-index:98;'></div>
+          <div class='outer bottom' ng-show='tokenCreating||!!edit_token' style='z-index:98;'></div>
+          <div class='outer right' ng-show='tokenCreating||!!edit_token' style='z-index:98;'></div>
+          <div id='edit-bbox' ng-show='!!edit_token' style='z-index:98;'></div>
+          <img id='target_image' width="{{imageDisplayWidth}}" ng-src='{{ann.imageUrlPrefix + ann.url}}' imageonload='img2data()' /><br />
+        </div>
+        <div class='ctrlZone'>
+          <button id='create-new-token-button' ng-show='!edit_token' ng-click='createToken($event)'>建立標註</button>
+          <button id='full-scope' ng-show='tokenCreating && !edit_token' ng-click='selectFullScope()'>全選畫面</button>
+          <button class='main cancel-editing-token-button' ng-click='cancelEditingToken($event)' ng-show='edit_token'>取消編輯</button>
+          <button ng-click='updateToken()' id='main_save_xd'>儲存標註</button>
+          <div>
+            <input class='annGraphSearch' placeholder="" ng-model='searchPattern' size='14' />
+            <button ng-click="graphSessionImageList()">尋找關聯</button><br />
+          </div>
+
+          <div id='msg' style='display:inline-block;'></div>
+        </div>
+      </div> <!-- end of div.css_td-->
+
+      <div class='css_td' style='width:100%;'>
+
+        <div class='css_table ctrl_panel' id='tree_and_form' style='z-index:101; width:0px; position:relative; left:0; top:0px; padding: 20px 0px 0px 0px;  width:100%; height:100%'>
+          <div style='position:relative; height:100%;'>
+            <div class='css_tr'>
+              <div class='css_td' style='width:300px'>
+                <script type="text/ng-template" id="tokens_renderer.html">
+            <div ui-tree-handle ng-class="classes[token.token_id]" ng-mouseover="highlightBox(token.token_id, $event)" ng-mousedown="setEditToken(token.token_id, $event)" ng-mouseleave="highlightAllBox($event)" style="display:inline-block">
+              <!--a ng-if="token.tokens && token.tokens.length > 0" data-nodrag ng-click="toggle(this)">Toggle {{token.tree_simple_id}}</a-->
+              <a>Token {{token.tree_simple_id}}</a>
+              <div data-nodrag class='delete_link' style='position:absolute; left:275px; top:5px; width:30px; height:30px; text-align:center; line-height:30px; border:1px solid #dae2ea' ng-mousedown='uiDeleteToken($event, token.token_id)'>x</div>
+              <div>id: {{token.token_id}}</div>
+              <div>{{token.description_level}}</div>
+              <div class="show_on_parent_focused show_on_parent_hovered">
+                <div>parent: {{token.meta.parent_id}}</div>
+                <div>viid: {{token.meta.virtual_individual_id}}</div>
+                <div>vpid: {{token.meta.virtual_part_id}}</div>
+              </div>
+            </div>
+            <div style="display:inline-block" ng-show='isReadyToRelate'><button style="width:25px; line-height:20px;" ng-mousedown='setRelationObject($event, token.token_id)'>》</button></div>
+            <ol ui-tree-nodes="" ng-model="token.tokens" ng-class="{hidden: collapsed}">
+              <li ng-repeat="token in token.tokens" data-expand-on-hover="true" ui-tree-node ng-include="'tokens_renderer.html'">
+              </li>
+            </ol>
+          </script>
+                <div>
+
+                  <div style='width:100%; height:40px; position:relative;'>
+                    <div style='position:absolute; right: 0px; width:100%; height:3em; left:5px;'>
+                      <button id='main_rebuild_tree_button' ng-click='rebuildTree()'>rebuild tree</button>
+                      <button class='main cancel-editing-token-button' ng-click='cancelEditingToken($event)' ng-show='edit_token'>取消編輯</button>
+                      <!--input type='checkbox' data-no-text ng-model='hover_to_preview' ng-init='false'/><span ng-click='hover_to_preview = !hover_to_preview'>滑鼠預覽</span-->
+                    </div>
+                  </div>
+                  <div ui-tree="treeOptions" style='width:320px; height:240px; overflow: auto; top: 5em;' class='token-basic-tree'
+                    tabindex="0">
+                    <ol ui-tree-nodes="" ng-model="tree.tokens" id="tree-root">
+                      <li ng-repeat="token in tree.tokens" data-expand-on-hover="true" ui-tree-node ng-include="'tokens_renderer.html'">
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </div><!-- end of level2 css_td -->
+              <div class='css_td'>
+                <div style='position:relative; margin-right: 10px; width:320px;'>
+                  <!--div style="height:300px; width:400px; float:left;">
+              <h3>{{current_token.description_level}}</h3>
+              <table>
+                <tr ng-repeat='data in current_token.data'>
+                  <td>{{data.label||data.key}}</td><td>{{data.value}} {{data.unit}}</td>
+                </tr>
+              </table>
+            </div-->
+                  <canvas id="canvas" width="320" height="240" style="border:1px solid; margin-top:40px; margin-left:10px;"
+                    class='ctrl_panel_drag_handle'></canvas>
+                  <!--label>你不能只是亢亢就好ㄇ3r 森77</label-->
+                </div>
+              </div>
+            </div>
+            <div>
+              <div>
+                <hr />
+                <form name='edit_token_form'>
+                  <div style='font-weight:bold' ng-show='edit_token'>
+                    <!-- start of edit token -->
+                    <div class='css_table' style='display:inline-block;'>
+                      <div class='css_tr'>
+                        <div class='css_td'>Token ID</div>
+                        <div class='css_td'>
+                          <input ng-model='edit_token.token_id'>
+                        </div>
+                      </div>
+                      <div class='css_tr'>
+                        <div class='css_td'>Description Lvl</div>
+                        <div class='css_td'><input ng-model='edit_token.description_level'></div>
+                      </div>
+                      <div class='css_tr'>
+                        <div class='css_td'>Parent ID</div>
+                        <div class='css_td'><input ng-model='edit_token.meta.parent_id'></div>
+                      </div>
+                      <div class='css_tr'>
+                        <div class='css_td'>Virtual Idv. ID</div>
+                        <div class='css_td'>
+                          <input name='viid' ng-model='edit_token.meta.virtual_individual_id' ng-keydown="ctrlPasteSth($event)">
+                        </div>
+                        <div class='css_td'>
+                          <button ng-click='edit_token.meta.virtual_individual_id = uuid();edit_token_form.viid.$setDirty()'>產生新ID</button>
+                        </div>
+                      </div>
+                      <div class='css_tr'>
+                        <div class='css_td'>Virtual Part ID</div>
+                        <div class='css_td'>
+                          <input name='vpid' ng-model='edit_token.meta.virtual_part_id' ng-keydown="ctrlPasteSth($event)">
+                        </div>
+                        <div class='css_td'>
+                          <button ng-click='edit_token.meta.virtual_part_id = uuid();edit_token_form.vpid.$setDirty()'>產生新ID</button>
+                        </div>
+                      </div>
+                    </div>
+                    <!--div style='display:inline-block; margin-left:30px; vertical-align:top;'>
+                <div>
+                  <div>[R] Switch between DATA and RELATION.</div>
+                  <div>[I] Start input.</div>
+                  <div>[TAB] [SHIFT+TAB] Next / Previous cell.</div>
+                  <div>[O] Go to the last row.</div>
+                  <div>[:W] Save.</div>
+                  <div>[ESC] Stop input/edit or close panel.</div>
+                </div>
+              </div>
+
+              <br/-->
+                    <md-content>
+                      <md-tabs md-dynamic-height="" md-border-bottom="">
+                        <md-tab label="Data">
+                          <table>
+                            <!--tr>
+                        <th>Label</th><th>Key</th><th>Value</th><th>Unit</th>
+                      </tr-->
+                            <tr ng-repeat='(di, data) in edit_token.data'>
+                              <td><input style='width:130px' nrow='data-{{di}}' name='data-label' class='data-row-{{di}} user-input user-input-data data-label user-input-first-cell'
+                                  ng-model='edit_token.data[di].label' placeholder="Label"></td>
+                              <td><input style='width:130px' nrow='data-{{di}}' name='data-key' class='data-row-{{di}} user-input user-input-data data-key'
+                                  ng-model='edit_token.data[di].key' placeholder="Key"></td>
+                              <td>
+                                <input style='width:130px' nrow='data-{{di}}' autocomplete="off" name='data-value'
+                                  class='data-row-{{di}} user-input user-input-data data-value' ng-model='edit_token.data[di].value'
+                                  placeholder="Value" ng-change='autoValues(di)' ng-blur='cellBlurred($event)'>
+                                <div style='background-color:white;position:absolute;z-index:1000;width:auto;height:200px;overflow:scroll'
+                                  ng-show='showSelectionBox[edit_token.token_id + "_" + edit_token.data[di].key + "-di-" + di]'>
+                                  <span ng-repeat="(elmId, v) in autoRes[edit_token.data[di].key] | v_filter : di : showSelectionBox[edit_token.token_id + '_' + edit_token.data[di].key + '-di-' + di] : this : 1"
+                                    ng-style='elmSearchStyleInd[elmId]||elmSearchStyle' class='elm_searh'>
+                                    <span ng-style='elmSearchStyleInd[elmId]||elmSearchStyle' ng-bind-html="v.matched">
+                                    </span>
+                                    <br />
+                                  </span>
+                                </div>
+                                <div></div>
+                              </td>
+                              <td><input style='width:130px' nrow='data-{{di}}' name='data-unit' class='data-row-{{di}} user-input user-input-data data-unit'
+                                  ng-model='edit_token.data[di].unit' placeholder="Unit" ng-class='{"last-data-cell" : (di==edit_token.data.length-1)}'
+                                  ng-focus='addDataEntry(di==edit_token.data.length-1)'></td>
+                            </tr>
+                          </table>
+                          <button class='add-a-row-button add-data' ng-click='addDataEntry(true)'>新增資料</button>
+                          <button ng-click='updateToken()'>儲存標註</button>
+                          <button class='cancel-editing-token-button' ng-click='cancelEditingToken($event)' ng-show='edit_token'>取消編輯</button><br />
+                        </md-tab>
+                        <md-tab label="Relations">
+                          <table>
+                            <!--tr>
+                        <th>Context</th><th>Relation</th><th>Object</th>
+                      </tr-->
+                            <tr ng-repeat='(ri, rel) in edit_token.relations'>
+                              <td><input nrow='relation-{{ri}}' name='relation-context' class='relation-row-{{ri}} user-input user-input-relation relation-context user-input-first-cell'
+                                  ng-model='edit_token.relations[ri].context' placeholder="Context"></td>
+                              <td><input nrow='relation-{{ri}}' name='relation-relation' class='relation-row-{{ri}} user-input user-input-relation relation-relation'
+                                  ng-model='edit_token.relations[ri].relation' placeholder="Relation"></td>
+                              <td><input nrow='relation-{{ri}}' name='relation-object' class='relation-row-{{ri}} user-input user-input-relation relation-object'
+                                  ng-keydown="ctrlPasteCopiedToken($event, ri)" ng-model='edit_token.relations[ri].object'
+                                  placeholder="Object" ng-focus="readyToRelate($event, ri);addRelEntry(ri==edit_token.relations.length-1);"
+                                  ng-blur="cancelToRelate($event)" ng-class='{"last-relation-cell" : (di==edit_token.data.length-1)}'></td>
+                              <td>
+                                <div ng-show="!!rel.object" ng-click="resolveUrlToken($event, rel.object)">resolve</div>
+                              </td>
+                              <td><button ng-show="isReadyToRelate" ng-mousedown="tokenIDFromCopiedToken($event, ri)">Paste
+                                  Copied Token</button></td>
+                            </tr>
+                          </table>
+                          <button class='add-a-row-button add-relation' ng-click='addRelEntry(true)'>Add a row</button>
+                          <button ng-click='updateToken()'>Save</button>
+                          <button class='cancel-editing-token-button' ng-click='cancelEditingToken($event)' ng-show='edit_token'>cancel
+                            editing token</button><br />
+                        </md-tab>
+                      </md-tabs>
+                    </md-content>
+                  </div> <!-- end of edit token -->
+                </form>
+              </div>
+            </div><!-- end of level2 css_td -->
+          </div><!-- end of level2 css_tr -->
+        </div>
+      </div><!-- end of level2 css_table -->
+
+
+    </div> <!-- end of div.css_td-->
+
+  </div> <!-- end of div.css_tr-->
+  </div> <!-- end of div.css_table-->
+  <div style='display:none'>
+    <label>DEBUG INFO</label>
+    <textarea disabled style='width:100%; height: 400px;'>{{formatJSON(ann)}}</textarea>
+  </div>
+</body>
+
+</html>

@@ -58,14 +58,7 @@
                       <div class="col-3">{{ td.label }}</div>
                       <div class="col-3">{{ td.type }}</div>
                       <div class="text-gray col-3">
-                        <div
-                          v-if="td.label === '物種'"
-                          class="link text-green underline"
-                          @click="speciesOpen=true"
-                        >
-                          <i class="fa fa-pencil-alt"></i> {{ td.description }}
-                        </div>
-                        <span v-else>{{ td.description }}</span>
+                        <span>{{ td.description }}</span>
                       </div>
                       <div class="text-right col-3">
                         <a
@@ -229,6 +222,12 @@
       hideCancelBtn
       @submit="showApplyNewColumnSuccessModal=false"
     />
+    <species-order
+      :species="projectSpeciesList"
+      :open="speciesOpen"
+      @close="speciesOpen=false"
+      @submit="updateSpeciesOrder"
+    />
   </div>
 </template>
 
@@ -241,6 +240,7 @@ import NewColumnModal from '../components/NewColumn';
 import DeleteColumnDialog from '../components/DeleteColumnDialog';
 import DialogUI from '../components/DialogUI';
 import EditNav from '../components/EditNav';
+import SpeciesOrder from '../components/SpeciesOrder';
 import { isAllowAddColumns } from '../../../util/roles.js';
 import { applyNewColumnField } from '../../../service/modules/project.js';
 
@@ -257,6 +257,7 @@ export default {
     DeleteColumnDialog,
     CloseWindowDialog,
     DialogUI,
+    SpeciesOrder,
   },
   data() {
     return {
@@ -335,6 +336,7 @@ export default {
         status: 0,
       },
       showApplyNewColumnSuccessModal: false,
+      speciesOpen: false,
       closeWindowOpen: false,
     };
   },
@@ -360,18 +362,19 @@ export default {
       'projectDailyTestTime',
       'allColumnsField',
       'projectDataFieldEnabled',
+      'projectSpeciesList',
     ]),
     currentProjectId() {
       return this.$route.params.id;
     },
     showAddColumnsBtn() {
-      const projectRoles = this.projectRoles.find(
+      const projectRole = this.projectRoles.find(
         projectRole => projectRole.projectId === this.currentProjectId,
       );
-      if (!projectRoles) {
+      if (!projectRole) {
         return false;
       }
-      return isAllowAddColumns(projectRoles.roles);
+      return isAllowAddColumns(projectRole.role);
     },
     unUseColumnsField() {
       const currentFieldEnabled = this.columns.map(obj => obj.key);
@@ -477,6 +480,15 @@ export default {
           _id: this.currentProjectId,
           projectId: this.currentProjectId,
           $set: { dailyTestTime },
+        },
+      ]);
+    },
+    updateSpeciesOrder(speciesList) {
+      this.updateCameraLocations([
+        {
+          _id: this.currentProjectId,
+          projectId: this.currentProjectId,
+          $set: { speciesList },
         },
       ]);
     },

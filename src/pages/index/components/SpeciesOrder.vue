@@ -22,27 +22,27 @@
               <!-- 拖拉排序架構 draggable > transition-group -->
               <draggable
                 :options="{handle: '.drag-item'}"
-                @start="drag=true"
-                @end="drag=false"
+                v-model="projectSpecies"
               >
                 <transition-group>
                   <div
                     class="row sortable-item"
-                    v-for="(o, index) in order"
+                    v-for="(s, index) in projectSpecies"
                     :key="`species-${index}`"
                   >
                     <div class="col-2">{{ index+1 }}</div>
                     <div class="col-4">
-                      <v-select
-                        :options="species"
-                        v-model="species[index]"
-                        taggable
+                      <input
+                        class="form-control"
+                        :value="s"
+                        @focus="selectEditSpecies(index)"
+                        @blur="editSpecies"
                       />
                     </div>
                     <div class="col-3">
                       <span
-                        v-if="species[index] !== undefined && species[index].note !== undefined"
-                        v-tooltip.right="species[index].note"
+                        v-if="notes[s] !== undefined"
+                        v-tooltip.right="notes[s]"
                       >
                         <i class="icon icon-info"></i>
                       </span>
@@ -98,47 +98,43 @@ export default {
       type: Boolean,
       default: false,
     },
+    species: {
+      type: Array,
+      default: function() {
+        return [];
+      },
+    },
   },
   data() {
     return {
-      order: [0, 1, 2, 3, 4, 5, 6],
-      // 需要 API 取得後，透過 props 帶入
-      species: [
-        {
-          label: '空拍',
-          value: '空拍',
-          note: '相機觸發，但影像中無拍攝到生物',
-        },
-        {
-          label: '測試',
-          value: '測試',
-          note:
-            '研究人員安置相機時觸發拍攝之影像，抑或研究人員設置自動拍攝以測試相機運作之影像',
-        },
-        { label: '山羌', value: '山羌' },
-        { label: '水鹿', value: '水鹿' },
-        { label: '獼猴', value: '獼猴' },
-        { label: '鼬獾', value: '鼬獾' },
-        {
-          label: '人',
-          value: '人',
-          note: '登山客、狩獵者等，非研究人員之人類',
-        },
-      ],
+      notes: {
+        空拍: '相機觸發，但影像中無拍攝到生物',
+        測試:
+          '研究人員安置相機時觸發拍攝之影像，抑或研究人員設置自動拍攝以測試相機運作之影像',
+        人: '登山客、狩獵者等，非研究人員之人類',
+      },
+      projectSpecies: this.species,
+      editRow: null,
     };
   },
   methods: {
+    selectEditSpecies(value) {
+      this.editRow = value;
+    },
+    editSpecies(e) {
+      if (!isNaN(this.editRow)) {
+        this.projectSpecies[this.editRow] = e.target.value;
+        this.editRow = null;
+      }
+    },
     addSpecies() {
-      // 新增項目
-      this.order.push(0);
+      this.projectSpecies.push('');
     },
     removeItem(i) {
-      // 刪除項目
-      this.order.splice(i, 1);
+      this.projectSpecies.splice(i, 1);
     },
     submit() {
-      // 送出資料
-      this.$emit('submit', this.form);
+      this.$emit('submit', this.projectSpecies.filter(species => species));
     },
   },
 };
