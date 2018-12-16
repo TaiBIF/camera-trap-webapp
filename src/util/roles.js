@@ -19,29 +19,28 @@ const projectManagerRoles = [
 ];
 
 /**
- * @param {array} roles
+ * @param {string} role
  * @return {bool}
  */
-export const isAllowManageProject = roles => {
-  if (!roles || roles.length === 0) {
+export const isAllowManageProject = role => {
+  if (!role || role === '') {
     return false;
   }
 
-  return roles.some(
-    userRole =>
-      systemManagerRoles.includes(userRole) ||
-      projectManagerRoles.includes(userRole),
+  return (
+    systemManagerRoles.indexOf(role) > 0 ||
+    projectManagerRoles.indexOf(role) > 0
   );
 };
 
 /**
- * @param {array} roles
+ * @param {string} role
  * @return {bool}
  */
-export const isAllowAddColumns = roles => {
-  if (!roles || roles.length === 0) {
+export const isAllowAddColumns = role => {
+  if (!role || role === '') {
     return false;
   }
 
-  return roles.some(userRole => projectManagerRoles.includes(userRole));
+  return projectManagerRoles.indexOf(role) > 0;
 };
