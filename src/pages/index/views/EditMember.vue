@@ -23,7 +23,7 @@
                     <input
                       type="text"
                       class="form-control is-invalid"
-                      placeholder="請輸入成員ROCID名稱或電子郵件"
+                      placeholder="請輸入成員 ORCiD 或電子郵件"
                     />
                     <div class="invalid-feedback">
                       <span class="alert-box">!</span>
