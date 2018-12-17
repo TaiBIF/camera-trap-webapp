@@ -23,13 +23,12 @@ const projectManagerRoles = [
  * @return {bool}
  */
 export const isAllowManageProject = role => {
-  if (!role || role === '') {
+  if (!role) {
     return false;
   }
 
   return (
-    systemManagerRoles.indexOf(role) > 0 ||
-    projectManagerRoles.indexOf(role) > 0
+    systemManagerRoles.includes(role) || projectManagerRoles.includes(role)
   );
 };
 
@@ -42,5 +41,5 @@ export const isAllowAddColumns = role => {
     return false;
   }
 
-  return projectManagerRoles.indexOf(role) > 0;
+  return projectManagerRoles.includes(role);
 };

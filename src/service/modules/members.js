@@ -9,12 +9,12 @@ export const getProjectMembers = async projectId => {
   return results || [];
 };
 
-export const addProjectMember = async ({ projectId, orcId, roles }) => {
+export const addProjectMember = async ({ projectId, orcId, role }) => {
   const res = await fetchWrap({
     url: `/project/${projectId}/user/add/${orcId}`,
     method: 'POST',
     body: {
-      roles,
+      role,
     },
   });
 
