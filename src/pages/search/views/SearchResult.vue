@@ -10,11 +10,6 @@
             <span class="icon"><i class="icon-download-green"></i></span>
             <span class="text">下載篩選結果</span>
           </a>
-          <button
-            class="btn btn-orange btn-sm ml-2"
-            v-if="editMode"
-            @click.stop.prevent="submitSearch()"
-          >篩選</button>
         </div>
         <router-link to="/"><small class="text-gray">
             <i class="fa fa-chevron-left"></i> 返回資料篩選及計算
@@ -22,158 +17,8 @@
         <h3 class="text-green mb-2 mt-2">資料篩選結果</h3>
       </div>
 
-      <form
-        action=""
-        class="form filter-form"
-        v-if="editMode"
-      >
-        <div class="col-12">
-          <h6 class="text-gray mt-3">資料來源</h6>
-        </div>
-        <div class="row mx-0">
-          <div v-for="(data, index) in form.data"
-               :key="`data-form-${index}`"
-               class="col-3">
-            <div class="form-group">
-              <label>計畫名稱：</label>
-              <v-select
-                :options="projectOptions"
-                :on-change="generateOnProjectSelectorChangeHandler(index)"
-                v-model="data.project"
-                :placeholder="'請選擇計畫名稱'"
-              />
-            </div>
-            <div class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label>樣區：</label>
-                  <v-select
-                    :options="projectSiteOptions[index]"
-                    :on-change="generateOnProjectSiteSelectorChangeHandler(index)"
-                    v-model="data.site"
-                    :placeholder="'請選擇樣區'"
-                  />
-                </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label>子樣區：</label>
-                  <v-select
-                    :options="projectSibSiteOptions[index]"
-                    :on-change="generateOnProjectSubSiteSelectorChangeHandler(index)"
-                    v-model="data.subSite"
-                    :placeholder="'請選擇子樣區'"
-                  />
-                </div>
-              </div>
-              <div class="col-4">
-                <div class="form-group">
-                  <label>相機位置：</label>
-                  <v-select
-                    :options="projectCameraOptions[index]"
-                    v-model="data.camera"
-                    :placeholder="'請選擇相機位置'"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <div class="col-4">
-                <div class="form-group">
-                  <label>物種：</label>
-                  <v-select
-                    :options="[{label:'山羌', value:'山羌'},{label:'鼬獾', value:'鼬獾'},{label:'台灣獼猴', value:'台灣獼猴'},{label:'山羊', value:'山羊'},{label:'赤腹松鼠', value:'赤腹松鼠'},{label:'白鼻心', value:'白鼻心'}]"
-                    multiple
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-5">
-                <div class="form-group">
-                  <label>資料起始時間：</label>
-                  <div class="input-group-inline">
-                    <div class="input-group">
-                      <date-picker
-                        v-model="form.start_at"
-                        :placeholder="'2018-09-20'"
-                        :format="'YYYY-MM-DD'"
-                        :first-day-of-week="1"
-                      ></date-picker>
-                      <div class="input-group-append">
-                        <i class="icon icon-calendar"></i>
-                      </div>
-                    </div>
-                    <div class="input-group ml-2">
-                      <vue-timepicker
-                        v-model="form.start_time"
-                        format=""
-                      ></vue-timepicker>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <span class="align-self-center px-2">
-                到
-              </span>
-              <div class="col-5">
-                <div class="form-group">
-                  <label>資料結束時間：</label>
-                  <div class="input-group-inline">
-                    <div class="input-group">
-                      <date-picker
-                        v-model="form.end_at"
-                        :placeholder="'2018-09-20'"
-                        :format="'YYYY-MM-DD'"
-                        :first-day-of-week="1"
-                      ></date-picker>
-                      <div class="input-group-append">
-                        <i class="icon icon-calendar"></i>
-                      </div>
-                    </div>
-                    <div class="input-group ml-2">
-                      <vue-timepicker
-                        v-model="form.end_time"
-                        format=""
-                      ></vue-timepicker>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="row">
-              <div class="col-5">
-                <div class="form-group">
-                  <label>起始日期：</label>
-                  <div class="input-group-inline">
-                    <div class="input-group">
-                      <date-picker
-                        v-model="form.start_at"
-                        :placeholder="'2018-09-20'"
-                        :format="'YYYY-MM-DD'"
-                        :first-day-of-week="1"
-                      ></date-picker>
-                      <div class="input-group-append">
-                        <i class="icon icon-calendar"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
 
-      <div
-        v-else
-        class="search-content"
-      >
-
+      <div class="search-content">
         <div class="row search-filters">
           <div class="col-4">
             <div class="item">
@@ -237,19 +82,11 @@
             <div class="item long-label">
               <label>拍攝時段：</label>
               <div class="content">
-                {{ `${form.cameraStart.HH}:${form.cameraStart.mm}` }}
+                {{ form.cameraStart.HH }}:{{ form.cameraStart.mm }}
                 ~
-                {{ `${form.cameraEnd.HH}:${form.cameraEnd.mm}` }}
+                {{ form.cameraEnd.HH }}:{{ form.cameraEnd.mm }}
               </div>
             </div>
-          </div>
-          <div class="col-12">
-            <button
-              @click.stop.prevent="changeMode('editMode', true)"
-              class="btn btn-sm btn-block btn-green"
-            >
-              <i class="fa fa-pencil-alt"></i> 進入編輯模式
-            </button>
           </div>
         </div>
       </div>
@@ -261,10 +98,7 @@
             <div class="col-8">
               <small class="text-gray">共 132,136 筆資料</small>
               <div class="divider"></div>
-              <div
-                class="dropdown"
-                :class="{'d-none': !editMode}"
-              >
+              <div class="dropdown d-none">
                 <div
                   class="btn-group btn-grayscale"
                   :class="{'active': isContinuous}"
@@ -433,8 +267,6 @@
 import leftPad from 'left-pad';
 import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
-import DatePicker from 'vue2-datepicker';
-import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 import ZoomDrag from '../../index/components/ZoomDrag';
@@ -685,84 +517,11 @@ export default {
     currentRow: 'recordUpdate',
   },
   components: {
-    DatePicker,
-    VueTimepicker,
     ZoomDrag,
   },
   computed: {
     ...project.mapGetters(['Projects']),
     ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
-    projectOptions: function() {
-      /*
-      All projects.
-      @returns {Array<{label: 'string', value: 'string'}>}
-      */
-      return this.Projects.map(project => {
-        return {
-          label: project.projectTitle,
-          value: project._id,
-        };
-      });
-    },
-    projectSiteOptions: function() {
-      /*
-      All sites of projects.
-      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
-      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
-      */
-      const result = [];
-      this.form.data.forEach(data => {
-        result.push(
-          this.getProjectSiteOptions(data.project && data.project.value),
-        );
-      });
-      return result;
-    },
-    projectSibSiteOptions: function() {
-      /*
-      All sub-sites of projects.
-      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
-      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
-      */
-      return this.form.data.map(data => {
-        return this.getProjectSubSiteOptions(
-          data.project && data.project.value,
-          data.site && data.site.value,
-        );
-      });
-    },
-    projectCameraOptions: function() {
-      /*
-      All camera locations of projects.
-      The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
-      @returns {Array<{Array<{label: 'string', value: 'string'}>}>}
-      */
-      return this.form.data.map(data => {
-        return this.getProjectCameraOptions(
-          data.project && data.project.value,
-          data.site && data.site.value,
-          data.subSite && data.subSite.value,
-        );
-      });
-    },
-    projectSpecOptions: function() {
-      /*
-      All species of all projects.
-      @returns {Array<{label: 'string', value: 'string'}>}
-      */
-      const species = new Set();
-      this.Projects.forEach(project => {
-        (project.speciesList || []).forEach(spec => {
-          species.add(spec);
-        });
-      });
-      return Array.from(species).map(spec => {
-        return {
-          label: spec,
-          value: spec,
-        };
-      });
-    },
     dataFields: function() {
       /*
       All data fields of projects.
@@ -805,122 +564,6 @@ export default {
       }
       return null;
     },
-    getProjectSiteOptions(projectId) {
-      /*
-      Get sites of the project.
-      @param projectId {string}
-      @returns {Array<{label: 'string', value: 'string'}}>}
-       */
-      const project = this.getProject(projectId);
-      if (project) {
-        const sites = new Set();
-        project.cameraLocations.forEach(cameraLocation => {
-          sites.add(cameraLocation.site);
-        });
-        return Array.from(sites).map(site => {
-          return {
-            label: site,
-            value: site,
-          };
-        });
-      }
-      return [];
-    },
-    getProjectSubSiteOptions(projectId, site) {
-      /*
-      Get sub-sites of the project.
-      @param projectId {string}
-      @param site {string}
-      @returns {Array<{label: 'string', value: 'string'}}>}
-       */
-      for (let index = 0; index < this.Projects.length; index += 1) {
-        const project = this.Projects[index];
-        if (project._id === projectId) {
-          const subSites = new Set();
-          project.cameraLocations.forEach(cameraLocation => {
-            if (cameraLocation.site === site) {
-              subSites.add(cameraLocation.subSite);
-            }
-          });
-          return Array.from(subSites).map(subSite => {
-            return {
-              label: subSite,
-              value: subSite,
-            };
-          });
-        }
-      }
-      return [];
-    },
-    getProjectCameraOptions(projectId, site, subSite) {
-      /*
-      Get camera locations of the project.
-      @param projectId {string}
-      @param site {string}
-      @param subSite {string}
-      @returns {Array<{label: 'string', value: 'string'}}>}
-       */
-      for (let index = 0; index < this.Projects.length; index += 1) {
-        const project = this.Projects[index];
-        if (project._id === projectId) {
-          const locations = new Set();
-          project.cameraLocations.forEach(cameraLocation => {
-            if (
-              cameraLocation.site === site &&
-              cameraLocation.subSite === subSite
-            ) {
-              locations.add(cameraLocation.cameraLocation);
-            }
-          });
-          return Array.from(locations).map(location => {
-            return {
-              label: location,
-              value: location,
-            };
-          });
-        }
-      }
-      return [];
-    },
-    generateOnProjectSelectorChangeHandler(dataIndex) {
-      const _this = this;
-      return function(value) {
-        const oldProjectId =
-          _this.form.data[dataIndex].project &&
-          _this.form.data[dataIndex].project.value;
-        this.$emit('input', value);
-        if (oldProjectId !== (value && value.value)) {
-          _this.form.data[dataIndex].site = '';
-          _this.form.data[dataIndex].subSite = '';
-          _this.form.data[dataIndex].camera = '';
-        }
-      };
-    },
-    generateOnProjectSiteSelectorChangeHandler(dataIndex) {
-      const _this = this;
-      return function(value) {
-        const oldSite =
-          _this.form.data[dataIndex].site &&
-          _this.form.data[dataIndex].site.value;
-        this.$emit('input', value);
-        if (oldSite !== (value && value.value)) {
-          _this.form.data[dataIndex].subSite = '';
-          _this.form.data[dataIndex].camera = '';
-        }
-      };
-    },
-    generateOnProjectSubSiteSelectorChangeHandler(dataIndex) {
-      const _this = this;
-      return function(value) {
-        const oldSubSite =
-          _this.form.data[dataIndex].subSite &&
-          _this.form.data[dataIndex].subSite.value;
-        this.$emit('input', value);
-        if (oldSubSite !== (value && value.value)) {
-          _this.form.data[dataIndex].camera = '';
-        }
-      };
-    },
     findDataField(key) {
       /*
       Find the data field from dataFieldAvailable.
@@ -933,9 +576,6 @@ export default {
         }
       }
       return null;
-    },
-    submitSearch() {
-      this.editMode = false;
     },
     recordUpdate() {},
     dragStart() {
@@ -1215,14 +855,18 @@ export default {
           }
           return result;
         })(),
-        cameraStart: {
-          HH: '10',
-          mm: '05',
-        },
-        cameraEnd: {
-          HH: '10',
-          mm: '05',
-        },
+        cameraStart: form.cameraStart
+          ? form.cameraStart
+          : {
+              HH: '10',
+              mm: '05',
+            },
+        cameraEnd: form.cameraEnd
+          ? form.cameraEnd
+          : {
+              HH: '10',
+              mm: '05',
+            },
       };
     };
     this.form = parseQuery(JSON.parse(this.$router.history.current.query.form));

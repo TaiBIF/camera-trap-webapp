@@ -24,7 +24,7 @@
                       type="text"
                       class="form-control"
                       v-model="newMember.orcId"
-                      placeholder="請輸入成員 ORCID"
+                      placeholder="請輸入成員 ORCiD"
                     />
                   </div>
                   <div class="col-4">
@@ -75,7 +75,7 @@
                   </td>
                   <td class="text-right">
                     <a
-                      @click="removeMember(i)"
+                      @click="removeMember(member.orcId)"
                       v-if="member.role.value!=='ProjectManager'"
                     >
                       <i class="icon icon-remove-sm"></i>
@@ -114,7 +114,7 @@
     />
     <remove-member-dialog
       :open="removeMemberOpen"
-      @close="removeMemberOpen=false"
+      @close="cancelRemove"
       @submit="confirmRemove"
     />
 
@@ -128,7 +128,10 @@ import CloseWindowDialog from '../components/CloseWindowDialog';
 import InvitationDialog from '../components/InvitationDialog';
 import RemoveMemberDialog from '../components/RemoveMemberDialog';
 import EditNav from '../components/EditNav';
-import { addProjectMember } from '../../../service/modules/members.js';
+import {
+  addProjectMember,
+  removeProjectMember,
+} from '../../../service/modules/members.js';
 
 const members = createNamespacedHelpers('members');
 
@@ -154,7 +157,7 @@ export default {
         role: { value: 'ProjectManager', label: '計畫管理員' },
       },
       members: [],
-      currentMember: null,
+      removeMemberId: null,
       invitationOpen: false,
       removeMemberOpen: false,
       closeWindowOpen: false,
@@ -198,27 +201,28 @@ export default {
         this.invitationOpen = true;
       });
     },
-    confirmRemove() {
-      this.members.splice(this.currentMember, 1);
-      this.removeMemberOpen = false;
-    },
-    removeMember(i) {
+    removeMember(orcId) {
       this.removeMemberOpen = true;
-      this.currentMember = i;
+      this.removeMemberId = orcId;
     },
-    removeItem(i) {
-      this.column.splice(i, 1);
+    cancelRemove() {
+      this.removeMemberOpen = false;
+      this.removeMemberId = null;
+    },
+    confirmRemove() {
+      removeProjectMember({
+        projectId: this.currentProjectId,
+        orcId: this.removeMemberId,
+      }).then(() => {
+        this.members = this.members.filter(
+          member => member.orcId !== this.removeMemberId,
+        );
+        this.removeMemberOpen = false;
+        this.removeMemberId = null;
+      });
     },
     doSubmit() {
-      this.$router.push('/');
-    },
-    submitColumn(form) {
-      this.column.push({
-        default: false,
-        ...form,
-      });
-
-      this.newColumnOpen = false;
+      // TODO:
     },
   },
   mounted() {

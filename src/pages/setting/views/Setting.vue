@@ -129,6 +129,9 @@
 </template>
 
 <script>
+/**
+ * @todo wire form elements
+ */
 export default {
   name: 'Setting',
   data() {
@@ -138,8 +141,8 @@ export default {
         key: '',
       },
       form: {
-        name: 'Cindy Gu',
-        email: 'cindy@gmail.com',
+        name: '',
+        email: '',
       },
     };
   },
