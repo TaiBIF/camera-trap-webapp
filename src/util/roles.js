@@ -19,7 +19,7 @@ const projectManagerRoles = [
 ];
 
 /**
- * @param {array} roles
+ * @param {string} role
  * @return {bool}
  */
 export const isAllowManageProject = role => {
@@ -27,21 +27,19 @@ export const isAllowManageProject = role => {
     return false;
   }
 
-  return [role].some(
-    userRole =>
-      systemManagerRoles.includes(userRole) ||
-      projectManagerRoles.includes(userRole),
+  return (
+    systemManagerRoles.includes(role) || projectManagerRoles.includes(role)
   );
 };
 
 /**
- * @param {array} roles
+ * @param {string} role
  * @return {bool}
  */
 export const isAllowAddColumns = role => {
-  if (!role) {
+  if (!role || role === '') {
     return false;
   }
 
-  return [role].some(userRole => projectManagerRoles.includes(userRole));
+  return projectManagerRoles.includes(role);
 };

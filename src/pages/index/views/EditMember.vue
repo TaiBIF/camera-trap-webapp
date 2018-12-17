@@ -24,7 +24,7 @@
                       type="text"
                       class="form-control"
                       v-model="newMember.orcId"
-                      placeholder="請輸入成員 ORCID"
+                      placeholder="請輸入成員 ORCiD"
                     />
                   </div>
                   <div class="col-4">
@@ -166,10 +166,11 @@ export default {
   watch: {
     projectMembers: function(newValue) {
       this.members = newValue.map(({ name, _id, role }) => {
+        console.log(role);
         return {
           name,
           orcId: _id,
-          role: this.roles.find(r => r.value === role[0].role) || {},
+          role: this.roles.find(r => r.value === role) || {},
         };
       });
       console.log(this.members);
@@ -195,7 +196,16 @@ export default {
           role:
             this.roles.find(r => r.value === this.newMember.role.value) || {},
         };
-        this.members.push(newMemer);
+        let memberExists = false;
+        this.members.some((member, memIndex, memArr) => {
+          if (member.orcId === ret._id) {
+            memArr[memIndex] = newMemer;
+            memberExists = true;
+          }
+        });
+        if (!memberExists) {
+          this.members.push(newMemer);
+        }
         this.invitationOpen = true;
       });
     },
