@@ -371,7 +371,7 @@ export default {
       if (!projectRoles) {
         return false;
       }
-      return isAllowAddColumns(projectRoles.roles);
+      return isAllowAddColumns(projectRoles.role);
     },
     unUseColumnsField() {
       const currentFieldEnabled = this.columns.map(obj => obj.key);

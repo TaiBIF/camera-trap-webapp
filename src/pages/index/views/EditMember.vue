@@ -165,11 +165,14 @@ export default {
   },
   watch: {
     projectMembers: function(newValue) {
-      this.members = newValue.map(({ name, _id, role }) => ({
-        name,
-        orcId: _id,
-        role: this.roles.find(r => r.value === role[0].role) || {},
-      }));
+      this.members = newValue.map(({ name, _id, role }) => {
+        return {
+          name,
+          orcId: _id,
+          role: this.roles.find(r => r.value === role[0].role) || {},
+        };
+      });
+      console.log(this.members);
     },
   },
   computed: {
@@ -184,12 +187,7 @@ export default {
       addProjectMember({
         projectId: this.currentProjectId,
         orcId: this.newMember.orcId,
-        roles: [
-          {
-            _id: this.currentProjectId,
-            role: this.newMember.role.value,
-          },
-        ],
+        role: this.newMember.role.value,
       }).then(({ ret }) => {
         const newMemer = {
           name: ret.name,

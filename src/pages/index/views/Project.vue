@@ -704,7 +704,7 @@ export default {
       if (!projectRoles) {
         return false;
       }
-      return isAllowManageProject(projectRoles.roles);
+      return isAllowManageProject(projectRoles.role);
     },
     currentCameraAdnormalMonth() {
       if (!this.currentCamera || !this.currentCamera.cameraLocation) {
