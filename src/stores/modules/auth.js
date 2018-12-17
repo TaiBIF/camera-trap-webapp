@@ -1,5 +1,5 @@
 import { auth } from '../../util/auth/cognito-config';
-import { getUserInfo, signOut } from '../../service/api';
+import { getUserInfo, signOut, updateUserInfo } from '../../service/api';
 
 export const getters = {
   isLogin: state => !!state.awsToken,
@@ -14,6 +14,12 @@ export const mutations = {
   setProfile(state, payload) {
     state.profile = payload;
   },
+  setNameAndEmail(state, payload) {
+    state.profile = {
+      ...state.profile,
+      ...payload,
+    };
+  },
 };
 
 export const actions = {
@@ -27,6 +33,12 @@ export const actions = {
   async loadProfile({ commit }) {
     const data = await getUserInfo();
     commit('setProfile', data);
+  },
+  async updateProfile({ commit }, payload) {
+    await updateUserInfo(payload);
+    // TODO: wait API adjust response format: https://github.com/TaiBIF/camera-trap-api/issues/33#issuecomment-447838361
+    const data = payload[0].$set;
+    commit('setNameAndEmail', data);
   },
 };
 

@@ -25,13 +25,18 @@
             </div>
           </div>
           <div class="form-group row">
-            <label class="required col-2 text-right">
+            <label
+              class="required col-2 text-right"
+              for="nameInput"
+            >
               使用者名稱：
             </label>
             <div class="col-6">
-              <v-select
-                :options="[{label:'Cindy Gu', value: '1'}]"
-                v-model="form.name"
+              <input
+                type="text"
+                class="form-control"
+                id="nameInput"
+                v-model="name"
               />
               <small class="note d-block text-gray">
                 您對外公開的稱呼
@@ -39,13 +44,18 @@
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-2 text-right">
+            <label
+              class="col-2 text-right"
+              for="emailInput"
+            >
               電子郵件：
             </label>
             <div class="col-6">
-              <v-select
-                :options="[{label:'cindy@gmail.com', value: '1'}]"
-                v-model="form.email"
+              <input
+                type="email"
+                class="form-control"
+                id="emailInput"
+                v-model="email"
               />
               <small class="note d-block text-gray">
                 此電子郵件僅作通知及聯絡用途
@@ -114,12 +124,16 @@
       </div>
     </div>
     <div class="action">
-      <button class="btn btn-green-border">
+      <button
+        class="btn btn-green-border"
+        @click="handleCancel"
+      >
         取消
       </button>
       <button
         type="submit"
         class="btn btn-orange"
+        @click="handleSubmit"
       >
         儲存設定
       </button>
@@ -129,22 +143,56 @@
 </template>
 
 <script>
-/**
- * @todo wire form elements
- */
+import { createNamespacedHelpers } from 'vuex';
+
+const auth = createNamespacedHelpers('auth');
+
 export default {
   name: 'Setting',
   data() {
     return {
+      name: '',
+      email: '',
       keyword: {
         description: '',
         key: '',
       },
-      form: {
-        name: '',
-        email: '',
-      },
     };
+  },
+  computed: {
+    ...auth.mapGetters(['loginUser']),
+  },
+  watch: {
+    loginUser: function() {
+      const { name, email } = this.loginUser;
+      if (name) {
+        this.name = name;
+      }
+      if (email) {
+        this.email = email;
+      }
+    },
+  },
+  methods: {
+    ...auth.mapActions(['updateProfile']),
+    handleCancel() {
+      // unable to use vue-router to another vue instance
+      window.location.href = '/index.html';
+    },
+    handleSubmit() {
+      console.log('handleSubmit');
+      if (this.name) {
+        this.updateProfile([
+          {
+            _id: this.loginUser.userId,
+            $set: {
+              name: this.name,
+              email: this.email,
+            },
+          },
+        ]);
+      }
+    },
   },
 };
 </script>

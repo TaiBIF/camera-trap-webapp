@@ -17,4 +17,13 @@ const signOut = async () => {
   return res.ret;
 };
 
-export { getUserInfo, signOut };
+const updateUserInfo = async payload => {
+  const res = await fetchWrap({
+    url: '/ctp-user/bulk-update',
+    method: 'POST',
+    body: payload,
+  });
+  return res.ret;
+};
+
+export { getUserInfo, signOut, updateUserInfo };
