@@ -698,13 +698,13 @@ export default {
       };
     },
     showManageLink() {
-      const projectRoles = this.projectRoles.find(
+      const projectRole = this.projectRoles.find(
         projectRole => projectRole.projectId === this.currentProject.projectId,
       );
-      if (!projectRoles) {
+      if (!projectRole) {
         return false;
       }
-      return isAllowManageProject(projectRoles.role);
+      return isAllowManageProject(projectRole.role);
     },
     currentCameraAdnormalMonth() {
       if (!this.currentCamera || !this.currentCamera.cameraLocation) {

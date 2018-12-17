@@ -168,6 +168,9 @@ export const getters = {
   projectDataFieldEnabled: (state, getters) => {
     return getters.currentProject.dataFieldEnabled || [];
   },
+  projectSpeciesList: (state, getters) => {
+    return getters.currentProject.speciesList || [];
+  },
 };
 
 export const mutations = {

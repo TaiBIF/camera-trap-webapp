@@ -53,12 +53,21 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
+const auth = createNamespacedHelpers('auth');
 export default {
   name: 'Editnav',
   props: {
     projectId: {
       type: String,
       default: null,
+    },
+  },
+  computed: {
+    ...auth.mapGetters(['projectRoles']),
+    currentProjectRole() {
+      return this.projectRoles.find(role => role.projectId === this.projectId);
     },
   },
 };
