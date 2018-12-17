@@ -169,10 +169,9 @@ export default {
         return {
           name,
           orcId: _id,
-          role: this.roles.find(r => r.value === role[0].role) || {},
+          role: this.roles.find(r => r.value === role) || {},
         };
       });
-      console.log(this.members);
     },
   },
   computed: {
@@ -195,7 +194,16 @@ export default {
           role:
             this.roles.find(r => r.value === this.newMember.role.value) || {},
         };
-        this.members.push(newMemer);
+        let memberExists = false;
+        this.members.some((member, memIndex, memArr) => {
+          if (member.orcId === ret._id) {
+            memArr[memIndex] = newMemer;
+            memberExists = true;
+          }
+        });
+        if (!memberExists) {
+          this.members.push(newMemer);
+        }
         this.invitationOpen = true;
       });
     },
