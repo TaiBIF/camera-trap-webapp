@@ -1,5 +1,10 @@
 import { auth } from '../../util/auth/cognito-config';
-import { getUserInfo, signOut, updateUserInfo } from '../../service/api';
+import {
+  getUserInfo,
+  signOut,
+  updateUserInfo,
+  updateSpeciesKey,
+} from '../../service/api';
 
 export const getters = {
   isLogin: state => !!state.awsToken,
@@ -20,6 +25,9 @@ export const mutations = {
       ...payload,
     };
   },
+  setSpeciesKeys(state, payload) {
+    state.profile.speciesKeys = payload;
+  },
 };
 
 export const actions = {
@@ -39,6 +47,12 @@ export const actions = {
     // TODO: wait API adjust response format: https://github.com/TaiBIF/camera-trap-api/issues/33#issuecomment-447838361
     const data = payload[0].$set;
     commit('setNameAndEmail', data);
+  },
+  async updateSpeciesKey({ commit }, speciesKeys) {
+    const data = await updateSpeciesKey(speciesKeys);
+    // TODO: check API response and update to store
+    console.log('resetSpeciesKey', data);
+    commit('setSpeciesKeys', speciesKeys);
   },
 };
 

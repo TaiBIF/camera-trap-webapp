@@ -78,7 +78,10 @@
               * 提醒您：您可以設定任一英文字、數字作為輸入物種時的快速鍵，但不接受空白鍵和符號
             </div>
             <div class="col-2 text-right">
-              <button class="btn btn-basic btn-sm mt-2">回復預設值</button>
+              <button
+                class="btn btn-basic btn-sm mt-2"
+                @click="resetHotkey"
+              >回復預設值</button>
             </div>
           </div>
         </div>
@@ -91,21 +94,28 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr
+              v-for="(s, index) in speciesKeys"
+              :key="`hotkey-${index}`"
+            >
               <td width="22%">
                 <v-select
-                  v-model='keyword.description'
-                  :options="[{label:'空拍', value: '1'}]"
+                  v-model='s.key'
+                  :options="options"
                 />
               </td>
               <td width="22%">
-                <v-select
-                  v-model='keyword.key'
-                  :options="[{label:'SP', value: '1'}]"
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="s.value"
                 />
               </td>
               <td class="text-right">
-                <a class="close"><i class="icon-remove"></i></a>
+                <a
+                  class="close"
+                  @click="removeHotkey(index)"
+                ><i class="icon-remove"></i></a>
               </td>
             </tr>
             <tr>
@@ -113,7 +123,10 @@
                 colspan="3"
                 class="add"
               >
-                <a class="btn btn-block btn-text text-green text-left">
+                <a
+                  class="btn btn-block btn-text text-green text-left"
+                  @click="addHotkey"
+                >
                   <span class="icon"><i class="icon-add-green"></i></span>
                   <span class="text">新增快速鍵</span>
                 </a>
@@ -146,6 +159,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 const auth = createNamespacedHelpers('auth');
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'Setting',
@@ -153,35 +167,63 @@ export default {
     return {
       name: '',
       email: '',
-      keyword: {
-        description: '',
-        key: '',
-      },
+      speciesKeys: [],
     };
   },
   computed: {
     ...auth.mapGetters(['loginUser']),
+    ...project.mapGetters(['allSpeciesList']),
+    shouldUpdateProfile() {
+      return (
+        this.name &&
+        (this.name !== this.loginUser.name ||
+          this.email !== this.loginUser.email)
+      );
+    },
+    options() {
+      return this.allSpeciesList.filter(
+        species => !this.speciesKeys.find(s => s.key === species),
+      );
+    },
   },
   watch: {
     loginUser: function() {
-      const { name, email } = this.loginUser;
+      const { name, email, speciesKeys } = this.loginUser;
       if (name) {
         this.name = name;
       }
       if (email) {
         this.email = email;
       }
+      if (speciesKeys) {
+        this.speciesKeys = Object.keys(speciesKeys).map(key => ({
+          key,
+          value: speciesKeys[key],
+        }));
+      }
     },
   },
   methods: {
-    ...auth.mapActions(['updateProfile']),
+    ...auth.mapActions(['loadProfile', 'updateSpeciesKey', 'updateProfile']),
+    ...project.mapActions(['loadProject']),
+    resetHotkey() {
+      this.updateSpeciesKey(null);
+    },
+    removeHotkey(index) {
+      this.speciesKeys.splice(index, 1);
+    },
+    addHotkey() {
+      this.speciesKeys.push({
+        key: '',
+        value: '',
+      });
+    },
     handleCancel() {
       // unable to use vue-router to another vue instance
       window.location.href = '/index.html';
     },
     handleSubmit() {
-      console.log('handleSubmit');
-      if (this.name) {
+      if (this.shouldUpdateProfile) {
         this.updateProfile([
           {
             _id: this.loginUser.userId,
@@ -192,7 +234,18 @@ export default {
           },
         ]);
       }
+      const speciesKeys = this.speciesKeys.reduce((obj, species) => {
+        if (species.key && species.value) {
+          obj[species.key] = species.value;
+        }
+        return obj;
+      }, {});
+      this.updateSpeciesKey(speciesKeys);
     },
+  },
+  mounted() {
+    this.loadProject();
+    this.loadProfile();
   },
 };
 </script>
