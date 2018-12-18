@@ -113,7 +113,7 @@ export const actions = {
     const dataFields = await getDataFields({
       projectId: payload.query.projectId,
     });
-    commit('updateDataFields', dataFields);
+    commit('updateDataFields', dataFields ? dataFields : { fieldDetails: [] });
     const data = await getSiteData(payload);
     commit('updateSiteData', data);
   },
