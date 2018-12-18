@@ -1,7 +1,3 @@
-# Camera Trap 自動相機資料管理平台隱私政策
-
-v.2018-11-01
-
 ### 1. 適用範圍
 1.1. 本隱私政策：當您使用本平台服務時，本平台將透過 ORCID iD (Open Researcher and Contributor ID)，進行相關人別識別碼的認證，您於 ORCID iD 填入之各項個人資料，悉依 ORCID iD 之隱私政策處理，其後續蒐集、處理及利用關係存在您與 ORCID iD 管理機構間。
 

@@ -15,23 +15,38 @@
       </p>
 
       <article>
-        <privacy-policy></privacy-policy>
+        <prose-content></prose-content>
       </article>
 
       <div class="text-right text-gray">
-        最後更新日期：{{ prose.updatedAt }}
+        最後更新日期：{{ prose.date }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import PrivacyPolicy from '../../../prose/privacy-policy.md';
+let proses = [
+  {
+    path: 'privacy-policy',
+    title: 'Camera Trap 自動相機資料平台隱私政策',
+    description: '',
+    date: '2018-11-01',
+  },
+  {
+    path: 'contribution-protocol',
+    title: 'Camera Trap 自動相機資料平台貢獻協議',
+    description: '',
+    date: '2018-11-01',
+  },
+];
+import ProseContent from '../../../prose/privacy-policy.md';
+
 export default {
   name: 'prose',
   props: ['slug'],
   components: {
-    'privacy-policy': PrivacyPolicy,
+    'prose-content': ProseContent,
   },
   data() {
     return {
@@ -40,7 +55,7 @@ export default {
       prose: null,
     };
   },
-  created() {
+  mounted() {
     this.renderContent();
   },
   watch: {
@@ -49,13 +64,11 @@ export default {
   methods: {
     renderContent: function() {
       let self = this;
+      let index = proses.findIndex(prose => prose.path === self.slug);
       self.loading = true;
       self.error = self.prose = null;
       self.loading = false;
-      self.prose = {
-        title: 'title',
-        description: self.slug,
-      };
+      self.prose = proses[index];
     },
   },
 };
