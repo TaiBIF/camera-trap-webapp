@@ -96,7 +96,7 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-8">
-              <small class="text-gray">共 132,136 筆資料</small>
+              <small class="text-gray">共 {{siteData.data.length}} 筆資料</small>
               <div class="divider"></div>
               <div class="dropdown d-none">
                 <div
@@ -153,6 +153,53 @@
           </div>
         </div>
         <div id="spreadsheet"></div>
+        <!-- Pagination -->
+        <div class="sheet-footer">
+          <span class="text-gray">單頁顯示</span>
+          <span class="select">
+            <select
+              name=""
+              id=""
+              class="form-control"
+              v-model="pageSize"
+            >
+              <option value=10>10</option>
+              <option value=20>20</option>
+              <option value=30>30</option>
+              <option value=500>500</option>
+              <option value=1000>1000</option>
+              <option value=1500>1500</option>
+            </select>
+          </span>
+          <span class="text-gray">筆資料，您正在檢視：</span>
+          <span>{{`第 ${currentDataRange.begin+1} - ${currentDataRange.end} 筆`}}</span>
+          <div class="float-right">
+            <div class="input-group pager">
+              <div class="input-group-prepend">
+                <button
+                  @click="currentPage--"
+                  :disabled="currentPage === 1"
+                >
+                  <i class="fa fa-caret-left"></i>
+                </button>
+              </div>
+              <input
+                disabled
+                type="text"
+                class="form-control"
+                :value="`${currentPage}/${totalPage}`"
+              >
+              <div class="input-group-append">
+                <button
+                  @click="currentPage++"
+                  :disabled="currentPage+1 > totalPage"
+                >
+                  <i class="fa fa-caret-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div
         class="sidebar"
@@ -160,7 +207,7 @@
       >
         <div
           class="photo-container"
-          v-if="row_data.length && !row_data[currentRow].url==false && galleryShow"
+          v-if="displayImageComponent"
         >
           <div class="gallery-header">
             <a
@@ -173,7 +220,7 @@
           </div>
           <div
             class="gallery-body"
-            v-if="!row_data[currentRow].url || row_data[currentRow].url==''"
+            v-if="!hasImageOrVideo"
           >
             <div class="empty-result">
               <img
@@ -193,29 +240,42 @@
             v-else
           >
             <zoom-drag
-              :row="row_data[currentRow]"
+              v-if="siteData.data[currentRow].imageUrl"
+              :row="siteData.data[currentRow]"
               :index="currentRow"
-              :total="row_data.length"
+              :total="siteData.data.length"
+            />
+            <youtube-embed
+              v-else
+              :row="siteData.data[currentRow]"
             />
             <div class="control">
               <span
                 class="prev"
+                v-tooltip.top="'上一張'"
                 @click="currentRow>0 ? currentRow--: currentRow"
               >
                 <i class="fa fa-caret-left"></i>
               </span>
               <span class="text">
-                {{row_data[currentRow].filename}} | {{row_data[currentRow].datetime}}
+                {{siteData.data[currentRow].fileName}} | {{siteData.data[currentRow].corrected_date_time}}
               </span>
               <span
                 class="prev"
-                @click="currentRow>row_data.length-1?currentRow: currentRow++"
+                v-tooltip.top="'下一張'"
+                @click="currentRow>siteData.data[currentRow].length-1?currentRow: currentRow++"
               >
                 <i class="fa fa-caret-right"></i>
               </span>
             </div>
             <div class="text-right my-2">
-              <div class="btn btn-sm btn-default">進階標註</div>
+              <router-link
+                v-if="siteData.data[currentRow].type === 'StillImage'"
+                :to="`/project/${$route.params.id}/site/${$route.params.site_id}/${$route.params.subsite_id}/photo/tag?image_id=${siteData.data[currentRow]._id}`"
+                class="btn btn-sm btn-default"
+              >
+                進階標註
+              </router-link>
             </div>
           </div>
         </div>
@@ -235,20 +295,21 @@
           <div class="version-body">
             <table class="table version-list">
               <tbody>
-                <tr>
-                  <td>2018/09/05 17:37</td>
-                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
-                  <td class="text-gray">目前版本</td>
-                </tr>
-                <tr>
-                  <td>2018/09/05 17:37</td>
-                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
-                  <td class="text-gray"><a class="btn btn-basic btn-sm">還原成此版本</a></td>
-                </tr>
-                <tr>
-                  <td>2018/09/05 17:37</td>
-                  <td class="text-gray">由 <b>黃智賢</b> 編輯</td>
-                  <td class="text-gray"><a class="btn btn-basic btn-sm">還原成此版本</a></td>
+                <tr
+                  v-for="(rev, i) in revision"
+                  :key="`rev-${i}`"
+                >
+                  <td>{{rev.created}}</td>
+                  <td class="text-gray">由 <b>{{rev.modifiedBy.name}}</b> 編輯</td>
+                  <td
+                    class="text-gray"
+                    v-if="i===0"
+                  >目前版本</td>
+                  <td
+                    class="text-gray"
+                    v-else
+                  >
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -274,20 +335,13 @@ import store from '../../../stores';
 
 const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
 const project = createNamespacedHelpers('project');
+const media = createNamespacedHelpers('media');
+const annotationRevision = createNamespacedHelpers('annotationRevision');
 
 export default {
   name: 'SearchResult',
   data() {
     return {
-      today: moment(),
-      editMode: false,
-      galleryShow: true,
-      historyShow: true,
-      isRender: false,
-      scaleSize: 1,
-      galleryWidth: 450,
-      isContinuous: false,
-      continuousTime: 1,
       form: {
         data: [
           {
@@ -318,10 +372,27 @@ export default {
           mm: '05',
         },
       },
+      species: ['測試', '空拍', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
+      pageSize: 10, //一頁顯示的筆數
+      currentPage: 1, //目前在第幾頁
+      today: moment(),
+      idleTimeout: null,
+      CameraModalOpen: false,
+      idleTimeoutOpen: false,
+      hasColumnError: false,
+      editMode: false,
+      galleryShow: true,
+      historyShow: true,
+      isRender: false,
+      scaleSize: 1,
+      galleryWidth: 450,
+      isContinuous: false,
+      continuousTime: 1,
       selection: null,
       currentRow: 0,
       row_data: [],
       rowData: {},
+      // 連拍紀錄
       continuousCount: 0,
       continuousStart: false,
       continuous: {
@@ -329,19 +400,20 @@ export default {
         current: 0,
         total: 0,
       },
-      species: ['測試', '空拍', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
       contextMenuSetting: {
         callback: (key, selection) => {
-          let idx = selection[0].start.row;
-          let row = this.row_data[idx];
+          const idx = selection[0].start.row;
+          const row = this.row_data[idx];
 
           switch (key) {
+            // 設定連拍
             case 'setContinuous':
               this.settings.data[idx].is_continuous = true;
               break;
             case 'stopContinuous':
               this.settings.data[idx].is_continuous = false;
               break;
+            // 複製一列
             case 'clone':
               this.row_data.splice(idx, 0, window._.cloneDeep(row));
               this.row_data = this.setContinuous(this.row_data);
@@ -357,7 +429,7 @@ export default {
               return '<span class="icon"><i class="icon-link"></i></span><span class="text">重新建立連拍連結</span>';
             },
             disabled: () => {
-              let selected = this.sheet.getSelectedLast();
+              const selected = this.sheet.getSelectedLast();
               return this.row_data[selected[0]].is_continuous;
             },
           },
@@ -366,7 +438,7 @@ export default {
               return '<span class="icon"><i class="icon-unlink"></i></span><span class="text">解除連拍連結</span>';
             },
             disabled: () => {
-              let selected = this.sheet.getSelectedLast();
+              const selected = this.sheet.getSelectedLast();
               return !this.row_data[selected[0]].is_continuous;
             },
           },
@@ -407,121 +479,111 @@ export default {
       },
       settings: {
         data: [],
-        columns: [
-          {
-            data: 'station',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'camera',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'filename',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'datetime',
-            type: 'date',
-            dateFormat: 'YYYY-MM-DD HH:mm:ss',
-            editor: false,
-          },
-          {
-            data: 'species',
-            type: 'autocomplete',
-            source: ['測試', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
-            renderer: this.continousRenderer,
-            editor: false,
-          },
-          {
-            data: 'sex',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'age',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'idvcount',
-            type: 'numeric',
-            editor: false,
-          },
-          {
-            data: 'category',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'sciName',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'behavior',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'note',
-            type: 'text',
-            editor: false,
-          },
-          {
-            data: 'add',
-            type: 'text',
-            editor: false,
-          },
-        ],
         language: 'zh-TW',
         stretchH: 'all',
         autoWrapRow: true,
         manualRowResize: true,
         manualColumnResize: true,
         rowHeaders: true,
-        colHeaders: [
-          // 'URL',
-          '樣區',
-          '相機位置',
-          '檔名',
-          '時間',
-          '物種',
-          '性別',
-          '年齡',
-          '數量',
-          '類別',
-          '學名',
-          '行為',
-          '備註',
-          '<i class="icon-add"></i>',
-        ],
         manualRowMove: true,
         manualColumnMove: true,
         filters: true,
         contextMenu: false,
         dropdownMenu: true,
+        cells: (row, col) => {
+          const cellProperties = {};
+          if (col === 4 || col === 3) {
+            cellProperties.renderer = 'continousRenderer';
+          }
+          return cellProperties;
+        },
+        afterChange: changes => {
+          if (!changes) return;
+          const payload = changes.reduce((arr, change) => {
+            let [row, prop, oldVal, newVal] = change;
+            row = row + this.currentDataRange.begin; //需計算真正資料的 row
+            const value = this.siteData.data[row];
+            if (oldVal !== newVal) {
+              if (!value.index.column[prop] && value.index.column[prop] !== 0) {
+                //資料尚未存在需要更新 index，排除 index 為 0 的情況
+                const newColumnIndex = value.index.columnLength;
+                this.addSiteDataLength({
+                  row,
+                  newColumnIndex,
+                  prop,
+                });
+              }
+
+              arr.push({
+                _id: value._id,
+                projectId: value.projectId,
+                projectTitle: value.projectTitle,
+                fullCameraLocationMd5: value.fullCameraLocationMd5,
+                $set: {
+                  [`tokens.${value.index.token}.data.${
+                    value.index.column[prop]
+                  }.key`]: prop,
+                  [`tokens.${value.index.token}.data.${
+                    value.index.column[prop]
+                  }.label`]: this.siteData.columns.find(v => v.data === prop)
+                    .label,
+                  [`tokens.${value.index.token}.data.${
+                    value.index.column[prop]
+                  }.value`]: newVal,
+                  //special case: https://github.com/TaiBIF/camera-trap-webapp/issues/106
+                  ...(prop === 'species'
+                    ? {
+                        [`tokens.${
+                          value.index.token
+                        }.species_shortcut`]: newVal,
+                      }
+                    : undefined),
+                },
+              });
+            }
+
+            return arr;
+          }, []);
+
+          this.updateAnnotation(payload);
+        },
         afterSelectionEnd: r => {
-          this.currentRow = r;
+          this.currentRow = this.pageSize * (this.currentPage - 1) + r;
+          this.getRevision({
+            _id: this.siteData.data[r]._id,
+          });
         },
       },
       sheetContainer: null,
       sheet: null,
       isDrag: false,
+      fetchCameraLockTimer: null,
     };
   },
   watch: {
     currentRow: 'recordUpdate',
+    siteData: {
+      handler: function() {
+        this.getSheetData();
+      },
+      deep: true,
+    },
+    currentPage() {
+      this.updateSheetData(); // 換頁更新 sheet 顯示的資料範圍
+    },
+    pageSize() {
+      this.currentPage = 1; //切換顯示的筆數回到第一頁
+      this.updateSheetData();
+    },
   },
   components: {
     ZoomDrag,
   },
   computed: {
+    ...annotationRevision.mapState(['revision']),
     ...project.mapGetters(['Projects']),
     ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+    ...media.mapState(['siteData']),
     dataFields: function() {
       /*
       All data fields of projects.
@@ -548,8 +610,118 @@ export default {
         };
       });
     },
+    //計算目前筆數範圍
+    currentDataRange() {
+      const { currentPage, pageSize, siteData } = this;
+      return {
+        begin: (currentPage - 1) * pageSize,
+        end: Math.min(currentPage * pageSize, siteData.data.length),
+      };
+    },
+    //計算最多總頁數
+    totalPage() {
+      return Math.ceil(this.siteData.data.length / this.pageSize);
+    },
+    // 判斷是否顯示影像區塊
+    displayImageComponent() {
+      const { siteData, currentRow, galleryShow } = this;
+      return (
+        siteData.data[currentRow] &&
+        galleryShow &&
+        (!siteData.data[currentRow].imageUrl == false ||
+          !siteData.data[currentRow].youtubeUrl == false)
+      );
+    },
+    // 檢查是否存在圖片連結
+    hasImageOrVideo() {
+      const { siteData, currentRow } = this;
+      return (
+        (siteData.data[currentRow].imageUrl &&
+          siteData.data[currentRow].imageUrl !== '') ||
+        (siteData.data[currentRow].youtubeUrl &&
+          siteData.data[currentRow].youtubeUrl !== '')
+      );
+    },
+    cameraList() {
+      return this.currentProject
+        ? this.currentProject.cameraLocations.filter(
+            val =>
+              val.subSite === this.$route.params.subsite_id &&
+              val.site === this.$route.params.site_id,
+          )
+        : [];
+    },
+    // 編輯視窗用相機列表
+    editViewCameraList() {
+      return this.form.camera.indexOf('all') !== -1
+        ? this.cameraList.map(val => val.cameraLocation)
+        : this.form.camera.map(
+            val =>
+              this.cameraList.find(v => v.fullCameraLocationMd5 === val)
+                .cameraLocation,
+          );
+    },
+    // 編輯視窗用資料時間
+    editViewTimeRange() {
+      const getTime = (day, time) => {
+        return moment(day)
+          .hour(time.HH)
+          .minute(time.mm)
+          .format('YYYY-MM-DD HH:mm:ss');
+      };
+
+      return {
+        start: getTime(this.form.start_at, this.form.start_time),
+        end: getTime(this.form.end_at, this.form.end_time),
+      };
+    },
+    // 判斷是否可以進入編輯模式
+    enableEditeMode() {
+      return this.form.camera.indexOf('all') !== -1
+        ? this.cameraList.every(
+            val =>
+              !this.cameraLocked[val.fullCameraLocationMd5] ||
+              this.cameraLocked[val.fullCameraLocationMd5].locked === false ||
+              this.cameraLocked[val.fullCameraLocationMd5].lockedBy.userId ===
+                window.currentUser.userId,
+          )
+        : this.siteData.data.length >= 1 &&
+            this.form.camera.every(
+              val =>
+                !this.cameraLocked[val] ||
+                this.cameraLocked[val].locked === false ||
+                this.cameraLocked[val].lockedBy.userId ===
+                  window.currentUser.userId,
+            );
+    },
+    sheetSetting() {
+      const columns = this.siteData.columns.map(column => ({
+        ...column,
+        editor: false,
+      }));
+      this.dataFields.forEach(dataField => {
+        columns.push({
+          data: dataField.key,
+          label: dataField.label,
+          editor: false,
+          editorMode: false,
+        });
+      });
+
+      return {
+        ...this.settings,
+        ...this.siteData,
+        ...{ columns },
+        colHeaders: columns.map(column => column.label),
+        data: this.siteData.data.slice(
+          this.currentDataRange.begin,
+          this.currentDataRange.end,
+        ),
+      };
+    },
   },
   methods: {
+    ...annotationRevision.mapActions(['getRevision']),
     getProject(projectId) {
       /*
       Get the project from this.Projects.
@@ -589,28 +761,42 @@ export default {
       this.isDrag = false;
     },
     continousRenderer(instance, TD, row, col, prop, value) {
-      if (prop == 'species' && !value == false && value !== '') {
-        let clsName = '';
-        let $row = this.row_data[row];
-        let error = '';
+      Handsontable.renderers.TextRenderer.apply(this, arguments);
+      const $row = this.row_data[row];
+      let clsName = '';
+      let error = '';
+
+      if (prop === 'species' && !value === false && value !== '') {
+        if (!$row === false) TD.dataset.tooltip = $row.sciName;
+        // 不在預設物種資料顯示錯誤
         if (
           this.species.indexOf(value) === -1 &&
           value.indexOf('測試') === -1
         ) {
+          // 設定錯誤提示文字
+          TD.dataset.tooltip = '物種不在預設中';
+          this.hasColumnError = true;
           clsName += 'htInvalid ';
           error = '<span class="alert-box">!</span>';
         }
-        if (this.isContinuous) {
-          // debugger
-          if ($row.is_continuous) {
-            clsName += 'is-continuoust';
-          }
+      }
+      if (
+        this.isContinuous &&
+        prop === 'corrected_date_time' &&
+        !value === false &&
+        value !== ''
+      ) {
+        // 是否為連拍照片
+        if ($row.is_continuous) {
+          clsName += 'is-continuoust';
 
+          // 是否與連拍分離
           if ($row.is_continuous_apart) {
             clsName += ' is-continuous-apart';
           }
 
           if ($row.is_continuous_start) {
+            TD.dataset.tooltip = '連拍';
             clsName += ' is-continuous-start ';
           }
 
@@ -618,117 +804,113 @@ export default {
             clsName += ' is-continuous-end ';
           }
         }
-
-        TD.dataset.tooltip = '物種不在預設中';
-        TD.innerHTML = value + error;
-        TD.className = clsName;
       }
+      TD.innerHTML = value + error;
+      TD.className = clsName;
     },
     setCurrentContinuous() {
-      let row = this.row_data[this.currentRow];
+      // 取得目前資料的連拍資訊
+      const row = this.row_data[this.currentRow];
 
-      if (!row.is_continuous)
+      if (!row.is_continuous) {
         this.continuous = {
           row: null,
           current: 0,
           total: 0,
         };
-      else
+      } else {
         this.continuous = {
           row: this.currentRow,
           current: row.current_continuous,
           total: this.row_data[row.continuous_start].continuous_count,
         };
+      }
     },
     renderContinuous() {
+      // 切換連拍狀態
       this.isContinuous = !this.isContinuous;
       this.setContinuous();
     },
     setContinuous(data) {
-      let row_data = !data ? this.row_data : data;
-      row_data.forEach((r, i) => {
-        let $row = r;
-        let current = r.datetime;
-        let prev = i > 0 ? row_data[i - 1].datetime : null;
-        let next = i + 1 < row_data.length ? row_data[i + 1].datetime : null;
-        let c_dt = new Date(current);
-        let p_dt = !prev ? null : new Date(prev);
-        let n_dt = !next ? null : new Date(next);
-        let time = Number(this.continuousTime) * 60 * 1000;
+      const rowData = !data ? this.row_data : data;
+      // 判斷連拍
+      rowData.forEach((r, i) => {
+        const $row = r;
+        const current = r.corrected_date_time;
+        const prev = i > 0 ? rowData[i - 1].corrected_date_time : null;
+        const next =
+          i + 1 < rowData.length ? rowData[i + 1].corrected_date_time : null;
+        const cDt = new Date(current);
+        const pDt = !prev ? null : new Date(prev);
+        const nDt = !next ? null : new Date(next);
+        const time = Number(this.continuousTime) * 60 * 1000;
         let isContinue = false;
+        // const isStart = false
+        // const isEnd = false
 
-        if ($row.is_continuous_apart == undefined) {
+        if ($row.is_continuous_apart === undefined) {
           $row.is_continuous_apart = false;
         }
 
+        // 排除測試、空拍
         if (
-          !n_dt == false &&
-          (n_dt - c_dt <= time || (!p_dt == false && c_dt - p_dt <= time)) &&
-          ['測試', '空拍'].indexOf($row.species) == -1
+          !nDt === false &&
+          (nDt - cDt <= time || (!pDt === false && cDt - pDt <= time)) &&
+          ['測試', '空拍'].indexOf($row.species) === -1
         ) {
           isContinue = true;
           $row.is_continuous = true;
           this.continuousCount++;
-          // result += " is-continuous ";
         }
 
-        // detect is continuous start
-        if (
-          (isContinue && !p_dt && n_dt - c_dt <= time) ||
-          c_dt - p_dt >= time
-        ) {
+        // 是不是連拍第一張
+        if ((isContinue && !pDt && nDt - cDt <= time) || cDt - pDt >= time) {
+          // isStart = true
           this.continuousCount = 1;
           this.continuousStart = i;
           $row.is_continuous_start = true;
-          // $row += " is-continuous-start ";
         }
 
         $row.current_continuous = this.continuousCount;
         $row.continuous_start = this.continuousStart;
-        // detect is continuous end
-        if (
-          (isContinue && !n_dt && c_dt - p_dt <= time) ||
-          n_dt - c_dt >= time
-        ) {
+
+        // 是不是連拍最後一張
+        if ((isContinue && !nDt && cDt - pDt <= time) || nDt - cDt >= time) {
+          // isEnd = true
           $row.is_continuous_end = true;
 
-          row_data[
-            this.continuousStart
-          ].continuous_count = this.continuousCount;
+          rowData[this.continuousStart].continuous_count = this.continuousCount;
           this.continuousCount = 0;
-          // $row += " is-continuous-end ";
         }
       });
 
-      return row_data;
+      return rowData;
     },
     getSheetData() {
-      this.$http.get('/csv/HC21A.csv').then(response => {
-        var data = [];
+      // 產出 sheet 畫面
+      this.row_data = this.siteData.data;
+      Handsontable.renderers.registerRenderer(
+        'continousRenderer',
+        this.continousRenderer,
+      );
 
-        response.data.split(/\r\n/g).forEach((ref, idx) => {
-          var row = ref.split(/,/g);
-          // debugger;
-          if (idx == 0) {
-            // Project, Station, Camera, File name, Date & Time, Species name, Number of individuals,Sex,Age,ID,Notes
-            this.rowData = row;
-          } else {
-            let item = {};
+      if (this.isRender) {
+        this.sheet.updateSettings(this.sheetSetting);
+      } else {
+        this.sheet = new Handsontable(this.sheetContainer, this.sheetSetting);
+      }
 
-            row.forEach((r, i) => {
-              item[this.rowData[i].toLowerCase()] = r;
-            });
-
-            data.push(item);
-          }
-        });
-
-        this.row_data = this.setContinuous(data);
-        this.settings.data = this.row_data;
-
-        this.sheet = new Handsontable(this.sheetContainer, this.settings);
-        this.isRender = true;
-      });
+      this.isRender = true;
+    },
+    // 切頁時更新 sheet 顯示資料
+    updateSheetData() {
+      this.row_data = this.siteData.data.slice(
+        this.currentDataRange.begin,
+        this.currentDataRange.end,
+      );
+      if (this.isRender) {
+        this.sheet.updateSettings(this.sheetSetting);
+      }
     },
     changeMode(key, val) {
       this[key] = val;
@@ -749,19 +931,96 @@ export default {
       let sheetHeight =
         window.innerHeight -
         (64 + this.$el.querySelector('.search-container').clientHeight);
-      this.settings.height = sheetHeight - 40;
+      this.settings.height = sheetHeight - 80;
       this.$el
         .querySelector('.sheet-container')
         .querySelector('.sidebar').style.height =
         sheetHeight + 'px';
       // debugger
-      if (this.isRender) this.sheet.updateSettings(this.settings);
+      if (this.isRender) this.sheet.updateSettings(this.sheetSetting);
     },
   },
   beforeRouteEnter(to, from, next) {
+    const form = JSON.parse(to.query.form);
+    const payload = {
+      query: {
+        $and: [
+          {
+            $or: form.data.map(data => {
+              const result = {
+                projectId: data.projectId,
+              };
+              data.site && (result.site = data.site);
+              data.subSite && (result.subSite = data.subSite);
+              data.camera && (result.cameraLocation = data.camera);
+              return result;
+            }),
+          },
+        ],
+      },
+    };
+    if (form.species && form.species.length) {
+      payload.query.$and.push({
+        'tokens.species_shortcut': {
+          $in: form.species,
+        },
+      });
+    }
+    if (form.startAt) {
+      payload.query.$and.push({
+        $gte: new Date(form.startAt) / 1000,
+      });
+    }
+    if (form.endAt) {
+      payload.query.$and.push({
+        $lte: new Date(form.endAt) / 1000,
+      });
+    }
+    if (Object.keys(form.customFields).length) {
+      payload.query.$and.push({
+        $or: (() => {
+          const result = [];
+          for (let fieldKey in form.customFields || {}) {
+            result.push({
+              'tokens.data.key': fieldKey,
+              'tokens.data.value': form.customFields[fieldKey],
+            });
+          }
+          return result;
+        })(),
+      });
+      if (form.cameraStart && form.cameraEnd) {
+        if (+form.cameraEnd >= +form.cameraStart) {
+          payload.query.$and.push({
+            hour: {
+              $gte: +form.cameraStart.HH,
+              $lte: +form.cameraEnd.HH,
+            },
+          });
+        } else {
+          payload.query.$and.push({
+            $or: [
+              {
+                hour: {
+                  $gte: +form.cameraStart.HH,
+                  $lte: 24,
+                },
+              },
+              {
+                hour: {
+                  $gte: 0,
+                  $lte: +form.cameraEnd.HH,
+                },
+              },
+            ],
+          });
+        }
+      }
+    }
     Promise.all([
       store.dispatch('project/loadProject'),
       store.dispatch('dataFieldAvailable/loadDataFieldAvailable'),
+      store.dispatch('media/getSiteData', payload),
     ])
       .then(() => {
         next();
