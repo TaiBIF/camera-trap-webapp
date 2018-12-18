@@ -165,11 +165,13 @@ export default {
   },
   watch: {
     projectMembers: function(newValue) {
-      this.members = newValue.map(({ name, _id, role }) => ({
-        name,
-        orcId: _id,
-        role: this.roles.find(r => r.value === role[0].role) || {},
-      }));
+      this.members = newValue.map(({ name, _id, role }) => {
+        return {
+          name,
+          orcId: _id,
+          role: this.roles.find(r => r.value === role) || {},
+        };
+      });
     },
   },
   computed: {
@@ -184,12 +186,7 @@ export default {
       addProjectMember({
         projectId: this.currentProjectId,
         orcId: this.newMember.orcId,
-        roles: [
-          {
-            _id: this.currentProjectId,
-            role: this.newMember.role.value,
-          },
-        ],
+        role: this.newMember.role.value,
       }).then(({ ret }) => {
         const newMemer = {
           name: ret.name,
@@ -197,7 +194,16 @@ export default {
           role:
             this.roles.find(r => r.value === this.newMember.role.value) || {},
         };
-        this.members.push(newMemer);
+        let memberExists = false;
+        this.members.some((member, memIndex, memArr) => {
+          if (member.orcId === ret._id) {
+            memArr[memIndex] = newMemer;
+            memberExists = true;
+          }
+        });
+        if (!memberExists) {
+          this.members.push(newMemer);
+        }
         this.invitationOpen = true;
       });
     },
