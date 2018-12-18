@@ -17,4 +17,23 @@ const signOut = async () => {
   return res.ret;
 };
 
-export { getUserInfo, signOut };
+const updateUserInfo = async payload => {
+  const res = await fetchWrap({
+    url: '/ctp-user/bulk-update',
+    method: 'POST',
+    body: payload,
+  });
+  return res.ret;
+};
+const updateSpeciesKey = async speciesKeys => {
+  const res = await fetchWrap({
+    url: '/ctp-user/me/update',
+    method: 'PATCH',
+    body: {
+      speciesKeys,
+    },
+  });
+  return res.ret;
+};
+
+export { getUserInfo, signOut, updateUserInfo, updateSpeciesKey };
