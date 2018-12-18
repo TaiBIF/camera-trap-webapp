@@ -171,6 +171,18 @@ export const getters = {
   projectSpeciesList: (state, getters) => {
     return getters.currentProject.speciesList || [];
   },
+  allSpeciesList: state => {
+    return state.projects.reduce((list, project) => {
+      if (project.speciesList) {
+        project.speciesList.forEach(species => {
+          if (!list.includes(species)) {
+            list.push(species);
+          }
+        });
+      }
+      return list;
+    }, []);
+  },
 };
 
 export const mutations = {
