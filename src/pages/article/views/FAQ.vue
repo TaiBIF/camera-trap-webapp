@@ -23,6 +23,7 @@
           >
             <a>計畫管理</a>
           </li>
+          <!--
           <li
             :class="current==3 ? 'active' : ''"
             @click="current=3"
@@ -41,6 +42,7 @@
           >
             <a>篩選及下載</a>
           </li>
+          -->
         </ul>
         <div class="action text-center">
           <div class="mb-2"><small class="text-gray">仍需要協助嗎？</small></div>
@@ -99,6 +101,7 @@ const faq = [
         title: '計畫管理員的權限？',
         content: '<p>相當於計畫主持人</p>',
       },
+      /*
       {
         title: '如何更改權限？',
         content: '',
@@ -107,14 +110,21 @@ const faq = [
         title: '如何更改帳號設定？',
         content: '',
       },
+      */
+      {
+        title: '為何無法順利登入？',
+        content:
+          '<p>可能原因：<br/> 瀏覽器不支援，請使用Google Chrome 或 Firefox。<br/> 瀏覽器版本未更新至最新版。</p>',
+      },
     ],
   },
   {
     name: '帳號相關',
     list: [
       {
-        title: '',
-        content: '',
+        title: '有那幾種登入方式？',
+        content:
+          '本平台僅能透過 ORCiD 帳號進行登入，若尚未註冊請先至 ORCiD 官網申請帳號。ORCiD 可使用 Google 或 FaceBook 認證。',
       },
     ],
   },
@@ -122,11 +132,13 @@ const faq = [
     name: '計畫管理',
     list: [
       {
-        title: '',
-        content: '',
+        title: '新增計畫需要填寫哪些基本資訊？',
+        content:
+          '下列為必填之選項，可於新增計畫前先行檢視：<br/> 計畫名稱<br/> 計畫簡稱 (限4字)<br/> 委辦單位<br/> 計畫編號<br/> 主持人<br/> 計畫執行時間<br/> 創用CC授權許可 (分別針對詮釋資料、鑑定資訊、影像資料作授權，了解創用 CC 授權內容)<br/>計畫資料公開日期',
       },
     ],
   },
+  /*
   {
     name: '檔案上傳',
     list: [
@@ -154,6 +166,7 @@ const faq = [
       },
     ],
   },
+  */
 ];
 
 export default {
