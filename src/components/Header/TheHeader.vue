@@ -126,10 +126,10 @@
           <li class="divider"></li>
         </ul>
         <div class="navbar-nav subnav">
-          <div class="divider"></div>
+          <div v-if="haveNotification" class="divider"></div>
           <div
-            class="nav-item dropdown"
-            :class="haveNotification ? 'notification' : ''"
+            v-if="haveNotification"
+            class="nav-item dropdown notification"
           >
             <a
               class="nav-item nav-link dropdown-toggle"
@@ -142,7 +142,6 @@
               <i class="fa fa-bell"></i>
             </a>
             <div
-              v-if="haveNotification"
               id="notification-container"
               class="dropdown-menu dropdown-menu-right"
               aria-labelledby="notification"
@@ -264,7 +263,19 @@ export default {
       return this.pathname === 'History';
     },
     haveNotification: function() {
-      return this.notifications && this.notifications.length > 0;
+      /*
+      Return true when there are any notifications that are not "Announcement".
+      @returns {bool}
+       */
+      if (!this.notifications) {
+        return false;
+      }
+      for (let index = 0; index < this.notifications.length; index += 1) {
+        if (this.notifications[index].collection !== 'Announcement') {
+          return true;
+        }
+      }
+      return false;
     },
   },
   methods: {
