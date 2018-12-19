@@ -17,15 +17,17 @@
         <h3 class="text-green mb-2 mt-2">資料篩選結果</h3>
       </div>
 
-
       <div class="search-content">
         <div class="row search-filters">
           <div class="col-4">
             <div class="item">
               <label>資料來源：</label>
               <div class="content">
-                <span v-for="(data, index) in form.data" :key="index">
-                  {{ data.project && data.project.label }}：<br/>
+                <span
+                  v-for="(data, index) in form.data"
+                  :key="index"
+                >
+                  {{ data.project && data.project.label }}：<br />
                   {{ data.site && data.site.label }}{{ data.subSite && `-${data.subSite.label}` }}{{ data.camera && `-${data.camera.label}` }}
                 </span>
               </div>
@@ -44,35 +46,52 @@
             </div>
           </div>
           <div class="col-4">
-            <div v-for="dataField in dataFields"
-                 :key="dataField.key"
-                 class="item short-label">
+            <div
+              v-for="dataField in dataFields"
+              :key="dataField.key"
+              class="item short-label"
+            >
               <label>{{ dataField.label }}：</label>
-              <div v-if="dataField.type==='select'" class="content">
+              <div
+                v-if="dataField.type==='select'"
+                class="content"
+              >
                 {{ form.customFields[dataField.key] && form.customFields[dataField.key].value }}
                 <!-- 公 -->
               </div>
-              <div v-if="dataField.type==='text'" class="content">
+              <div
+                v-if="dataField.type==='text'"
+                class="content"
+              >
                 {{ form.customFields[dataField.key] }}
               </div>
             </div>
           </div>
           <div class="col-4">
-            <div class="item long-label" style="display: none;">
+            <div
+              class="item long-label"
+              style="display: none;"
+            >
               <label>海拔：</label>
               <div class="content">
                 {{form.elevation}}
                 <!-- 1,001~1,500 公尺 -->
               </div>
             </div>
-            <div class="item long-label" style="display: none;">
+            <div
+              class="item long-label"
+              style="display: none;"
+            >
               <label>植披：</label>
               <div class="content">
                 {{form.vegetation}}
                 <!-- 闊葉林 -->
               </div>
             </div>
-            <div class="item long-label" style="display: none;">
+            <div
+              class="item long-label"
+              style="display: none;"
+            >
               <label>土地覆蓋類型：</label>
               <div class="content">
                 {{form.land_cover}}
@@ -271,7 +290,7 @@
             <div class="text-right my-2">
               <router-link
                 v-if="siteData.data[currentRow].type === 'StillImage'"
-                :to="`/project/${$route.params.id}/site/${$route.params.site_id}/${$route.params.subsite_id}/photo/tag?image_id=${siteData.data[currentRow]._id}`"
+                :to="`/project/${siteData.data[currentRow].projectId}/site/${siteData.data[currentRow].site}/${siteData.data[currentRow].subSite}/photo/tag?image_id=${siteData.data[currentRow]._id}`"
                 class="btn btn-sm btn-default"
               >
                 進階標註
@@ -966,16 +985,22 @@ export default {
         },
       });
     }
+    let dateTimeCondition = {
+      date_time_corrected_timestamp: {},
+    };
+    let hasDateTimeCondition = false;
     if (form.startAt) {
-      payload.query.$and.push({
-        $gte: new Date(form.startAt) / 1000,
-      });
+      hasDateTimeCondition = true;
+      dateTimeCondition.date_time_corrected_timestamp.$gte =
+        new Date(form.startAt) / 1000;
     }
     if (form.endAt) {
-      payload.query.$and.push({
-        $lte: new Date(form.endAt) / 1000,
-      });
+      hasDateTimeCondition = true;
+      dateTimeCondition.date_time_corrected_timestamp.$lte =
+        new Date(form.endAt) / 1000;
     }
+    if (hasDateTimeCondition) payload.query.$and.push(dateTimeCondition);
+
     if (Object.keys(form.customFields).length) {
       payload.query.$and.push({
         $or: (() => {

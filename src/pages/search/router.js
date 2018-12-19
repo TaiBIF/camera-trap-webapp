@@ -25,5 +25,13 @@ export default new Router({
       name: 'Calculate',
       component: CalculateResult,
     },
+    {
+      path: '/project/:id/site/:site_id/:subsite_id/photo/tag',
+      name: 'photoTag',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../index/views/PhotoTag.vue'),
+    },
   ],
 });
