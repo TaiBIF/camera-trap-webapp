@@ -117,7 +117,7 @@
                 <div class="input-group">
                   <date-picker
                     v-model="form.start_at"
-                    :placeholder="'2017-01-01'"
+                    :placeholder="form.placeHolderStartAt"
                     :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
@@ -135,7 +135,7 @@
                 <div class="input-group">
                   <date-picker
                     v-model="form.end_at"
-                    :placeholder="'2018-12-31'"
+                    :placeholder="form.placeHolderEndAt"
                     :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
@@ -452,10 +452,15 @@ const media = createNamespacedHelpers('media');
 const cameraLocation = createNamespacedHelpers('cameraLocation');
 const annotationRevision = createNamespacedHelpers('annotationRevision');
 
+const placeHolderStartAt = moment('2001/1/1').format('YYYY-MM-DD');
+const placeHolderEndAt = moment('2018/12/31').format('YYYY-MM-DD');
+
 const formDefault = {
   camera: [],
-  start_at: moment('2017/1/1'),
-  end_at: moment('2018/12/31'),
+  placeHolderStartAt,
+  placeHolderEndAt,
+  start_at: moment(placeHolderStartAt),
+  end_at: moment(placeHolderEndAt),
   start_time: {
     HH: '00',
     mm: '00',
@@ -1090,11 +1095,15 @@ export default {
 
     const earliestDataDate = this.$route.query.earliestDataDate
       ? this.$route.query.earliestDataDate
-      : '2017-01-01 00:00:00';
+      : `${formDefault.placeHolderStartAt} ${formDefault.start_time.HH}:${
+          formDefault.start_time.mm
+        }:00`;
 
     const latestDataDate = this.$route.query.latestDataDate
       ? this.$route.query.latestDataDate
-      : '2018-12-31 23:59:59';
+      : `${formDefault.placeHolderEndAt} ${formDefault.end_time.HH}:${
+          formDefault.end_time.mm
+        }:00`;
 
     this.form.start_at = earliestDataDate.split(' ')[0];
     this.form.start_time = {
