@@ -50,6 +50,8 @@ const formatSiteData = state => {
     val.tokens.map((token, tokenIdx) => {
       const ret = {
         fullSite: val.subSite ? `${val.site}-${val.subSite}` : `${val.site}`,
+        site: val.site,
+        subSite: val.subSite,
         cameraLocation: val.cameraLocation,
         fileName: val.uploaded_file_name,
         corrected_date_time: val.corrected_date_time,
@@ -113,7 +115,7 @@ export const actions = {
     const dataFields = await getDataFields({
       projectId: payload.query.projectId,
     });
-    commit('updateDataFields', dataFields);
+    commit('updateDataFields', dataFields ? dataFields : { fieldDetails: [] });
     const data = await getSiteData(payload);
     commit('updateSiteData', data);
   },
