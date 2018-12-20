@@ -768,9 +768,9 @@ export default {
     submitReport(val) {
       this.updateAbnormalCamera([
         {
-          ...val,
-          // @todo to use projectId
+          projectId: this.currentProject._id,
           projectTitle: this.currentProject.projectTitle,
+          ...val,
         },
       ]);
     },
