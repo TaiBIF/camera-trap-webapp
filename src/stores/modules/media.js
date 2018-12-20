@@ -58,7 +58,7 @@ const formatSiteData = state => {
         type: val.type,
         ...(val.type === 'MovingImage'
           ? {
-              youtubeUrl: val.url,
+              youtubeUrl: val.youtube_url,
             }
           : {
               imageUrl: `${val.imageUrlPrefix}${val.url}`,

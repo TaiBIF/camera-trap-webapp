@@ -50,9 +50,7 @@ export const actions = {
   },
   async updateSpeciesKey({ commit }, speciesKeys) {
     const data = await updateSpeciesKey(speciesKeys);
-    // TODO: check API response and update to store
-    console.log('resetSpeciesKey', data);
-    commit('setSpeciesKeys', speciesKeys);
+    commit('setSpeciesKeys', data.speciesKeys);
   },
 };
 

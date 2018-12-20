@@ -43,9 +43,7 @@
                 <div class="row">
                   <div class="col-3">
                     <div class="form-group">
-                      <label
-                        class="required"
-                      >計畫名稱：</label>
+                      <label class="required">計畫名稱：</label>
                       <v-select
                         :options="projectOptions"
                         :on-change="generateOnProjectSelectorChangeHandler(did)"
@@ -56,9 +54,7 @@
                   </div>
                   <div class="col-3">
                     <div class="form-group">
-                      <label
-                        class="required"
-                      >樣區：</label>
+                      <label class="required">樣區：</label>
                       <v-select
                         :options="projectSiteOptions[did]"
                         :on-change="generateOnProjectSiteSelectorChangeHandler(did)"
@@ -69,9 +65,7 @@
                   </div>
                   <div class="col-3">
                     <div class="form-group">
-                      <label
-                        class="required"
-                      >子樣區：</label>
+                      <label class="required">子樣區：</label>
                       <v-select
                         :options="projectSibSiteOptions[did]"
                         :on-change="generateOnProjectSubSiteSelectorChangeHandler(did)"
@@ -82,9 +76,7 @@
                   </div>
                   <div class="col-3">
                     <div class="form-group">
-                      <label
-                        class="required"
-                      >相機位置：</label>
+                      <label class="required">相機位置：</label>
                       <v-select
                         :options="projectCameraOptions[did]"
                         v-model="data.camera"
@@ -132,7 +124,7 @@
                     <div class="input-group">
                       <date-picker
                         v-model="form.startAt"
-                        :placeholder="'2018-09-20'"
+                        :placeholder="'2001-01-01'"
                         :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                       />
@@ -159,7 +151,7 @@
                     <div class="input-group">
                       <date-picker
                         v-model="form.endAt"
-                        :placeholder="'2018-09-20'"
+                        :placeholder="'2018-12-31'"
                         :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                       />
@@ -192,13 +184,20 @@
               </div>
             </div>
 
-            <div id="adv-block" v-if="advSecOpen">
+            <div
+              id="adv-block"
+              v-if="advSecOpen"
+            >
               <div class="row">
                 <div
                   v-for="dataField in dataFields"
                   :key="dataField.key"
-                  :class="{'col-2': dataField.type==='select', 'col-4': dataField.type==='text'}">
-                  <div v-if="dataField.type==='select'" class="form-group">
+                  :class="{'col-2': dataField.type==='select', 'col-4': dataField.type==='text'}"
+                >
+                  <div
+                    v-if="dataField.type==='select'"
+                    class="form-group"
+                  >
                     <label>{{ dataField.label }}：</label>
                     <v-select
                       v-model="form.customFields[dataField.key]"
@@ -206,7 +205,10 @@
                       :placeholder="`請選擇${dataField.label}`"
                     />
                   </div>
-                  <div v-if="dataField.type==='text'" class="form-group">
+                  <div
+                    v-if="dataField.type==='text'"
+                    class="form-group"
+                  >
                     <label>
                       <span class="text">{{ dataField.label }}：</span>
                       <span class="icon">
@@ -222,7 +224,10 @@
                   </div>
                 </div>
               </div>
-              <div class="row" style="display: none;">
+              <div
+                class="row"
+                style="display: none;"
+              >
                 <div class="col-3">
                   <div class="form-group">
                     <label>海拔：</label>
@@ -263,15 +268,11 @@
                     <label>拍攝時段：</label>
                     <div class="input-group-inline">
                       <div class="input-group">
-                        <vue-timepicker
-                          v-model="form.cameraStart"
-                        />
+                        <vue-timepicker v-model="form.cameraStart" />
                       </div>
                       <div class="text px-2">到</div>
                       <div class="input-group">
-                        <vue-timepicker
-                          v-model="form.cameraEnd"
-                        />
+                        <vue-timepicker v-model="form.cameraEnd" />
                       </div>
                     </div>
                   </div>
@@ -506,7 +507,7 @@ export default {
   components: { DatePicker, VueTimepicker },
   data() {
     return {
-      currentTab: 1,
+      currentTab: 0,
       advSecOpen: true,
       form: {
         data: [
@@ -522,20 +523,20 @@ export default {
         startAt: '',
         endAt: '',
         startTime: {
-          HH: '10',
-          mm: '05',
+          HH: '00',
+          mm: '00',
         },
         endTime: {
-          HH: '10',
-          mm: '05',
+          HH: '23',
+          mm: '59',
         },
         cameraStart: {
-          HH: '10',
-          mm: '05',
+          HH: '00',
+          mm: '00',
         },
         cameraEnd: {
-          HH: '10',
-          mm: '05',
+          HH: '23',
+          mm: '59',
         },
       },
     };
