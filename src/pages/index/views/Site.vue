@@ -36,9 +36,9 @@
         class="search-content"
       >
         <a
+          :href="exportUrl"
           class="btn btn-green-border btn-sm float-right"
           v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'"
-          @click="exportCsv"
         >
           下載篩選結果
         </a>
@@ -445,7 +445,6 @@ import ZoomDrag from '../components/ZoomDrag';
 import CameraModal from '../components/CameraModal';
 import YoutubeEmbed from '../components/YoutubeEmbed';
 import IdleTimeoutDialog from '../components/IdleTimeoutDialog';
-import downloadCSV from '../../../util/downloadCsv.js';
 
 const project = createNamespacedHelpers('project');
 const media = createNamespacedHelpers('media');
@@ -745,6 +744,13 @@ export default {
     ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
     ...media.mapState(['siteData']),
+    exportUrl() {
+      return `${process.env.VUE_APP_API_URL}/project/${
+        this.$route.params.id
+      }/multimedia-annotations.csv?site=${encodeURIComponent(
+        this.$route.params.site_id,
+      )}&subSite=${encodeURIComponent(this.$route.params.subsite_id)}`;
+    },
     //計算目前筆數範圍
     currentDataRange() {
       const { currentPage, pageSize, siteData } = this;
@@ -872,9 +878,6 @@ export default {
         url_md5: this.revision[idx].url_md5,
         revision_tokens: this.revision[idx].tokens,
       });
-    },
-    exportCsv() {
-      downloadCSV([this.siteData.colHeaders, ...this.sheet.getData()]);
     },
     fetchCameraLocked() {
       this.getCameraLocked({
