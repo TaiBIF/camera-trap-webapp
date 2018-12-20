@@ -25,6 +25,14 @@ const updateUserInfo = async payload => {
   });
   return res.ret;
 };
+const updateMyInfo = async payload => {
+  const res = await fetchWrap({
+    url: '/ctp-user/me/update',
+    method: 'PATCH',
+    body: payload,
+  });
+  return res.ret;
+};
 const updateSpeciesKey = async speciesKeys => {
   const res = await fetchWrap({
     url: '/ctp-user/me/update',
@@ -36,4 +44,4 @@ const updateSpeciesKey = async speciesKeys => {
   return res.ret;
 };
 
-export { getUserInfo, signOut, updateUserInfo, updateSpeciesKey };
+export { getUserInfo, signOut, updateUserInfo, updateMyInfo, updateSpeciesKey };

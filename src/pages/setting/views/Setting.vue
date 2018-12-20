@@ -206,7 +206,12 @@ export default {
     },
   },
   methods: {
-    ...auth.mapActions(['loadProfile', 'updateSpeciesKey', 'updateProfile']),
+    ...auth.mapActions([
+      'loadProfile',
+      'updateSpeciesKey',
+      'updateProfile',
+      'updateProfile',
+    ]),
     ...project.mapActions(['loadProject']),
     resetHotkey() {
       // this.updateSpeciesKey(null);
@@ -229,24 +234,17 @@ export default {
       window.location.href = '/index.html';
     },
     handleSubmit() {
-      if (this.shouldUpdateProfile) {
-        this.updateProfile([
-          {
-            _id: this.loginUser.userId,
-            $set: {
-              name: this.name,
-              email: this.email,
-            },
-          },
-        ]);
-      }
       const speciesKeys = this.speciesKeys.reduce((obj, species) => {
         if (species.key && species.value) {
           obj[species.key] = species.value;
         }
         return obj;
       }, {});
-      this.updateSpeciesKey(speciesKeys);
+      this.updateProfile({
+        speciesKeys,
+        name: this.name,
+        email: this.email,
+      });
     },
   },
   mounted() {
