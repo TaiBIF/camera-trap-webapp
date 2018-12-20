@@ -462,7 +462,7 @@ export default {
       errorReportOpen: false,
       pieChartRendering: false,
       mapMode: 'project', // 目前顯示的圖表層級
-      progressData: [], // 取得每月繳交資訊
+      // progressData: [], // 取得每月繳交資訊
       showWoods: false, // 是否顯示林班地
       // polygon: [
       //   // 林班地資料示意
@@ -652,6 +652,9 @@ export default {
       }, 100);
     },
     species: 'loadPieChart',
+    locationCameraAbnormalStatus: 'renderMap',
+    locationIdentifiedStatus: 'renderMap',
+    locationRetrievedStatus: 'renderMap',
   },
   computed: {
     ...project.mapState([
@@ -718,6 +721,15 @@ export default {
       }
       return adnormalStatus.month;
     },
+    progressData() {
+      if (this.mapMode === 'project') {
+        return this.ProjectMarkers;
+      }
+      if (this.mapMode === 'camera') {
+        return this.SiteMarkers;
+      }
+      return [];
+    },
   },
   methods: {
     ...project.mapMutations(['setCurrentProject', 'setSiteStatusTab']),
@@ -735,7 +747,6 @@ export default {
     },
     fetchImageStatus() {
       this.mapInfo.marker = [];
-      this.progressData = [];
       const payload = {
         year: this.currentDuration,
         ...{
@@ -750,11 +761,6 @@ export default {
       this.getLocationIdentifiedStatus(payload);
       this.getLocationRetrievedStatus(payload);
       this.getLocationCameraAbnormalStatus(payload);
-
-      // TODO: need to wait getLocationXXX response, setTimeout as temp solution, need to re-design data flow
-      setTimeout(() => {
-        this.renderMap();
-      }, 1000);
     },
     timeFormat(time) {
       return moment(time * 1000).format('YYYY-MM-DD');
@@ -779,18 +785,15 @@ export default {
           this.currentSubSite = null;
         }
         this.mapMode = 'camera';
-        // this.renderMap();
       } else if (this.mapMode === 'camera') {
         if (!value.child) {
           // const proj = this.ProjectMarkers.find(p => { return p.id === value.value })
           this.currentCamera = null;
           this.currentSubSite = null;
-          this.progressData = this.ProjectMarkers;
           this.mapMode = 'project';
         } else {
           this.currentCamera = null;
           this.currentSubSite = value.child[0];
-          // this.renderMap();
         }
       }
     },
@@ -929,13 +932,11 @@ export default {
       if (this.mapMode === 'project') {
         this.mapInfo.zoom = 9;
         this.mapInfo.marker = this.ProjectMarkers;
-        this.progressData = this.ProjectMarkers;
       }
 
       if (this.mapMode === 'camera') {
         this.setSiteMarker();
         this.mapInfo.zoom = 15;
-        this.progressData = this.SiteMarkers;
         this.mapInfo.marker = this.SiteMarkers.map(val =>
           // 設定地圖要顯示的 Icon
           ({
@@ -1000,7 +1001,6 @@ export default {
   },
   mounted() {
     this.setCurrentProject(this.$route.params.id);
-    this.progressData = this.ProjectMarkers;
     this.loadForestBoundaryByMapCenter();
   },
 };
