@@ -29,8 +29,8 @@
                     <input
                       type="radio"
                       id="for-data-1"
-                      v-model="licenseForm.forData"
-                      value="1"
+                      v-model="licenseForm.data"
+                      value="CC0"
                     >
                     <label for="for-data-1">
                       <img
@@ -45,8 +45,8 @@
                     <input
                       type="radio"
                       id="for-data-2"
-                      v-model="licenseForm.forData"
-                      value="2"
+                      v-model="licenseForm.data"
+                      value="CC BY 4.0"
                     >
                     <label for="for-data-2">
                       <img
@@ -61,8 +61,8 @@
                     <input
                       type="radio"
                       id="for-data-3"
-                      v-model="licenseForm.forData"
-                      value="3"
+                      v-model="licenseForm.data"
+                      value="CC BY-NC"
                     >
                     <label for="for-data-3">
                       <img
@@ -82,8 +82,8 @@
                     <input
                       type="radio"
                       id="for-info-1"
-                      v-model="licenseForm.forInfo"
-                      value="1"
+                      v-model="licenseForm.metadata"
+                      value="CC BY 4.0"
                     >
                     <label for="for-info-1">
                       <img
@@ -103,8 +103,8 @@
                     <input
                       type="radio"
                       id="for-img-1"
-                      v-model="licenseForm.forImg"
-                      value="1"
+                      v-model="licenseForm.multimedia"
+                      value="CC0"
                     >
                     <label for="for-img-1">
                       <img
@@ -119,8 +119,8 @@
                     <input
                       type="radio"
                       id="for-img-2"
-                      v-model="licenseForm.forImg"
-                      value="2"
+                      v-model="licenseForm.multimedia"
+                      value="CC BY 4.0"
                     >
                     <label for="for-img-2">
                       <img
@@ -135,8 +135,8 @@
                     <input
                       type="radio"
                       id="for-img-3"
-                      v-model="licenseForm.forImg"
-                      value="3"
+                      v-model="licenseForm.multimedia"
+                      value="CC BY-NC"
                     >
                     <label for="for-img-3">
                       <img
@@ -198,10 +198,14 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import EditNav from '../components/EditNav';
 import DatePicker from 'vue2-datepicker';
 import CloseWindowDialog from '../components/CloseWindowDialog';
+import { editProjectLicense } from '../../../service/api';
+
+const project = createNamespacedHelpers('project');
 
 export default {
   name: 'EditLicense',
@@ -215,22 +219,35 @@ export default {
     return {
       closeWindowOpen: false,
       licenseForm: {
-        forData: '',
-        forInfo: '',
-        forImg: '',
-        public_at: '',
+        data: '',
+        metadata: '',
+        multimedia: '',
       },
+      public_at: '',
     };
   },
   computed: {
+    ...project.mapGetters(['getProjectLicense']),
     currentProjectId() {
       return this.$route.params.id;
     },
   },
   methods: {
+    ...project.mapActions(['loadSingleProject']),
     doSubmit() {
-      this.$router.push('/');
+      editProjectLicense({
+        projectId: this.currentProjectId,
+        license: this.licenseForm,
+      });
     },
+  },
+  watch: {
+    getProjectLicense(newValue) {
+      this.licenseForm = newValue;
+    },
+  },
+  mounted() {
+    this.loadSingleProject(this.currentProjectId);
   },
 };
 </script>
