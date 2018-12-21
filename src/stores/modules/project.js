@@ -183,6 +183,9 @@ export const getters = {
       return list;
     }, []);
   },
+  getProjectLicense: (state, getters) => {
+    return getters.currentProject.license || {};
+  },
 };
 
 export const mutations = {
