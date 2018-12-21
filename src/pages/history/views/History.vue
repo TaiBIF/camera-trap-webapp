@@ -72,27 +72,40 @@
               <span class="text">{{row.msg}}</span>
             </div>
 
-            <a
-              href="/upload.html"
+            <div
               v-if="row.status=='ERROR'"
-              class="link text-underline mr-2"
+              class="float-left"
             >
-              補上傳影像檔
-            </a>
-            <a
-              v-if="row.status=='SUCCESS'"
-              class="link text-underline"
-              :href="`/index.html#/project/${row.projectId}/site/${row.site}/${row.subsite}?camera=${row.fullCameraLocationMd5}&upload_session_id=${row.uploadSessionId}&earliestDataDate=${row.earliestDataDate ? row.earliestDataDate : ''}&latestDataDate=${row.latestDataDate ? row.latestDataDate : ''}`"
+              <a
+                :href="`/upload.html#/${row.projectId}`"
+                class="link text-underline mr-2"
+              >
+                補上傳影像檔
+              </a>
+            </div>
+            <div
+              v-if="row.status=='SUCCESS' || row.status=='ERROR'"
+              class="float-left"
             >
-              查看
-            </a>
-            <a
-              @click="modalOpen('errorModalOpen')"
+              <a
+                class="link text-underline"
+                :href="`/index.html#/project/${row.projectId}/site/${row.site}/${row.subsite}?camera=${row.fullCameraLocationMd5}&upload_session_id=${row.uploadSessionId}&earliestDataDate=${row.earliestDataDate ? row.earliestDataDate : ''}&latestDataDate=${row.latestDataDate ? row.latestDataDate : ''}`"
+              >
+                查看資料
+              </a>
+            </div>
+            <!--div
               v-if="row.status=='ERROR'"
-              class="text-danger text-underline"
+              class="float-left"
             >
-              檢視錯誤
-            </a>
+              <a
+                @click="modalOpen('errorModalOpen')"
+                v-if="row.status=='ERROR'"
+                class="text-danger text-underline"
+              >
+                檢視錯誤
+              </a>
+            </div-->
           </td>
         </tr>
       </tbody>
@@ -119,7 +132,7 @@ export default {
   components: { ErrorModal },
   data() {
     return {
-      errorModalOpen: true,
+      // errorModalOpen: true,
     };
   },
   mounted() {

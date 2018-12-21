@@ -63,7 +63,7 @@
                 <div class="input-group">
                   <date-picker
                     v-model="form.startAt"
-                    :placeholder="'18/9/20'"
+                    :placeholder="'2018-09-20'"
                     :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
@@ -75,7 +75,7 @@
                 <div class="input-group">
                   <date-picker
                     v-model="form.endAt"
-                    :placeholder="'18/9/20'"
+                    :placeholder="'2018-09-20'"
                     :format="'YYYY-MM-DD'"
                     :first-day-of-week="1"
                   ></date-picker>
@@ -128,8 +128,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import DatePicker from 'vue2-datepicker';
 import moment from 'moment';
+
+const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'ReportModal',
@@ -174,6 +177,7 @@ export default {
     },
   },
   computed: {
+    ...auth.mapGetters(['loginUser']),
     siteOptions() {
       return this.options.map(v => v.id);
     },
@@ -220,6 +224,7 @@ export default {
   },
   methods: {
     submit() {
+      console.log(moment(this.form.startAt).format('YYYY-MM-DD'));
       this.$emit('close');
       this.$emit('submit', {
         site: this.form.site,
@@ -230,6 +235,8 @@ export default {
         abnormalEndDate: moment(this.form.endAt).format('YYYY-MM-DD'),
         abnormalType: this.form.status,
         remarks: this.form.note,
+        userId: this.loginUser.userId,
+        userName: this.loginUser.name,
       });
     },
   },

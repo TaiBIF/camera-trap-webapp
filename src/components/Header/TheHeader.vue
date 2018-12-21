@@ -126,7 +126,10 @@
           <li class="divider"></li>
         </ul>
         <div class="navbar-nav subnav">
-          <div v-if="haveNotification" class="divider"></div>
+          <div
+            v-if="haveNotification"
+            class="divider"
+          ></div>
           <div
             v-if="haveNotification"
             class="nav-item dropdown notification"
@@ -151,29 +154,71 @@
                 v-for="(msg, mid) in notifications"
                 :key="`log-msg-${mid}`"
               >
-                <div class="meta text-gray date">
-                  {{msg.updateAt}} 你 上傳了
-                </div>
-                <h5 class="text-green">
-                  <a
-                    href="#"
-                    class="link"
+                <div v-if="msg.collection=='UploadSession'">
+                  <div class="meta text-gray date">
+                    {{formattedDateTime(msg.modified)}} 您上傳了
+                  </div>
+                  <h5 class="text-green">
+                    <a
+                      href="#"
+                      class="link"
+                    >
+                      <!-- {{msg.projectTitle}} {{msg.site}}-{{msg.subSite}} {{msg.cameraLocation}}<br /> {{msg.earliestDataDate}}-{{msg.latestDataDate}} -->
+                      <span v-html="msg.message"></span>
+                    </a>
+                  </h5>
+                  <div
+                    class="meta"
+                    v-if="msg.status=='ERROR'"
                   >
-                    {{msg.project_id}} {{msg.site}}-{{msg.subSite}} {{msg.camera}}<br /> {{msg.startAt}}-{{msg.endAt}}
-                  </a>
-                </h5>
-                <div
-                  class="meta"
-                  v-if="msg.status==-1"
-                >
-                  上傳失敗
-                  <a class="text-green link">檢視錯誤</a>
+                    上傳內容可能有誤
+                    <!-- a class="text-green link">檢視錯誤</a -->
+                  </div>
+                  <div
+                    class="meta"
+                    v-else
+                  >
+                    上傳成功
+                  </div>
                 </div>
-                <div
-                  class="meta"
-                  v-else
-                >
-                  上傳成功
+                <div v-if="msg.collection=='AbnormalData'">
+                  <div class="meta text-gray date">
+                    {{formattedDateTime(msg.modified)}}
+                  </div>
+                  <h5 class="text-green">
+                    <a
+                      href="#"
+                      class="link"
+                    >
+                      <span v-html="msg.message"></span>
+                    </a>
+                  </h5>
+                </div>
+                <div v-if="msg.collection=='UserReport'">
+                  <div class="meta text-gray date">
+                    {{formattedDateTime(msg.modified)}}
+                  </div>
+                  <h5 class="text-green">
+                    <a
+                      href="#"
+                      class="link"
+                    >
+                      <span v-html="msg.message"></span>
+                    </a>
+                  </h5>
+                </div>
+                <div v-if="msg.collection=='Announcement'">
+                  <div class="meta text-gray date">
+                    {{formattedDateTime(msg.modified)}}
+                  </div>
+                  <h5 class="text-green">
+                    <a
+                      href="#"
+                      class="link"
+                    >
+                      <span v-html="msg.message"></span>
+                    </a>
+                  </h5>
                 </div>
               </a>
             </div>
@@ -217,6 +262,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import moment from 'moment';
 import LoginModal from './Login';
 
 const auth = createNamespacedHelpers('auth');
@@ -284,6 +330,9 @@ export default {
     fetchData() {
       this.loadProfile();
       this.loadNotifications();
+    },
+    formattedDateTime: function(timestamp) {
+      return moment(timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
     },
   },
   watch: {
