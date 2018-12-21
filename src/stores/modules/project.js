@@ -186,6 +186,7 @@ export const getters = {
   getProjectLicense: (state, getters) => {
     return getters.currentProject.license || {};
   },
+  projectCameraAbnormalStatus: state => state.locationCameraAbnormalStatus,
 };
 
 export const mutations = {

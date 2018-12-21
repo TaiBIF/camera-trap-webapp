@@ -43,7 +43,10 @@
         >
           <i class="icon-lock-green"></i>
         </div>
-        <div class="icon float-right">
+        <div
+          class="icon float-right"
+          v-if="haveAbnormal"
+        >
           <i class="has-error"></i>
         </div>
       </router-link>
@@ -88,6 +91,7 @@ export default {
     ...mapGetters(['CurrentToggle']),
     ...project.mapState(['currentProjectId']),
     ...cameraLocation.mapState(['cameraLocked']),
+    ...project.mapGetters(['projectCameraAbnormalStatus']),
     link() {
       if (this.site) {
         return `/project/${this.currentProjectId}/site/${this.site}/${
@@ -105,6 +109,15 @@ export default {
         )
         .map(v => v.locked)
         .some(v => v === true);
+    },
+    haveAbnormal() {
+      return (
+        this.projectCameraAbnormalStatus.filter(
+          abnormalData =>
+            abnormalData.site === this.site &&
+            abnormalData.subSite === this.item.name,
+        ).length > 0
+      );
     },
   },
   data() {

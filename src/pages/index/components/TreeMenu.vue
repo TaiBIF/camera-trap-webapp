@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
 import TreeItem from './TreeItem';
 
 export default {
@@ -21,12 +20,6 @@ export default {
     items: Array,
     defaultOpenLevel: Number,
   },
-  computed: {
-    ...mapGetters(['currentProject']),
-  },
   components: { TreeItem },
-  methods: {
-    ...mapActions(['setCurrentProject']),
-  },
 };
 </script>
