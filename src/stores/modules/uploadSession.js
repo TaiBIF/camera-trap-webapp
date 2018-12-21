@@ -16,7 +16,10 @@ export const getters = {
           subsite: v.subSite,
           camera: v.cameraLocation,
           status: v.status,
-          msg: 'todo error message',
+          msg:
+            v.messages && v.messages.length > 0
+              ? v.messages[v.messages.length - 1].errors.join('|')
+              : '',
           fullCameraLocationMd5: v.fullCameraLocationMd5,
           projectId: v.projectId,
           uploadSessionId: v.upload_session_id,

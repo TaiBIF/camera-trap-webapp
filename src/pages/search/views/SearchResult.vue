@@ -663,8 +663,7 @@ export default {
     hasImageOrVideo() {
       const { siteData, currentRow } = this;
       return (
-        (siteData.data[currentRow].imageUrl &&
-          siteData.data[currentRow].imageUrl !== '') ||
+        siteData.data[currentRow].hasImage ||
         (siteData.data[currentRow].youtubeUrl &&
           siteData.data[currentRow].youtubeUrl !== '')
       );
