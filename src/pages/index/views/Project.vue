@@ -482,9 +482,9 @@ export default {
           zoomControl: true,
         },
         center: L.latLng(25.039202, 121.819413),
-        url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+        url: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
         attribution:
-          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+          '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
         marker: [],
       },
       // 共用圖表顏色
