@@ -103,6 +103,9 @@ export const mutations = {
     state.rawSiteData = payload;
     state.siteData = formatSiteData(state);
   },
+  updateQuery(state, payload) {
+    state.query = payload;
+  },
   // 當資料要新增時需要更新指定 data 的 index 屬性
   addSiteDataLength(state, { row, newColumnIndex, prop }) {
     state.siteData.data[row].index.columnLength = newColumnIndex + 1;
@@ -111,6 +114,33 @@ export const mutations = {
 };
 
 export const actions = {
+  updateQuery({ commit }, payload = {}) {
+    payload.projection = {
+      projectId: true,
+      projectTitle: true,
+      site: true,
+      subSite: true,
+      cameraLocation: true,
+      fullCameraLocationMd5: true,
+      'tokens.data.key': true,
+      'tokens.data.label': true,
+      'tokens.data.value': true,
+      corrected_date_time: true,
+      date_time_corrected_timestamp: true,
+      url: true,
+      low_quality_url: true,
+      imageUrlPrefix: true,
+      uploaded_file_name: true,
+      type: true,
+      youtube_url: true,
+    };
+    payload.sort = [
+      ['cameraLocation', 1],
+      ['date_time_corrected_timestamp', 1],
+      ['uploaded_file_name', 1],
+    ];
+    commit('updateQuery', payload);
+  },
   async getSiteData({ commit }, payload) {
     const dataFields = await getDataFields({
       projectId: payload.query.projectId,

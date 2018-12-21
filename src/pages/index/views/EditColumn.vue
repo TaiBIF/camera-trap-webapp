@@ -184,7 +184,7 @@
         </div>
         <div class="action">
           <router-link
-            to="/project/1"
+            :to="`/project/${$route.params.id}`"
             class="btn btn-default"
           >
             返回

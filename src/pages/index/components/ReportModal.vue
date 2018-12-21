@@ -100,7 +100,7 @@
             <div class="form-group row">
               <label
                 for=""
-                class="col-3 px-0 text-right required"
+                class="col-3 px-0 text-right"
               >備註：</label>
               <div class="col-9">
                 <textarea
@@ -119,6 +119,7 @@
           <button
             @click="submit()"
             class="btn btn-orange"
+            :disabled="isFormRequiredMissing"
           >回報異常資料</button>
         </div>
       </div>
@@ -202,6 +203,19 @@ export default {
           : undefined;
 
       return tmp ? tmp.cameraList : [];
+    },
+    isFormRequiredMissing() {
+      if (
+        !this.form.site ||
+        !this.form.subSite ||
+        !this.form.camera ||
+        !this.form.startAt ||
+        !this.form.endAt ||
+        !this.form.status
+      ) {
+        return true;
+      }
+      return false;
     },
   },
   methods: {

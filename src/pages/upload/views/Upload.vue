@@ -76,8 +76,8 @@
             class="float-right text-right"
             v-if="isUploading"
           >
-            剩餘時間：{{40}} 分鐘<br />
-            <small class="text-gray">正在上傳檔案：{{5}} %</small>
+            剩餘時間：_ 分鐘<br />
+            <small class="text-gray">正在上傳檔案：_ %</small>
           </div>
           <!-- 顯示選取與刪除 -->
           <div
@@ -187,11 +187,10 @@
                         v-if="file.state===-1"
                         class="link text-danger text-underline"
                       >檢視錯誤</a>
-
                       <a
-                        v-if="file.state===2"
-                        @click="goCheck(file)"
+                        v-if="file.state===1 || file.state===2"
                         role="button"
+                        :href="`/index.html#/project/${$route.params.projectId}/site/${fileList[f_id].site}/${fileList[f_id].subsite}?camera=${fileList[f_id].fullCameraLocationMd5}&upload_session_id=${uploadSessions[f_id]}`"
                         class="link text-green text-underline"
                       >查看</a>
                     </div>
@@ -320,11 +319,13 @@ export default {
       dropzone: null,
       albumBucketName: 'tagphoto',
       bucketRegion: 'ap-northeast-1',
-      alertMsg: '全部上傳的檔案已超過上限 5GB，建議您可以分次上傳',
+      // alertMsg: '全部上傳的檔案已超過上限 5GB，建議您可以分次上傳',
+      alertMsg: '',
       isUploading: false,
       uploadIndex: 0,
       uploadComplete: false,
       progress: [],
+      uploadSessions: [],
     };
   },
   components: {
@@ -436,6 +437,7 @@ export default {
       const file = this.fileList[this.uploadIndex];
       const bar = this.progress[this.uploadIndex];
 
+      const currentUploadIndex = this.uploadIndex;
       uploadS3({
         file: file.file,
         site: file.site,
@@ -449,12 +451,14 @@ export default {
       })
         .then(e => {
           console.log(e);
+          this.uploadSessions[currentUploadIndex] = e.key.split('/')[1];
           file.state = 2;
           this.uploadIndex++;
           this.doUpload();
         })
         .catch(e => {
           console.log(e);
+          this.uploadSessions[currentUploadIndex] = 'ERROR';
           file.state = -1;
           this.uploadIndex++;
           this.doUpload();

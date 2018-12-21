@@ -109,6 +109,7 @@
                   type="text"
                   class="form-control"
                   v-model="s.value"
+                  maxlength=2
                 />
               </td>
               <td class="text-right">
@@ -118,7 +119,7 @@
                 ><i class="icon-remove"></i></a>
               </td>
             </tr>
-            <tr>
+            <tr v-if="options.length > 0">
               <td
                 colspan="3"
                 class="add"
@@ -157,6 +158,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import intToChar from '../../../util/intToChar.js';
 
 const auth = createNamespacedHelpers('auth');
 const project = createNamespacedHelpers('project');
@@ -204,10 +206,19 @@ export default {
     },
   },
   methods: {
-    ...auth.mapActions(['loadProfile', 'updateSpeciesKey', 'updateProfile']),
+    ...auth.mapActions([
+      'loadProfile',
+      'updateSpeciesKey',
+      'updateProfile',
+      'updateProfile',
+    ]),
     ...project.mapActions(['loadProject']),
     resetHotkey() {
-      this.updateSpeciesKey(null);
+      // this.updateSpeciesKey(null);
+      this.speciesKeys = this.allSpeciesList.map((species, index) => ({
+        key: species,
+        value: intToChar(index).toUpperCase(),
+      }));
     },
     removeHotkey(index) {
       this.speciesKeys.splice(index, 1);
@@ -223,28 +234,21 @@ export default {
       window.location.href = '/index.html';
     },
     handleSubmit() {
-      if (this.shouldUpdateProfile) {
-        this.updateProfile([
-          {
-            _id: this.loginUser.userId,
-            $set: {
-              name: this.name,
-              email: this.email,
-            },
-          },
-        ]);
-      }
       const speciesKeys = this.speciesKeys.reduce((obj, species) => {
         if (species.key && species.value) {
           obj[species.key] = species.value;
         }
         return obj;
       }, {});
-      this.updateSpeciesKey(speciesKeys);
+      this.updateProfile({
+        speciesKeys,
+        name: this.name,
+        email: this.email,
+      });
     },
   },
   mounted() {
-    this.loadProject();
+    this.loadProject(); // for generate speciesKeys' option from all project's speciesList
     this.loadProfile();
   },
 };

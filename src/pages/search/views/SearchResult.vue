@@ -5,6 +5,7 @@
         <div class="float-right">
           <a
             class="btn btn-green-border btn-sm"
+            :href="exportUrl"
             v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'"
           >
             <span class="icon"><i class="icon-download-green"></i></span>
@@ -602,7 +603,14 @@ export default {
     ...annotationRevision.mapState(['revision']),
     ...project.mapGetters(['Projects']),
     ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
-    ...media.mapState(['siteData']),
+    ...media.mapState(['siteData', 'query']),
+    exportUrl: function() {
+      return `${
+        process.env.VUE_APP_API_URL
+      }/media/annotation/export.csv?query=${encodeURIComponent(
+        JSON.stringify(this.query),
+      )}`;
+    },
     dataFields: function() {
       /*
       All data fields of projects.
@@ -1046,6 +1054,7 @@ export default {
       store.dispatch('project/loadProject'),
       store.dispatch('dataFieldAvailable/loadDataFieldAvailable'),
       store.dispatch('media/getSiteData', payload),
+      store.dispatch('media/updateQuery', payload),
     ])
       .then(() => {
         next();

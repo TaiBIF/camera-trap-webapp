@@ -2,7 +2,7 @@ import { auth } from '../../util/auth/cognito-config';
 import {
   getUserInfo,
   signOut,
-  updateUserInfo,
+  updateMyInfo,
   updateSpeciesKey,
 } from '../../service/api';
 
@@ -43,10 +43,10 @@ export const actions = {
     commit('setProfile', data);
   },
   async updateProfile({ commit }, payload) {
-    await updateUserInfo(payload);
     // TODO: wait API adjust response format: https://github.com/TaiBIF/camera-trap-api/issues/33#issuecomment-447838361
-    const data = payload[0].$set;
+    const data = await updateMyInfo(payload);
     commit('setNameAndEmail', data);
+    commit('setSpeciesKeys', data.speciesKeys);
   },
   async updateSpeciesKey({ commit }, speciesKeys) {
     const data = await updateSpeciesKey(speciesKeys);

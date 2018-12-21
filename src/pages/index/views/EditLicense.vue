@@ -179,7 +179,7 @@
 
           <div class="action">
             <router-link
-              to="/overview"
+              :to="`/project/${$route.params.id}`"
               class="btn btn-default"
             >取消</router-link>
             <button
