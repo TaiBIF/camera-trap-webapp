@@ -908,6 +908,7 @@ export default {
         if (!$row === false) TD.dataset.tooltip = $row.sciName;
         // 不在預設物種資料顯示錯誤
         if (
+          this.species &&
           this.species.indexOf(value) === -1 &&
           value.indexOf('測試') === -1
         ) {
