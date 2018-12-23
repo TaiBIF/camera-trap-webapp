@@ -29,7 +29,7 @@
                     <input
                       type="radio"
                       id="for-data-1"
-                      v-model="licenseForm.data"
+                      v-model="licenseForm.metadata"
                       value="CC0"
                     >
                     <label for="for-data-1">
@@ -45,7 +45,7 @@
                     <input
                       type="radio"
                       id="for-data-2"
-                      v-model="licenseForm.data"
+                      v-model="licenseForm.metadata"
                       value="CC BY 4.0"
                     >
                     <label for="for-data-2">
@@ -61,7 +61,7 @@
                     <input
                       type="radio"
                       id="for-data-3"
-                      v-model="licenseForm.data"
+                      v-model="licenseForm.metadata"
                       value="CC BY-NC"
                     >
                     <label for="for-data-3">
@@ -82,7 +82,7 @@
                     <input
                       type="radio"
                       id="for-info-1"
-                      v-model="licenseForm.metadata"
+                      v-model="licenseForm.data"
                       value="CC BY 4.0"
                     >
                     <label for="for-info-1">
@@ -219,8 +219,8 @@ export default {
     return {
       closeWindowOpen: false,
       licenseForm: {
-        data: '',
         metadata: '',
+        data: '',
         multimedia: '',
       },
       public_at: '',
