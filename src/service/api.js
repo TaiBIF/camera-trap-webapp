@@ -11,3 +11,4 @@ export * from './modules/annotationRevision';
 export * from './modules/forestBoundary';
 export * from './modules/exampleFiles';
 export * from './modules/members';
+export * from './modules/contact';
