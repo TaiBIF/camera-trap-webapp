@@ -15,8 +15,8 @@
             type="radio"
             name="reply_type"
             id="reply-type-1"
-            v-model="form.type"
-            value="1"
+            v-model="form.reportType"
+            value="問題回報"
           >
           <label for="reply-type-1">問題回報</label>
         </div>
@@ -25,14 +25,14 @@
             type="radio"
             name="reply_type"
             id="reply-type-2"
-            v-model="form.type"
-            value="2"
+            v-model="form.reportType"
+            value="意見反饋"
           >
           <label for="reply-type-2">意見反饋</label>
         </div>
       </div>
       <div
-        v-if="form.type==1"
+        v-if="form.reportType==='問題回報'"
         class="panel panel-default mb-3"
       >
         <div class="panel-heading">
@@ -47,8 +47,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-1"
-                  value="1"
-                  v-model="form.questType"
+                  value="系統操作"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-1">系統操作</label>
               </div>
@@ -57,8 +57,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-2"
-                  value="2"
-                  v-model="form.questType"
+                  value="帳號相關"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-2">帳號相關</label>
               </div>
@@ -67,8 +67,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-3"
-                  value="3"
-                  v-model="form.questType"
+                  value="計畫管理"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-3">計畫管理</label>
               </div>
@@ -77,8 +77,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-4"
-                  value="4"
-                  v-model="form.questType"
+                  value="檔案上傳"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-4">檔案上傳</label>
               </div>
@@ -87,8 +87,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-5"
-                  value="5"
-                  v-model="form.questType"
+                  value="資料編輯"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-5">資料編輯</label>
               </div>
@@ -97,8 +97,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-6"
-                  value="6"
-                  v-model="form.questType"
+                  value="篩選及下載"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-6">篩選及下載</label>
               </div>
@@ -107,8 +107,8 @@
                   type="checkbox"
                   name=""
                   id="quest-type-7"
-                  value="7"
-                  v-model="form.questType"
+                  value="其他問題"
+                  v-model="form.reportContentType"
                 >
                 <label for="quest-type-7">其他問題</label>
               </div>
@@ -118,7 +118,7 @@
             <label class="col-2 text-right required">問題描述：</label>
             <div class="col-10">
               <textarea
-                v-model="form.decsription"
+                v-model="form.description"
                 cols="30"
                 rows="5"
                 class="form-control"
@@ -155,7 +155,7 @@
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-2 text-right required">附件：</label>
+            <label class="col-2 text-right">附件：</label>
             <div class="col-10">
               <label class="btn btn-upload">
                 <input
@@ -183,20 +183,7 @@
         </div>
       </div>
       <div
-        v-if="form.type==1"
-        class="action"
-      >
-        <button
-          type="reset"
-          class="btn btn-green-border"
-        >取消</button>
-        <button
-          type="submit"
-          class="btn btn-orange"
-        >確認送出</button>
-      </div>
-      <div
-        v-if="form.type==2"
+        v-if="form.reportType==='意見反饋'"
         class="panel panel-default mb-3"
       >
         <div class="panel-heading">
@@ -211,8 +198,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-1"
-                  value="1"
-                  v-model="form.comment_type"
+                  value="系統操作"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-1">系統操作</label>
               </div>
@@ -221,8 +208,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-2"
-                  value="2"
-                  v-model="form.comment_type"
+                  value="帳號相關"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-2">帳號相關</label>
               </div>
@@ -231,8 +218,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-3"
-                  value="3"
-                  v-model="form.comment_type"
+                  value="計畫管理"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-3">計畫管理</label>
               </div>
@@ -241,8 +228,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-4"
-                  value="4"
-                  v-model="form.comment_type"
+                  value="檔案上傳"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-4">檔案上傳</label>
               </div>
@@ -251,8 +238,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-5"
-                  value="5"
-                  v-model="form.comment_type"
+                  value="資料編輯"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-5">資料編輯</label>
               </div>
@@ -261,8 +248,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-6"
-                  value="6"
-                  v-model="form.comment_type"
+                  value="篩選及下載"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-6">篩選及下載</label>
               </div>
@@ -271,8 +258,8 @@
                   type="checkbox"
                   name=""
                   id="comment-type-7"
-                  value="7"
-                  v-model="form.comment_type"
+                  value="其他問題"
+                  v-model="form.reportContentType"
                 >
                 <label for="comment-type-7">其他問題</label>
               </div>
@@ -282,7 +269,7 @@
             <label class="col-2 text-right required">問題描述：</label>
             <div class="col-10">
               <textarea
-                v-model="form.decsription"
+                v-model="form.description"
                 cols="30"
                 rows="5"
                 class="form-control"
@@ -308,7 +295,7 @@
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-2 text-right required">附件：</label>
+            <label class="col-2 text-right">附件：</label>
             <div class="col-10">
               <label class="btn btn-upload">
                 <input
@@ -326,29 +313,38 @@
               </div>
             </div>
           </div>
-          <div class="form-group row">
+          <!-- <div class="form-group row">
             <div class="col-10 offset-2">
-              <vue-recaptcha sitekey="6LcILnYUAAAAAJLerKtPwnZGD3NICCfDKThGOW6j">
+              <vue-recaptcha
+                ref="invisibleRecaptcha"
+                @verify="onVerify"
+                @expired="onExpired"
+                size="invisible"
+                :sitekey="sitekey"
+              >
                 <button>I am not ROBOT</button>
               </vue-recaptcha>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div
-        v-if="form.type==2"
+        v-if="form.reportType!==''"
         class="action"
       >
         <button
           type="reset"
           class="btn btn-green-border"
+          @click="onCancel"
         >取消</button>
         <button
           type="submit"
           class="btn btn-orange"
+          @click="onSubmit"
+          :disabled="!isRequiredInputFill"
         >確認送出</button>
       </div>
-      <div v-if="form.type==''">
+      <div v-if="form.reportType===''">
         <router-link
           to="/faq"
           class="btn btn-green-border"
@@ -362,18 +358,52 @@
 
 <script>
 import VueRecaptcha from 'vue-recaptcha';
+import { submitContactForm } from '../../../service/api.js';
 
 export default {
   name: 'Contact',
   components: { VueRecaptcha },
   data() {
     return {
+      sitekey: '6LcILnYUAAAAAJLerKtPwnZGD3NICCfDKThGOW6j',
       form: {
-        type: '',
-        decsription: '',
-        questType: [1],
+        reportType: '',
+        reportContentType: [],
+        description: '',
+        email: '',
+        attachments: [],
       },
+      showSuccessModal: false,
     };
+  },
+  computed: {
+    isRequiredInputFill: function() {
+      const { reportContentType, description, email } = this.form;
+
+      return reportContentType.length > 0 && !!description && !!email;
+    },
+  },
+  methods: {
+    onCancel() {
+      this.form.reportType = '';
+    },
+    onSubmit() {
+      // this.$refs.invisibleRecaptcha.execute();
+      submitContactForm(this.form).then(({ ret }) => {
+        if (ret.ok === 1) {
+          this.showSuccessModal = true;
+        }
+      });
+    },
+    // onVerify(response) {
+    //   console.log('Verify: ' + response);
+    // },
+    // onExpired() {
+    //   console.log('Expired');
+    // },
+    // resetRecaptcha() {
+    //   this.$refs.recaptcha.reset(); // Direct call reset method
+    // },
   },
 };
 </script>
