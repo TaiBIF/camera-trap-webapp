@@ -631,9 +631,12 @@ export default {
               },
             };
           });
-        this.updateCameraLocations([...updateDate, ...addData]);
+        let reloadAfterUpdate = async () => {
+          await this.updateCameraLocations([...updateDate, ...addData]);
+          this.$router.go();
+        };
+        reloadAfterUpdate();
         this.resetEditRecord();
-        this.$router.go();
       }
     },
   },

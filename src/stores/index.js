@@ -49,7 +49,7 @@ export default new Vuex.Store({
       ],
     },
     calcForm: {},
-    calcFormResult: [],
+    calcFormCSV: '',
     isCalcFormLoading: true,
   },
   getters: {
@@ -94,7 +94,7 @@ export default new Vuex.Store({
     },
 
     CALC_FORM_SUCCESS(state, csv) {
-      state.calcFormResult = csv;
+      state.calcFormCSV = csv;
       state.isCalcFormLoading = false;
     },
 
