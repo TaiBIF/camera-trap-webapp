@@ -154,7 +154,7 @@
                       :class="{'is-invalid': errors.has('project_start')}"
                     >
                       <date-picker
-                        :placeholder="'2018-09-20'"
+                        :placeholder="getTodayDate()"
                         :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
                         v-model="form.startAt"
@@ -170,7 +170,7 @@
                     >
                       <date-picker
                         :not-before="form.startAt"
-                        :placeholder="'2018-09-20'"
+                        :placeholder="plusNYears(form.startAt, 1)"
                         :format="'YYYY-MM-DD'"
                         v-model="form.endAt"
                         :first-day-of-week="1"
@@ -471,7 +471,7 @@
                   >
                     <date-picker
                       v-model="form.publicAt"
-                      :placeholder="'18/9/20'"
+                      :placeholder="plusNYears(form.startAt, 5)"
                       :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     />
@@ -521,6 +521,7 @@ import { createNamespacedHelpers } from 'vuex';
 import DatePicker from 'vue2-datepicker';
 import { commonMixin } from '../../../mixins/common';
 import { cityOptions } from '../../../util/constants';
+import moment from 'moment';
 
 const project = createNamespacedHelpers('project');
 
@@ -539,9 +540,9 @@ export default {
         agency: '',
         principalInvestigator: '',
         adminProjectId: '',
-        startAt: '',
-        endAt: '',
-        publicAt: '',
+        startAt: this.getTodayDate(),
+        endAt: this.plusNYears(this.getTodayDate(), 1),
+        publicAt: this.plusNYears(this.getTodayDate(), 2),
         area: '',
         description: '',
         comment: '',
@@ -577,6 +578,14 @@ export default {
         if (result) this.step += 1;
         else return false;
       });
+    },
+    plusNYears(dateTimeString, n = 1) {
+      return moment(dateTimeString)
+        .add(n, 'years')
+        .format('YYYY-MM-DD');
+    },
+    getTodayDate() {
+      return moment(Date.now()).format('YYYY-MM-DD');
     },
   },
   watch: {
