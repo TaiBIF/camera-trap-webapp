@@ -7,8 +7,12 @@
             class="btn btn-green-border btn-sm"
             v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'"
           >
-            <span class="icon"><i class="icon-download-green"></i></span>
-            <span class="text">下載篩選結果</span>
+            <div
+              class="text"
+              v-on:click="downloadCSV"
+            >
+              <span class="icon"><i class="icon-download-green"></i></span>下載計算結果
+            </div>
           </a>
           <button class="btn btn-orange btn-sm ml-2">
             計算
@@ -275,6 +279,26 @@ export default {
   },
 
   methods: {
+    downloadCSV() {
+      const a = document.createElement('a');
+      const url = window.URL.createObjectURL(
+        new Blob([this.$store.state.calcFormCSV], {
+          type: 'text/csv',
+        }),
+      );
+      const { calcForm } = this.$store.state;
+
+      a.hidden = true;
+      a.href = url;
+      a.download = `${calcForm.project.projectTitle} from ${
+        calcForm.fromDate
+      } to ${calcForm.toDate} find ${calcForm.species} in ${calcForm.site}.csv`;
+      document.body.appendChild(a);
+      a.click();
+
+      document.body.removeChild(a);
+    },
+
     dragStart() {
       this.isDrag = true;
     },
@@ -286,7 +310,7 @@ export default {
       this.isDrag = false;
     },
     getSheetData() {
-      const csv = this.$store.state.calcFormResult;
+      const csv = this.$store.state.calcFormCSV;
       const [head, ...rows] = csv.split`\n`;
 
       this.settings.colHeaders = head.split`,`;
