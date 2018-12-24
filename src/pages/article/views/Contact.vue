@@ -156,7 +156,7 @@
           </div>
           <div class="form-group row">
             <label class="col-2 text-right">附件：</label>
-            <div class="col-10">
+            <div class="col-5">
               <label class="btn btn-upload">
                 <input
                   type="file"
@@ -201,7 +201,7 @@
                     class="btn btn-text"
                     @click='removeFile(index)'
                   >
-                    <i class="fa fa-times"></i>
+                    X
                   </div>
                 </div>
               </div>
@@ -330,7 +330,7 @@
           </div>
           <div class="form-group row">
             <label class="col-2 text-right">附件：</label>
-            <div class="col-10">
+            <div class="col-5">
               <label class="btn btn-upload">
                 <input
                   type="file"
@@ -375,7 +375,7 @@
                     class="btn btn-text"
                     @click='removeFile(index)'
                   >
-                    <i class="fa fa-times"></i>
+                    X
                   </div>
                 </div>
               </div>
