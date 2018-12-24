@@ -1,7 +1,7 @@
 import { CognitoAuth } from 'amazon-cognito-auth-js';
 import 'amazon-cognito-auth-js/dist/aws-cognito-sdk';
 import AWS from 'aws-sdk';
-import fetchWrap from '../../util/fetch';
+import store from '../../stores';
 
 import {
   clientId,
@@ -74,15 +74,14 @@ const authentication = () => {
         IdentityPoolId: identityPoolId,
         Logins: logins,
       });
-      fetchWrap({
-        method: 'GET',
-        url: '/ctp-user/me',
-      })
-        .then(result => {
-          if (result.error && result.error.statusCode === 403) {
+      store
+        .dispatch('auth/loadProfile')
+        .then(() => {
+          const loginUser = store.getters['auth/loginUser'];
+          if (!loginUser || !Object.keys(loginUser).length) {
             return resolve(null);
           }
-          resolve(result.ret);
+          resolve(loginUser);
         })
         .catch(error => {
           reject(error);
