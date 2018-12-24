@@ -94,7 +94,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.managerOnly)) {
-    const currentProjectId = store.state.project.currentProjectId;
+    const currentProjectId = to.params.id;
     const projectRoles = store.state.auth.profile.project_roles || [];
     const currentRole = projectRoles.find(
       role => role.projectId === currentProjectId,
