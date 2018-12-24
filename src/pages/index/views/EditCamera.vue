@@ -221,6 +221,12 @@ export default {
           //   type: 'date',
           // },
           {
+            data: 'setupDate',
+            type: 'date',
+            dateFormat: 'YYYY-MM-DD',
+            correctFormat: true,
+          },
+          {
             data: 'original_x',
             type: 'text',
           },
@@ -250,7 +256,7 @@ export default {
         colHeaders: [
           // 'URL',
           '*相機位置名稱',
-          // '架設日期',
+          '架設日期',
           '*經度 (X)',
           '*緯度 (Y)',
           '海拔 (公尺)',
@@ -463,6 +469,7 @@ export default {
     addData() {
       this.settings.data.push({
         cameraLocation: '',
+        setupDate: '',
         original_x: '',
         original_y: '',
         elevation: '',
@@ -499,6 +506,7 @@ export default {
         [`cameraLocations.${index}.cameraLocation`]: editData.cameraLocation,
         [`cameraLocations.${index}.elevation`]: editData.elevation,
         [`cameraLocations.${index}.land_cover`]: editData.land_cover,
+        [`cameraLocations.${index}.setupDate`]: editData.setupDate,
         [`cameraLocations.${index}.original_x`]: editData.original_x,
         [`cameraLocations.${index}.original_y`]: editData.original_y,
         [`cameraLocations.${index}.vegetation`]: editData.vegetation,
@@ -575,6 +583,7 @@ export default {
           .map(camera => {
             const {
               cameraLocation,
+              setupDate,
               original_x,
               original_y,
               elevation,
@@ -616,6 +625,7 @@ export default {
                   wgs84dec_y,
                   vegetation,
                   land_cover,
+                  setupDate,
                   ...elevationData,
                 },
               },
@@ -623,6 +633,7 @@ export default {
           });
         this.updateCameraLocations([...updateDate, ...addData]);
         this.resetEditRecord();
+        this.$router.go();
       }
     },
   },
