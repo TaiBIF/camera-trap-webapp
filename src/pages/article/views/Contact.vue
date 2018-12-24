@@ -162,6 +162,7 @@
                   type="file"
                   name="upload"
                   id="upload"
+                  @change="previewFile($event)"
                 >
                 <span class="text">添加附加檔案</span>
               </label>
@@ -171,15 +172,48 @@
                   (.csv, .tsv, .tab, .txt, .xls, .xlsx, .jpg, .png, .mp4, .avi, .mov, .mpg, .mpeg) ，檔案容量上限為 20 MB
                 </small>
               </div>
+              <div
+                class="preview"
+                v-if="isUploadTypeError"
+              >
+                不支援此檔案類型
+              </div>
+              <div
+                class="preview"
+                v-else-if="isUploadSizeError"
+              >
+                檔案上限為 20 MB
+              </div>
+              <div
+                class="preview"
+                v-else-if="uploadFiles.length > 0"
+                v-for="(uploadFile, index) in uploadFiles"
+                :key="index"
+              >
+                <div class="image">
+                  <img :src="uploadFile.src">
+                </div>
+                <div class="content">
+                  {{ uploadFile.name }}
+                </div>
+                <div class="action">
+                  <div
+                    class="btn btn-text"
+                    @click='removeFile(index)'
+                  >
+                    <i class="fa fa-times"></i>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="form-group row">
+          <!-- <div class="form-group row">
             <div class="col-10 offset-2">
               <vue-recaptcha sitekey="6LcILnYUAAAAAJLerKtPwnZGD3NICCfDKThGOW6j">
                 <button>I am not ROBOT</button>
               </vue-recaptcha>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div
@@ -302,6 +336,7 @@
                   type="file"
                   name="upload"
                   id="upload"
+                  @change="previewFile($event)"
                 >
                 <span class="text">添加附加檔案</span>
               </label>
@@ -310,6 +345,39 @@
                   附加螢幕截圖、資料、圖片或影片檔案<br />
                   (.csv, .tsv, .tab, .txt, .xls, .xlsx, .jpg, .png, .mp4, .avi, .mov, .mpg, .mpeg) ，檔案容量上限為 20 MB
                 </small>
+              </div>
+              <div
+                class="preview"
+                v-if="isUploadTypeError"
+              >
+                不支援此檔案類型
+              </div>
+              <div
+                class="preview"
+                v-else-if="isUploadSizeError"
+              >
+                檔案上限為 20 MB
+              </div>
+              <div
+                class="preview"
+                v-else-if="uploadFiles.length > 0"
+                v-for="(uploadFile, index) in uploadFiles"
+                :key="index"
+              >
+                <div class="image">
+                  <img :src="uploadFile.src">
+                </div>
+                <div class="content">
+                  {{ uploadFile.name }}
+                </div>
+                <div class="action">
+                  <div
+                    class="btn btn-text"
+                    @click='removeFile(index)'
+                  >
+                    <i class="fa fa-times"></i>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -357,12 +425,12 @@
 </template>
 
 <script>
-import VueRecaptcha from 'vue-recaptcha';
+// import VueRecaptcha from 'vue-recaptcha';
 import { submitContactForm } from '../../../service/api.js';
 
 export default {
   name: 'Contact',
-  components: { VueRecaptcha },
+  // components: { VueRecaptcha },
   data() {
     return {
       sitekey: '6LcILnYUAAAAAJLerKtPwnZGD3NICCfDKThGOW6j',
@@ -373,6 +441,9 @@ export default {
         email: '',
         attachments: [],
       },
+      uploadFiles: [],
+      isUploadTypeError: false,
+      isUploadSizeError: false,
       showSuccessModal: false,
     };
   },
@@ -384,6 +455,50 @@ export default {
     },
   },
   methods: {
+    removeFile(index) {
+      this.uploadFiles.splice(index, 1);
+    },
+    previewFile(e) {
+      this.isUploadTypeError = false;
+      this.isUploadSizeError = false;
+      let input = e.target;
+
+      if (e.target.files && input.files[0]) {
+        let reader = new FileReader();
+        const file = input.files[0];
+        const supportExt = [
+          'text/csv',
+          'text/tab-separated-values',
+          'text/plain',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'image/jpeg',
+          'image/png',
+          'video/mp4',
+          'video/x-msvideo',
+          'video/quicktime',
+          'audio/mpeg',
+        ];
+        if (!supportExt.includes(file.type)) {
+          this.isUploadTypeError = true;
+          this.uploadFiles = [];
+        } else if (file.size / 1024 / 1024 > 20) {
+          this.isUploadSizeError = true;
+          this.uploadFiles = [];
+        } else {
+          reader.onload = e => {
+            this.uploadFiles.push({
+              src: e.target.result,
+              name: file.name,
+              type: file.type,
+              file: file,
+            });
+          };
+
+          reader.readAsDataURL(file);
+        }
+      }
+    },
     onCancel() {
       this.form.reportType = '';
     },
