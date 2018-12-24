@@ -270,7 +270,7 @@
             <div class="input-group pager">
               <div class="input-group-prepend">
                 <button
-                  @click="currentPage--"
+                  @click="currentPage--; hasColumnError=false"
                   :disabled="currentPage === 1"
                 >
                   <i class="fa fa-caret-left"></i>
@@ -284,7 +284,7 @@
               >
               <div class="input-group-append">
                 <button
-                  @click="currentPage++"
+                  @click="currentPage++; hasColumnError=false"
                   :disabled="currentPage+1 > totalPage"
                 >
                   <i class="fa fa-caret-right"></i>

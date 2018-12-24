@@ -37,7 +37,7 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                依建立時間排序
+                依 {{sortedBy}} 排序
               </a>
               <div
                 class="dropdown-menu"
@@ -45,18 +45,22 @@
               >
                 <a
                   class="dropdown-item"
+                  @click="sortByField('earliestRecordTimestamp', -1); sortedBy = '資料起始時間'"
                   href="#"
                 >依資料起始時間排序 (新→舊)</a>
                 <a
                   class="dropdown-item"
+                  @click="sortByField('modified', -1); sortedBy = '最後更新時間'"
                   href="#"
                 >依最後更新時間排序 (新→舊) </a>
                 <a
                   class="dropdown-item"
+                  @click="sortByField('funder', 1); sortedBy = '委託單位'"
                   href="#"
                 >依委託單位筆畫排序</a>
                 <a
                   class="dropdown-item"
+                  @click="sortByField('projectTitle', 1); sortedBy = '計畫名稱'"
                   href="#"
                 >依計畫名稱筆畫排序</a>
               </div>
@@ -118,6 +122,7 @@ export default {
   data() {
     return {
       loading: false,
+      sortedBy: '條件',
     };
   },
   watch: {
@@ -127,6 +132,15 @@ export default {
     ...project.mapMutations(['setCurrentProject']),
     ProjectInit() {
       this.loading = false;
+    },
+    sortByField(fieldName, dir) {
+      this.Projects.sort((prjA, prjB) => {
+        if (dir > 0) {
+          return prjA[fieldName] > prjB[fieldName] ? 1 : -1;
+        } else {
+          return prjA[fieldName] < prjB[fieldName] ? 1 : -1;
+        }
+      });
     },
   },
   beforeMount() {
