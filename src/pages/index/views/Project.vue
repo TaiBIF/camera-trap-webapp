@@ -285,7 +285,7 @@
                       <small class="text-gray">{{currentCamera.site}}-{{currentCamera.subSite}}</small>
                     </h1>
                     <div class="text-gray">
-                      <div>架設日期：{{ currentCamera.modified_at }}</div>
+                      <div>架設日期：{{ currentCamera.setupDate }}</div>
                       <div>經緯度：{{ `X(${currentCamera.original_x})${currentCamera.twd97tm2_x}` }}, {{ `Y(${currentCamera.original_y})${currentCamera.twd97tm2_y}` }}</div>
                       <div>海拔：{{ currentCamera.elevation }}m</div>
                       <div>植披：{{ currentCamera.vegetation }}</div>

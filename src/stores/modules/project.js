@@ -183,6 +183,10 @@ export const getters = {
       return list;
     }, []);
   },
+  getProjectLicense: (state, getters) => {
+    return getters.currentProject.license || {};
+  },
+  projectCameraAbnormalStatus: state => state.locationCameraAbnormalStatus,
 };
 
 export const mutations = {

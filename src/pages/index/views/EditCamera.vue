@@ -101,12 +101,26 @@
                 <div class="control p-2">
                   <div class="row">
                     <div class="col-12 text-right">
-                      <div class="form-group-inline">
+                      <div
+                        class="form-group-inline"
+                        v-if="!lockGeoDatum"
+                      >
                         <label for="">座標大地基準：</label>
                         <v-select
-                          :options="['WGS84', 'TWD97']"
+                          :options="['WGS84', 'TWD97TM2']"
+                          v-model="geoDatum"
                           class="d-inline-block"
                         />
+                        <span class="icon-note">
+                          <i class="icon-info"></i>
+                        </span>
+                      </div>
+                      <div
+                        class="form-group-inline"
+                        v-else
+                      >
+                        <label for="">座標大地基準：</label>
+                        {{geoDatum}}
                         <span class="icon-note">
                           <i class="icon-info"></i>
                         </span>
@@ -186,6 +200,8 @@ export default {
     return {
       newSite: '',
       currentSite: 0,
+      geoDatum: '',
+      lockGeoDatum: false,
       originalSiteName: '',
       currentEditSite: null,
       renameSites: {},
@@ -204,6 +220,12 @@ export default {
           //   data: 'updated_at',
           //   type: 'date',
           // },
+          {
+            data: 'setupDate',
+            type: 'date',
+            dateFormat: 'YYYY-MM-DD',
+            correctFormat: true,
+          },
           {
             data: 'original_x',
             type: 'text',
@@ -234,7 +256,7 @@ export default {
         colHeaders: [
           // 'URL',
           '*相機位置名稱',
-          // '架設日期',
+          '架設日期',
           '*經度 (X)',
           '*緯度 (Y)',
           '海拔 (公尺)',
@@ -447,6 +469,7 @@ export default {
     addData() {
       this.settings.data.push({
         cameraLocation: '',
+        setupDate: '',
         original_x: '',
         original_y: '',
         elevation: '',
@@ -470,14 +493,20 @@ export default {
       const editData = this.settings.data.find(
         data => data.fullCameraLocationMd5 === camera.fullCameraLocationMd5,
       );
-      const wgs84 = twd97ToWgs84({
-        lng: editData.original_x,
-        lat: editData.original_y,
-      });
+      let wgs84;
+      if (this.geoDatum == 'TWD97TM2') {
+        wgs84 = twd97ToWgs84({
+          lng: editData.original_x,
+          lat: editData.original_y,
+        });
+      } else {
+        wgs84 = [editData.original_x, editData.original_y];
+      }
       return {
         [`cameraLocations.${index}.cameraLocation`]: editData.cameraLocation,
         [`cameraLocations.${index}.elevation`]: editData.elevation,
         [`cameraLocations.${index}.land_cover`]: editData.land_cover,
+        [`cameraLocations.${index}.setupDate`]: editData.setupDate,
         [`cameraLocations.${index}.original_x`]: editData.original_x,
         [`cameraLocations.${index}.original_y`]: editData.original_y,
         [`cameraLocations.${index}.vegetation`]: editData.vegetation,
@@ -525,6 +554,7 @@ export default {
               projectId,
               $set: {
                 ...newCameraData,
+                geoDatum: this.geoDatum,
                 [projectIdKey]: projectId,
                 [projectTitleKey]: projectTitle,
                 [siteKey]: newSite,
@@ -553,16 +583,24 @@ export default {
           .map(camera => {
             const {
               cameraLocation,
+              setupDate,
               original_x,
               original_y,
               elevation,
               vegetation,
               land_cover,
             } = camera;
-            const [wgs84dec_x, wgs84dec_y] = twd97ToWgs84({
-              lng: original_x,
-              lat: original_y,
-            });
+            let wgs84dec_x, wgs84dec_y;
+            if (this.geoDatum == 'TWD97TM2') {
+              [wgs84dec_x, wgs84dec_y] = twd97ToWgs84({
+                lng: original_x,
+                lat: original_y,
+              });
+            } else {
+              wgs84dec_x = original_x;
+              wgs84dec_y = original_y;
+            }
+
             const elevationData =
               isNaN(elevation) || elevation === ''
                 ? {}
@@ -587,6 +625,7 @@ export default {
                   wgs84dec_y,
                   vegetation,
                   land_cover,
+                  setupDate,
                   ...elevationData,
                 },
               },
@@ -594,6 +633,7 @@ export default {
           });
         this.updateCameraLocations([...updateDate, ...addData]);
         this.resetEditRecord();
+        this.$router.go();
       }
     },
   },
@@ -601,6 +641,8 @@ export default {
     this.loadSingleProject(this.currentProjectId);
     this.sheetContainer = this.$el.querySelector('#sheet');
     this.sheet = new Handsontable(this.sheetContainer, this.settings);
+    this.geoDatum = this.currentProject.geoDatum || 'WGS84';
+    this.lockGeoDatum = !!this.currentProject.geoDatum;
   },
 };
 </script>

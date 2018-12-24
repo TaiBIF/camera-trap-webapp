@@ -188,6 +188,23 @@ const applyNewColumnField = async ({ projectId, payload }) => {
   });
 };
 
+const editProjectLicense = async payload => {
+  const { projectId, license } = payload;
+  await fetchWrap({
+    url: '/project/bulk-update',
+    method: 'POST',
+    body: [
+      {
+        _id: projectId,
+        projectId,
+        $set: {
+          license,
+        },
+      },
+    ],
+  });
+};
+
 export {
   getProjects,
   createProject,
@@ -201,4 +218,5 @@ export {
   editCameraLocations,
   getColumnsField,
   applyNewColumnField,
+  editProjectLicense,
 };

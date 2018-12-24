@@ -157,7 +157,9 @@
         </div>
       </form>
     </div>
+
     <div class="sheet-container">
+      <div v-if="$store.state.isCalcFormLoading">正在載入計算資料...</div>
       <div class="sheet">
         <div id="spreadsheet"></div>
       </div>
@@ -202,15 +204,45 @@ export default {
       settings: {
         data: [],
         columns: [
+          // "NumberOfPhotos,NumberOfEvents,WorkingHours,WorkingDays,NopPerWorkingHour,NoePerWorkingHour,NopPerWorkingDay,NoePerWorkingDay"
           {
-            data: 'item',
+            data: 'NumberOfPhotos',
             type: 'text',
             editor: false,
           },
           {
-            data: 'result',
+            data: 'NumberOfEvents',
             type: 'text',
-            width: 200,
+            editor: false,
+          },
+          {
+            data: 'WorkingHours',
+            type: 'text',
+            editor: false,
+          },
+          {
+            data: 'WorkingDays',
+            type: 'text',
+            editor: false,
+          },
+          {
+            data: 'NopPerWorkingHour',
+            type: 'text',
+            editor: false,
+          },
+          {
+            data: 'NoePerWorkingHour',
+            type: 'text',
+            editor: false,
+          },
+          {
+            data: 'NopPerWorkingDay',
+            type: 'text',
+            editor: false,
+          },
+          {
+            data: 'NoePerWorkingDay',
+            type: 'text',
             editor: false,
           },
         ],
@@ -241,6 +273,7 @@ export default {
     DatePicker,
     VueTimepicker,
   },
+
   methods: {
     dragStart() {
       this.isDrag = true;
@@ -253,32 +286,24 @@ export default {
       this.isDrag = false;
     },
     getSheetData() {
-      this.rowData = [
-        {
-          item: '相機工作時數',
-          result: '306 小時',
-        },
-        {
-          item: '有效照片',
-          result: '1,360 張',
-        },
-        {
-          item: '目擊事件',
-          result: '45 次',
-        },
-        {
-          item: '平均偵測天數比例',
-          result: '15 %',
-        },
-        {
-          item: '有效照片除以相機工作時長',
-          result: '306 小時',
-        },
-        {
-          item: '目擊事件除以相機工作時長',
-          result: '306 小時',
-        },
-      ];
+      const csv = this.$store.state.calcFormResult;
+      const [head, ...rows] = csv.split`\n`;
+
+      this.settings.colHeaders = head.split`,`;
+      this.settings.columns = this.settings.colHeaders.map(head => ({
+        data: head,
+        type: 'text',
+        editor: false,
+      }));
+
+      this.rowData = rows.filter(r => !!r).map(row =>
+        row.split(',').reduce((o, value, i) => {
+          return {
+            ...o,
+            [this.settings.colHeaders[i]]: value,
+          };
+        }, {}),
+      );
 
       this.settings.data = this.rowData;
 
@@ -296,12 +321,15 @@ export default {
       }
     },
   },
-  mounted() {
+
+  async mounted() {
     this.sheetContainer = this.$el.querySelector('#spreadsheet');
     this.settingSheetHeight();
-    this.getSheetData();
 
     window.onresize = () => this.settingSheetHeight();
+
+    await this.$store.dispatch('calcForm');
+    this.getSheetData();
   },
 };
 </script>

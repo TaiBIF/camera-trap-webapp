@@ -5,7 +5,10 @@
         <div class="caption col-xs-12 col-sm-12 col-md-6">
           <h1 class="header">Camera Trap</h1>
           <p>簡單、效率、專業 - 紅外線相機資料管理平台</p>
-          <a class="btn btn-orange btn-lg">開始使用</a>
+          <a
+            class="btn btn-orange btn-lg"
+            @click="loginModalOpen = true"
+          >開始使用</a>
         </div>
       </div>
     </section>
@@ -213,10 +216,17 @@
           >
         </div>
 
-        <a class="btn btn-orange btn-lg">
+        <a
+          class="btn btn-orange btn-lg"
+          @click="loginModalOpen = true"
+        >
           立即開始使用
         </a>
       </div>
+      <login-modal
+        :open="loginModalOpen"
+        @close="loginModalOpen = false"
+      />
     </section>
     <footer>
       <div class="container">
@@ -355,5 +365,13 @@
 </template>
 
 <script>
-export default {};
+import LoginModal from '../../../components/Header/Login';
+export default {
+  components: { LoginModal },
+  data() {
+    return {
+      loginModalOpen: false,
+    };
+  },
+};
 </script>
