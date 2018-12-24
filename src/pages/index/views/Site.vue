@@ -81,6 +81,7 @@
                       v-model="form.camera"
                       :id="camera.fullCameraLocationMd5"
                       :value="camera.fullCameraLocationMd5"
+                      :disabled="form.camera.indexOf('all') > -1"
                     >
                     <label :for="camera.fullCameraLocationMd5">
                       <span class="text">{{camera.cameraLocation}}</span>
@@ -270,7 +271,7 @@
             <div class="input-group pager">
               <div class="input-group-prepend">
                 <button
-                  @click="currentPage--; hasColumnError=false"
+                  @click="currentPage--"
                   :disabled="currentPage === 1"
                 >
                   <i class="fa fa-caret-left"></i>
@@ -284,7 +285,7 @@
               >
               <div class="input-group-append">
                 <button
-                  @click="currentPage++; hasColumnError=false"
+                  @click="currentPage++"
                   :disabled="currentPage+1 > totalPage"
                 >
                   <i class="fa fa-caret-right"></i>
@@ -865,6 +866,7 @@ export default {
     },
     // 切頁時更新 sheet 顯示資料
     updateSheetData() {
+      this.hasColumnError = false;
       this.row_data = this.siteData.data.slice(
         this.currentDataRange.begin,
         this.currentDataRange.end,
@@ -1027,6 +1029,7 @@ export default {
     },
     getSheetData() {
       // 產出 sheet 畫面
+      this.hasColumnError = false;
       this.row_data = this.siteData.data;
       Handsontable.renderers.registerRenderer(
         'continousRenderer',
