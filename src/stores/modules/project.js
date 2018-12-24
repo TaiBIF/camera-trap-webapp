@@ -8,6 +8,7 @@ import {
   getLocationIdentifiedStatus,
   getLocationRetrievedStatus,
   getLocationAbnormalStatus,
+  getProjectErrorSites,
   updateAbnormalCamera,
   editCameraLocations,
   getColumnsField,
@@ -187,6 +188,7 @@ export const getters = {
     return getters.currentProject.license || {};
   },
   projectCameraAbnormalStatus: state => state.locationCameraAbnormalStatus,
+  projectErrorSites: state => state.projectErrorSites,
 };
 
 export const mutations = {
@@ -207,6 +209,9 @@ export const mutations = {
   },
   setLocationCameraAbnormalStatus(state, payload) {
     state.locationCameraAbnormalStatus = payload;
+  },
+  setProjectErrorSites(state, payload) {
+    state.projectErrorSites = payload;
   },
   setSiteStatusTab(state, payload) {
     state.siteStatusTab = payload;
@@ -275,6 +280,10 @@ export const actions = {
     });
     commit('setLocationCameraAbnormalStatus', data);
   },
+  async getProjectErrorSites({ commit }, payload) {
+    const data = await getProjectErrorSites(payload);
+    commit('setProjectErrorSites', data);
+  },
   // 回報相機異常
   async updateAbnormalCamera(_, payload) {
     await updateAbnormalCamera(payload);
@@ -308,6 +317,7 @@ export default {
     locationIdentifiedStatus: [],
     locationRetrievedStatus: [],
     locationCameraAbnormalStatus: [],
+    projectErrorSites: [],
     columnsField: [],
     // 畫面用
     siteStatusTab: 0,

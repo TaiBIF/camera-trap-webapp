@@ -858,7 +858,6 @@ export default {
     ...media.mapActions(['getSiteData', 'updateAnnotation']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
     ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
-    ...project.mapActions(['getLocationCameraAbnormalStatus']),
     setSelectedCamera(camera) {
       console.log(camera);
       this.form.camera = camera;
@@ -1090,9 +1089,6 @@ export default {
   mounted() {
     this.setCurrentProject(this.$route.params.id);
     this.fetchCameraLocked();
-    this.getLocationCameraAbnormalStatus({
-      year: new Date().getFullYear(), // TODO: need to change search range
-    });
 
     // 從 query 判斷是否有 camera 資料做預設選取
     this.form.camera = this.$route.query.camera

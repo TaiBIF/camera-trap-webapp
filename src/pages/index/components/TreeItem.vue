@@ -3,7 +3,6 @@
     class="tree-menu-item"
     :class="{'is-open': CurrentToggle==idx}"
   >
-
     <div
       class="tree-menu-link"
       @click="toggleDropdown()"
@@ -11,7 +10,6 @@
       'is-active': $route.params.site_id == item.id
     }"
     >
-
       <!-- 有子項目顯示箭頭 -->
       <span class="icon">
         <i
@@ -37,19 +35,19 @@
         :to="link"
       >
         {{item.name}}
-        <div
-          class="icon float-right"
-          v-if="locked"
-        >
-          <i class="icon-lock-green"></i>
-        </div>
-        <div
-          class="icon float-right"
-          v-if="haveAbnormal"
-        >
-          <i class="has-error"></i>
-        </div>
       </router-link>
+      <div
+        class="icon float-right"
+        v-if="locked"
+      >
+        <i class="icon-lock-green"></i>
+      </div>
+      <div
+        class="icon float-right"
+        v-if="haveAbnormal"
+      >
+        <i class="has-error"></i>
+      </div>
     </div>
     <!-- Print 出所有子項目 -->
     <ul
@@ -91,7 +89,7 @@ export default {
     ...mapGetters(['CurrentToggle']),
     ...project.mapState(['currentProjectId']),
     ...cameraLocation.mapState(['cameraLocked']),
-    ...project.mapGetters(['projectCameraAbnormalStatus']),
+    ...project.mapGetters(['projectErrorSites']),
     link() {
       if (this.site) {
         return `/project/${this.currentProjectId}/site/${this.site}/${
@@ -111,13 +109,16 @@ export default {
         .some(v => v === true);
     },
     haveAbnormal() {
-      return (
-        this.projectCameraAbnormalStatus.filter(
-          abnormalData =>
+      const abnormalRecord = this.projectErrorSites.find(abnormalData => {
+        if (this.site) {
+          return (
             abnormalData.site === this.site &&
-            abnormalData.subSite === this.item.name,
-        ).length > 0
-      );
+            abnormalData.subSite === this.item.name
+          );
+        }
+        return abnormalData.site === this.item.name;
+      });
+      return abnormalRecord && abnormalRecord.errorCount > 0;
     },
   },
   data() {
