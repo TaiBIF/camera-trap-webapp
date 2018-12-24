@@ -159,6 +159,7 @@
     </div>
 
     <div class="sheet-container">
+      <div v-if="$store.state.isCalcFormLoading">正在載入計算資料...</div>
       <div class="sheet">
         <div id="spreadsheet"></div>
       </div>
@@ -286,36 +287,14 @@ export default {
     },
     getSheetData() {
       const csv = this.$store.state.calcFormResult;
-      const [head, ...rows] = csv.split('\n');
+      const [head, ...rows] = csv.split`\n`;
 
-      this.settings.colHeaders = head.split(',');
-
-      this.rowData = [
-        // {
-        //   item: '相機工作時數',
-        //   result: '306 小時',
-        // },
-        // {
-        //   item: '有效照片',
-        //   result: '1,360 張',
-        // },
-        // {
-        //   item: '目擊事件',
-        //   result: '47 次',
-        // },
-        // {
-        //   item: '平均偵測天數比例',
-        //   result: '15 %',
-        // },
-        // {
-        //   item: '有效照片除以相機工作時長',
-        //   result: '306 小時',
-        // },
-        // {
-        //   item: '目擊事件除以相機工作時長',
-        //   result: '306 小時',
-        // },
-      ];
+      this.settings.colHeaders = head.split`,`;
+      this.settings.columns = this.settings.colHeaders.map(head => ({
+        data: head,
+        type: 'text',
+        editor: false,
+      }));
 
       this.rowData = rows.filter(r => !!r).map(row =>
         row.split(',').reduce((o, value, i) => {

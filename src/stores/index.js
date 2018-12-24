@@ -50,7 +50,7 @@ export default new Vuex.Store({
     },
     calcForm: {},
     calcFormResult: [],
-    isCalcFormLoading: false,
+    isCalcFormLoading: true,
   },
   getters: {
     ImageInfo: state => {
@@ -135,44 +135,76 @@ export default new Vuex.Store({
 
         ctx.commit('CALC_FORM_STARTING');
 
+        // const delayData = {
+        //   projectId: 'd8064aa7-9643-44fb-bed9-1f23a690f968',
+        //   site: '臺東處',
+        //   subSite: 'NULL',
+        //   species: '山羌',
+        //   fromDateTime: '2018-01-05 13:00:00',
+        //   toDateTime: '2018-03-31 23:59:59',
+        //   fullCameraLocationMd5s: [
+        //     'ba59a7c8d7474b301d44d0c7034178f9',
+        //     'bd81f8a4ade6932536087767aec0511d',
+        //   ],
+        // };
+
+        // const basicData = {
+        //   projectId: 'd8064aa7-9643-44fb-bed9-1f23a690f968',
+        //   site: '臺東處',
+        //   subSite: 'NULL',
+        //   species: '山羌',
+        //   fromDateTime: '2018-01-01 00:00:00',
+        //   toDateTime: '2018-03-31 23:59:59',
+        //   effectiveTimeInterval: 60,
+        //   fullCameraLocationMd5s: [
+        //     'ba59a7c8d7474b301d44d0c7034178f9',
+        //     'bd81f8a4ade6932536087767aec0511d',
+        //   ],
+        // };
+
         const res = await api({
           method: 'POST',
           url: `/media/annotation/${form.type.value}`,
+          // url: '/media/annotation/daily-first-captured',
           // url: '/media/annotation/basic-calculation',
           data,
-          // data: {
-          //   projectId: 'd8064aa7-9643-44fb-bed9-1f23a690f968',
-          //   site: '臺東處',
-          //   subSite: 'NULL',
-          //   species: '山羌',
-          //   fromDateTime: '2018-01-01 00:00:00',
-          //   toDateTime: '2018-03-31 23:59:59',
-          //   effectiveTimeInterval: 60,
-          //   fullCameraLocationMd5s: [
-          //     'ba59a7c8d7474b301d44d0c7034178f9',
-          //     'bd81f8a4ade6932536087767aec0511d',
-          //   ],
-          // },
         });
 
-        const checkStatus = async () => {
-          const { data: status } = await axios({
-            url: res.ret.status,
-          });
-
-          if (status === 'RUNNING') {
-            setTimeout(checkStatus, 500);
-          } else {
-            const { data: csv } = await axios({
-              url: res.ret.results,
+        if (res.ret.status) {
+          const checkStatus = async () => {
+            const { data: status } = await axios({
+              url: res.ret.status,
             });
 
+            if (status === 'RUNNING') {
+              setTimeout(checkStatus, 500);
+            } else {
+              const { data: csv } = await axios({
+                url: res.ret.results,
+              });
+
+              resolve(csv);
+              ctx.commit('CALC_FORM_SUCCESS', csv);
+            }
+          };
+          checkStatus();
+        } else {
+          const rows = Object.values(res.ret.locationDailyFirstCaptured).reduce(
+            (a, b) => a.concat(b),
+            [],
+          );
+
+          let csv = '';
+          if (rows[0]) {
+            const heads = Object.keys(rows[0]);
+            const values = rows.map(
+              row => heads.map(head => row[head] || 'NULL').join`,`,
+            );
+            csv = `${heads}\n${values.join`\n`}`;
             resolve(csv);
             ctx.commit('CALC_FORM_SUCCESS', csv);
           }
-        };
-
-        checkStatus();
+        }
       });
     },
     setPageLock: ({ commit }, bool) => {
