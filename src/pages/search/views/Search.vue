@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="text-green">資料篩選與下載</h1>
+    <h1 class="text-green">資料篩選與下載 </h1>
     <div class="tab">
       <ul class="nav-tab">
         <li
@@ -28,6 +28,7 @@
           class="tab-pane"
           :class="{'active': currentTab==0}"
         >
+          <!-- =tab1 -->
           <form
             action=""
             class="form"
@@ -46,7 +47,6 @@
                       <label class="required">計畫名稱：</label>
                       <v-select
                         :options="projectOptions"
-                        :on-change="generateOnProjectSelectorChangeHandler(did)"
                         v-model="data.project"
                         :placeholder="'請選擇計畫名稱'"
                       />
@@ -57,8 +57,8 @@
                       <label class="required">樣區：</label>
                       <v-select
                         :options="projectSiteOptions[did]"
-                        :on-change="generateOnProjectSiteSelectorChangeHandler(did)"
                         v-model="data.site"
+                        :on-change="generateOnProjectSiteSelectorChangeHandler(did)"
                         :placeholder="'請選擇樣區'"
                       />
                     </div>
@@ -68,8 +68,8 @@
                       <label class="required">子樣區：</label>
                       <v-select
                         :options="projectSibSiteOptions[did]"
-                        :on-change="generateOnProjectSubSiteSelectorChangeHandler(did)"
                         v-model="data.subSite"
+                        :on-change="generateOnProjectSubSiteSelectorChangeHandler(did)"
                         :placeholder="'請選擇子樣區'"
                       />
                     </div>
@@ -292,7 +292,7 @@
             </div>
           </form>
         </div>
-
+        <!-- =tab2 -->
         <div
           id="calculate"
           class="tab-pane"
@@ -309,7 +309,13 @@
                   <div class="form-group row mb-0">
                     <label class="col-3 text-right required">計算項目：</label>
                     <div class="col-9">
-                      <v-select :options="[{value: 1, label:'有效照片與目擊事件'}]" />
+                      <v-select
+                        v-model="calcForm.type"
+                        :options="[
+                          {label: '有效照片與目擊事件', value:'basic-calculation'},
+                          {label: '初測延遲', value:'daily-first-captured'}
+                      ]"
+                      />
                     </div>
                   </div>
                 </div>
@@ -320,11 +326,7 @@
               基本欄位
               <span class="text-gray">( 請選擇單一相機位置及物種進行計算 )</span>
             </h5>
-            <div
-              class="gray-block"
-              v-for="(data, did) in form.data"
-              :key="`data-form-${did}`"
-            >
+            <div class="gray-block">
               <div class="form-content">
                 <div class="row">
                   <div class="col-3">
@@ -334,7 +336,8 @@
                         class="required"
                       >計畫名稱：</label>
                       <v-select
-                        :options="[{label: '林務局全島鼬獾監測', value:'1'}]"
+                        v-model="calcForm.project"
+                        :options="projectOptions"
                         :placeholder="'請選擇計畫名稱'"
                       />
                     </div>
@@ -346,7 +349,8 @@
                         class="required"
                       >樣區：</label>
                       <v-select
-                        :options="[{label: '屏東處', value:'屏東處'}]"
+                        :options="calcFormOptions.site"
+                        v-model="calcForm.site"
                         :placeholder="'請選擇樣區'"
                       />
                     </div>
@@ -358,7 +362,8 @@
                         class="required"
                       >子樣區：</label>
                       <v-select
-                        :options="[{label: '旗山站', value:'旗山站'}]"
+                        :options="calcFormOptions.subSite"
+                        v-model="calcForm.subSite"
                         :placeholder="'請選擇子樣區'"
                       />
                     </div>
@@ -370,7 +375,9 @@
                         class="required"
                       >相機位置：</label>
                       <v-select
-                        :options="[{label: 'PT10A', value:'PT10A'}]"
+                        v-model="calcForm.camera"
+                        :options="calcFormOptions.camera"
+                        multiple
                         :placeholder="'請選擇相機位置'"
                       />
                     </div>
@@ -384,15 +391,8 @@
                 <div class="form-group">
                   <label>物種：</label>
                   <v-select
-                    :options="[
-                      {label:'山羌', value:'山羌'},
-                      {label:'鼬獾', value:'鼬獾'},
-                      {label:'台灣獼猴', value:'台灣獼猴'},
-                      {label:'山羊', value:'山羊'},
-                      {label:'赤腹松鼠', value:'赤腹松鼠'},
-                      {label:'白鼻心', value:'白鼻心'}
-                    ]"
-                    multiple
+                    :options="calcFormOptions.species"
+                    v-model="calcForm.species"
                   />
                 </div>
               </div>
@@ -404,7 +404,7 @@
                   <div class="input-group-inline">
                     <div class="input-group">
                       <date-picker
-                        v-model="form.startAt"
+                        v-model="calcForm.fromDate"
                         :placeholder="'2018-09-20'"
                         :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
@@ -415,7 +415,7 @@
                     </div>
                     <div class="input-group ml-2">
                       <vue-timepicker
-                        v-model="form.startTime"
+                        v-model="calcForm.fromTime"
                         format=""
                       />
                     </div>
@@ -431,7 +431,7 @@
                   <div class="input-group-inline">
                     <div class="input-group">
                       <date-picker
-                        v-model="form.endAt"
+                        v-model="calcForm.toDate"
                         :placeholder="'2018-09-20'"
                         :format="'YYYY-MM-DD'"
                         :first-day-of-week="1"
@@ -442,7 +442,7 @@
                     </div>
                     <div class="input-group ml-2">
                       <vue-timepicker
-                        v-model="form.endTime"
+                        v-model="calcForm.toTime"
                         format=""
                       />
                     </div>
@@ -459,13 +459,21 @@
               <div class="col-4">
                 <div class="form-group">
                   <label class="required">有效時間判定間隔：</label>
-                  <v-select :placeholder="'請選擇有效時間判定間隔'"></v-select>
+                  <v-select
+                    v-model="calcForm.effectiveTimeInterval"
+                    :options="[2,5,10,30,60]"
+                    :placeholder="'請選擇有效時間判定間隔'"
+                  ></v-select>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
-                  <label class="required">目擊事件判斷間隔：</label>
-                  <v-select :placeholder="'請選擇目擊事件判斷間隔'"></v-select>
+                  <!-- <label class="required">目擊事件判斷間隔：</label>
+                  <v-select
+                    v-model="form.seeMin"
+                    :options="[2,5,10,30,60]"
+                    :placeholder="'請選擇目擊事件判斷間隔'"
+                  ></v-select> -->
                 </div>
               </div>
             </div>
@@ -498,6 +506,8 @@ import DatePicker from 'vue2-datepicker';
 import VueTimepicker from 'vue2-timepicker';
 import { commonMixin } from '../../../mixins/common.js';
 
+// import moment from 'moment';
+
 const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
 const project = createNamespacedHelpers('project');
 
@@ -509,6 +519,28 @@ export default {
     return {
       currentTab: 0,
       advSecOpen: true,
+      calcForm: {
+        type: '',
+        project: {
+          value: '',
+          label: '',
+        },
+        site: '',
+        subSite: 'NULL',
+        species: '',
+        fromDate: '',
+        fromTime: {
+          HH: '00',
+          mm: '00',
+        },
+        toDate: '',
+        toTime: {
+          HH: '00',
+          mm: '00',
+        },
+        effectiveTimeInterval: 0,
+        camera: [],
+      },
       form: {
         data: [
           {
@@ -544,13 +576,33 @@ export default {
   computed: {
     ...project.mapGetters(['Projects']),
     ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+
+    calcFormOptions() {
+      const { project } = this.calcForm;
+      const { cameraLocations = [], speciesList } = project;
+
+      return {
+        species: speciesList,
+        camera: cameraLocations.map(c => {
+          return {
+            ...c,
+            label: c.cameraLocation,
+          };
+        }),
+        site: [...new Set(cameraLocations.map(c => c.site))],
+        subSite: [...new Set(cameraLocations.map(c => c.subSite))],
+      };
+    },
+
     projectOptions: function() {
       /*
       All projects.
       @returns {Array<{label: 'string', value: 'string'}>}
       */
+
       return this.Projects.map(project => {
         return {
+          ...project,
           label: project.projectTitle,
           value: project._id,
         };
@@ -832,6 +884,7 @@ export default {
       });
     },
     submitCalculate() {
+      this.$store.commit('CALC_FORM', this.calcForm);
       this.$router.push('/calculate');
     },
     removeFormData(idx) {
