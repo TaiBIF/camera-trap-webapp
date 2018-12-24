@@ -251,7 +251,7 @@
                 <ul>
                   <li>
                     <a
-                      href="#"
+                      href="//www.forest.gov.tw"
                       target="_blank"
                     >
                       林務局網站
@@ -259,7 +259,7 @@
                   </li>
                   <li>
                     <a
-                      href="#"
+                      href="//tesri.tesri.gov.tw"
                       target="_blank"
                     >
                       特有生物研究保育中心
@@ -267,7 +267,7 @@
                   </li>
                   <li>
                     <a
-                      href="#"
+                      href="http://taibif.tw"
                       target="_blank"
                     >
                       台灣生物多樣性資訊入口網
@@ -280,7 +280,7 @@
                 <ul>
                   <li>
                     <a
-                      href="#"
+                      href="/article.html#/faq"
                       target="_blank"
                     >
                       常見問題
@@ -288,7 +288,7 @@
                   </li>
                   <li>
                     <a
-                      href="#"
+                      href="/article.html#/privacy-policy"
                       target="_blank"
                     >
                       隱私權聲明及使用條款
