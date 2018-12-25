@@ -16,7 +16,7 @@
             <span class="error-label">20</span>
           </div>
           <div class="col-5 text-right">
-            <span class="text-gray">最後儲存時間：{{`todo`}} 分鐘前</span>
+            <span class="text-gray">最後儲存時間：{{lastUpdated}} </span>
             <span class="divider"></span>
             <button
               @click.stop.prevent="changeMode('editMode', false)"
@@ -176,7 +176,7 @@
                 class="dropdown"
                 :class="{'d-none': !editMode}"
               >
-                <div
+                <!--div
                   class="btn-group btn-grayscale"
                   :class="{'active': isContinuous}"
                 >
@@ -206,7 +206,7 @@
                       class="form-control form-control-inline"
                     /> 分鐘時，自動補齊物種名稱
                   </div>
-                </div>
+                </div-->
               </div>
             </div>
             <div class="col-4 text-right">
@@ -482,6 +482,7 @@ export default {
       idleTimeout: null,
       CameraModalOpen: false,
       idleTimeoutOpen: false,
+      lastUpdated: '未儲存',
       hasColumnError: false,
       editMode: false,
       galleryShow: true,
@@ -648,7 +649,7 @@ export default {
 
             return arr;
           }, []);
-
+          this.lastUpdated = moment(Date.now()).format('YYYY-MM-DD hh:mm:ss');
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
@@ -874,11 +875,30 @@ export default {
         this.sheet.updateSettings(this.sheetSetting);
       }
     },
-    restoreRev(idx) {
-      this.restoreRevision({
-        url_md5: this.revision[idx].url_md5,
-        revision_tokens: this.revision[idx].tokens,
-      });
+    async restoreRev(idx) {
+      if (this.siteData.data[this.currentRow]) {
+        console.log(this.siteData.data[this.currentRow]);
+        await this.restoreRevision({
+          url_md5: this.revision[idx].url_md5,
+          revision_tokens: this.revision[idx].tokens,
+        });
+        console.log(this.revision[idx].tokens);
+        this.revision[idx].tokens.forEach((t, tid) => {
+          for (let dataKey in t.summary) {
+            if (t.summary.hasOwnProperty(dataKey)) {
+              if (
+                this.siteData.data[this.currentRow + tid]._id ==
+                this.siteData.data[this.currentRow]._id
+              ) {
+                this.siteData.data[this.currentRow][dataKey] =
+                  t.summary[dataKey];
+              } else {
+                // inser a row and re-render
+              }
+            }
+          }
+        });
+      }
     },
     fetchCameraLocked() {
       this.getCameraLocked({

@@ -55,6 +55,8 @@ const createProject = async payload => {
         abstract: form.description,
         remarks: form.comment,
         coverImage: form.cover,
+        dataFieldEnabled: form.dataFieldEnabled,
+        speciesList: form.speciesList,
         license: {
           metadata: licenseForm.forData,
           data: licenseForm.forInfo,

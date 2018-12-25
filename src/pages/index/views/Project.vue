@@ -286,7 +286,8 @@
                     </h1>
                     <div class="text-gray">
                       <div>架設日期：{{ currentCamera.setupDate }}</div>
-                      <div>經緯度：{{ `X(${currentCamera.original_x})${currentCamera.twd97tm2_x}` }}, {{ `Y(${currentCamera.original_y})${currentCamera.twd97tm2_y}` }}</div>
+                      <div> WGS84 經緯度：{{ `${currentCamera.wgs84dec_x.toFixed(6)}` }}, {{ `${currentCamera.wgs84dec_y.toFixed(6)}` }}</div>
+                      <div> TWD97TM2 座標：{{ `${currentCamera.twd97tm2_x || ''}` }}, {{ `${currentCamera.original_y || ''}` }}</div>
                       <div>海拔：{{ currentCamera.elevation }}m</div>
                       <div>植披：{{ currentCamera.vegetation }}</div>
                       <div>土地利用型態：{{ currentCamera.land_cover }}</div>
