@@ -158,8 +158,7 @@
                 <div class="d-inline-block pl-3">
                   <div class="input-group">
                     <date-picker
-                      v-model="licenseForm.public_at"
-                      :placeholder="'18/9/20'"
+                      v-model="publicAt"
                       :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
@@ -223,11 +222,11 @@ export default {
         data: '',
         multimedia: '',
       },
-      public_at: '',
+      publicAt: '',
     };
   },
   computed: {
-    ...project.mapGetters(['getProjectLicense']),
+    ...project.mapGetters(['getProjectLicense', 'currentProject']),
     currentProjectId() {
       return this.$route.params.id;
     },
@@ -246,8 +245,9 @@ export default {
       this.licenseForm = newValue;
     },
   },
-  mounted() {
-    this.loadSingleProject(this.currentProjectId);
+  async mounted() {
+    await this.loadSingleProject(this.currentProjectId);
+    this.publicAt = this.currentProject.dataPublicDate;
   },
 };
 </script>
