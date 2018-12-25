@@ -549,14 +549,10 @@ export default {
 
             const isCameraEdited = this.isCameraEdited(cameraLocation);
             const newCameraData = this.getNewCameraData(cameraLocation, index);
-            console.log(cameraLocation);
             const currentCameraLocation = isCameraEdited
               ? newCameraData[`cameraLocations.${index}.cameraLocation`]
               : cameraLocation.cameraLocation;
-            console.log([
-              'updateDate',
-              `${projectId}/${newSite}/${newSubSite}/${currentCameraLocation}`,
-            ]);
+
             return {
               _id: projectId,
               projectId,
@@ -598,7 +594,6 @@ export default {
               vegetation,
               land_cover,
             } = camera;
-            console.log(camera);
             let wgs84dec_x, wgs84dec_y, twd97tm2_x, twd97tm2_y;
             if (this.geoDatum == 'TWD97TM2') {
               [wgs84dec_x, wgs84dec_y] = twd97ToWgs84({
@@ -617,10 +612,6 @@ export default {
                 ? {}
                 : { elevation: +elevation }; // only accept number
 
-            console.log([
-              'addData',
-              `${projectId}/${site}/${subSite}/${cameraLocation}`,
-            ]);
             return {
               _id: projectId,
               projectId,
