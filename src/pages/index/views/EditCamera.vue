@@ -499,6 +499,8 @@ export default {
           lng: editData.original_x,
           lat: editData.original_y,
         });
+        editData.twd97tm2_x = editData.original_x;
+        editData.twd97tm2_y = editData.original_y;
       } else {
         wgs84 = [editData.original_x, editData.original_y];
       }
@@ -509,6 +511,8 @@ export default {
         [`cameraLocations.${index}.setupDate`]: editData.setupDate,
         [`cameraLocations.${index}.original_x`]: editData.original_x,
         [`cameraLocations.${index}.original_y`]: editData.original_y,
+        [`cameraLocations.${index}.twd97tm2_x`]: editData.twd97tm2_x,
+        [`cameraLocations.${index}.twd97tm2_y`]: editData.twd97tm2_y,
         [`cameraLocations.${index}.vegetation`]: editData.vegetation,
         [`cameraLocations.${index}.wgs84dec_x`]: wgs84[0],
         [`cameraLocations.${index}.wgs84dec_y`]: wgs84[1],
@@ -545,10 +549,14 @@ export default {
 
             const isCameraEdited = this.isCameraEdited(cameraLocation);
             const newCameraData = this.getNewCameraData(cameraLocation, index);
+            console.log(cameraLocation);
             const currentCameraLocation = isCameraEdited
-              ? newCameraData.cameraLocation
+              ? newCameraData[`cameraLocations.${index}.cameraLocation`]
               : cameraLocation.cameraLocation;
-
+            console.log([
+              'updateDate',
+              `${projectId}/${newSite}/${newSubSite}/${currentCameraLocation}`,
+            ]);
             return {
               _id: projectId,
               projectId,
@@ -590,12 +598,15 @@ export default {
               vegetation,
               land_cover,
             } = camera;
-            let wgs84dec_x, wgs84dec_y;
+            console.log(camera);
+            let wgs84dec_x, wgs84dec_y, twd97tm2_x, twd97tm2_y;
             if (this.geoDatum == 'TWD97TM2') {
               [wgs84dec_x, wgs84dec_y] = twd97ToWgs84({
                 lng: original_x,
                 lat: original_y,
               });
+              twd97tm2_x = original_x;
+              twd97tm2_y = original_y;
             } else {
               wgs84dec_x = original_x;
               wgs84dec_y = original_y;
@@ -606,6 +617,10 @@ export default {
                 ? {}
                 : { elevation: +elevation }; // only accept number
 
+            console.log([
+              'addData',
+              `${projectId}/${site}/${subSite}/${cameraLocation}`,
+            ]);
             return {
               _id: projectId,
               projectId,
@@ -623,6 +638,8 @@ export default {
                   original_y,
                   wgs84dec_x,
                   wgs84dec_y,
+                  twd97tm2_x,
+                  twd97tm2_y,
                   vegetation,
                   land_cover,
                   setupDate,
@@ -640,8 +657,8 @@ export default {
       }
     },
   },
-  mounted() {
-    this.loadSingleProject(this.currentProjectId);
+  async mounted() {
+    await this.loadSingleProject(this.currentProjectId);
     this.sheetContainer = this.$el.querySelector('#sheet');
     this.sheet = new Handsontable(this.sheetContainer, this.settings);
     this.geoDatum = this.currentProject.geoDatum || 'WGS84';
