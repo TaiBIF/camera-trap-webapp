@@ -110,11 +110,11 @@
         </tr>
       </tbody>
     </table>
-    <error-modal
+    <!-- error-modal
       :open="errorModalOpen"
       :error-type="1"
       @close="modalClose('errorModalOpen')"
-    />
+    /-->
   </div>
 </template>
 
@@ -122,14 +122,14 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { commonMixin } from '../../../mixins/common.js';
-import ErrorModal from '../components/ErrorModal';
+// import ErrorModal from '../components/ErrorModal';
 
 const uploadSession = createNamespacedHelpers('uploadSession');
 
 export default {
   name: 'History',
   mixins: [commonMixin],
-  components: { ErrorModal },
+  // components: { ErrorModal },
   data() {
     return {
       // errorModalOpen: true,

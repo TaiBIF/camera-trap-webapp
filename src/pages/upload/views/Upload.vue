@@ -72,13 +72,13 @@
             <div class="text">{{alertMsg}}</div>
           </div>
           <!-- 顯示上傳資訊 -->
-          <div
+          <!--div
             class="float-right text-right"
             v-if="isUploading"
           >
             剩餘時間：_ 分鐘<br />
             <small class="text-gray">正在上傳檔案：_ %</small>
-          </div>
+          </div-->
           <!-- 顯示選取與刪除 -->
           <div
             class="float-right"
@@ -186,7 +186,7 @@
                       <a
                         v-if="file.state===-1"
                         class="link text-danger text-underline"
-                      >檢視錯誤</a>
+                      >錯誤：{{file.errorMessage}}</a>
                       <a
                         v-if="file.state===1 || file.state===2"
                         role="button"
@@ -451,7 +451,7 @@ export default {
       })
         .then(e => {
           console.log(e);
-          this.uploadSessions[currentUploadIndex] = e.key.split('/')[1];
+          this.uploadSessions[currentUploadIndex] = e.Key.split('/')[1];
           file.state = 2;
           this.uploadIndex++;
           this.doUpload();
@@ -460,6 +460,7 @@ export default {
           console.log(e);
           this.uploadSessions[currentUploadIndex] = 'ERROR';
           file.state = -1;
+          file.errorMessage = e.message || e;
           this.uploadIndex++;
           this.doUpload();
         });

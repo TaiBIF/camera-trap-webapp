@@ -256,7 +256,7 @@
 }
 
 .icon-calendar {
-  background-image: url('../assets/icons-sa4ae1ae68a.png');
+  /* background-image: url('../assets/icons-sa4ae1ae68a.png'); */
   background-position: 0 -86px;
   background-repeat: no-repeat;
   overflow: hidden;
@@ -267,7 +267,7 @@
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
   .icon-calendar {
     background-repeat: no-repeat;
-    background-image: url('../assets/icons-2x-sb27373e813.png');
+    /* background-image: url('../assets/icons-2x-sb27373e813.png');*/
     background-size: 53px 1401px;
     background-position: 0 -80px;
     height: 17px;
