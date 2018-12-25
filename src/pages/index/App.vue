@@ -75,13 +75,19 @@ export default {
   },
   computed: {
     ...project.mapGetters(['currentProject', 'cameraLocations']),
+    currentProjectId() {
+      return this.$route.params.id;
+    },
   },
   methods: {
-    ...project.mapActions(['loadProject']),
+    ...project.mapActions(['loadProject', 'getProjectErrorSites']),
     ...message.mapActions(['loadMessage']),
     fetchData() {
       this.loadProject();
       this.loadMessage();
+      if (this.currentProjectId) {
+        this.getProjectErrorSites(this.currentProjectId);
+      }
     },
   },
 };

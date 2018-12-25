@@ -106,6 +106,15 @@ const getLocationAbnormalStatus = async payload => {
   return res.ret;
 };
 
+const getProjectErrorSites = async projectId => {
+  const { results } = await fetchWrap({
+    url: `/project/${projectId}/multimedia-annotation-error-sites`,
+    method: 'GET',
+  });
+
+  return results;
+};
+
 const getDataFields = async payload => {
   const res = await fetchWrap({
     url: '/project/data-fields',
@@ -212,6 +221,7 @@ export {
   getLocationIdentifiedStatus,
   getLocationRetrievedStatus,
   getLocationAbnormalStatus,
+  getProjectErrorSites,
   getDataFields,
   editProject,
   getProject,
