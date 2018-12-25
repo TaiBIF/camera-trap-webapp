@@ -47,6 +47,7 @@
                       <label class="required">計畫名稱：</label>
                       <v-select
                         :options="projectOptions"
+                        :on-change="generateOnProjectSelectorChangeHandler(did)"
                         v-model="data.project"
                         :placeholder="'請選擇計畫名稱'"
                       />
@@ -894,7 +895,7 @@ export default {
       this.form.data.push({
         project: '',
         site: '',
-        subsite: '',
+        subSite: '',
         camera: '',
       });
     },
