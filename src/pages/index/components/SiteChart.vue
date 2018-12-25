@@ -42,9 +42,9 @@
             class="progress"
             v-if="data !== 0"
             :class="{
-            'is-complete': data>0,
-            'is-cancel': data==-1
-          }"
+              'is-complete': data>0,
+              'not-complete': data<0
+            }"
           ></span>
         </td>
       </tr>
@@ -143,10 +143,13 @@ export default {
           (retrievedNum, index) => {
             const identifiedNum = data.identifiedStatus[index];
             if (identifiedNum === 0 && retrievedNum === 0) {
+              // 未收資料
               return 0;
-            } else if (identifiedNum === retrievedNum) {
+            } else if (identifiedNum >= retrievedNum) {
+              // 鑑定完成
               return 1;
             }
+            // 鑑定未完成
             return -1;
           },
         );
