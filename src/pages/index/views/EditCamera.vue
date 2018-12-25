@@ -481,6 +481,7 @@ export default {
     },
     isCameraEdited(camera) {
       const editCameraMd5 = Object.values(this.editCameraLocations);
+      console.log(editCameraMd5);
       if (editCameraMd5.includes(camera.fullCameraLocationMd5)) {
         return true;
       }
