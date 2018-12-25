@@ -20,7 +20,10 @@
               <div class="caption">
                 <p>上傳之資料檔需至少涵蓋以下欄位：(1) 樣區 、(2)相機位置 、(3) 檔名 、(4) 時間、 (5) 物種 </p>
                 <small class="text-gray">
-                  詳細欄位規範請參考 <a class="link">欄位規範說明</a>
+                  各計畫欄位規範請參考 <a
+                    class="link"
+                    :href="downloadCsvSrc"
+                  >資料範本</a>
                 </small>
               </div>
             </slide>
@@ -33,7 +36,8 @@
               <div class="caption">
                 <p>可上傳的檔案形式包含：(1) 內含資料檔及其對應影像之壓縮檔、(2) 影像壓縮檔、(3) 單一影像檔、(4) 單一資料檔。 </p>
                 <small class="text-gray">
-                  詳細支援檔案格式請參考 <a class="link">上傳格式說明</a>
+                  支援格式包括壓縮檔 (ZIP)、影像檔 (JPG、MP4、AVI) 與資料檔 (CSV)
+                  <!--a class="link">上傳格式說明</a-->
                 </small>
               </div>
             </slide>
@@ -46,7 +50,10 @@
               <div class="caption">
                 <p>請將每個上傳檔案大小制於 2G 以內，單一次上傳中，檔案大小總合須小於 5G 。 </p>
                 <small class="text-gray">
-                  若仍有其他問題請<a class="link">聯絡我們</a>
+                  若仍有其他問題請<a
+                    class="link"
+                    href="/article.html#/contact"
+                  >聯絡我們</a>
                 </small>
               </div>
             </slide>
@@ -100,6 +107,14 @@ export default {
         this.$emit('close', 'trialModalOpen');
         this.currentPage = 2;
       }
+    },
+  },
+  computed: {
+    downloadCsvSrc() {
+      console.log(this.$router);
+      return `${process.env.VUE_APP_API_URL}/project/${
+        this.$route.params.projectId
+      }/example-multimedia-annotations.csv`;
     },
   },
 };
