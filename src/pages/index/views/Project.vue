@@ -527,7 +527,7 @@ export default {
                 }">資料異常</span>
                 <h5 class="my-1">${this.y} <small>筆</small></h5>
               </div>
-              <div class="text-gray">上傳時間：${this.updated_at}</div>
+              <div class="text-gray">上傳時間：${this.lastUploaded}</div>
             `;
           },
           style: {
@@ -845,6 +845,7 @@ export default {
             currentValue.subSite === currentSubSiteLabel
           ) {
             const retrievedStatus = Array(12).fill(0);
+            const retrievedDate = Array(12).fill(null);
             const cameraAbnormalStatus = Array(12).fill(0);
             const identifiedStatus = Array(12).fill(0);
 
@@ -852,6 +853,7 @@ export default {
               if (status.cameraLocation === currentValue.cameraLocation) {
                 status.monthly_num.forEach(value => {
                   retrievedStatus[value.month - 1] += value.num;
+                  retrievedDate[value.month - 1] = value.lastUploaded;
                 });
               }
             });
@@ -879,6 +881,7 @@ export default {
               ),
               ...currentValue,
               retrievedStatus,
+              retrievedDate,
               cameraAbnormalStatus,
               identifiedStatus,
             });
@@ -901,6 +904,7 @@ export default {
     },
     // 更新圖表
     loadBarChart() {
+      const retrievedDate = this.currentCamera.retrievedDate;
       const BarChartData = {
         name: '每月影像筆數',
         data: this.currentCamera.retrievedStatus.reduce((array, value, i) => {
@@ -908,6 +912,7 @@ export default {
             name: i + 1 + '月',
             y: value,
             hasError: this.currentCameraAdnormalMonth.includes(i + 1),
+            lastUploaded: this.timeFormat(retrievedDate[i], 'YYYY/MM/DD'),
           });
           return array;
         }, []),
