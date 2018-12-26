@@ -284,6 +284,10 @@
                       {{currentCamera.cameraLocation}}
                       <small class="text-gray">{{currentCamera.site}}-{{currentCamera.subSite}}</small>
                     </h1>
+                    <small
+                      class="sub-heading text-gray"
+                      v-if="currentCameraLastUpdate"
+                    >最後更新時間：{{timeFormat(currentCameraLastUpdate)}}</small>
                     <div class="text-gray">
                       <div>架設日期：{{ currentCamera.setupDate }}</div>
                       <div> WGS84 經緯度：{{ `${parseFloat(currentCamera.wgs84dec_x).toFixed(6)}` }}, {{ `${parseFloat(currentCamera.wgs84dec_y).toFixed(6)}` }}</div>
@@ -402,7 +406,7 @@ import { createNamespacedHelpers } from 'vuex';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
-import { isAllowManageProject } from '../../../util/roles.js';
+import { isAllowManageProject } from '../../../util/roles';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
@@ -652,6 +656,11 @@ export default {
         }
       }, 100);
     },
+    currentCamera(newValue) {
+      if (newValue && newValue.fullCameraLocationMd5) {
+        this.getCameraLastUpdate(newValue.fullCameraLocationMd5);
+      }
+    },
     species: 'loadPieChart',
     locationCameraAbnormalStatus: 'renderMap',
     locationIdentifiedStatus: 'renderMap',
@@ -671,6 +680,7 @@ export default {
       'species',
       'sites',
       'ProjectMarkers',
+      'cameraLastUpdate',
     ]),
     ...auth.mapGetters(['projectRoles']),
     ...forestBoundary.mapGetters(['forestBoundary']),
@@ -731,6 +741,13 @@ export default {
       }
       return [];
     },
+    currentCameraLastUpdate() {
+      if (this.currentCamera && this.currentCamera.fullCameraLocationMd5) {
+        const { fullCameraLocationMd5 } = this.currentCamera;
+        return this.cameraLastUpdate[fullCameraLocationMd5] || null;
+      }
+      return null;
+    },
   },
   methods: {
     ...project.mapMutations(['setCurrentProject', 'setSiteStatusTab']),
@@ -740,6 +757,7 @@ export default {
       'getLocationRetrievedStatus',
       'getLocationCameraAbnormalStatus',
       'updateAbnormalCamera',
+      'getCameraLastUpdate',
     ]),
     ...forestBoundary.mapActions(['loadForestBoundary']),
     ...exampleFiles.mapActions(['downloadProjectExampleCsv']),

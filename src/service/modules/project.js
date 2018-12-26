@@ -216,6 +216,15 @@ const editProjectLicense = async payload => {
   });
 };
 
+const getCameraLastUpdate = async ({ projectId, fullCameraLocationMd5 }) => {
+  const res = await fetchWrap({
+    url: `/project/${projectId}/location-last-updated/${fullCameraLocationMd5}`,
+    method: 'GET',
+  });
+
+  return res;
+};
+
 export {
   getProjects,
   createProject,
@@ -231,4 +240,5 @@ export {
   getColumnsField,
   applyNewColumnField,
   editProjectLicense,
+  getCameraLastUpdate,
 };
