@@ -44,6 +44,7 @@ function initCognitoSDK() {
         Logins: logins,
       });
       if (!window.currentUser) {
+        // We need bypass the call back of the success of refresh token.
         const form = document.createElement('form');
         const inputIdToken = document.createElement('input');
         const inputRedirect = document.createElement('input');
