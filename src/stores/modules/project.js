@@ -12,6 +12,7 @@ import {
   updateAbnormalCamera,
   editCameraLocations,
   getColumnsField,
+  getCameraLastUpdate,
 } from '../../service/api';
 
 export const getters = {
@@ -189,6 +190,7 @@ export const getters = {
   },
   projectCameraAbnormalStatus: state => state.locationCameraAbnormalStatus,
   projectErrorSites: state => state.projectErrorSites,
+  cameraLastUpdate: state => state.cameraLastUpdate || null,
 };
 
 export const mutations = {
@@ -232,6 +234,12 @@ export const mutations = {
   setColumnsField(state, payload) {
     state.columnsField = payload;
   },
+  setCameraLastUpdate(state, payload) {
+    state.cameraLastUpdate = {
+      ...state.cameraLastUpdate,
+      ...payload,
+    };
+  },
 };
 
 export const actions = {
@@ -271,6 +279,15 @@ export const actions = {
       ...payload,
     });
     commit('setLocationRetrievedStatus', data);
+  },
+  async getCameraLastUpdate({ state, commit }, fullCameraLocationMd5) {
+    const data = await getCameraLastUpdate({
+      projectId: state.currentProjectId,
+      fullCameraLocationMd5,
+    });
+    commit('setCameraLastUpdate', {
+      [fullCameraLocationMd5]: data.lastModified,
+    });
   },
   // 相機異常值
   async getLocationCameraAbnormalStatus({ state, commit }, payload) {
@@ -319,6 +336,7 @@ export default {
     locationCameraAbnormalStatus: [],
     projectErrorSites: [],
     columnsField: [],
+    cameraLastUpdate: {},
     // 畫面用
     siteStatusTab: 0,
   },

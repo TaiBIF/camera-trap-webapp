@@ -284,6 +284,10 @@
                       {{currentCamera.cameraLocation}}
                       <small class="text-gray">{{currentCamera.site}}-{{currentCamera.subSite}}</small>
                     </h1>
+                    <small
+                      class="sub-heading text-gray"
+                      v-if="currentCameraLastUpdate"
+                    >最後更新時間：{{timeFormat(currentCameraLastUpdate)}}</small>
                     <div class="text-gray">
                       <div>架設日期：{{ currentCamera.setupDate }}</div>
                       <div> WGS84 經緯度：{{ `${parseFloat(currentCamera.wgs84dec_x).toFixed(6)}` }}, {{ `${parseFloat(currentCamera.wgs84dec_y).toFixed(6)}` }}</div>
@@ -402,7 +406,7 @@ import { createNamespacedHelpers } from 'vuex';
 import VueHighcharts from 'vue2-highcharts';
 import SiteChart from '../components/SiteChart';
 import ReportModal from '../components/ReportModal';
-import { isAllowManageProject } from '../../../util/roles.js';
+import { isAllowManageProject } from '../../../util/roles';
 
 const project = createNamespacedHelpers('project');
 const auth = createNamespacedHelpers('auth');
@@ -523,7 +527,7 @@ export default {
                 }">資料異常</span>
                 <h5 class="my-1">${this.y} <small>筆</small></h5>
               </div>
-              <div class="text-gray">上傳時間：${this.updated_at}</div>
+              <div class="text-gray">上傳時間：${this.lastUploaded}</div>
             `;
           },
           style: {
@@ -652,6 +656,11 @@ export default {
         }
       }, 100);
     },
+    currentCamera(newValue) {
+      if (newValue && newValue.fullCameraLocationMd5) {
+        this.getCameraLastUpdate(newValue.fullCameraLocationMd5);
+      }
+    },
     species: 'loadPieChart',
     locationCameraAbnormalStatus: 'renderMap',
     locationIdentifiedStatus: 'renderMap',
@@ -671,6 +680,7 @@ export default {
       'species',
       'sites',
       'ProjectMarkers',
+      'cameraLastUpdate',
     ]),
     ...auth.mapGetters(['projectRoles']),
     ...forestBoundary.mapGetters(['forestBoundary']),
@@ -731,6 +741,13 @@ export default {
       }
       return [];
     },
+    currentCameraLastUpdate() {
+      if (this.currentCamera && this.currentCamera.fullCameraLocationMd5) {
+        const { fullCameraLocationMd5 } = this.currentCamera;
+        return this.cameraLastUpdate[fullCameraLocationMd5] || null;
+      }
+      return null;
+    },
   },
   methods: {
     ...project.mapMutations(['setCurrentProject', 'setSiteStatusTab']),
@@ -740,6 +757,7 @@ export default {
       'getLocationRetrievedStatus',
       'getLocationCameraAbnormalStatus',
       'updateAbnormalCamera',
+      'getCameraLastUpdate',
     ]),
     ...forestBoundary.mapActions(['loadForestBoundary']),
     ...exampleFiles.mapActions(['downloadProjectExampleCsv']),
@@ -827,6 +845,7 @@ export default {
             currentValue.subSite === currentSubSiteLabel
           ) {
             const retrievedStatus = Array(12).fill(0);
+            const retrievedDate = Array(12).fill(null);
             const cameraAbnormalStatus = Array(12).fill(0);
             const identifiedStatus = Array(12).fill(0);
 
@@ -834,6 +853,7 @@ export default {
               if (status.cameraLocation === currentValue.cameraLocation) {
                 status.monthly_num.forEach(value => {
                   retrievedStatus[value.month - 1] += value.num;
+                  retrievedDate[value.month - 1] = value.lastUploaded;
                 });
               }
             });
@@ -861,6 +881,7 @@ export default {
               ),
               ...currentValue,
               retrievedStatus,
+              retrievedDate,
               cameraAbnormalStatus,
               identifiedStatus,
             });
@@ -883,6 +904,7 @@ export default {
     },
     // 更新圖表
     loadBarChart() {
+      const retrievedDate = this.currentCamera.retrievedDate;
       const BarChartData = {
         name: '每月影像筆數',
         data: this.currentCamera.retrievedStatus.reduce((array, value, i) => {
@@ -890,6 +912,7 @@ export default {
             name: i + 1 + '月',
             y: value,
             hasError: this.currentCameraAdnormalMonth.includes(i + 1),
+            lastUploaded: this.timeFormat(retrievedDate[i], 'YYYY/MM/DD'),
           });
           return array;
         }, []),
