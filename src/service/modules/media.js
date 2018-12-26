@@ -16,6 +16,7 @@ const getSiteData = async payload => {
         'tokens.data.key': true,
         'tokens.data.label': true,
         'tokens.data.value': true,
+        'tokens.species_shortcut': true,
         corrected_date_time: true,
         date_time_corrected_timestamp: true,
         url: true,

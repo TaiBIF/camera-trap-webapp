@@ -29,8 +29,8 @@ const formatSiteData = state => {
     species: {
       data: 'species',
       label: '物種',
-      editorMode: 'select',
-      selectOptions: state.dataFields.speciesList,
+      type: 'dropdown',
+      source: state.dataFields.speciesList,
     },
   };
 
@@ -39,8 +39,8 @@ const formatSiteData = state => {
     obj[val.key] = {
       data: val.key,
       label: val.label,
-      editorMode: val.widget_type,
-      selectOptions: val.widget_select_options,
+      type: val.widget_type == 'select' ? 'dropdown' : 'handsontable',
+      source: val.widget_select_options,
     };
     return obj;
   }, defaultColumn);
@@ -75,6 +75,8 @@ const formatSiteData = state => {
           column: {},
           columnLength: token.data.length, // 新增資料要補在最後面
         },
+        tokenErrorFlag: token.token_error_flag,
+        species_shortcut: token.species_shortcut,
       };
       token.data.map((d, columnIdx) => {
         ret[d.key] = d.value;

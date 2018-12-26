@@ -235,9 +235,14 @@
     display: block !important;
   }
   
-  &.is-continuoust:not(.is-continuoust_apart) {
+  &.is-continuoust.period-x:not(.is-continuoust_apart) {
     background: #d3d3d3;
   }
+
+  &.is-continuoust.period-y:not(.is-continuoust_apart) {
+    background: #a3a3a3;
+  }
+
   &.is-continuoust {
     padding-left: 6px;
     border-left: 2px solid #2A7F60 !important;
