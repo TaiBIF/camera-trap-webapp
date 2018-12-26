@@ -240,7 +240,7 @@
           </div>
           <div
             class="gallery-body"
-            v-if="!hasImageOrVideo"
+            v-if="!hasImage && !hasVideo"
           >
             <div class="empty-result">
               <img
@@ -291,48 +291,12 @@
             <div class="text-right my-2">
               <router-link
                 v-if="siteData.data[currentRow].type === 'StillImage'"
-                :to="`/project/${siteData.data[currentRow].projectId}/site/${siteData.data[currentRow].site}/${siteData.data[currentRow].subSite}/photo/tag?image_id=${siteData.data[currentRow]._id}`"
+                :to="`/project/${$route.params.id}/site/${$route.params.site_id}/${$route.params.subsite_id}/photo/tag?image_id=${siteData.data[currentRow]._id}`"
                 class="btn btn-sm btn-default"
               >
                 進階標註
               </router-link>
             </div>
-          </div>
-        </div>
-        <div
-          class="version-container"
-          v-if="historyShow"
-        >
-          <div class="version-header">
-            <a
-              @click="changeMode('historyShow', false)"
-              class="close mt-1 float-right"
-            >
-              <i class="icon-remove-sm"></i>
-            </a>
-            版本紀錄
-          </div>
-          <div class="version-body">
-            <table class="table version-list">
-              <tbody>
-                <tr
-                  v-for="(rev, i) in revision"
-                  :key="`rev-${i}`"
-                >
-                  <td>{{rev.created}}</td>
-                  <td class="text-gray">由 <b>{{rev.modifiedBy.name}}</b> 編輯</td>
-                  <td
-                    class="text-gray"
-                    v-if="i===0"
-                  >目前版本</td>
-                  <td
-                    class="text-gray"
-                    v-else
-                  >
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
         <div
@@ -349,6 +313,7 @@ import leftPad from 'left-pad';
 import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
 import Handsontable from 'handsontable';
+import YoutubeEmbed from '../../index/components/YoutubeEmbed';
 import 'handsontable/languages/all';
 import ZoomDrag from '../../index/components/ZoomDrag';
 import store from '../../../stores';
@@ -569,9 +534,11 @@ export default {
         },
         afterSelectionEnd: r => {
           this.currentRow = this.pageSize * (this.currentPage - 1) + r;
+          /*
           this.getRevision({
             _id: this.siteData.data[r]._id,
           });
+          //*/
         },
       },
       sheetContainer: null,
@@ -598,6 +565,7 @@ export default {
   },
   components: {
     ZoomDrag,
+    YoutubeEmbed,
   },
   computed: {
     ...annotationRevision.mapState(['revision']),
@@ -652,20 +620,19 @@ export default {
     // 判斷是否顯示影像區塊
     displayImageComponent() {
       const { siteData, currentRow, galleryShow } = this;
-      return (
-        siteData.data[currentRow] &&
-        galleryShow &&
-        (!siteData.data[currentRow].imageUrl == false ||
-          !siteData.data[currentRow].youtubeUrl == false)
-      );
+      return siteData.data[currentRow] && galleryShow;
     },
     // 檢查是否存在圖片連結
-    hasImageOrVideo() {
+    hasImage() {
+      const { siteData, currentRow } = this;
+      return siteData.data[currentRow].hasImage;
+    },
+    // 檢查是否存在圖片連結
+    hasVideo() {
       const { siteData, currentRow } = this;
       return (
-        siteData.data[currentRow].hasImage ||
-        (siteData.data[currentRow].youtubeUrl &&
-          siteData.data[currentRow].youtubeUrl !== '')
+        siteData.data[currentRow].youtubeUrl &&
+        siteData.data[currentRow].youtubeUrl !== ''
       );
     },
     cameraList() {

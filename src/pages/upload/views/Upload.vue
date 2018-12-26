@@ -189,7 +189,6 @@
                       >錯誤：{{file.errorMessage}}</a>
                       <a
                         v-if="file.state===1 || file.state===2"
-                        role="button"
                         :href="`/index.html#/project/${$route.params.projectId}/site/${fileList[f_id].site}/${fileList[f_id].subsite}?camera=${fileList[f_id].fullCameraLocationMd5}&upload_session_id=${uploadSessions[f_id]}`"
                         class="link text-green text-underline"
                       >查看</a>
