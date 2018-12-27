@@ -529,7 +529,9 @@ export default {
         callback: (key, selection) => {
           const idx = selection[0].start.row;
           const row = this.row_data[idx];
-
+          const _id = row._id;
+          let offset = 1;
+          let cloned;
           switch (key) {
             // 設定連拍
             /*
@@ -542,9 +544,19 @@ export default {
             // 複製一列
             //*/
             case 'clone':
-              this.row_data.splice(idx, 0, window._.cloneDeep(row));
+              console.log(row);
+              cloned = window._.cloneDeep(row);
+              this.row_data.splice(idx, 0, cloned);
+              while (this.row_data[idx + offset]._id === _id) {
+                this.row_data[idx + offset].index.token++;
+                offset++;
+              }
               this.row_data = this.setContinuous(this.row_data);
               this.settings.data = this.row_data;
+              this.replicateToken({
+                annotationId: row._id,
+                tokenIndex: row.index.token,
+              });
               break;
           }
 
@@ -679,7 +691,7 @@ export default {
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
-          console.log(this.siteData.data[r].continuousPeriod);
+          // console.log(this.siteData.data[r].continuousPeriod);
           this.currentRow = this.pageSize * (this.currentPage - 1) + r;
           this.getRevision({
             _id: this.siteData.data[r]._id,
@@ -882,7 +894,7 @@ export default {
   methods: {
     ...project.mapMutations(['setCurrentProject']),
     ...media.mapMutations(['addSiteDataLength']),
-    ...media.mapActions(['getSiteData', 'updateAnnotation']),
+    ...media.mapActions(['getSiteData', 'updateAnnotation', 'replicateToken']),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
     ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
     setSelectedCamera(camera) {
@@ -1142,7 +1154,7 @@ export default {
     async getCameraLocationErrors() {
       this.cameraLocationErrors = {};
       const _this = this;
-      console.log(this.siteData);
+      // console.log(this.siteData);
       this.siteData.data.forEach((token, idx) => {
         if (!_this.cameraLocationErrors[token.fullCameraLocationMd5]) {
           _this.cameraLocationErrors[token.fullCameraLocationMd5] = 0;
