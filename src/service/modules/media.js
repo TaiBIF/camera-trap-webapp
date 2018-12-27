@@ -48,4 +48,14 @@ const updateAnnotation = async payload => {
   return res;
 };
 
-export { getSiteData, updateAnnotation };
+const replicateToken = async payload => {
+  const { annotationId, tokenIndex } = payload;
+  const res = await fetchWrap({
+    url: `/media/annotation/${annotationId}/token/${tokenIndex}/replicate`,
+    method: 'POST',
+    body: payload,
+  });
+  return res;
+};
+
+export { getSiteData, updateAnnotation, replicateToken };
