@@ -18,8 +18,8 @@
             width="196"
             srcset="/assets/common/invitation-img@2x.png"
           >
-          <h1 class="text-green">邀請已送出</h1>
-          <p class="text-gray">已將成員邀請送出！</p>
+          <h1 class="text-green">已加入成員</h1>
+          <p class="text-gray">已將成員加入此計畫！</p>
           <a
             @click="$emit('close')"
             class="btn btn-default"

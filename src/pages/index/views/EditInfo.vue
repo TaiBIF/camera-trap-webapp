@@ -148,7 +148,7 @@
                   <div class="select">
                     <v-select
                       id="project-admin-area"
-                      :value="currentProject.adminArea"
+                      :value="currentProject.adminArea || []"
                       @change="handleAdminAreaChange"
                       :options="options"
                       multiple

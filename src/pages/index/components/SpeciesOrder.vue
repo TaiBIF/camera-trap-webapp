@@ -76,7 +76,7 @@
             class="btn btn-default"
           >取消</a>
           <button
-            @click="submit()"
+            @click="submit(); $emit('close')"
             class="btn btn-orange"
           >確定</button>
         </div>

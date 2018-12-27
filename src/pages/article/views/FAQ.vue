@@ -124,7 +124,7 @@ const faq = [
       {
         title: '有那幾種登入方式？',
         content:
-          '本平台僅能透過 ORCiD 帳號進行登入，若尚未註冊請先至 ORCiD 官網申請帳號。ORCiD 可使用 Google 或 FaceBook 認證。',
+          '本平台僅能透過 ORCiD 帳號進行登入，若尚未註冊請先至 ORCiD 官網申請帳號。ORCiD 可使用 Google 或 Facebook 認證。',
       },
     ],
   },

@@ -44,7 +44,7 @@
                       @click.prevent="submitInvitation()"
                       class="btn btn-orange"
                       :disabled="!newMember.orcId"
-                    >邀請</button>
+                    >加入</button>
                   </div>
                 </div>
               </form>
