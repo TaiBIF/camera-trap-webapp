@@ -219,7 +219,7 @@
                   </div>
                   <div
                     class="preview"
-                    v-else-if="previewImg!==null"
+                    v-else-if="previewImg"
                   >
                     <div class="image">
                       <img :src="previewImg.src">
@@ -234,6 +234,17 @@
                       >
                         <i class="fa fa-times"></i>
                       </div>
+                    </div>
+                  </div>
+                  <div
+                    class="preview"
+                    v-else-if="currentProject.coverImage"
+                  >
+                    <div class="image">
+                      <img :src="currentProject.coverImage">
+                    </div>
+                    <div class="content">
+                      {{ `目前封面：${currentProject.coverImage.split('/').pop()}` }}
                     </div>
                   </div>
                 </div>
