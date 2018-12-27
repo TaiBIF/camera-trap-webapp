@@ -544,19 +544,19 @@ export default {
             // 複製一列
             //*/
             case 'clone':
-              console.log(row);
+              // console.log(row);
               cloned = window._.cloneDeep(row);
               this.row_data.splice(idx, 0, cloned);
               while (this.row_data[idx + offset]._id === _id) {
                 this.row_data[idx + offset].index.token++;
                 offset++;
               }
-              this.row_data = this.setContinuous(this.row_data);
-              this.settings.data = this.row_data;
               this.replicateToken({
                 annotationId: row._id,
-                tokenIndex: row.index.token,
+                tokenIndex: cloned.index.token,
               });
+              this.row_data = this.setContinuous(this.row_data);
+              this.settings.data = this.row_data;
               break;
           }
 
@@ -691,7 +691,6 @@ export default {
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
-          // console.log(this.siteData.data[r].continuousPeriod);
           this.currentRow = this.pageSize * (this.currentPage - 1) + r;
           this.getRevision({
             _id: this.siteData.data[r]._id,
