@@ -118,6 +118,7 @@ export default {
   computed: {
     chartData() {
       return this.chart.map(data => {
+        /*
         const latestRetrievedMonth = data.retrievedStatus.reduce(
           (max, num, index) => {
             if (num > 0) {
@@ -127,16 +128,20 @@ export default {
           },
           0,
         );
+        //*/
 
         // https://github.com/TaiBIF/camera-trap-webapp/issues/16#issuecomment-442069580
         const retrievedData = data.retrievedStatus.map((num, index) => {
+          if (data.cameraAbnormalStatus[index]) {
+            return -1;
+          }
           if (num > 0) {
             return 1;
-          } else if (index < latestRetrievedMonth) {
-            return -1;
           }
           return 0;
         });
+
+        //console.log(retrievedData);
 
         // https://github.com/TaiBIF/camera-trap-webapp/issues/16#issuecomment-441432809
         const identifiedData = data.retrievedStatus.map(

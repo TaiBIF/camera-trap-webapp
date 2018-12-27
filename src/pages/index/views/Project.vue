@@ -764,7 +764,7 @@ export default {
     downloadExampleCsv() {
       this.downloadProjectExampleCsv(this.currentProject._id);
     },
-    fetchImageStatus() {
+    async fetchImageStatus() {
       this.mapInfo.marker = [];
       const payload = {
         year: this.currentDuration,
@@ -778,8 +778,8 @@ export default {
       };
 
       this.getLocationIdentifiedStatus(payload);
+      await this.getLocationCameraAbnormalStatus(payload);
       this.getLocationRetrievedStatus(payload);
-      this.getLocationCameraAbnormalStatus(payload);
     },
     timeFormat(time) {
       return moment(time * 1000).format('YYYY-MM-DD');
