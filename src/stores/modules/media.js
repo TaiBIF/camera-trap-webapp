@@ -10,21 +10,25 @@ const formatSiteData = state => {
       data: 'fullSite',
       label: '樣區',
       editorMode: false,
+      readOnly: true,
     },
     cameraLocation: {
       data: 'cameraLocation',
       label: '相機位置',
       editorMode: false,
+      readOnly: true,
     },
     fileName: {
       data: 'fileName',
       label: '檔名',
       editorMode: false,
+      readOnly: true,
     },
     corrected_date_time: {
       data: 'corrected_date_time',
       label: '時間',
       editorMode: false,
+      readOnly: true,
     },
     species: {
       data: 'species',

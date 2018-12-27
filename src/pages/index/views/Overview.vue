@@ -83,7 +83,10 @@
           >
             <div class="image">
               <img :src="proj.coverImage">
-              <div class="badget">
+              <div
+                class="badget"
+                v-if="proj.members"
+              >
                 <i class="fa fa-user"></i>{{proj.members.length}}
               </div>
             </div>

@@ -515,6 +515,8 @@ export default {
         'fileName',
         'corrected_date_time',
       ],
+      notErrors: ['測試', '定時測試', '尚未辨識', '工作照', '空拍'],
+      notContinuous: ['定時測試', '測試', '空拍', '工作照'],
       // 連拍紀錄
       continuousCount: 0,
       continuousStart: false,
@@ -958,7 +960,7 @@ export default {
           this.species &&
           value &&
           this.species.indexOf(value) === -1 &&
-          value.indexOf('測試') === -1
+          !this.notErrors.includes(value)
         ) {
           // 設定錯誤提示文字
           TD.dataset.tooltip = '物種不在預設中';
@@ -1044,7 +1046,7 @@ export default {
         if (
           !nDt === false &&
           (nDt - cDt <= time || (!pDt === false && cDt - pDt <= time)) &&
-          ['測試', '空拍', '工作照'].indexOf($row.species) === -1
+          this.notContinuous.indexOf($row.species) === -1
         ) {
           isContinue = true;
           $row.is_continuous = true;
@@ -1147,7 +1149,7 @@ export default {
         }
         if (
           token.species_shortcut &&
-          token.species_shortcut != '測試' &&
+          !this.notErrors.includes(token.species_shortcut) &&
           (token.token_error_flag === true ||
             !_this.species.includes(token.species_shortcut))
         ) {
