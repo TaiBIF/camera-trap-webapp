@@ -272,6 +272,7 @@ import { cityOptions } from '../../../util/constants';
 import { uploadCoverImage } from '../../../util/uploadToS3.js';
 
 const project = createNamespacedHelpers('project');
+const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'EditInfo',
@@ -359,6 +360,7 @@ export default {
         uploadCoverImage({
           file: this.previewImg.file,
           projectId: this.currentProject._id,
+          credentials: this.authCredentials,
         })
           .then(({ key }) => {
             // TODO: apply s3 src base on env
@@ -377,6 +379,7 @@ export default {
   },
   computed: {
     ...project.mapGetters(['currentProject']),
+    ...auth.mapGetters(['authCredentials']),
     isUploadTypeError() {
       if (!this.previewImg) {
         return false;

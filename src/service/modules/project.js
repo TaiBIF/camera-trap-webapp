@@ -17,7 +17,7 @@ const getProjects = async () => {
 
 const createProject = async payload => {
   console.log(payload);
-  const { form, licenseForm, file } = payload;
+  const { form, licenseForm, file, credentials } = payload;
   const { ret } = await fetchWrap({
     url: '/project/init',
     method: 'POST',
@@ -31,6 +31,7 @@ const createProject = async payload => {
     const { key } = await uploadCoverImage({
       file,
       projectId,
+      credentials,
     });
     form.cover = `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`;
   } else {

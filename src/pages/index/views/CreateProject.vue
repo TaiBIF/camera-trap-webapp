@@ -524,6 +524,7 @@ import { cityOptions } from '../../../util/constants';
 import moment from 'moment';
 
 const project = createNamespacedHelpers('project');
+const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'CreateProject',
@@ -585,6 +586,7 @@ export default {
             this.previewImg && this.previewImg.file
               ? this.previewImg.file
               : null,
+          credentials: this.authCredentials,
         }).then(() => this.$router.push('/'));
       }
     },
@@ -614,6 +616,7 @@ export default {
     },
   },
   computed: {
+    ...auth.mapGetters(['authCredentials']),
     isOverPublicLimit: function() {
       return this.form.publicAt > this.publicAtLimit;
     },

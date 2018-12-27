@@ -39,7 +39,7 @@ function initCognitoSDK() {
     onSuccess(awsCognitoSession) {
       const logins = {};
       logins[idpDomain] = awsCognitoSession.getIdToken().getJwtToken();
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      result.credentials = new AWS.CognitoIdentityCredentials({
         IdentityPoolId: identityPoolId,
         Logins: logins,
       });
