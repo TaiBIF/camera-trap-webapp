@@ -21,6 +21,7 @@ export default ({
   fullCameraLocationMd5,
   userId,
   onProgress,
+  credentials,
 }) =>
   new Promise((resolve, reject) => {
     let Key = '';
@@ -65,6 +66,7 @@ export default ({
     }
 
     if (Key.length > 0) {
+      AWS.config.credentials = credentials;
       new AWS.S3.ManagedUpload({
         params: {
           Bucket: 'camera-trap',
@@ -103,7 +105,7 @@ export default ({
   });
 
 // https://github.com/TaiBIF/camera-trap-api/wiki/aws-folder-structure
-export const uploadCoverImage = ({ file, projectId }) => {
+export const uploadCoverImage = ({ file, projectId, credentials }) => {
   return new Promise((resolve, reject) => {
     if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
       reject('不支援的檔案');
@@ -116,6 +118,7 @@ export const uploadCoverImage = ({ file, projectId }) => {
         ACL: 'public-read',
       };
       console.log('params', params);
+      AWS.config.credentials = credentials;
       new AWS.S3.ManagedUpload({
         params,
       })

@@ -292,6 +292,7 @@ import ProgressBar from 'progressbar.js';
 import uploadS3 from '../../../util/uploadToS3.js';
 
 const project = createNamespacedHelpers('project');
+const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'Upload',
@@ -332,6 +333,7 @@ export default {
   },
   computed: {
     ...mapGetters(['FileReady']),
+    ...auth.mapGetters(['authCredentials']),
     ...project.mapGetters(['currentProject', 'cameraLocations']),
     options() {
       const tmp = JSON.parse(JSON.stringify(this.cameraLocations || []));
@@ -446,6 +448,7 @@ export default {
         projectId: this.$route.params.projectId,
         projectTitle: this.currentProject.projectTitle,
         userId: window.currentUser.userId,
+        credentials: this.authCredentials,
         onProgress: evt => bar.set(evt.loaded / evt.total),
       })
         .then(e => {
