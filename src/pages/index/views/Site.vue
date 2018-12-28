@@ -547,10 +547,15 @@ export default {
               // console.log(row);
               cloned = window._.cloneDeep(row);
               this.row_data.splice(idx, 0, cloned);
-              while (this.row_data[idx + offset]._id === _id) {
+
+              while (
+                this.row_data[idx + offset] &&
+                this.row_data[idx + offset]._id === _id
+              ) {
                 this.row_data[idx + offset].index.token++;
                 offset++;
               }
+
               this.replicateToken({
                 annotationId: row._id,
                 tokenIndex: cloned.index.token,
