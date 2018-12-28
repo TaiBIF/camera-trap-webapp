@@ -357,7 +357,7 @@ export default {
         },
       },
       species: ['測試', '空拍', '山羌', '鼬獾', '台灣獼猴', '水鹿', '白鼻心'],
-      pageSize: 10, //一頁顯示的筆數
+      pageSize: 50, //一頁顯示的筆數
       currentPage: 1, //目前在第幾頁
       today: moment(),
       idleTimeout: null,
