@@ -426,7 +426,11 @@
 
 <script>
 // import VueRecaptcha from 'vue-recaptcha';
-import { submitContactForm } from '../../../service/api.js';
+import { createNamespacedHelpers } from 'vuex';
+import { submitContactForm } from '../../../service/api';
+import { uploadContactUsAttach } from '../../../util/uploadToS3';
+
+const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'Contact',
@@ -448,6 +452,7 @@ export default {
     };
   },
   computed: {
+    ...auth.mapGetters(['authCredentials']),
     isRequiredInputFill: function() {
       const { reportContentType, description, email } = this.form;
 
@@ -504,11 +509,44 @@ export default {
     },
     onSubmit() {
       // this.$refs.invisibleRecaptcha.execute();
-      submitContactForm(this.form).then(({ ret }) => {
-        if (ret.ok === 1) {
-          this.showSuccessModal = true;
-        }
-      });
+      if (this.uploadFiles.length > 0) {
+        const reportType =
+          this.form.reportType === '問題回報' ? 'bug_report' : 'feedback';
+        const time = Date.now();
+        const attachments = [];
+        const promises = [];
+        this.uploadFiles.forEach(({ file, type }, index) => {
+          const ext = type.replace(/.*\//, '');
+          const fileName = `${reportType}_${time}_${index}.${ext}`;
+          attachments.push(
+            `https://s3-ap-northeast-1.amazonaws.com/camera-trap/user_report_images/${fileName}`,
+          );
+          promises.push(
+            uploadContactUsAttach({
+              file,
+              fileName,
+              credentials: this.authCredentials,
+            }),
+          );
+        });
+        console.log('xxx', { attachments, promises });
+        // Promise.all(promises).then(() => {
+        //   submitContactForm({
+        //     ...this.form,
+        //     attachments: [],
+        //   }).then(({ ret }) => {
+        //     if (ret.ok === 1) {
+        //       this.showSuccessModal = true;
+        //     }
+        //   });
+        // });
+      } else {
+        submitContactForm(this.form).then(({ ret }) => {
+          if (ret.ok === 1) {
+            this.showSuccessModal = true;
+          }
+        });
+      }
     },
     // onVerify(response) {
     //   console.log('Verify: ' + response);

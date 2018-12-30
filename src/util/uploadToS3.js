@@ -138,3 +138,30 @@ export const uploadCoverImage = ({ file, projectId, credentials }) => {
     }
   });
 };
+
+export const uploadContactUsAttach = ({ file, fileName }) => {
+  return new Promise((resolve, reject) => {
+    const params = {
+      Bucket: 'camera-trap',
+      Key: `user_report_images/${fileName}`,
+      Body: file,
+      ACL: 'public-read',
+    };
+    console.log('params', params);
+    new AWS.S3.ManagedUpload({
+      params,
+    })
+      .on('httpUploadProgress', function(evt) {
+        console.log(
+          'Uploaded :: ' + parseInt((evt.loaded * 100) / evt.total) + '%',
+        );
+      })
+      .send(function(err, data) {
+        if (!err) {
+          resolve(data);
+        } else {
+          reject(err);
+        }
+      });
+  });
+};
