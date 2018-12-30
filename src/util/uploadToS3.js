@@ -117,7 +117,6 @@ export const uploadCoverImage = ({ file, projectId, credentials }) => {
         Body: file,
         ACL: 'public-read',
       };
-      console.log('params', params);
       AWS.config.credentials = credentials;
       new AWS.S3.ManagedUpload({
         params,
@@ -139,7 +138,7 @@ export const uploadCoverImage = ({ file, projectId, credentials }) => {
   });
 };
 
-export const uploadContactUsAttach = ({ file, fileName }) => {
+export const uploadContactUsAttach = ({ file, fileName, credentials }) => {
   return new Promise((resolve, reject) => {
     const params = {
       Bucket: 'camera-trap',
@@ -147,7 +146,7 @@ export const uploadContactUsAttach = ({ file, fileName }) => {
       Body: file,
       ACL: 'public-read',
     };
-    console.log('params', params);
+    AWS.config.credentials = credentials;
     new AWS.S3.ManagedUpload({
       params,
     })

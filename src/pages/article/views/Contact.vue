@@ -406,7 +406,7 @@
           @click="onCancel"
         >取消</button>
         <button
-          type="submit"
+          type="button"
           class="btn btn-orange"
           @click="onSubmit"
           :disabled="!isRequiredInputFill"
@@ -512,12 +512,12 @@ export default {
       if (this.uploadFiles.length > 0) {
         const reportType =
           this.form.reportType === '問題回報' ? 'bug_report' : 'feedback';
-        const time = Date.now();
+        const timestamp = Date.now();
         const attachments = [];
         const promises = [];
         this.uploadFiles.forEach(({ file, type }, index) => {
           const ext = type.replace(/.*\//, '');
-          const fileName = `${reportType}_${time}_${index}.${ext}`;
+          const fileName = `${reportType}_${timestamp}_${index}.${ext}`;
           attachments.push(
             `https://s3-ap-northeast-1.amazonaws.com/camera-trap/user_report_images/${fileName}`,
           );
@@ -530,16 +530,16 @@ export default {
           );
         });
         console.log('xxx', { attachments, promises });
-        // Promise.all(promises).then(() => {
-        //   submitContactForm({
-        //     ...this.form,
-        //     attachments: [],
-        //   }).then(({ ret }) => {
-        //     if (ret.ok === 1) {
-        //       this.showSuccessModal = true;
-        //     }
-        //   });
-        // });
+        Promise.all(promises).then(() => {
+          submitContactForm({
+            ...this.form,
+            attachments: [],
+          }).then(({ ret }) => {
+            if (ret.ok === 1) {
+              this.showSuccessModal = true;
+            }
+          });
+        });
       } else {
         submitContactForm(this.form).then(({ ret }) => {
           if (ret.ok === 1) {
