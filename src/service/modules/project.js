@@ -200,8 +200,8 @@ const applyNewColumnField = async ({ projectId, payload }) => {
   });
 };
 
-const editProjectLicense = async payload => {
-  const { projectId, license } = payload;
+const editProjectLicenseAndPublicDate = async payload => {
+  const { projectId, license, dataPublicDate } = payload;
   await fetchWrap({
     url: '/project/bulk-update',
     method: 'POST',
@@ -211,6 +211,7 @@ const editProjectLicense = async payload => {
         projectId,
         $set: {
           license,
+          dataPublicDate,
         },
       },
     ],
@@ -240,6 +241,6 @@ export {
   editCameraLocations,
   getColumnsField,
   applyNewColumnField,
-  editProjectLicense,
+  editProjectLicenseAndPublicDate,
   getCameraLastUpdate,
 };
