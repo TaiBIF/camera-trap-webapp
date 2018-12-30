@@ -158,7 +158,7 @@
                 <div class="d-inline-block pl-3">
                   <div class="input-group">
                     <date-picker
-                      v-model="publicAt"
+                      v-model="dataPublicDate"
                       :format="'YYYY-MM-DD'"
                       :first-day-of-week="1"
                     ></date-picker>
@@ -166,6 +166,12 @@
                       <i class="icon-calendar"></i>
                     </div>
                   </div>
+                </div>
+                <div class="col-12 pt-2">
+                  <small
+                    class="text-danger"
+                    v-if="isPublicDateError"
+                  >{{isPublicDateError}}</small>
                 </div>
                 <div class="col-12 pt-2">
                   <small class="text-gray">
@@ -184,6 +190,7 @@
             <button
               type="submit"
               class="btn btn-orange"
+              :disabled="!!isPublicDateError"
             >儲存設定</button>
           </div>
         </form>
@@ -197,12 +204,13 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { commonMixin } from '../../../mixins/common';
 import EditNav from '../components/EditNav';
 import DatePicker from 'vue2-datepicker';
 import CloseWindowDialog from '../components/CloseWindowDialog';
-import { editProjectLicense } from '../../../service/api';
+import { editProjectLicenseAndPublicDate } from '../../../service/api';
 
 const project = createNamespacedHelpers('project');
 
@@ -222,7 +230,7 @@ export default {
         data: '',
         multimedia: '',
       },
-      publicAt: '',
+      dataPublicDate: '',
     };
   },
   computed: {
@@ -230,13 +238,28 @@ export default {
     currentProjectId() {
       return this.$route.params.id;
     },
+    projectStartDate() {
+      return this.currentProject.projectStartDate;
+    },
+    isPublicDateError() {
+      if (!this.dataPublicDate) {
+        return '公開日期為必填欄位';
+      }
+      const publicDateLimit = moment(this.projectStartDate).add(5, 'years');
+
+      if (moment(this.dataPublicDate).isAfter(publicDateLimit)) {
+        return `公開日期之上限為計畫起始時間(${this.projectStartDate})的5年後`;
+      }
+      return false;
+    },
   },
   methods: {
     ...project.mapActions(['loadSingleProject']),
     doSubmit() {
-      editProjectLicense({
+      editProjectLicenseAndPublicDate({
         projectId: this.currentProjectId,
         license: this.licenseForm,
+        dataPublicDate: this.dataPublicDate,
       });
     },
   },
@@ -244,10 +267,12 @@ export default {
     getProjectLicense(newValue) {
       this.licenseForm = newValue;
     },
+    currentProject(newValue) {
+      this.dataPublicDate = newValue.dataPublicDate;
+    },
   },
-  async mounted() {
-    await this.loadSingleProject(this.currentProjectId);
-    this.publicAt = this.currentProject.dataPublicDate;
+  mounted() {
+    this.loadSingleProject(this.currentProjectId);
   },
 };
 </script>
