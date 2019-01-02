@@ -530,7 +530,7 @@ export default {
           const idx = selection[0].start.row;
           const row = this.row_data[idx];
           const _id = row._id;
-          let offset = 1;
+          let offset;
           let cloned;
           switch (key) {
             // 設定連拍
@@ -545,6 +545,7 @@ export default {
             //*/
             case 'clone':
               // console.log(row);
+              offset = 1;
               cloned = window._.cloneDeep(row);
               this.row_data.splice(idx, 0, cloned);
 
@@ -560,6 +561,40 @@ export default {
                 annotationId: row._id,
                 tokenIndex: cloned.index.token,
               });
+              this.row_data = this.setContinuous(this.row_data);
+              this.settings.data = this.row_data;
+              break;
+            case 'delete':
+              // console.log(row);
+              offset = 0;
+              cloned = window._.cloneDeep(row);
+
+              // 檢查是否為此照片的最後一個 token
+              if (
+                !(
+                  (this.row_data[idx + 1] &&
+                    this.row_data[idx + 1]._id === _id) ||
+                  (this.row_data[idx - 1] && this.row_data[idx - 1]._id === _id)
+                )
+              ) {
+                break;
+              }
+
+              this.row_data.splice(idx, 1);
+
+              while (
+                this.row_data[idx + offset] &&
+                this.row_data[idx + offset]._id === _id
+              ) {
+                this.row_data[idx + offset].index.token--;
+                offset++;
+              }
+              //*
+              this.deleteToken({
+                annotationId: row._id,
+                tokenIndex: cloned.index.token,
+              });
+              //*/
               this.row_data = this.setContinuous(this.row_data);
               this.settings.data = this.row_data;
               break;
@@ -619,6 +654,11 @@ export default {
           clone: {
             name: () => {
               return '<span class="icon"></span><span class="text">複製並貼上一列</span>';
+            },
+          },
+          delete: {
+            name: () => {
+              return '<span class="icon"></span><span class="text">刪除此列</span>';
             },
           },
         },
@@ -898,7 +938,12 @@ export default {
   methods: {
     ...project.mapMutations(['setCurrentProject']),
     ...media.mapMutations(['addSiteDataLength']),
-    ...media.mapActions(['getSiteData', 'updateAnnotation', 'replicateToken']),
+    ...media.mapActions([
+      'getSiteData',
+      'updateAnnotation',
+      'replicateToken',
+      'deleteToken',
+    ]),
     ...cameraLocation.mapActions(['getCameraLocked', 'setCameraLocked']),
     ...annotationRevision.mapActions(['getRevision', 'restoreRevision']),
     setSelectedCamera(camera) {
@@ -1116,6 +1161,8 @@ export default {
     changeMode(key, val) {
       // 切換編輯狀態
       this[key] = val;
+
+      console.log([key, val]);
 
       if (key === 'editMode') {
         // 使用 api 鎖定相機位置

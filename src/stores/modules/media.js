@@ -3,6 +3,7 @@ import {
   getDataFields,
   updateAnnotation,
   replicateToken,
+  deleteToken,
 } from '../../service/api';
 
 const formatSiteData = state => {
@@ -162,6 +163,9 @@ export const actions = {
   },
   async replicateToken(_, payload) {
     await replicateToken(payload);
+  },
+  async deleteToken(_, payload) {
+    await deleteToken(payload);
   },
 };
 

@@ -58,4 +58,14 @@ const replicateToken = async payload => {
   return res;
 };
 
-export { getSiteData, updateAnnotation, replicateToken };
+const deleteToken = async payload => {
+  const { annotationId, tokenIndex } = payload;
+  const res = await fetchWrap({
+    url: `/media/annotation/${annotationId}/token/${tokenIndex}/delete`,
+    method: 'POST',
+    body: payload,
+  });
+  return res;
+};
+
+export { getSiteData, updateAnnotation, replicateToken, deleteToken };
