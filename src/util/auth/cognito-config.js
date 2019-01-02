@@ -106,7 +106,7 @@ const authentication = () => {
       }
 
       // The user didn't login.
-      if (!location.pathname.match(/^\/intro.html/)) {
+      if (!location.pathname.match(/^\/intro.html|^\/article.html/)) {
         // redirect to login.html
         window.location.replace('/intro.html');
         return new Promise(() => {});

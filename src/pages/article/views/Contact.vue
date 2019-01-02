@@ -157,7 +157,10 @@
           <div class="form-group row">
             <label class="col-2 text-right">附件：</label>
             <div class="col-5">
-              <label class="btn btn-upload">
+              <label
+                class="btn btn-upload"
+                v-if="authCredentials"
+              >
                 <input
                   type="file"
                   name="upload"
@@ -165,6 +168,9 @@
                   @change="previewFile($event)"
                 >
                 <span class="text">添加附加檔案</span>
+              </label>
+              <label v-else>
+                <span class="text text-gray">請先登入系統以上傳附加檔案</span>
               </label>
               <div class="note">
                 <small class="text-gray">
@@ -331,7 +337,10 @@
           <div class="form-group row">
             <label class="col-2 text-right">附件：</label>
             <div class="col-5">
-              <label class="btn btn-upload">
+              <label
+                class="btn btn-upload"
+                v-if="authCredentials"
+              >
                 <input
                   type="file"
                   name="upload"
@@ -339,6 +348,9 @@
                   @change="previewFile($event)"
                 >
                 <span class="text">添加附加檔案</span>
+              </label>
+              <label v-else>
+                <span class="text text-gray">請先登入系統以上傳附加檔案</span>
               </label>
               <div class="note">
                 <small class="text-gray">
@@ -406,7 +418,7 @@
           @click="onCancel"
         >取消</button>
         <button
-          type="submit"
+          type="button"
           class="btn btn-orange"
           @click="onSubmit"
           :disabled="!isRequiredInputFill"
@@ -426,7 +438,11 @@
 
 <script>
 // import VueRecaptcha from 'vue-recaptcha';
-import { submitContactForm } from '../../../service/api.js';
+import { createNamespacedHelpers } from 'vuex';
+import { submitContactForm } from '../../../service/api';
+import { uploadContactUsAttach } from '../../../util/uploadToS3';
+
+const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'Contact',
@@ -448,6 +464,7 @@ export default {
     };
   },
   computed: {
+    ...auth.mapGetters(['authCredentials']),
     isRequiredInputFill: function() {
       const { reportContentType, description, email } = this.form;
 
@@ -504,11 +521,44 @@ export default {
     },
     onSubmit() {
       // this.$refs.invisibleRecaptcha.execute();
-      submitContactForm(this.form).then(({ ret }) => {
-        if (ret.ok === 1) {
-          this.showSuccessModal = true;
-        }
-      });
+      if (this.uploadFiles.length > 0) {
+        const reportType =
+          this.form.reportType === '問題回報' ? 'bug_report' : 'feedback';
+        const timestamp = Date.now();
+        const attachments = [];
+        const promises = [];
+        const authCredentials = this.authCredentials;
+        this.uploadFiles.forEach(({ file, type }, index) => {
+          const ext = type.replace(/.*\//, '');
+          const fileName = `${reportType}_${timestamp}_${index + 1}.${ext}`;
+          attachments.push(
+            `https://s3-ap-northeast-1.amazonaws.com/camera-trap/user_report_images/${fileName}`,
+          );
+          promises.push(
+            uploadContactUsAttach({
+              file,
+              fileName,
+              credentials: authCredentials,
+            }),
+          );
+        });
+        Promise.all(promises).then(() => {
+          submitContactForm({
+            ...this.form,
+            attachments,
+          }).then(({ ret }) => {
+            if (ret.ok === 1) {
+              this.showSuccessModal = true;
+            }
+          });
+        });
+      } else {
+        submitContactForm(this.form).then(({ ret }) => {
+          if (ret.ok === 1) {
+            this.showSuccessModal = true;
+          }
+        });
+      }
     },
     // onVerify(response) {
     //   console.log('Verify: ' + response);
