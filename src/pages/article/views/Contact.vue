@@ -530,7 +530,7 @@ export default {
         const authCredentials = this.authCredentials;
         this.uploadFiles.forEach(({ file, type }, index) => {
           const ext = type.replace(/.*\//, '');
-          const fileName = `${reportType}_${timestamp}_${index}.${ext}`;
+          const fileName = `${reportType}_${timestamp}_${index + 1}.${ext}`;
           attachments.push(
             `https://s3-ap-northeast-1.amazonaws.com/camera-trap/user_report_images/${fileName}`,
           );
@@ -542,11 +542,10 @@ export default {
             }),
           );
         });
-        console.log('xxx', { attachments, promises });
         Promise.all(promises).then(() => {
           submitContactForm({
             ...this.form,
-            attachments: [],
+            attachments,
           }).then(({ ret }) => {
             if (ret.ok === 1) {
               this.showSuccessModal = true;
