@@ -157,7 +157,10 @@
           <div class="form-group row">
             <label class="col-2 text-right">附件：</label>
             <div class="col-5">
-              <label class="btn btn-upload">
+              <label
+                class="btn btn-upload"
+                v-if="authCredentials"
+              >
                 <input
                   type="file"
                   name="upload"
@@ -165,6 +168,9 @@
                   @change="previewFile($event)"
                 >
                 <span class="text">添加附加檔案</span>
+              </label>
+              <label v-else>
+                <span class="text text-gray">請先登入系統以上傳附加檔案</span>
               </label>
               <div class="note">
                 <small class="text-gray">
@@ -331,7 +337,10 @@
           <div class="form-group row">
             <label class="col-2 text-right">附件：</label>
             <div class="col-5">
-              <label class="btn btn-upload">
+              <label
+                class="btn btn-upload"
+                v-if="authCredentials"
+              >
                 <input
                   type="file"
                   name="upload"
@@ -339,6 +348,9 @@
                   @change="previewFile($event)"
                 >
                 <span class="text">添加附加檔案</span>
+              </label>
+              <label v-else>
+                <span class="text text-gray">請先登入系統以上傳附加檔案</span>
               </label>
               <div class="note">
                 <small class="text-gray">
@@ -515,6 +527,7 @@ export default {
         const timestamp = Date.now();
         const attachments = [];
         const promises = [];
+        const authCredentials = this.authCredentials;
         this.uploadFiles.forEach(({ file, type }, index) => {
           const ext = type.replace(/.*\//, '');
           const fileName = `${reportType}_${timestamp}_${index}.${ext}`;
@@ -525,7 +538,7 @@ export default {
             uploadContactUsAttach({
               file,
               fileName,
-              credentials: this.authCredentials,
+              credentials: authCredentials,
             }),
           );
         });
