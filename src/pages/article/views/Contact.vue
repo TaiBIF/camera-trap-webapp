@@ -433,12 +433,17 @@
         </router-link>
       </div>
     </form>
+    <SuccessModal
+      :open="showSuccessModal"
+      @close="handleCloseModal"
+    />
   </div>
 </template>
 
 <script>
 // import VueRecaptcha from 'vue-recaptcha';
 import { createNamespacedHelpers } from 'vuex';
+import SuccessModal from '../components/SuccessModal';
 import { submitContactForm } from '../../../service/api';
 import { uploadContactUsAttach } from '../../../util/uploadToS3';
 
@@ -446,7 +451,10 @@ const auth = createNamespacedHelpers('auth');
 
 export default {
   name: 'Contact',
-  // components: { VueRecaptcha },
+  components: {
+    SuccessModal,
+    // VueRecaptcha,
+  },
   data() {
     return {
       sitekey: '6LcILnYUAAAAAJLerKtPwnZGD3NICCfDKThGOW6j',
@@ -559,6 +567,10 @@ export default {
           }
         });
       }
+    },
+    handleCloseModal() {
+      this.showSuccessModal = false;
+      this.form.reportType = '';
     },
     // onVerify(response) {
     //   console.log('Verify: ' + response);
