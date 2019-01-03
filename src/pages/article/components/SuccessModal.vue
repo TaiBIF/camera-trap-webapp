@@ -18,7 +18,7 @@
             width="221"
             srcset="/assets/common/invitation-img@2x.png"
           >
-          <h1 class="text-green">提交成功</h1>
+          <h1 class="text-green">送出成功</h1>
           <p class="text-gray">感謝您！我們將盡快與您聯繫！</p>
           <a
             class="btn btn-green-border"
