@@ -3,6 +3,10 @@
     <!-- 權限表格 -->
     <div class="row">
       <div class="col-12">
+        <a
+          class="btn btn-default"
+          @click="$router.go(-1)"
+        >返回上一頁</a>
         <h1 class="heading">成員權限說明</h1>
         <p>
           此處詳列系統各成員層級權限，若有疑問
@@ -320,9 +324,12 @@
             </tr>
           </tbody>
         </table>
+        <a
+          class="btn btn-default"
+          @click="$router.go(-1)"
+        >返回上一頁</a>
       </div>
     </div>
-
   </div>
 </template>
 
