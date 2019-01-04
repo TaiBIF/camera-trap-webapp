@@ -64,6 +64,8 @@ function initCognitoSDK() {
     },
     onFailure(error) {
       console.error(error);
+      // when cached tokens doesn't work for some reason (invalid_grant), sign-in workflow will stuck. sign user out to reset user state.
+      auth.signOut();
     },
   };
   // The default response_type is "token", uncomment the next line will make it be "code".
@@ -76,10 +78,34 @@ const authentication = () => {
   Authentication.
   @returns {Promise<CtpUser|null>}
    */
-  if (location.pathname === '/' && location.search.indexOf('code=') >= 0) {
-    // oauth continue
-    auth.parseCognitoWebResponse(location.href);
-    return new Promise(() => {});
+  if (location.pathname === '/') {
+    if (location.search.indexOf('code=') >= 0) {
+      // oauth continue
+      auth.parseCognitoWebResponse(location.href);
+      return new Promise(() => {});
+    }
+
+    //*
+    let queryParams = {};
+    if (location.search) {
+      location.search
+        .substr(1)
+        .split('&')
+        .map(queryParam => {
+          const [arg, value] = queryParam.split('=');
+          queryParams[arg] = value.replace(/\+/g, ' ');
+        });
+    }
+
+    if (
+      queryParams.error_description === 'Connection reset' &&
+      queryParams.error === 'invalid_request'
+    ) {
+      auth.getSession();
+      // auth.parseCognitoWebResponse(location.href);
+      return new Promise(() => {});
+    }
+    //*/
   }
 
   return store
