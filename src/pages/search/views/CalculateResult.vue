@@ -5,7 +5,7 @@
         <div class="float-right">
           <a
             class="btn btn-green-border btn-sm"
-            v-tooltip.bottom="'將目前頁面或篩選範圍之資料輸出為 CSV 檔並下載'"
+            v-tooltip.bottom="'將計算結果輸出為 CSV 檔並下載'"
           >
             <div
               class="text"
@@ -14,9 +14,19 @@
               <span class="icon"><i class="icon-download-green"></i></span>下載計算結果
             </div>
           </a>
-          <button class="btn btn-orange btn-sm ml-2">
+          <a
+            v-if="calcFormAggregatedRes.ret"
+            class="btn btn-green-border btn-sm"
+            v-tooltip.bottom="'將計算用資料輸出為 CSV 檔並下載'"
+            :href="calcFormAggregatedRes.ret.input"
+          >
+            <div class="text">
+              <span class="icon"><i class="icon-download-green"></i></span>下載計算資料
+            </div>
+          </a>
+          <!--button class="btn btn-orange btn-sm ml-2">
             計算
-          </button>
+          </button-->
         </div>
         <router-link to="/">
           <small class="text-gray">
@@ -33,50 +43,62 @@
           <h6 class="text-gray mt-3">資料來源</h6>
         </div>
         <div class="row mx-0">
-          <div class="col-3">
+          <div class="col-4">
             <div class="form-group">
               <label for="">計畫名稱：</label>
-              <v-select
+              <!--v-select
                 v-model="form.project"
                 :placeholder="'請選擇計畫名稱'"
-              ></v-select>
+              ></v-select-->
+              <div class="content">
+                <span>{{calcForm.project.projectTitle}}</span>
+              </div>
             </div>
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
                   <label for="">樣區：</label>
-                  <v-select
+                  <!--v-select
                     v-model="form.site"
                     :placeholder="'請選擇樣區'"
-                  ></v-select>
+                  ></v-select-->
+                  <div class="content">
+                    <span>{{calcForm.site.label}}</span>
+                  </div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">子樣區：</label>
-                  <v-select
+                  <!--v-select
                     v-model="form.subSite"
                     :placeholder="'請選擇子樣區'"
-                  ></v-select>
+                  ></v-select-->
+                  <div class="content">
+                    <span>{{calcForm.subSite.label}}</span>
+                  </div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-group">
                   <label for="">相機位置：</label>
-                  <v-select
+                  <!--v-select
                     v-model="form.camera"
                     :placeholder="'請選擇相機位置'"
-                  ></v-select>
+                  ></v-select-->
+                  <div class="content">
+                    <span>{{calcForm.camera.map(c => c.label).join("/")}}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-5">
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
                   <label>物種：</label>
-                  <v-select
+                  <!--v-select
                     :options="[
                     {label:'山羌', value:'山羌'},
                     {label:'鼬獾', value:'鼬獾'},
@@ -86,7 +108,10 @@
                     {label:'白鼻心', value:'白鼻心'}
                   ]"
                     multiple
-                  />
+                  /-->
+                  <div class="content">
+                    <span>{{calcForm.species}}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -94,7 +119,7 @@
               <div class="col-5">
                 <div class="form-group">
                   <label>資料起始時間：</label>
-                  <div class="input-group-inline">
+                  <!--div class="input-group-inline">
                     <div class="input-group">
                       <date-picker
                         v-model="form.startAt"
@@ -112,6 +137,9 @@
                         format=""
                       />
                     </div>
+                  </div-->
+                  <div class="content">
+                    <span>{{calcForm.fromDate}} {{calcForm.fromTime.HH}}:{{calcForm.fromTime.mm}}</span>
                   </div>
                 </div>
               </div>
@@ -121,7 +149,7 @@
               <div class="col-5">
                 <div class="form-group">
                   <label>資料結束時間：</label>
-                  <div class="input-group-inline">
+                  <!--div class="input-group-inline">
                     <div class="input-group">
                       <date-picker
                         v-model="form.endAt"
@@ -139,6 +167,9 @@
                         format=""
                       />
                     </div>
+                  </div-->
+                  <div class="content">
+                    <span>{{calcForm.toDate}} {{calcForm.toTime.HH}}:{{calcForm.toTime.mm}}</span>
                   </div>
                 </div>
               </div>
@@ -146,14 +177,13 @@
           </div>
           <div class="col-3">
             <div class="row">
-              <div class="col-6">
+              <div class="col">
                 <div class="form-group">
-                  <label>有效照片判定間隔：</label>
-                  <v-select></v-select>
-                </div>
-                <div class="form-group">
-                  <label>目擊事件判斷間隔：</label>
-                  <v-select></v-select>
+                  <label>有效時間判定間隔：</label>
+                  <!--v-select></v-select-->
+                  <div class="content">
+                    <span>{{calcForm.effectiveTimeInterval}} 分鐘</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -173,8 +203,6 @@
 
 <script>
 import moment from 'moment';
-import DatePicker from 'vue2-datepicker';
-import VueTimepicker from 'vue2-timepicker';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/all';
 
@@ -188,21 +216,28 @@ export default {
       isRender: false,
       isContinuous: false,
       continuousTime: 1,
-      form: {
-        project: '',
+      calcFormAggregatedRes: { ret: null },
+      calcForm: {
+        type: { label: '有效照片與目擊事件', value: 'basic-calculation' },
+        project: {
+          value: '',
+          label: '',
+        },
         site: '',
-        subSite: '',
+        subSite: 'NULL',
+        species: '',
+        fromDate: '',
+        fromTime: {
+          HH: '00',
+          mm: '00',
+        },
+        toDate: '',
+        toTime: {
+          HH: '00',
+          mm: '00',
+        },
+        effectiveTimeInterval: 30,
         camera: [],
-        startAt: '',
-        endAt: '',
-        startTime: {
-          HH: '10',
-          mm: '05',
-        },
-        endTime: {
-          HH: '10',
-          mm: '05',
-        },
       },
       rowData: [],
       settings: {
@@ -273,10 +308,7 @@ export default {
   watch: {
     currentRow: 'recordUpdate',
   },
-  components: {
-    DatePicker,
-    VueTimepicker,
-  },
+  components: {},
 
   methods: {
     downloadCSV() {
@@ -311,6 +343,7 @@ export default {
     },
     getSheetData() {
       const csv = this.$store.state.calcFormCSV;
+      this.calcFormAggregatedRes = this.$store.state.calcFormAggregatedRes;
       const [head, ...rows] = csv.split`\n`;
 
       this.settings.colHeaders = head.split`,`;
@@ -352,6 +385,7 @@ export default {
 
     window.onresize = () => this.settingSheetHeight();
 
+    this.calcForm = this.$store.state.calcForm;
     await this.$store.dispatch('calcForm');
     this.getSheetData();
   },

@@ -16,7 +16,7 @@ import members from './modules/members';
 import moment from 'moment';
 import axios from 'axios';
 
-import api from './api';
+import fetchWrap from '../util/fetch';
 
 Vue.use(Vuex);
 
@@ -93,6 +93,15 @@ export default new Vuex.Store({
       state.calcForm = calcForm;
     },
 
+    CALC_FORM_AGGREGATING(state) {
+      state.isCalcFormAggregating = true;
+    },
+
+    CALC_FORM_AGGREGATED(state, aggregatedRes) {
+      state.calcFormAggregatedRes = aggregatedRes;
+      state.isCalcFormAggregating = false;
+    },
+
     CALC_FORM_SUCCESS(state, csv) {
       state.calcFormCSV = csv;
       state.isCalcFormLoading = false;
@@ -103,7 +112,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async calcForm(ctx) {
+    async calcFormAggregate(ctx) {
       return new Promise(async resolve => {
         const {
           site,
@@ -115,12 +124,13 @@ export default new Vuex.Store({
           toDate,
           toTime,
           camera,
+          idTokenHash,
           ...form
         } = ctx.state.calcForm;
 
         const data = {
-          site,
-          subSite,
+          site: site.value,
+          subSite: subSite.value,
           effectiveTimeInterval,
           projectId: project._id,
           species: form.species,
@@ -130,9 +140,22 @@ export default new Vuex.Store({
           toDateTime: `${moment(toDate).format('YYYY-MM-DD')} ${toTime.HH}:${
             toTime.mm
           }`,
-          fullCameraLocationMd5: camera.map(c => c.fullCameraLocationMd5),
+          fullCameraLocationMd5s: camera.map(c => c.value),
+          idTokenHash,
         };
 
+        const res = await fetchWrap({
+          url: `/media/annotation/${form.type.value}`,
+          method: 'POST',
+          body: data,
+        });
+
+        ctx.commit('CALC_FORM_AGGREGATED', res);
+        resolve(res);
+      });
+    },
+    async calcForm(ctx) {
+      return new Promise(async resolve => {
         ctx.commit('CALC_FORM_STARTING');
 
         // const delayData = {
@@ -162,6 +185,7 @@ export default new Vuex.Store({
         //   ],
         // };
 
+        /*
         const res = await api({
           method: 'POST',
           url: `/media/annotation/${form.type.value}`,
@@ -169,40 +193,44 @@ export default new Vuex.Store({
           // url: '/media/annotation/basic-calculation',
           data,
         });
+        //*/
 
-        if (res.ret.status) {
-          const checkStatus = async () => {
-            const { data: status } = await axios({
-              url: res.ret.status,
-            });
+        const res = ctx.state.calcFormAggregatedRes;
 
-            if (status === 'RUNNING') {
-              setTimeout(checkStatus, 500);
-            } else {
-              const { data: csv } = await axios({
-                url: res.ret.results,
+        if (res.ret) {
+          if (res.ret.status) {
+            const checkStatus = async () => {
+              const { data: status } = await axios({
+                url: res.ret.status,
               });
 
+              if (status === 'RUNNING') {
+                setTimeout(checkStatus, 3000);
+              } else {
+                const { data: csv } = await axios({
+                  url: res.ret.results,
+                });
+
+                resolve(csv);
+                ctx.commit('CALC_FORM_SUCCESS', csv);
+              }
+            };
+            checkStatus();
+          } else {
+            const rows = Object.values(
+              res.ret.locationDailyFirstCaptured,
+            ).reduce((a, b) => a.concat(b), []);
+
+            let csv = '';
+            if (rows[0]) {
+              const heads = Object.keys(rows[0]);
+              const values = rows.map(
+                row => heads.map(head => row[head] || 'NULL').join`,`,
+              );
+              csv = `${heads}\n${values.join`\n`}`;
               resolve(csv);
               ctx.commit('CALC_FORM_SUCCESS', csv);
             }
-          };
-          checkStatus();
-        } else {
-          const rows = Object.values(res.ret.locationDailyFirstCaptured).reduce(
-            (a, b) => a.concat(b),
-            [],
-          );
-
-          let csv = '';
-          if (rows[0]) {
-            const heads = Object.keys(rows[0]);
-            const values = rows.map(
-              row => heads.map(head => row[head] || 'NULL').join`,`,
-            );
-            csv = `${heads}\n${values.join`\n`}`;
-            resolve(csv);
-            ctx.commit('CALC_FORM_SUCCESS', csv);
           }
         }
       });

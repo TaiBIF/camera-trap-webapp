@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <h1 class="text-green">資料篩選與下載 </h1>
-    <div class="tab">
+    <div
+      class="tab"
+      v-bind:class="{loading: isCalcFormAggregating}"
+    >
       <ul class="nav-tab">
         <li
           class="tab-item"
@@ -68,7 +71,7 @@
                     <div class="form-group">
                       <label class="required">子樣區：</label>
                       <v-select
-                        :options="projectSibSiteOptions[did]"
+                        :options="projectSubSiteOptions[did]"
                         v-model="data.subSite"
                         :on-change="generateOnProjectSubSiteSelectorChangeHandler(did)"
                         :placeholder="'請選擇子樣區'"
@@ -315,7 +318,7 @@
                         :options="[
                           {label: '有效照片與目擊事件', value:'basic-calculation'},
                           {label: '初測延遲', value:'daily-first-captured'}
-                      ]"
+                        ]"
                       />
                     </div>
                   </div>
@@ -340,6 +343,7 @@
                         v-model="calcForm.project"
                         :options="projectOptions"
                         :placeholder="'請選擇計畫名稱'"
+                        :on-change="generateOnProjectSelectorChangeHandler()"
                       />
                     </div>
                   </div>
@@ -350,7 +354,8 @@
                         class="required"
                       >樣區：</label>
                       <v-select
-                        :options="calcFormOptions.site"
+                        :options="getProjectSiteOptions(calcForm.project.value)"
+                        :on-change="generateOnProjectSiteSelectorChangeHandler()"
                         v-model="calcForm.site"
                         :placeholder="'請選擇樣區'"
                       />
@@ -363,7 +368,8 @@
                         class="required"
                       >子樣區：</label>
                       <v-select
-                        :options="calcFormOptions.subSite"
+                        :options="getProjectSubSiteOptions(calcForm.project.value, calcForm.site.value)"
+                        :on-change="generateOnProjectSubSiteSelectorChangeHandler()"
                         v-model="calcForm.subSite"
                         :placeholder="'請選擇子樣區'"
                       />
@@ -377,7 +383,7 @@
                       >相機位置：</label>
                       <v-select
                         v-model="calcForm.camera"
-                        :options="calcFormOptions.camera"
+                        :options="getProjectCameraMd5Options(calcForm.project.value, calcForm.site.value, calcForm.subSite.value)"
                         multiple
                         :placeholder="'請選擇相機位置'"
                       />
@@ -459,7 +465,7 @@
             <div class="row">
               <div class="col-4">
                 <div class="form-group">
-                  <label class="required">有效時間判定間隔：</label>
+                  <label class="required">有效時間判定間隔(分鐘)：</label>
                   <v-select
                     v-model="calcForm.effectiveTimeInterval"
                     :options="[2,5,10,30,60]"
@@ -507,7 +513,8 @@ import DatePicker from 'vue2-datepicker';
 import VueTimepicker from 'vue2-timepicker';
 import { commonMixin } from '../../../mixins/common.js';
 
-// import moment from 'moment';
+import moment from 'moment';
+const auth = createNamespacedHelpers('auth');
 
 const dataFieldAvailable = createNamespacedHelpers('dataFieldAvailable');
 const project = createNamespacedHelpers('project');
@@ -520,8 +527,9 @@ export default {
     return {
       currentTab: 0,
       advSecOpen: true,
+      isCalcFormAggregating: false,
       calcForm: {
-        type: '',
+        type: { label: '有效照片與目擊事件', value: 'basic-calculation' },
         project: {
           value: '',
           label: '',
@@ -539,7 +547,7 @@ export default {
           HH: '00',
           mm: '00',
         },
-        effectiveTimeInterval: 0,
+        effectiveTimeInterval: 30,
         camera: [],
       },
       form: {
@@ -577,21 +585,14 @@ export default {
   computed: {
     ...project.mapGetters(['Projects']),
     ...dataFieldAvailable.mapGetters(['dataFieldAvailable']),
+    ...auth.mapGetters(['authCredentials']),
 
     calcFormOptions() {
       const { project } = this.calcForm;
-      const { cameraLocations = [], speciesList } = project;
+      const { speciesList } = project;
 
       return {
         species: speciesList,
-        camera: cameraLocations.map(c => {
-          return {
-            ...c,
-            label: c.cameraLocation,
-          };
-        }),
-        site: [...new Set(cameraLocations.map(c => c.site))],
-        subSite: [...new Set(cameraLocations.map(c => c.subSite))],
       };
     },
 
@@ -623,7 +624,7 @@ export default {
       });
       return result;
     },
-    projectSibSiteOptions: function() {
+    projectSubSiteOptions: function() {
       /*
       All sub-sites of projects.
       The first item of the result if for form.data[0]. The second item of the result if for form.data[1].
@@ -794,17 +795,79 @@ export default {
       }
       return [];
     },
+    getProjectCameraMd5Options(projectId, site, subSite) {
+      /*
+      Get camera locations of the project.
+      @param projectId {string}
+      @param site {string}
+      @param subSite {string}
+      @returns {Array<{label: 'string', value: 'string'}}>}
+       */
+      for (let index = 0; index < this.Projects.length; index += 1) {
+        const project = this.Projects[index];
+        if (project._id === projectId) {
+          const locations = {};
+          project.cameraLocations.forEach(cameraLocation => {
+            if (
+              cameraLocation.site === site &&
+              cameraLocation.subSite === subSite
+            ) {
+              locations[cameraLocation.cameraLocation] =
+                cameraLocation.fullCameraLocationMd5;
+            }
+          });
+          return Object.keys(locations).map(location => {
+            return {
+              label: location,
+              value: locations[location],
+            };
+          });
+        }
+      }
+      return [];
+    },
     generateOnProjectSelectorChangeHandler(dataIndex) {
       const _this = this;
+      if (dataIndex === undefined)
+        return function(value) {
+          this.$emit('input', value);
+          _this.calcForm.site = '';
+          _this.calcForm.subSite = '';
+          _this.calcForm.camera = '';
+          _this.calcForm.fromDate = moment(
+            _this.calcForm.project.earliestRecordTimestamp * 1000,
+          ).format('YYYY-MM-DD');
+          _this.calcForm.toDate = moment(
+            _this.calcForm.project.latestRecordTimestamp * 1000,
+          ).format('YYYY-MM-DD');
+        };
       return function(value) {
         this.$emit('input', value);
         _this.form.data[dataIndex].site = '';
         _this.form.data[dataIndex].subSite = '';
         _this.form.data[dataIndex].camera = '';
+        _this.form.startAt = moment(
+          Math.min(
+            ..._this.form.data.map(
+              d => d.project.earliestRecordTimestamp * 1000,
+            ),
+          ),
+        ).format('YYYY-MM-DD');
+        _this.form.endAt = moment(
+          Math.max(
+            ..._this.form.data.map(d => d.project.latestRecordTimestamp * 1000),
+          ),
+        ).format('YYYY-MM-DD');
       };
     },
     generateOnProjectSiteSelectorChangeHandler(dataIndex) {
       const _this = this;
+      if (dataIndex === undefined)
+        return function(value) {
+          this.$emit('input', value);
+          _this.calcForm.subSite = '';
+          _this.calcForm.camera = '';
+        };
       return function(value) {
         this.$emit('input', value);
         _this.form.data[dataIndex].subSite = '';
@@ -813,6 +876,11 @@ export default {
     },
     generateOnProjectSubSiteSelectorChangeHandler(dataIndex) {
       const _this = this;
+      if (dataIndex === undefined)
+        return function(value) {
+          this.$emit('input', value);
+          _this.calcForm.camera = '';
+        };
       return function(value) {
         this.$emit('input', value);
         _this.form.data[dataIndex].camera = '';
@@ -884,9 +952,20 @@ export default {
         },
       });
     },
-    submitCalculate() {
+    async submitCalculate() {
+      this.isCalcFormAggregating = true;
+      this.calcForm.idTokenHash = Object.values(
+        this.authCredentials.params.Logins,
+      )[0];
       this.$store.commit('CALC_FORM', this.calcForm);
-      this.$router.push('/calculate');
+      const res = await this.$store.dispatch('calcFormAggregate');
+      this.isCalcFormAggregating = false;
+      if (res.ret) {
+        this.$router.push('/calculate');
+      } else {
+        // somehow show no results
+        alert('no data!!');
+      }
     },
     removeFormData(idx) {
       this.form.data.splice(idx, 1);
