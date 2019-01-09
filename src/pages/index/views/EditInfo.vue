@@ -1,5 +1,8 @@
 <template>
-  <div class="container page-project-edit">
+  <div
+    class="container page-project-edit"
+    v-bind:class="{'loading': isUpdatingData}"
+  >
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
@@ -9,7 +12,7 @@
         <!-- 計畫基本資訊 -->
         <form
           class="form form-horizontal"
-          @submit.stop.prevent="hanldeSave()"
+          @submit.stop.prevent="handleSave()"
         >
           <div class="panel">
             <div class="panel-heading">
@@ -295,6 +298,7 @@ export default {
   },
   data() {
     return {
+      isUpdatingData: true,
       closeWindowOpen: false,
       options: cityOptions,
     };
@@ -362,7 +366,8 @@ export default {
         value,
       });
     },
-    hanldeSave() {
+    async handleSave() {
+      this.isUpdatingData = true;
       if (
         this.previewImg &&
         !this.isUploadTypeError &&
@@ -373,18 +378,21 @@ export default {
           projectId: this.currentProject._id,
           credentials: this.authCredentials,
         })
-          .then(({ key }) => {
+          .then(async ({ key }) => {
             // TODO: apply s3 src base on env
             this.handleCoverImageChange(
               `https://s3-ap-northeast-1.amazonaws.com/camera-trap/${key}`,
             );
-            this.updateProject(this.currentProject);
+            await this.updateProject(this.currentProject);
+            this.isUpdatingData = false;
           })
           .catch(err => {
             console.log('uploadCoverImage err: ', err);
+            this.isUpdatingData = false;
           });
       } else {
-        this.updateProject(this.currentProject);
+        await this.updateProject(this.currentProject);
+        this.isUpdatingData = false;
       }
     },
   },
@@ -411,6 +419,22 @@ export default {
         return false;
       }
       return true;
+    },
+  },
+  watch: {
+    currentProject: {
+      immediate: true,
+      handler(newValue, oldValue) {
+        if (
+          (newValue && newValue.projectId) ||
+          (newValue &&
+            newValue.projectId &&
+            oldValue &&
+            newValue.projectId !== oldValue.projectId)
+        ) {
+          this.isUpdatingData = false;
+        }
+      },
     },
   },
   mounted() {

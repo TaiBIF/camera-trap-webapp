@@ -1,5 +1,8 @@
 <template>
-  <div class="container page-project-edit">
+  <div
+    class="container page-project-edit"
+    v-bind:class="{'loading': isUpdatingData}"
+  >
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
@@ -198,6 +201,7 @@ export default {
   },
   data() {
     return {
+      isUpdatingData: false,
       newSite: '',
       currentSite: 0,
       geoDatum: '',
@@ -263,76 +267,10 @@ export default {
           '植被',
           '土地覆蓋類型',
         ],
-        contextMenu: {
-          callback: (key, selection) => {
-            if (key === 'clone') {
-              const idx = selection[0].start.row;
-              let data =
-                this.CurrentPoint === null
-                  ? this.sites[this.CurrentSite].data
-                  : this.sites[this.CurrentSite].children[this.CurrentPoint]
-                      .data;
-              const row = data[idx];
-              data = data.splice(idx, 0, window._.cloneDeep(row));
-              // this.sheet.loadData(data)
-              // this.sheet.updateSettings(this.settings)
-            }
-
-            this.sheet.render();
-          },
-          items: {
-            cut: {
-              name: () => {
-                return '<span class="icon"><i class="icon-cut"></i></span><span class="text">剪下</span>';
-              },
-            },
-            copy: {
-              name: () => {
-                return '<span class="icon"><i class="icon-copy"></i></span><span class="text">複製</span>';
-              },
-            },
-            paste: {
-              name: () => {
-                return '<span class="icon"><i class="icon-paste"></i></span><span class="text">貼上</span>';
-              },
-            },
-            divider1: { name: '---------' },
-            undo: {
-              name: () => {
-                return '<span class="icon"></i></span><span class="text">復原</span>';
-              },
-            },
-            redo: {
-              name: () => {
-                return '<span class="icon"></i></span><span class="text">重做</span>';
-              },
-            },
-            divider2: { name: '---------' },
-            clone: {
-              name: () => {
-                return '<span class="icon"></span><span class="text">複製並貼上一列</span>';
-              },
-            },
-            remove_row: {
-              name: () => {
-                return '<span class="icon"></span><span class="text">刪除相機位置</span>';
-              },
-              disabled() {
-                const selected = this.getSelected()[0][0];
-                const row = this.getDataAtRow(selected);
-                let empty = true;
-
-                row.forEach(col => {
-                  if (col !== null && col !== '') empty = false;
-                });
-                return !empty;
-              },
-            },
-          },
-        },
+        contextMenu: {},
         dropdownMenu: true,
-        manualRowMove: true,
-        manualColumnMove: true,
+        manualRowMove: false,
+        manualColumnMove: false,
         afterChange: this.editData,
       },
       forceRecomputeCounter: 0, // a hack to force recompute when edit Hansontable: https://github.com/vuejs/vue/issues/214#issuecomment-400591973
@@ -393,7 +331,8 @@ export default {
     ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
     renderSheet() {
       this.settings.data = this.cameraData;
-      this.sheet.updateSettings(this.settings);
+      if (this.sheet && this.sheet.updateSettings)
+        this.sheet.updateSettings(this.settings);
     },
     enableEditSite(idx) {
       this.originalSiteName = this.filterSites[idx].value;
@@ -523,12 +462,13 @@ export default {
       this.renamePoints = {};
       this.editCameraLocations = {};
     },
-    doSubmit() {
+    async doSubmit() {
       if (
         Object.keys(this.renameSites).length > 0 ||
         Object.keys(this.renamePoints).length > 0 ||
         Object.keys(this.editCameraLocations).length > 0
       ) {
+        this.isUpdatingData = true;
         const projectId = this.currentProjectId;
         const projectTitle = this.currentProject.projectTitle;
         const updateDate = this.currentProject.cameraLocations
@@ -639,17 +579,19 @@ export default {
               },
             };
           });
-        let reloadAfterUpdate = async () => {
-          await this.updateCameraLocations([...updateDate, ...addData]);
-          this.$router.go();
-        };
-        reloadAfterUpdate();
+
+        await this.updateCameraLocations([...updateDate, ...addData]);
+        this.isUpdatingData = false;
+        this.$router.go();
+
         this.resetEditRecord();
       }
     },
   },
   async mounted() {
+    this.isUpdatingData = true;
     await this.loadSingleProject(this.currentProjectId);
+    this.isUpdatingData = false;
     this.sheetContainer = this.$el.querySelector('#sheet');
     this.sheet = new Handsontable(this.sheetContainer, this.settings);
     this.geoDatum = this.currentProject.geoDatum || 'WGS84';

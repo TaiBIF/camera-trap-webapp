@@ -1,5 +1,8 @@
 <template>
-  <div class="container page-project-edit">
+  <div
+    class="container page-project-edit"
+    v-bind:class="{'loading': isUpdatingData}"
+  >
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
@@ -94,6 +97,7 @@
             返回
           </router-link>
           <button
+            disabled
             type="submit"
             @click.stop.prevent="doSubmit()"
             class="btn btn-orange"
@@ -146,6 +150,7 @@ export default {
   },
   data() {
     return {
+      isUpdatingData: false,
       roles: [
         { value: 'ProjectManager', label: '計畫管理員' },
         { value: 'Researcher', label: '研究人員' },
@@ -231,8 +236,10 @@ export default {
       // TODO:
     },
   },
-  mounted() {
-    this.loadProjectMembers(this.currentProjectId);
+  async mounted() {
+    this.isUpdatingData = true;
+    await this.loadProjectMembers(this.currentProjectId);
+    this.isUpdatingData = false;
   },
 };
 </script>

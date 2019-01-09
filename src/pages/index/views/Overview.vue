@@ -1,6 +1,9 @@
 <template>
   <main class="page-project">
-    <div class="container">
+    <div
+      class="container"
+      v-bind:class="{'loading': loading}"
+    >
       <div
         class="message"
         v-if="Message !== null"
@@ -124,12 +127,28 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: true,
       sortedBy: '條件',
     };
   },
   watch: {
-    Projects: 'ProjectInit',
+    Projects: {
+      immediate: true,
+      handler(newValue, oldValue) {
+        if (newValue && Array.isArray(newValue) && newValue.length > 0) {
+          // case initializing
+          this.loading = false;
+        } else if (
+          newValue &&
+          Array.isArray(newValue) &&
+          oldValue &&
+          Array.isArray(oldValue)
+        ) {
+          // case value changing
+          this.loading = false;
+        }
+      },
+    },
   },
   methods: {
     ...project.mapMutations(['setCurrentProject']),

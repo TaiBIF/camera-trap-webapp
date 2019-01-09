@@ -1,5 +1,8 @@
 <template>
-  <div class="container page-project-edit">
+  <div
+    class="container page-project-edit"
+    v-bind:class="{'loading': isUpdatingData}"
+  >
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
@@ -224,6 +227,7 @@ export default {
   },
   data() {
     return {
+      isUpdatingData: false,
       closeWindowOpen: false,
       licenseForm: {
         metadata: '',
@@ -255,12 +259,14 @@ export default {
   },
   methods: {
     ...project.mapActions(['loadSingleProject']),
-    doSubmit() {
-      editProjectLicenseAndPublicDate({
+    async doSubmit() {
+      this.isUpdatingData = true;
+      await editProjectLicenseAndPublicDate({
         projectId: this.currentProjectId,
         license: this.licenseForm,
         dataPublicDate: this.dataPublicDate,
       });
+      this.isUpdatingData = false;
     },
   },
   watch: {
@@ -271,8 +277,10 @@ export default {
       this.dataPublicDate = newValue.dataPublicDate;
     },
   },
-  mounted() {
-    this.loadSingleProject(this.currentProjectId);
+  async mounted() {
+    this.isUpdatingData = true;
+    await this.loadSingleProject(this.currentProjectId);
+    this.isUpdatingData = false;
   },
 };
 </script>

@@ -1,5 +1,8 @@
 <template>
-  <div class="container page-project-edit">
+  <div
+    class="container page-project-edit"
+    v-bind:class="{'loading': isUpdatingData}"
+  >
     <div class="row">
       <div class="col-2">
         <h1 class="heading">計畫管理</h1>
@@ -261,6 +264,7 @@ export default {
   },
   data() {
     return {
+      isUpdatingData: false,
       columnTypeMapping: {
         text: '輸入欄',
         select: '下拉選單',
@@ -455,8 +459,9 @@ export default {
         this.showApplyNewColumnSuccessModal = true;
       });
     },
-    doSubmit() {
+    async doSubmit() {
       // save columns
+      this.isUpdatingData = true;
       const dataFieldEnabled = this.columns
         .filter(field => !field.default)
         .map(field => field.key);
@@ -470,7 +475,7 @@ export default {
         });
       }
 
-      this.updateCameraLocations([
+      await this.updateCameraLocations([
         {
           _id: this.currentProjectId,
           projectId: this.currentProjectId,
@@ -482,6 +487,7 @@ export default {
           $set: { dailyTestTime },
         },
       ]);
+      this.isUpdatingData = false;
     },
     updateSpeciesOrder(speciesList) {
       this.updateCameraLocations([
@@ -493,9 +499,11 @@ export default {
       ]);
     },
   },
-  mounted() {
-    this.loadSingleProject(this.currentProjectId);
-    this.loadColumnsField();
+  async mounted() {
+    this.isUpdatingData = true;
+    await this.loadSingleProject(this.currentProjectId);
+    await this.loadColumnsField();
+    this.isUpdatingData = false;
   },
 };
 </script>

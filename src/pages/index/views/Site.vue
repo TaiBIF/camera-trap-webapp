@@ -167,7 +167,10 @@
         </form>
       </div>
     </div>
-    <div class="sheet-container">
+    <div
+      class="sheet-container"
+      v-bind:class="{loading: isLoadingData}"
+    >
       <div class="sheet">
         <div class="sheet-header">
           <div class="row">
@@ -509,6 +512,7 @@ export default {
       currentRow: 0,
       row_data: [],
       rowData: {},
+      isLoadingData: false,
       immutable: [
         'fullSite',
         'cameraLocation',
@@ -758,7 +762,7 @@ export default {
       this.fetchCameraLocked();
     },
     form: {
-      handler: function(newValue) {
+      handler: async function(newValue) {
         const getTime = (day, time) => {
           return (
             moment(day)
@@ -794,7 +798,9 @@ export default {
             'Invalid date' &&
           payload.query.date_time_corrected_timestamp['$lte'] !== 'Invalid date'
         ) {
-          this.getSiteData(payload);
+          this.isLoadingData = true;
+          await this.getSiteData(payload);
+          this.isLoadingData = false;
         }
       },
       deep: true,
