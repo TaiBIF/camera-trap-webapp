@@ -291,8 +291,8 @@
 
     .empty-result
         text-align: center
-        padding-top: 90px
-        padding-bottom: 90px
+        padding-top: 5%
+        padding-bottom: 5%
 
         h5
             margin-top: 10px
@@ -684,6 +684,24 @@
         flex-wrap: wrap
 
         .btn-group.btn-grayscale
+            .btn.btn-xs
+                vertical-align: middle
+                border-color: $gray
+                line-height: 15px
+                height: 25px
+                padding-left: 5px
+                padding-right: 5px
+
+                > *
+                    vertical-align: middle
+
+                .icon
+                    margin-right: 3px
+
+                .text
+                    padding-right: 3px
+                    border-right: 1px solid transparentize($gray, 0.8)
+
             .btn.btn-sm
                 vertical-align: middle
                 border-color: $gray
@@ -823,7 +841,7 @@
 
                 input.form-control
                     font-size: 13px
-                    width: 40px
+                    width: 80px
                     height: 24px
                     color: $black
                     text-align: center
@@ -1050,3 +1068,9 @@
         padding: 10px 20px
         line-height: 1.5
         background: #F3F2F2
+
+.no-padding-left
+    padding-left: 0px
+
+.no-padding-right
+    padding-right: 0px
