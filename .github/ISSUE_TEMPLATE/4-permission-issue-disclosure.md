@@ -1,6 +1,6 @@
 ---
-name: "權限問題建議"
-about: Report a security issue in Angular Framework, Material, or CLI
+name: "權限問題建議 permission scheme adjustment"
+about: 權限控制的調整建議
 
 ---
 

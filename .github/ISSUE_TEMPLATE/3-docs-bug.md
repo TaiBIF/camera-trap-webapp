@@ -1,6 +1,6 @@
 ---
-name: "文件或介面錯誤回報"
-about: 指出系統文件、說明的錯誤
+name: "文件或介面錯誤回報 documentation defect"
+about: 指出系統文件、介面說明的錯誤
 
 ---
 <!--

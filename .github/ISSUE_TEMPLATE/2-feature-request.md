@@ -1,5 +1,5 @@
 ---
-name: "新功能建議"
+name: "新功能建議 feature request"
 about: 建議新功能供開發團隊參考
 
 ---

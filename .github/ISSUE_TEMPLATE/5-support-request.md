@@ -1,5 +1,5 @@
 ---
-name: "求助"
+name: "求助 support request"
 about: 求助申請
 
 ---
