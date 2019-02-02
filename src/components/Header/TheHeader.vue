@@ -8,7 +8,7 @@
       >Camara Capture</a>
       <button
         v-if="!isLogin"
-        class="navbar-toggler"
+        class="navbar-toggler collapsed"
         type="button"
         data-toggle="collapse"
         data-target="#navbarSupportedContent"
