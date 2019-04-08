@@ -54,6 +54,7 @@ orbs:
         steps:
           - checkout_install
           - run: <<parameters.command>>
+
       build:
         executor: default
         steps:
@@ -71,6 +72,9 @@ orbs:
               key: dist#{{ .Revision }}
               paths:
                 - dist
+          - run:
+              name: Create debug info
+              command: node scripts/debug > dist/debug.json
 
 workflows:
   version: 2
