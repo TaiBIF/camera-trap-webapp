@@ -68,13 +68,13 @@ orbs:
                     SCRIPT=build
                 fi
                 npm run $SCRIPT
+          - run:
+              name: Create debug info
+              command: node scripts/debug > dist/debug.json
           - save_cache:
               key: dist#{{ .Revision }}
               paths:
                 - dist
-          - run:
-              name: Create debug info
-              command: node scripts/debug > dist/debug.json
 
 workflows:
   version: 2
