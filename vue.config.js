@@ -1,15 +1,10 @@
 const path = require('path');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const MarkdownIt = require('markdown-it');
 const md = new MarkdownIt();
 
 module.exports = {
   configureWebpack: {
-    optimization: {
-      minimize: true,
-      splitChunks: {
-        chunks: 'initial',
-      },
-    },
     module: {
       rules: [
         {
@@ -29,6 +24,14 @@ module.exports = {
         },
       ],
     },
+    plugins: [
+      new CompressionWebpackPlugin({
+        filename: '[path]',
+        algorithm: 'gzip',
+        test: /\.js$/,
+        threshold: 0,
+      }),
+    ],
   },
   pages: {
     index: {
