@@ -61,6 +61,7 @@ orbs:
           - checkout_install
           - run:
               name: Build
+              no_output_timeout: 15m
               command: |
                 SCRIPT=buildDev
                 if [ $CIRCLE_BRANCH = prod ]
