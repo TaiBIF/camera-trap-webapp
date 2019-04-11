@@ -6,6 +6,9 @@ module.exports = {
   configureWebpack: {
     optimization: {
       minimize: true,
+      splitChunks: {
+        chunks: 'initial',
+      },
     },
     module: {
       rules: [
