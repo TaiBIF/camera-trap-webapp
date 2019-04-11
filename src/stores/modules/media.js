@@ -54,6 +54,9 @@ const formatSiteData = state => {
   // 拆解實際顯示資料
   const data = state.rawSiteData.reduce((obj, val) => {
     val.tokens.map((token, tokenIdx) => {
+      // 先讓小圖可以出現, 之後可能再從 camera-trap-api 改
+      let t = `${val.imageUrlPrefix}${val.url}`;
+      t = t.replace('.jpg', '-m.jpg').replace('orig', 'thumbs');
       const ret = {
         fullSite: val.subSite ? `${val.site}-${val.subSite}` : `${val.site}`,
         site: val.site,
@@ -62,14 +65,14 @@ const formatSiteData = state => {
         fileName: val.uploaded_file_name,
         corrected_date_time: val.corrected_date_time,
         type: val.type,
-        hasImage: !!val.low_quality_url,
+        hasImage: !!val.url,
         ...(val.type === 'MovingImage'
           ? {
               youtubeUrl: val.youtube_url,
             }
           : {
               imageUrl: `${val.imageUrlPrefix}${val.url}`,
-              lowQualityImageUrl: `${val.imageUrlPrefix}${val.low_quality_url}`,
+              lowQualityImageUrl: t,
             }),
         projectTitle: val.projectTitle,
         projectId: val.projectId,
