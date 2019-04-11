@@ -4,6 +4,9 @@ const md = new MarkdownIt();
 
 module.exports = {
   configureWebpack: {
+    optimization: {
+      minimize: true,
+    },
     module: {
       rules: [
         {
