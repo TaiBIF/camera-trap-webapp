@@ -24,14 +24,20 @@ module.exports = {
         },
       ],
     },
-    plugins: [
-      new CompressionWebpackPlugin({
-        filename: '[path]',
-        algorithm: 'gzip',
-        test: /\.js$/,
-        threshold: 0,
-      }),
-    ],
+    plugins: (() => {
+      const result = [];
+      if (process.env.VUE_APP_MODE !== 'local') {
+        result.push(
+          new CompressionWebpackPlugin({
+            filename: '[path]',
+            algorithm: 'gzip',
+            test: /\.js$/,
+            threshold: 0,
+          }),
+        );
+      }
+      return result;
+    })(),
   },
   pages: {
     index: {
