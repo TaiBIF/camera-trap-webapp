@@ -16,3 +16,6 @@ yarn-error.log*
 *.sw*
 *.scssc
 *.sassc
+
+# Environment settings
+.env.local
