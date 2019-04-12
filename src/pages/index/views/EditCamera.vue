@@ -59,13 +59,15 @@
                   />
                 </li>
                 <li class="add">
-                  <div
+                  <label
+                    for="addSite"
                     class="icon"
                     @click="addSite($event)"
-                  ><i class="icon-add"></i></div>
+                  ><i class="icon-add"></i></label>
                   <div class="text">
                     <input
                       type="text"
+                      id="addSite"
                       v-model='newSite'
                       @keydown="addSite($event)"
                       placeholder='新增樣區'

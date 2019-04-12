@@ -11,14 +11,16 @@
     />
 
     <li class="add">
-      <div
+      <label
+        :for="inputId"
         class="icon"
         @click="addPoint($event)"
       >
         <i class="icon icon-add"></i>
-      </div>
+      </label>
       <div class="text">
         <input
+          :id="inputId"
           type="text"
           v-model="newPoint"
           @keydown="addPoint($event)"
@@ -60,6 +62,11 @@ export default {
         this.$emit('add', this.index, this.newPoint);
         this.newPoint = '';
       }
+    },
+  },
+  computed: {
+    inputId() {
+      return `addPoint_${this.index}`;
     },
   },
 };

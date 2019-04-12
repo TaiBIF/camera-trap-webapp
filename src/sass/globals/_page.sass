@@ -397,6 +397,7 @@
                     .icon
                         margin-right: 5px
                         align-self: center
+                        cursor: pointer
 
                     .text
                         flex: 1
@@ -410,6 +411,9 @@
 
                             &:focus
                                 outline: 0
+                                box-shadow: inset 0px -1px lightgray
+                                &::placeholder
+                                    opacity: 0;
 
         .sheet-view
             display: flex
