@@ -55,8 +55,10 @@ const formatSiteData = state => {
   const data = state.rawSiteData.reduce((obj, val) => {
     val.tokens.map((token, tokenIdx) => {
       // 先讓小圖可以出現, 之後可能再從 camera-trap-api 改
-      let t = `${val.imageUrlPrefix}${val.url}`;
-      t = t.replace('.jpg', '-m.jpg').replace('orig', 'thumbs');
+      let imageUrl = `${val.imageUrlPrefix}${val.url}`,
+        lowQualityImageUrl = imageUrl
+          .replace('.jpg', '.webq')
+          .replace('orig', '512q60');
       const ret = {
         fullSite: val.subSite ? `${val.site}-${val.subSite}` : `${val.site}`,
         site: val.site,
@@ -71,8 +73,8 @@ const formatSiteData = state => {
               youtubeUrl: val.youtube_url,
             }
           : {
-              imageUrl: `${val.imageUrlPrefix}${val.url}`,
-              lowQualityImageUrl: t,
+              imageUrl: imageUrl,
+              lowQualityImageUrl: lowQualityImageUrl,
             }),
         projectTitle: val.projectTitle,
         projectId: val.projectId,
