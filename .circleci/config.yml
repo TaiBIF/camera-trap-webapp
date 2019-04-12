@@ -41,7 +41,8 @@ orbs:
                 then
                   BUCKET=camera-trap.tw
                 fi
-                aws s3 sync dist "s3://$BUCKET" --delete
+                aws s3 sync dist "s3://$BUCKET" --exclude '*.js' --delete
+                aws s3 sync --content-encoding 'gzip' dist "s3://$BUCKET" --exclude '*.*' --include '*.js' --delete
       run:
         parameters:
           command:
