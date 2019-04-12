@@ -261,10 +261,10 @@ export default {
         language: 'zh-TW',
         colHeaders: [
           // 'URL',
-          '*相機位置名稱',
+          '<span style="color: red;">*</span>相機位置名稱',
           '架設日期',
-          '*經度 (X)',
-          '*緯度 (Y)',
+          '<span style="color: red;">*</span>經度 (X)',
+          '<span style="color: red;">*</span>緯度 (Y)',
           '海拔 (公尺)',
           '植被',
           '土地覆蓋類型',
