@@ -177,8 +177,8 @@ const getProject = async payload => {
   };
 };
 
-const editCameraLocations = async payload => {
-  await fetchWrap({
+const updateCameraLocations = async payload => {
+  return await fetchWrap({
     url: '/project/bulk-update',
     method: 'POST',
     body: payload,
@@ -238,7 +238,7 @@ export {
   getDataFields,
   editProject,
   getProject,
-  editCameraLocations,
+  updateCameraLocations,
   getColumnsField,
   applyNewColumnField,
   editProjectLicenseAndPublicDate,
