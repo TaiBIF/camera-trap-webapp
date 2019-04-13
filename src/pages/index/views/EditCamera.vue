@@ -59,13 +59,15 @@
                   />
                 </li>
                 <li class="add">
-                  <div
+                  <label
+                    for="addSite"
                     class="icon"
                     @click="addSite($event)"
-                  ><i class="icon-add"></i></div>
+                  ><i class="icon-add"></i></label>
                   <div class="text">
                     <input
                       type="text"
+                      id="addSite"
                       v-model='newSite'
                       @keydown="addSite($event)"
                       placeholder='新增樣區'
@@ -110,7 +112,7 @@
                       >
                         <label for="">座標大地基準：</label>
                         <v-select
-                          :options="['WGS84', 'TWD97TM2']"
+                          :options="['TWD97TM2', 'WGS84']"
                           v-model="geoDatum"
                           class="d-inline-block"
                         />
@@ -175,6 +177,15 @@
       :open="closeWindowOpen"
       @close="closeWindowOpen=false"
     />
+    <success-modal
+      :open="showSuccessModal"
+      @close="showSuccessModal=false"
+    />
+    <error-modal
+      :open="apiErrorMessage !== ''"
+      :error="apiErrorMessage"
+      @close="apiErrorMessage=''"
+    />
   </div>
 </template>
 
@@ -185,9 +196,12 @@ import { commonMixin } from '../../../mixins/common';
 import CloseWindowDialog from '../components/CloseWindowDialog';
 import SiteMenu from '../components/SiteMenu';
 import EditNav from '../components/EditNav';
+import SuccessModal from '../components/SuccessModal';
+import ErrorModal from '../components/ErrorModal';
 import Handsontable from 'handsontable';
 import 'handsontable/languages/zh-TW';
 import { twd97ToWgs84 } from '../../../util/transfer';
+import { updateCameraLocations } from '../../../service/api';
 
 const project = createNamespacedHelpers('project');
 
@@ -198,13 +212,15 @@ export default {
     CloseWindowDialog,
     SiteMenu,
     EditNav,
+    SuccessModal,
+    ErrorModal,
   },
   data() {
     return {
       isUpdatingData: false,
       newSite: '',
       currentSite: 0,
-      geoDatum: '',
+      geoDatum: 'TWD97TM2',
       lockGeoDatum: false,
       originalSiteName: '',
       currentEditSite: null,
@@ -259,10 +275,10 @@ export default {
         language: 'zh-TW',
         colHeaders: [
           // 'URL',
-          '*相機位置名稱',
+          '<span style="color: red;">*</span>相機位置名稱',
           '架設日期',
-          '*經度 (X)',
-          '*緯度 (Y)',
+          '<span style="color: red;">*</span>經度 (X)',
+          '<span style="color: red;">*</span>緯度 (Y)',
           '海拔 (公尺)',
           '植被',
           '土地覆蓋類型',
@@ -274,6 +290,8 @@ export default {
         afterChange: this.editData,
       },
       forceRecomputeCounter: 0, // a hack to force recompute when edit Hansontable: https://github.com/vuejs/vue/issues/214#issuecomment-400591973
+      showSuccessModal: false,
+      apiErrorMessage: '',
     };
   },
   watch: {
@@ -323,12 +341,23 @@ export default {
       if (nanElevation) {
         return '高度請輸入數字';
       }
+      if (this.isRequiredColMiss) {
+        return '相機位置名稱, 經緯度為必填欄位';
+      }
       return null;
+    },
+    isRequiredColMiss: function() {
+      const unfinishColumn = this.settings.data.filter(
+        ({ isNew, cameraLocation, original_x, original_y }) =>
+          isNew && (!cameraLocation || !original_x || !original_y),
+      );
+
+      return unfinishColumn.length > 0;
     },
   },
   methods: {
     ...mapActions(['setCurrentSite', 'setCurrentPoint']),
-    ...project.mapActions(['loadSingleProject', 'updateCameraLocations']),
+    ...project.mapActions(['loadSingleProject']),
     renderSheet() {
       this.settings.data = this.cameraData;
       if (this.sheet && this.sheet.updateSettings)
@@ -557,6 +586,7 @@ export default {
               projectId,
               $push: {
                 cameraLocations: {
+                  geoDatum: this.geoDatum,
                   projectId,
                   projectTitle,
                   site,
@@ -580,11 +610,14 @@ export default {
             };
           });
 
-        await this.updateCameraLocations([...updateDate, ...addData]);
+        const res = await updateCameraLocations([...updateDate, ...addData]);
         this.isUpdatingData = false;
-        this.$router.go();
-
-        this.resetEditRecord();
+        if (res && res.error) {
+          this.apiErrorMessage = res.error.message || '';
+        } else {
+          this.resetEditRecord();
+          this.showSuccessModal = true;
+        }
       }
     },
   },

@@ -10,7 +10,6 @@ import {
   getLocationAbnormalStatus,
   getProjectErrorSites,
   updateAbnormalCamera,
-  editCameraLocations,
   getColumnsField,
   getCameraLastUpdate,
 } from '../../service/api';
@@ -314,10 +313,6 @@ export const actions = {
   async loadColumnsField({ commit }) {
     const data = await getColumnsField();
     commit('setColumnsField', data);
-  },
-  // 3.4 計畫管理
-  async updateCameraLocations(_, payload) {
-    await editCameraLocations(payload);
   },
 };
 
