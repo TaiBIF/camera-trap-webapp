@@ -57,7 +57,7 @@ const formatSiteData = state => {
       // 先讓小圖可以出現, 之後可能再從 camera-trap-api 改
       let imageUrl = `${val.imageUrlPrefix}${val.url}`,
         lowQualityImageUrl = imageUrl
-          .replace('.jpg', '.webq')
+          .replace('.jpg', '.webp')
           .replace('orig', '512q60');
       const ret = {
         fullSite: val.subSite ? `${val.site}-${val.subSite}` : `${val.site}`,

@@ -152,19 +152,26 @@
                     format="HH:mm"
                   ></vue-timepicker>
                 </div>
+                <a
+                  @click="formWatchHandler(form)"
+                  class="btn btn-sm btn-green"
+                  :style="{margin:'4px'}"
+                >
+                  篩選
+                </a>
               </div>
             </div>
           </div>
-          <div>
-            <button
-              @click.stop.prevent="changeMode('editMode', true)"
-              class="btn btn-sm btn-block btn-green"
-              :disabled="!enableEditeMode"
-            >
-              <i class="fa fa-pencil-alt"></i> 進入編輯模式
-            </button>
-          </div>
         </form>
+        <div>
+          <button
+            @click.stop.prevent="changeMode('editMode', true)"
+            class="btn btn-sm btn-block btn-green"
+            :disabled="!enableEditeMode"
+          >
+            <i class="fa fa-pencil-alt"></i> 進入編輯模式
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -479,7 +486,7 @@ const media = createNamespacedHelpers('media');
 const cameraLocation = createNamespacedHelpers('cameraLocation');
 const annotationRevision = createNamespacedHelpers('annotationRevision');
 
-const placeHolderStartAt = moment('2001/1/1').format('YYYY-MM-DD');
+const placeHolderStartAt = moment('2001/01/01').format('YYYY-MM-DD');
 const placeHolderEndAt = moment('2018/12/31').format('YYYY-MM-DD');
 
 const formDefault = {
@@ -762,7 +769,7 @@ export default {
 
             return arr;
           }, []);
-          this.lastUpdated = moment(Date.now()).format('YYYY-MM-DD hh:mm:ss');
+          this.lastUpdated = moment().format('YYYY-MM-DD hh:mm:ss');
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
@@ -794,8 +801,10 @@ export default {
       this.form = Object.assign({}, formDefault);
       this.fetchCameraLocked();
     },
-    form: {
-      handler: 'formWatchHandler',
+    'form.camera': {
+      handler: function() {
+        this.formWatchHandler(this.form);
+      },
       deep: true,
     },
     siteData: {
