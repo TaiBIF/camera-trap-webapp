@@ -486,7 +486,7 @@ const media = createNamespacedHelpers('media');
 const cameraLocation = createNamespacedHelpers('cameraLocation');
 const annotationRevision = createNamespacedHelpers('annotationRevision');
 
-const placeHolderStartAt = moment('2001/1/1').format('YYYY-MM-DD');
+const placeHolderStartAt = moment('2001/01/01').format('YYYY-MM-DD');
 const placeHolderEndAt = moment('2018/12/31').format('YYYY-MM-DD');
 
 const formDefault = {
@@ -769,7 +769,7 @@ export default {
 
             return arr;
           }, []);
-          this.lastUpdated = moment(Date.now()).format('YYYY-MM-DD hh:mm:ss');
+          this.lastUpdated = moment().format('YYYY-MM-DD hh:mm:ss');
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
