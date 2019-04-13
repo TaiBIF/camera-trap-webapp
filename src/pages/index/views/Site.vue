@@ -152,6 +152,13 @@
                     format="HH:mm"
                   ></vue-timepicker>
                 </div>
+                <a
+                  @click="formWatchHandler(form)"
+                  class="btn btn-sm btn-green"
+                  :style="{margin:'4px'}"
+                >
+                  篩選
+                </a>
               </div>
             </div>
           </div>
@@ -794,8 +801,10 @@ export default {
       this.form = Object.assign({}, formDefault);
       this.fetchCameraLocked();
     },
-    form: {
-      handler: 'formWatchHandler',
+    'form.camera': {
+      handler: function() {
+        this.formWatchHandler(this.form);
+      },
       deep: true,
     },
     siteData: {
