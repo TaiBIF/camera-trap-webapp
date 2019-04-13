@@ -152,19 +152,26 @@
                     format="HH:mm"
                   ></vue-timepicker>
                 </div>
+                <a
+                  @click="formWatchHandler(form)"
+                  class="btn btn-sm btn-green"
+                  :style="{margin:'4px'}"
+                >
+                  篩選
+                </a>
               </div>
             </div>
           </div>
-          <div>
-            <button
-              @click.stop.prevent="changeMode('editMode', true)"
-              class="btn btn-sm btn-block btn-green"
-              :disabled="!enableEditeMode"
-            >
-              <i class="fa fa-pencil-alt"></i> 進入編輯模式
-            </button>
-          </div>
         </form>
+        <div>
+          <button
+            @click.stop.prevent="changeMode('editMode', true)"
+            class="btn btn-sm btn-block btn-green"
+            :disabled="!enableEditeMode"
+          >
+            <i class="fa fa-pencil-alt"></i> 進入編輯模式
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -794,8 +801,10 @@ export default {
       this.form = Object.assign({}, formDefault);
       this.fetchCameraLocked();
     },
-    form: {
-      handler: 'formWatchHandler',
+    'form.camera': {
+      handler: function() {
+        this.formWatchHandler(this.form);
+      },
       deep: true,
     },
     siteData: {
