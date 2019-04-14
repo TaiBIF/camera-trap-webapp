@@ -1267,9 +1267,9 @@ export default {
     this.fetchCameraLocked();
 
     // 從 query 判斷是否有 camera 資料做預設選取
-    this.form.camera = this.$route.query.camera
-      ? [this.$route.query.camera]
-      : [];
+    if (this.$route.query.camera) {
+      this.form.camera = [this.$route.query.camera];
+    }
 
     this.form.uploadSessionId = this.$route.query.upload_session_id
       ? this.$route.query.upload_session_id
