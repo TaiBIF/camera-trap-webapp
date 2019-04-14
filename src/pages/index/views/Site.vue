@@ -1130,7 +1130,6 @@ export default {
         }
       });
 
-      console.log(rowData);
       return rowData;
     },
     getSheetData() {
@@ -1153,8 +1152,6 @@ export default {
     changeMode(key, val) {
       // 切換編輯狀態
       this[key] = val;
-
-      console.log([key, val]);
 
       if (key === 'editMode') {
         // 使用 api 鎖定相機位置
@@ -1207,7 +1204,7 @@ export default {
     async getCameraLocationErrors() {
       this.cameraLocationErrors = {};
       const _this = this;
-      // console.log(this.siteData);
+
       this.siteData.data.forEach((token, idx) => {
         if (!_this.cameraLocationErrors[token.fullCameraLocationMd5]) {
           _this.cameraLocationErrors[token.fullCameraLocationMd5] = 0;
@@ -1224,9 +1221,7 @@ export default {
       });
     },
     async formWatchHandler(newValue) {
-      console.log(newValue);
       const getTime = (day, time) => {
-        console.log(time);
         return (
           moment(day)
             .hour(time.HH)
