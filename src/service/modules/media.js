@@ -1,9 +1,6 @@
 import fetchWrap from '../../util/fetch';
 
 const getSiteData = async payload => {
-  if (payload.projectOnly) {
-    return [];
-  }
   const res = await fetchWrap({
     url: '/media/annotation/query',
     method: 'POST',
@@ -71,32 +68,4 @@ const deleteToken = async payload => {
   return res;
 };
 
-const countSiteData = async payload => {
-  const { query } = payload;
-  const res = await fetchWrap({
-    url: '/media/annotation/doc-count',
-    method: 'POST',
-    body: Object.assign({}, { query }),
-  });
-
-  return res.count;
-};
-
-const scanSiteData = async payload => {
-  const res = await fetchWrap({
-    url: '/media/annotation/query',
-    method: 'POST',
-    body: payload,
-  });
-
-  return res;
-};
-
-export {
-  getSiteData,
-  updateAnnotation,
-  replicateToken,
-  deleteToken,
-  countSiteData,
-  scanSiteData,
-};
+export { getSiteData, updateAnnotation, replicateToken, deleteToken };
