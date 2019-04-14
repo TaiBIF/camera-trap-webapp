@@ -119,7 +119,7 @@ const authentication = () => {
     })
     .then(user => {
       if (auth.isUserSignedIn()) {
-        // The user is login.
+        // The user is logged in.
         window.currentUser = user;
         auth.refreshSession(auth.signInUserSession.refreshToken.refreshToken);
         if (refreshIntervalId) {
@@ -131,9 +131,9 @@ const authentication = () => {
         return user;
       }
 
-      // The user didn't login.
+      // The user is NOT logged in.
       if (!location.pathname.match(/^\/intro.html|^\/article.html/)) {
-        // redirect to login.html
+        // redirect to intro.html
         window.location.replace('/intro.html');
         return new Promise(() => {});
       }
