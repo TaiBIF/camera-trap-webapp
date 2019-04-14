@@ -297,7 +297,7 @@
             </small>
             <small class="text-gray">筆資料，您正在檢視：</small>
           </div>
-          <span>{{`第 ${currentDataRange.begin+1} - ${currentDataRange.end} 筆`}}</span>
+          <span>{{`第 ${Math.min(currentDataRange.begin+1,currentDataRange.end)} - ${currentDataRange.end} 筆`}}</span>
           <div class="float-right">
             <div class="input-group pager">
               <div class="input-group-prepend">
@@ -312,7 +312,7 @@
                 disabled
                 type="text"
                 class="form-control"
-                :value="`${currentPage}/${totalPage}`"
+                :value="`${Math.min(currentPage,totalPage)}/${totalPage}`"
               >
               <div class="input-group-append">
                 <button
