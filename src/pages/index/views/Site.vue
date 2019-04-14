@@ -73,7 +73,7 @@
                 >
                   <div
                     class="checkbox checkbox-inline"
-                    v-if="c_id < 6"
+                    v-if="c_id < 12"
                   >
                     <input
                       type="checkbox"
@@ -182,8 +182,8 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-10 no-padding-right">
-              <small class="text-gray">您正在檢視：{{`自 ${currentDataRange.begin} 至 ${currentDataRange.end}，共 ${currentPagePhotoNum} / ${totalCount} 張照片，${siteData.data.length} 筆資料。`}}</small>
-              <!--div class="divider"></div-->
+              <small class="text-gray">共 {{siteData.data.length}} 筆資料</small>
+              <!-- <div class="divider"></div> -->
               <div
                 class="dropdown"
                 :class="{'d-none': !editMode}"
@@ -286,23 +286,24 @@
                 name=""
                 id=""
                 class="form-control"
-                v-model="dayPageSize"
+                v-model="pageSize"
               >
-                <option value=10>10</option>
-                <option value=20>20</option>
-                <option value=30>30</option>
                 <option value=50>50</option>
                 <option value=100>100</option>
+                <option value=500>500</option>
+                <option value=1000>1000</option>
+                <option value=1500>1500</option>
               </select>
             </small>
-            <small class="text-gray">天的資料。</small>
+            <small class="text-gray">筆資料，您正在檢視：</small>
           </div>
+          <span>{{`第 ${currentDataRange.begin+1} - ${currentDataRange.end} 筆`}}</span>
           <div class="float-right">
             <div class="input-group pager">
               <div class="input-group-prepend">
                 <button
-                  @click="form.dataPage--"
-                  :disabled="form.dataPage === 1"
+                  @click="currentPage--"
+                  :disabled="currentPage === 1"
                 >
                   <i class="fa fa-caret-left"></i>
                 </button>
@@ -311,12 +312,12 @@
                 disabled
                 type="text"
                 class="form-control"
-                :value="`${form.dataPage}/${totalPage}`"
+                :value="`${currentPage}/${totalPage}`"
               >
               <div class="input-group-append">
                 <button
-                  @click="form.dataPage++"
-                  :disabled="form.dataPage+1 > totalPage"
+                  @click="currentPage++"
+                  :disabled="currentPage+1 > totalPage"
                 >
                   <i class="fa fa-caret-right"></i>
                 </button>
@@ -417,10 +418,7 @@
             版本紀錄
           </div>
           <div class="version-body">
-            <table
-              class="table version-list"
-              v-if="siteData.data.length && !loadingRevision"
-            >
+            <table class="table version-list">
               <tbody>
                 <tr
                   v-for="(rev, i) in revision"
@@ -479,7 +477,6 @@ import ZoomDrag from '../components/ZoomDrag';
 import CameraModal from '../components/CameraModal';
 import YoutubeEmbed from '../components/YoutubeEmbed';
 import IdleTimeoutDialog from '../components/IdleTimeoutDialog';
-import { countSiteData, scanSiteData } from '../../../service/api';
 
 const project = createNamespacedHelpers('project');
 const media = createNamespacedHelpers('media');
@@ -503,7 +500,6 @@ const formDefault = {
     HH: '23',
     mm: '59',
   },
-  dataPage: 1,
 };
 
 // debugger
@@ -511,13 +507,8 @@ export default {
   name: 'Site',
   data() {
     return {
-      oldDataPage: 1,
-      totalCount: 0,
-      currentPagePhotoNum: 0,
-      loadingRevision: false,
       pageSize: 50, //一頁顯示的筆數
-      dayPageSize: 30, // X 天 1 頁
-      // currentPage: 1, //目前在第幾頁
+      currentPage: 1, //目前在第幾頁
       today: moment(),
       idleTimeout: null,
       CameraModalOpen: false,
@@ -725,7 +716,7 @@ export default {
           const payload = changes.reduce((arr, change) => {
             let [row, prop, oldVal, newVal] = change;
             if (this.immutable.includes(prop)) return arr;
-            // row = row + this.currentDataRange.begin; //需計算真正資料的 row
+            row = row + this.currentDataRange.begin; //需計算真正資料的 row
             const value = this.siteData.data[row];
             if (oldVal !== newVal) {
               if (!value.index.column[prop] && value.index.column[prop] !== 0) {
@@ -773,17 +764,10 @@ export default {
           this.updateAnnotation(payload);
         },
         afterSelectionEnd: r => {
-          // this.currentRow = this.pageSize * (this.currentPage - 1) + r;
-          this.currentRow = r;
-          const vm = this;
-          if (window.toGetRevision) clearTimeout(window.toGetRevision);
-          this.loadingRevision = true;
-          window.toGetRevision = setTimeout(async () => {
-            await vm.getRevision({
-              _id: this.siteData.data[r]._id,
-            });
-            this.loadingRevision = false;
-          }, 250);
+          this.currentRow = this.pageSize * (this.currentPage - 1) + r;
+          this.getRevision({
+            _id: this.siteData.data[r]._id,
+          });
         },
       },
       sheetContainer: null,
@@ -802,30 +786,25 @@ export default {
       this.fetchCameraLocked();
     },
     'form.camera': {
-      handler: function() {
+      handler: async function() {
         this.formWatchHandler(this.form);
       },
       deep: true,
     },
     siteData: {
-      handler: function(newSiteData) {
+      handler: function() {
         if (!this.editMode) {
-          // this.currentPage = 1; // 當資料更新則要切換到第一頁，不過編輯模式不能切換因為不會是被修改查詢條件觸發
-          // this.form.dataPage = 1;
+          this.currentPage = 1; // 當資料更新則要切換到第一頁，不過編輯模式不能切換因為不會是被修改查詢條件觸發
         }
         this.getSheetData();
-        let photosDisplayed = new Set();
-        newSiteData.data.map(d => {
-          photosDisplayed.add(d._id);
-        });
-        this.currentPagePhotoNum = Array.from(photosDisplayed).length;
       },
       deep: true,
     },
-    async dayPageSize() {
-      // this.currentPage = 1; //切換顯示的筆數回到第一頁
-      this.form.dataPage = 1;
-      await this.formWatchHandler(this.form);
+    currentPage() {
+      this.updateSheetData(); // 換頁更新 sheet 顯示的資料範圍
+    },
+    pageSize() {
+      this.currentPage = 1; //切換顯示的筆數回到第一頁
       this.updateSheetData();
     },
   },
@@ -852,34 +831,15 @@ export default {
     },
     //計算目前筆數範圍
     currentDataRange() {
-      const { dayPageSize } = this;
+      const { currentPage, pageSize, siteData } = this;
       return {
-        begin: moment(
-          this.pagerDayStart(
-            this.form.start_at,
-            this.form.dataPage,
-            dayPageSize,
-          ) * 1000,
-        ).format('YYYY-MM-DD'),
-        end: moment(
-          (this.pagerDayEnd(
-            this.form.start_at,
-            this.form.dataPage,
-            dayPageSize,
-          ) -
-            1) *
-            1000,
-        ).format('YYYY-MM-DD'),
+        begin: (currentPage - 1) * pageSize,
+        end: Math.min(currentPage * pageSize, siteData.data.length),
       };
     },
     //計算最多總頁數
     totalPage() {
-      // return Math.ceil(this.totalCount / this.pageSize);
-      return Math.ceil(
-        (moment(this.form.end_at).format('X') -
-          moment(this.form.start_at).format('X')) /
-          (this.dayPageSize * 24 * 60 * 60),
-      );
+      return Math.ceil(this.siteData.data.length / this.pageSize);
     },
     // 判斷是否顯示影像區塊
     displayImageComponent() {
@@ -960,12 +920,10 @@ export default {
         ...this.settings,
         ...this.siteData,
         ...{ columns },
-        /*
         data: this.siteData.data.slice(
           this.currentDataRange.begin,
           this.currentDataRange.end,
         ),
-        //*/
       };
     },
   },
@@ -974,8 +932,6 @@ export default {
     ...media.mapMutations(['addSiteDataLength']),
     ...media.mapActions([
       'getSiteData',
-      'countSiteData',
-      'scanSiteData',
       'updateAnnotation',
       'replicateToken',
       'deleteToken',
@@ -990,25 +946,13 @@ export default {
     // 切頁時更新 sheet 顯示資料
     updateSheetData() {
       this.hasColumnError = false;
-      this.row_data = this.siteData.data; /*.slice(
+      this.row_data = this.siteData.data.slice(
         this.currentDataRange.begin,
         this.currentDataRange.end,
       );
-      //*/
-
       if (this.isRender) {
         this.sheet.updateSettings(this.sheetSetting);
       }
-    },
-    pagerDayStart(day, pageNum, pageSize) {
-      pageSize = parseInt(pageSize);
-      return (
-        moment(day).format('X') - 0 + (pageNum - 1) * pageSize * 24 * 60 * 60
-      );
-    },
-    pagerDayEnd(day, pageNum, pageSize) {
-      pageSize = parseInt(pageSize);
-      return moment(day).format('X') - 0 + pageNum * pageSize * 24 * 60 * 60;
     },
     async restoreRev(idx) {
       if (this.siteData.data[this.currentRow]) {
@@ -1186,7 +1130,7 @@ export default {
         }
       });
 
-      // console.log(rowData);
+      console.log(rowData);
       return rowData;
     },
     getSheetData() {
@@ -1210,6 +1154,8 @@ export default {
       // 切換編輯狀態
       this[key] = val;
 
+      console.log([key, val]);
+
       if (key === 'editMode') {
         // 使用 api 鎖定相機位置
         const list =
@@ -1217,19 +1163,18 @@ export default {
             ? this.cameraList.map(val => val.fullCameraLocationMd5)
             : this.form.camera;
 
-        const cameraLocationsToLock = list.map(v => ({
-          fullCameraLocationMd5: v,
-          projectId: this.$route.params.id,
-          locked: val,
-        }));
-
-        if (cameraLocationsToLock.length > 0)
-          this.setCameraLocked(cameraLocationsToLock);
+        this.setCameraLocked(
+          list.map(v => ({
+            fullCameraLocationMd5: v,
+            projectId: this.$route.params.id,
+            locked: val,
+          })),
+        );
 
         // 打開右鍵選單，打開欄位編輯模式
         this.settings.contextMenu = !val ? false : this.contextMenuSetting;
         // 更新 sheet
-        if (this.sheet) this.sheet.updateSettings(this.sheetSetting);
+        this.sheet.updateSettings(this.sheetSetting);
       }
 
       setTimeout(() => {
@@ -1278,8 +1223,10 @@ export default {
         }
       });
     },
-    async formWatchHandler(newForm) {
+    async formWatchHandler(newValue) {
+      console.log(newValue);
       const getTime = (day, time) => {
+        console.log(time);
         return (
           moment(day)
             .hour(time.HH)
@@ -1288,85 +1235,25 @@ export default {
         );
       };
 
-      // 按時間分頁時，切換頁時，如果分頁(時間區段)中沒有資料，則往前或往後掃到有資料的時間範疇
-      let scannerPayload = {
-        query: {
-          projectId: this.$route.params.id,
-          site: this.$route.params.site_id,
-          date_time_corrected_timestamp: {},
-          fullCameraLocationMd5:
-            newForm.camera.indexOf('all') !== -1
-              ? undefined
-              : { $in: newForm.camera },
-        },
-        projection: {
-          date_time_corrected_timestamp: 1,
-        },
-        limit: 1,
-        // skip: this.pageSize * (this.form.dataPage - 1),
-      };
-
-      // console.log(newForm.dataPage, this.oldDataPage);
-      // next page: 找出大於分頁起始時間
-      if (newForm.dataPage >= this.oldDataPage) {
-        scannerPayload.query.date_time_corrected_timestamp.$gte = this.pagerDayStart(
-          newForm.start_at,
-          newForm.dataPage,
-          this.dayPageSize,
-        );
-        scannerPayload.sort = [['date_time_corrected_timestamp', 1]];
-      } else if (newForm.dataPage < this.oldDataPage) {
-        scannerPayload.query.date_time_corrected_timestamp.$lt = this.pagerDayEnd(
-          newForm.start_at,
-          newForm.dataPage,
-          this.dayPageSize,
-        );
-        scannerPayload.sort = [['date_time_corrected_timestamp', -1]];
-      }
-
-      // get summary
       let payload = {
         query: {
           projectId: this.$route.params.id,
           site: this.$route.params.site_id,
           date_time_corrected_timestamp: {
-            $gte: getTime(newForm.start_at, newForm.start_time),
-            $lte: getTime(newForm.end_at, newForm.end_time),
+            $gte: getTime(newValue.start_at, newValue.start_time),
+            $lte: getTime(newValue.end_at, newValue.end_time),
           },
           fullCameraLocationMd5:
-            newForm.camera.indexOf('all') !== -1
+            newValue.camera.indexOf('all') !== -1
               ? undefined
-              : { $in: newForm.camera },
+              : { $in: newValue.camera },
         },
-        // limit: this.pageSize,
-        // skip: this.pageSize * (this.form.dataPage - 1),
+        limit: 100000,
+        skip: 0,
       };
 
-      let pagerPayload = {
-        query: {
-          projectId: this.$route.params.id,
-          site: this.$route.params.site_id,
-          date_time_corrected_timestamp: {
-            $gte: this.pagerDayStart(
-              newForm.start_at,
-              newForm.dataPage,
-              this.dayPageSize,
-            ),
-            $lt: this.pagerDayEnd(
-              newForm.start_at,
-              newForm.dataPage,
-              this.dayPageSize,
-            ),
-          },
-          fullCameraLocationMd5:
-            newForm.camera.indexOf('all') !== -1
-              ? undefined
-              : { $in: newForm.camera },
-        },
-      };
-
-      if (newForm.uploadSessionId) {
-        payload.query.related_upload_sessions = newForm.uploadSessionId;
+      if (newValue.uploadSessionId) {
+        payload.query.related_upload_sessions = newValue.uploadSessionId;
       }
 
       if (
@@ -1375,79 +1262,7 @@ export default {
         payload.query.date_time_corrected_timestamp['$lte'] !== 'Invalid date'
       ) {
         this.isLoadingData = true;
-        // console.log(pagerPayload);
-        if (
-          payload.query.fullCameraLocationMd5 &&
-          payload.query.fullCameraLocationMd5.$in &&
-          payload.query.fullCameraLocationMd5.$in.length === 0
-        ) {
-          this.totalCount = 0;
-          this.oldDataPage = this.form.dataPage;
-          await this.getSiteData({
-            query: { projectId: this.$route.params.id },
-            projectOnly: true,
-          });
-        } else {
-          // scanning data, get start_at with data
-
-          let timestampWithData;
-          const scanned = await scanSiteData(scannerPayload);
-          // console.log(scanned);
-          /*
-            {
-              results[0]
-                date_time_corrected_timestamp
-                _id
-            }
-          //*/
-          if (Array.isArray(scanned.results) && scanned.results.length > 0) {
-            timestampWithData =
-              scanned.results[0].date_time_corrected_timestamp;
-            const newDataPage =
-              Math.floor(
-                (timestampWithData - moment(newForm.start_at).format('X')) /
-                  (this.dayPageSize * 24 * 60 * 60),
-              ) + 1;
-
-            newForm.dataPage = newDataPage;
-
-            pagerPayload.query.date_time_corrected_timestamp = {
-              $gte: this.pagerDayStart(
-                newForm.start_at,
-                newDataPage,
-                this.dayPageSize,
-              ),
-              $lt: this.pagerDayEnd(
-                newForm.start_at,
-                newDataPage,
-                this.dayPageSize,
-              ),
-            };
-
-            this.oldDataPage = newDataPage;
-          } else {
-            pagerPayload.query.date_time_corrected_timestamp = {
-              $gte: this.pagerDayStart(
-                newForm.start_at,
-                this.oldDataPage,
-                this.dayPageSize,
-              ),
-              $lt: this.pagerDayEnd(
-                newForm.start_at,
-                this.oldDataPage,
-                this.dayPageSize,
-              ),
-            };
-            newForm.dataPage = this.oldDataPage;
-          }
-
-          // need to modify payload.query.$gte
-          (async () => {
-            this.totalCount = await countSiteData(payload);
-          })();
-
-          await this.getSiteData(pagerPayload);
-        }
+        await this.getSiteData(payload);
         this.isLoadingData = false;
       }
     },
