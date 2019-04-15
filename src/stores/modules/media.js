@@ -114,7 +114,8 @@ export const mutations = {
     state.dataFields = payload;
   },
   updateSiteData(state, payload) {
-    state.rawSiteData = payload;
+    state.siteDataLength = payload.total;
+    state.rawSiteData = payload.results;
     state.siteData = formatSiteData(state);
   },
   updateQuery(state, payload) {
@@ -177,6 +178,7 @@ export const actions = {
 export default {
   namespaced: true,
   state: {
+    siteDataLength: 0,
     dataFields: { fieldDetails: [] },
     rawSiteData: [],
     siteData: { data: [] },

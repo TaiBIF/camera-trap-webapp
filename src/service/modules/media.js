@@ -34,9 +34,7 @@ const getSiteData = async payload => {
     }),
   });
 
-  return res.results.map(val => ({
-    ...val,
-  }));
+  return res;
 };
 
 const updateAnnotation = async payload => {
