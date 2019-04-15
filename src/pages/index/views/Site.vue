@@ -716,7 +716,6 @@ export default {
           const payload = changes.reduce((arr, change) => {
             let [row, prop, oldVal, newVal] = change;
             if (this.immutable.includes(prop)) return arr;
-            row = row + this.currentDataRange.begin; //需計算真正資料的 row
             const value = this.siteData.data[row];
             if (oldVal !== newVal) {
               if (!value.index.column[prop] && value.index.column[prop] !== 0) {
