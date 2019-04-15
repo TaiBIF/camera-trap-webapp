@@ -288,11 +288,11 @@
                 class="form-control"
                 v-model="pageSize"
               >
-                <option value=50>50</option>
-                <option value=100>100</option>
-                <option value=500>500</option>
-                <option value=1000>1000</option>
-                <option value=1500>1500</option>
+                <option
+                  :key="opt"
+                  :value="opt"
+                  v-for="opt in [50,100,500,1000,1500]"
+                >{{opt}}</option>
               </select>
             </small>
             <small class="text-gray">筆資料，您正在檢視：</small>
