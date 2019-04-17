@@ -182,7 +182,7 @@
         <div class="sheet-header">
           <div class="row">
             <div class="col-10 no-padding-right">
-              <small class="text-gray">共 {{siteData.data.length}} 筆資料</small>
+              <small class="text-gray">共 {{siteDataLength}} 筆資料</small>
               <!-- <div class="divider"></div> -->
               <div
                 class="dropdown"
@@ -288,11 +288,11 @@
                 class="form-control"
                 v-model="pageSize"
               >
-                <option value=50>50</option>
-                <option value=100>100</option>
-                <option value=500>500</option>
-                <option value=1000>1000</option>
-                <option value=1500>1500</option>
+                <option
+                  :key="opt"
+                  :value="opt"
+                  v-for="opt in [50,100,500,1000,1500]"
+                >{{opt}}</option>
               </select>
             </small>
             <small class="text-gray">筆資料，您正在檢視：</small>
@@ -368,7 +368,7 @@
               v-if="siteData.data[currentRow].imageUrl"
               :row="siteData.data[currentRow]"
               :index="currentRow"
-              :total="siteData.data.length"
+              :total="siteDataLength"
             />
             <youtube-embed
               v-else
@@ -716,7 +716,6 @@ export default {
           const payload = changes.reduce((arr, change) => {
             let [row, prop, oldVal, newVal] = change;
             if (this.immutable.includes(prop)) return arr;
-            row = row + this.currentDataRange.begin; //需計算真正資料的 row
             const value = this.siteData.data[row];
             if (oldVal !== newVal) {
               if (!value.index.column[prop] && value.index.column[prop] !== 0) {
@@ -787,25 +786,23 @@ export default {
     },
     'form.camera': {
       handler: async function() {
+        this.currentPage = 1; //切換顯示的筆數回到第一頁
         this.formWatchHandler(this.form);
       },
       deep: true,
     },
     siteData: {
       handler: function() {
-        if (!this.editMode) {
-          this.currentPage = 1; // 當資料更新則要切換到第一頁，不過編輯模式不能切換因為不會是被修改查詢條件觸發
-        }
         this.getSheetData();
       },
       deep: true,
     },
     currentPage() {
-      this.updateSheetData(); // 換頁更新 sheet 顯示的資料範圍
+      this.formWatchHandler(this.form);
     },
     pageSize() {
       this.currentPage = 1; //切換顯示的筆數回到第一頁
-      this.updateSheetData();
+      this.formWatchHandler(this.form);
     },
   },
   components: {
@@ -821,7 +818,7 @@ export default {
     ...project.mapGetters(['currentProject']),
     ...media.mapGetters(['species']),
     ...cameraLocation.mapGetters(['cameraLocked']),
-    ...media.mapState(['siteData']),
+    ...media.mapState(['siteData', 'siteDataLength']),
     exportUrl() {
       return `${process.env.VUE_APP_API_URL}/project/${
         this.$route.params.id
@@ -831,15 +828,15 @@ export default {
     },
     //計算目前筆數範圍
     currentDataRange() {
-      const { currentPage, pageSize, siteData } = this;
+      const { currentPage, pageSize, siteDataLength } = this;
       return {
         begin: (currentPage - 1) * pageSize,
-        end: Math.min(currentPage * pageSize, siteData.data.length),
+        end: Math.min(currentPage * pageSize, siteDataLength),
       };
     },
     //計算最多總頁數
     totalPage() {
-      return Math.ceil(this.siteData.data.length / this.pageSize);
+      return Math.ceil(this.siteDataLength / this.pageSize);
     },
     // 判斷是否顯示影像區塊
     displayImageComponent() {
@@ -901,7 +898,7 @@ export default {
               this.cameraLocked[val.fullCameraLocationMd5].lockedBy.userId ===
                 window.currentUser.userId,
           )
-        : this.siteData.data.length >= 1 &&
+        : this.siteDataLength >= 1 &&
             this.form.camera.every(
               val =>
                 !this.cameraLocked[val] ||
@@ -920,10 +917,7 @@ export default {
         ...this.settings,
         ...this.siteData,
         ...{ columns },
-        data: this.siteData.data.slice(
-          this.currentDataRange.begin,
-          this.currentDataRange.end,
-        ),
+        data: this.siteData.data,
       };
     },
   },
@@ -942,17 +936,6 @@ export default {
       //console.log(camera);
       this.form.camera = camera;
       this.CameraModalOpen = false;
-    },
-    // 切頁時更新 sheet 顯示資料
-    updateSheetData() {
-      this.hasColumnError = false;
-      this.row_data = this.siteData.data.slice(
-        this.currentDataRange.begin,
-        this.currentDataRange.end,
-      );
-      if (this.isRender) {
-        this.sheet.updateSettings(this.sheetSetting);
-      }
     },
     async restoreRev(idx) {
       if (this.siteData.data[this.currentRow]) {
@@ -1243,8 +1226,8 @@ export default {
               ? undefined
               : { $in: newValue.camera },
         },
-        limit: 100000,
-        skip: 0,
+        limit: this.pageSize,
+        skip: (this.currentPage - 1) * this.pageSize,
       };
 
       if (newValue.uploadSessionId) {
